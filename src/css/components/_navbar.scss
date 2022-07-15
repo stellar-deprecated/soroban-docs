@@ -1,0 +1,18 @@
+#__docusaurus {
+  .navbar {
+    padding: 0;
+    box-shadow: none;
+    border-bottom: var(--ifm-global-border-width) solid
+      var(--ifm-toc-border-color);
+  }
+
+  .navbar__inner {
+    max-width: var(--page-max-width);
+    padding: 0 var(--ifm-spacing-horizontal);
+    margin: 0 auto;
+  }
+
+  .navbar__link svg {
+    display: none;
+  }
+}

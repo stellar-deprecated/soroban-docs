@@ -1,0 +1,24 @@
+#__docusaurus {
+  .row .col[class*='col--'] {
+    padding: 0;
+  }
+
+  .table-of-contents {
+    font-size: 0.875rem;
+  }
+
+  .table-of-contents__link--active {
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      height: 100%;
+      width: calc(2 * var(--ifm-global-border-width));
+      left: calc(
+        -2 * var(--ifm-toc-padding-horizontal) - var(--ifm-global-border-width)
+      );
+      background-color: var(--ifm-color-primary);
+    }
+  }
+}

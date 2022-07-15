@@ -1,0 +1,128 @@
+---
+title: Welcome
+order: -100
+---
+
+import { ReadMore } from "components/ReadMore";
+import { CodeExample } from "components/CodeExample";
+import { Alert } from "components/Alert";
+
+### More_info_url
+
+Once the transaction is completed on the Stellar network, the transaction’s status will update from “pending_stellar” to “completed.”
+
+This will open the prompt with a select\<\>options input field rather than a text input field.
+
+We’re not really making full use of [ Capacitor ][2], but it is an amazing service so be sure and check it out! For now we just need it to make storing and retrieving our data a bit more stable.
+
+To find out everything you'd ever want to know about stellar.toml files, check out [SEP-1], which is the complete stellar.toml specification.
+
+And here's [AnchorUSD]'s[3].
+
+_(It may be strange that A never holds any tokens of its custom asset, but that's exactly how issuing works: you create value where there used to be none. Sending an asset to its issuing account is *equivalent* to burning it, and auditing the total amount of an asset in existence is one of the benefits of properly distributing an asset via a [distribution account](../issuing-assets/how-to-issue-an-asset.mdx#why-have-separate-accounts-for-issuing-and-distribution), which we avoid doing here for example brevity.)_
+
+For example, if you're _selling_ 100 XLM in exchange for 40 USD, you would specify the price as `{40, 100}`, which would be the equivalent of 2.5 XLM for 1 USD (or \$.40 per XLM) (_nice profit_).
+
+It’s a lot of code, but keep in mind this is everything we need to completely interoperate with financial infrastructure foreign to the Stellar ecosystem, which is a big ask and in ~130 lines of code. It’s a modern day miracle!
+
+1. The wallet prompts the user to add the asset/create the trustline.
+1. Finally, the anchor sends the deposit funds to the user’s Stellar account.
+
+<ReadMore url="./issuing-assets/index" />
+
+<Alert>
+
+Note: the testnet is reset every three months, so when building on it, make sure you have a plan to recreate necessary accounts and other data. For more info, check out the [best practices for using the testnet](../../glossary/testnet.mdx#best-practices-for-using-testnet).
+
+</Alert>
+
+![Screenshots of the reference implementation](../../web-assets/polaris.png)
+
+![Screenshot of the demo client](../../web-assets/demo-wallet-sep31.png)
+
+<CodeExample title="Example Info Response">
+
+```json
+{
+  "deposit": {
+    "USD": {
+      "enabled": true,
+      "fee_fixed": 5,
+      "fee_percent": 1,
+      "min_amount": 0.1,
+      "max_amount": 1000
+    }
+  }
+}
+```
+
+</CodeExample>
+
+## Result Codes
+
+Fee-bump transactions share result codes with regular transactions. They're listed in a table below. Error reference for operations can be found in [List of Operations](../start/list-of-operations.mdx) doc.
+
+| Result | Code | Description |
+| --- | --- | --- |
+| FEE_BUMP_INNER_SUCCESS | 1 | The inner transaction contained in the fee bump succeeded. |
+| SUCCESS | 0 | All operations contained in the transaction succeeded. |
+| FAILED | -1 | One of the operations failed (check [List of operations](../start/list-of-operations.mdx) for errors). |
+| TOO_EARLY | -2 | Ledger `closeTime` before `minTime` value in the transaction. |
+| TOO_LATE | -3 | Ledger `closeTime` after `maxTime` value in the transaction. |
+| MISSING_OPERATION | -4 | No operation was specified. |
+| BAD_SEQ | -5 | Sequence number does not match source account. |
+| BAD_AUTH | -6 | Too few valid signatures / wrong network. |
+| INSUFFICIENT_BALANCE | -7 | Fee would bring account below [minimum reserve](./minimum-balance.mdx). |
+| NO_ACCOUNT | -8 | Source account not found. |
+| INSUFFICIENT_FEE | -9 | [Fee](./fees.mdx) is too small. |
+| BAD_AUTH_EXTRA | -10 | Unused signatures attached to transaction. |
+| INTERNAL_ERROR | -11 | An unknown error occured. |
+| NOT_SUPPORTED | -12 | The transaction type is not supported |
+| FEE_BUMP_INNER_FAILED | -13 | The fee bump inner transaction failed. See [Fee Bumps](./fee-bumps.mdx) for more info. |
+
+[Genesis] <---- [LedgerHeader_1] <----- ... <---- [LedgerHeader_n]
+
+Each slot contains the oldest ledger that is mod of either 50 5000 50000 or 500000 depending on index skipList[0] mod(50), skipList[1] mod(5000), etc.
+
+OperationID is a union with one possible type (ENVELOPE_TYPE_OP_ID).
+
+ClaimableBalanceID is a union with one possible type (CLAIMABLE_BALANCE_ID_TYPE_V0).
+
+- To learn about the SCP voting process, read this [blog post](https://stellar.org/developers-blog/intuitive-stellar-consensus-protocol) or watch this [talk](https://www.youtube.com/watch?v=fDt8Eh4T_lE&list=PLmr3tp_7-7GgDUgWJTbp7jhhgdMccVdhs).
+
+- **Alphanumeric 4-character maximum**: Any characters from the set [a-z]\[A-Z\][0-9] are allowed. The code can be shorter than 4 characters, but the trailing characters must all be empty.
+- **Alphanumeric 12-character maximum**: Any characters from the set [a-z]\[A-Z\][0-9] are allowed. The code can be any number of characters from 5 to 12, but the trailing characters must all be empty.
+
+- **Alphanumeric 4-character maximum**: Any characters from the set [a-z][A-Z][0-9] are allowed. The code can be shorter than 4 characters, but the trailing characters must all be empty.
+- **Alphanumeric 12-character maximum**: Any characters from the set [a-z][A-Z][0-9] are allowed. The code can be any number of characters from 5 to 12, but the trailing characters must all be empty.
+
+| flag | envvar | example |
+| ---- | ------ | ------- |
+| `--db-url` | `DATABASE_URL` | postgres://localhost/horizon_testnet |
+| `--history-archive-urls` | `HISTORY_ARCHIVE_URLS` | https://history.stellar.org/prd/core-testnet/core_testnet_001,https://history.stellar.org/prd/core-testnet/core_testnet_002 |
+
+Regardless of whether you are running live ingestion or building up historical data, you may occasionally need to _re_ingest ledgers anew (for example on certain upgrades of Horizon). For this, you use the same command as above.
+
+_(Though Horizon can run on Windows, *building* directly on Windows is not supported.)_
+
+If any of the above steps don't work or you are otherwise prevented from correctly setting up Horizon, please join our community and let us know. Either post a question at [our Stack Exchange](https://stellar.stackexchange.com/) or chat with us on [Keybase in #dev_discussion](https://keybase.io/team/stellar.public) to ask for help.
+
+- **print-xdr `<FILE-NAME>`**: Pretty-print a binary file containing an XDR object. If FILE-NAME is "-", the XDR object is read from standard input.<br/> Option --filetype [auto|ledgerheader|meta|result|resultpair|tx|txfee]\*\* controls type used for printing (default: auto).<br/> Option --base64 alters the behavior to work on base64-encoded XDR rather than raw XDR.
+
+- **dropcursor**  
+  `dropcursor?id=ID`<br/> Deletes the tracking cursor identified by `id`. See `setcursor` for more information.
+
+- **droppeer** `droppeer?node=NODE_ID[&ban=D]`<br/> Drops peer identified by NODE_ID, when D is 1 the peer is also banned.
+
+- **info** Returns information about the server in JSON format (sync state, connected peers, etc).
+
+- **ll**  
+  `ll?level=L[&partition=P]`<br/> Adjust the log level for partition P where P is one of Bucket, Database, Fs, Herder, History, Ledger, Overlay, Process, SCP, Tx (or all if no partition is specified). Level is one of FATAL, ERROR, WARNING, INFO, DEBUG, VERBOSE, TRACE.
+
+- **peers?[&fullkeys=true]** Returns the list of known peers in JSON format. If `fullkeys` is set, outputs unshortened public keys.
+
+Rolling your own crypto is a bad idea. Always use tried and tested libraries. A good example is [NaCl](<https://en.wikipedia.org/wiki/NaCl_(software)>).
+
+[1]: https://github.com/stellar/docs-wallet/tree/setup
+[2]: https://capacitor.ionicframework.com/ "Capacitor"
+[3]: https://stablecoin.anchorusd.com/.well-known/stellar.toml

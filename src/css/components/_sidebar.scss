@@ -1,0 +1,31 @@
+#__docusaurus {
+  --ifm-menu-color-background-active: transparent;
+  // --ifm-menu-color-background-hover: transparent;
+
+  .theme-doc-sidebar-container {
+    clip-path: none;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 0 -100rem;
+      background-color: var(--ifm-background-surface-color);
+      z-index: -2;
+    }
+  }
+
+  .menu {
+    padding-bottom: 4rem;
+    margin-top: calc(-1 * var(--ifm-global-border-width));
+    border-top: var(--ifm-global-border-width) solid var(--ifm-toc-border-color);
+
+    font-weight: var(--ifm-font-weight-normal);
+    font-size: 0.875rem;
+  }
+
+  .menu__link--sublist-caret:after,
+  .menu__caret:before {
+    background-size: 1.25rem;
+  }
+}

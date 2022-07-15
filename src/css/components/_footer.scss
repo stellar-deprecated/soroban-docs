@@ -1,0 +1,19 @@
+#__docusaurus {
+  --ifm-footer-padding-vertical: 4rem;
+  --ifm-footer-background-color: var(--ifm-background-surface-color);
+
+  .footer {
+    border-top: var(--ifm-global-border-width) solid var(--ifm-toc-border-color);
+  }
+
+  .footer__title {
+    text-transform: uppercase;
+  }
+
+  .footer__link-item {
+    text-decoration: none;
+    svg {
+      display: none;
+    }
+  }
+}

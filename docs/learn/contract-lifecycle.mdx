@@ -4,9 +4,9 @@ title: Contract Lifecycle
 ---
 
 ## Development
-Contract development can be done on a local computer with as little as 3 necessary components: an IDE, a copy of the Rust toolchain, and a copy of the Jump Cannon SDK.
+Contract development can be done on a local computer with as little as 3 necessary components: an IDE, a copy of the Rust toolchain, and a copy of the Soroban SDK.
 
-The SDK contains a full working copy of the host environment, as well as a “mock” version of the ledger for persistent storage of contract data. It is therefore possible (and encouraged) to edit, compile, test and debug contracts directly against this “local” copy of the host, entirely offline and without even accessing a test network.
+The SDK contains a full working copy of the host environment, as well as a "mock" version of the ledger for persistent storage of contract data. It is therefore possible (and encouraged) to edit, compile, test and debug contracts directly against this "local" copy of the host, entirely offline and without even accessing a test network.
 
 To make the local development process even more convenient and fast, the contract being developed can (and should) be compiled as native code and linked directly to the local host, rather than compiled to WASM and run in a local VM sandbox. Both configurations are possible, but the native configuration is fastest and provides the richest testing and debugging experience.
 
@@ -22,9 +22,9 @@ The SDK command-line utility can also build and submit the transaction deploying
 ## Execution
 Deployed contracts live on chain in a CONTRACT_DATA ledger entry. They are executed within a VM sandbox managed by a host environment inside stellar-core. Each transaction that leads to a contract execution is run in a separate host environment, and each contract called by such a transaction (either directly or indirectly from another contract) is executed in a separate guest WASM VM contained within the transaction’s host environment. 
 
-Execution is initiated by a host function called “call”. The “call” host function can itself be invoked two different ways: either by someone submitting a transaction to the network that invokes “call” directly, or indirectly by some other contract invoking “call”.
+Execution is initiated by a host function called "call". The "call" host function can itself be invoked two different ways: either by someone submitting a transaction to the network that invokes "call" directly, or indirectly by some other contract invoking "call".
 
-In either case, the “call” host function is provided with the ID of a contract to invoke, the name of a function in the contract, and a vector of argument values to pass. The “call” host function then sets up a VM sandbox for the called contract, loads and instantiates its WASM bytecode, and invokes the named function, passing the provided arguments.
+In either case, the "call" host function is provided with the ID of a contract to invoke, the name of a function in the contract, and a vector of argument values to pass. The "call" host function then sets up a VM sandbox for the called contract, loads and instantiates its WASM bytecode, and invokes the named function, passing the provided arguments.
 
 Each contract execution continues until the contract either completes successfully or traps with an error condition. If execution completes successfully, all ledger entries modified during execution will be written back to the ledger atomically. If execution traps, all modified ledger entries will be discarded and the contract will have no effect on the ledger.
 

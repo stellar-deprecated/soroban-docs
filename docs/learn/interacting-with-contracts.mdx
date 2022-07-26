@@ -42,3 +42,38 @@ Since it can be difficult for a user to always know which ledger entries a given
 Such a preflight-provided footprint can then be used to accompany a "real" submission of the same transaction to the network for real execution. If the state of the ledger has changed too much between the time of the preflight and the real submission, the footprint may be too stale and no longer accurately identify the _keys_ the transaction needs to read and write, at which point the preflight must be retried to refresh the footprint.
 
 In any event -- whether successful or failing -- the real transaction will execute atomically, deterministically and with serializable consistency semantics. An inaccurate footprint simply causes deterministic transaction failure, not a stale-read anomaly. All effects of such a failed transaction are discarded, as they would be in the presence of any other error.
+
+## Testing contracts with our testutils machinery
+
+We provide some machinery in the Soroban
+[SDK](https://github.com/stellar/rs-soroban-sdk) that allows a user to
+test contract calls by writing rust test cases.
+
+### Example
+
+//TODO: fix all links after the Soroban rename
+Let's look at the [single offer contract](https://github.com/stellar/soroban-examples/blob/main/single_offer/src/lib.rs) as an example -
+
+```rust
+#[contractimpl(export_if = "export")]
+impl SingleOfferTrait for SingleOffer {
+    fn initialize(e: Env, admin: Identifier, sell_token: U256, buy_token: U256, n: u32, d: u32) {
+        ...
+```
+
+Notice the `contractimpl` procedural macro attribute. This attribute, along with
+the `testutils` feature enabled, will allow the user to call a function in the
+contract directly in a rust test case. For example, the single offer contract
+has an alias `pub use crate::__initialize::call_internal as initialize` for the
+`initialize` contract function, which is used
+[here](https://github.com/stellar/soroban-examples/blob/56fef787395b5aed7cd7b19772cca28e21b3feb5/single_offer/src/testutils.rs#L45).
+The rest of the `call_internal` aliases for the single offer contract can be
+seen
+[here](https://github.com/stellar/soroban-examples/blob/56fef787395b5aed7cd7b19772cca28e21b3feb5/single_offer/src/testutils.rs#L15)
+in a `SingleOffer` wrapper class, and you can see how they're used in a [test
+case](https://github.com/stellar/soroban-examples/blob/56fef787395b5aed7cd7b19772cca28e21b3feb5/single_offer/src/test.rs#L42).
+
+This machinery can also be used to test multiple contracts together. For
+example, the single offer contract test case creates a token using the
+[token
+contract](https://github.com/stellar/soroban-examples/blob/56fef787395b5aed7cd7b19772cca28e21b3feb5/single_offer/src/test.rs#L22).

@@ -34,6 +34,26 @@ access the public methods of a contract.
 If a contract contains a public function `f`, then invoking `f` can be done by
 making a Rust function call to `f::invoke`.
 
+Some contracts, such as the token contract, only export the contract invocation
+functions. In doing so, they are able to assign those functions friendly names.
+For example,
+[initialize](https://github.com/stellar/soroban-token-contract/blob/42380647bb817bf01c739c19286f18be881e0e41/src/contract.rs#L55-L57)
+
+```rust
+#[contractimpl(export_if = "export")]
+impl TokenTrait for Token {
+    fn initialize(e: Env, admin: Identifier, decimal: u32, name: Binary, symbol: Binary) {
+```
+
+is [exported](https://github.com/stellar/soroban-token-contract/blob/42380647bb817bf01c739c19286f18be881e0e41/src/lib.rs#L26)
+as
+
+```rust
+pub use crate::contract::initialize::invoke as initialize;
+```
+
+This function is then easily [called by the liquidity pool contract](https://github.com/stellar/soroban-examples/blob/4060d3bd5ee7846020b68ee583665a4d4cf4b315/liquidity_pool/src/lib.rs#L164-L171).
+
 ### Operation
 
 An operation is the ultimate entrypoint of every contract interaction. An
@@ -56,32 +76,14 @@ WASM bytecode loaded from the ledger. So how does this work if you are testing
 native code? You must register your contract with the environment so it knows
 what functions are available and how to call them. While this sounds complex,
 the `contractimpl` procedural macro automatically generates almost all of the
-code to do this. All you have to do is write a small stub to actually call the
-generated code. An example of this can be seen in the [token contract](https://github.com/stellar/soroban-token-contract/blob/42380647bb817bf01c739c19286f18be881e0e41/src/testutils.rs#L12-L15)
+code to do this. All you have to do is write a small [stub](https://github.com/stellar/soroban-token-contract/blob/42380647bb817bf01c739c19286f18be881e0e41/src/testutils.rs#L12-L15)
+to actually call the generated code, such as
 
 ```rust
 pub fn register_test_contract(e: &Env, contract_id: &[u8; 32]) {
     let contract_id = FixedBinary::from_array(e, *contract_id);
     e.register_contract(&contract_id, crate::contract::Token {});
 }
-```
-
-Some contracts, such as the token contract, only export the contract invocation
-functions. In doing so, they are able to assign those functions friendly names.
-For example,
-[initialize](https://github.com/stellar/soroban-token-contract/blob/42380647bb817bf01c739c19286f18be881e0e41/src/contract.rs#L55-L57)
-
-```rust
-#[contractimpl(export_if = "export")]
-impl TokenTrait for Token {
-    fn initialize(e: Env, admin: Identifier, decimal: u32, name: Binary, symbol: Binary) {
-```
-
-is [exported](https://github.com/stellar/soroban-token-contract/blob/42380647bb817bf01c739c19286f18be881e0e41/src/lib.rs#L26)
-as
-
-```rust
-pub use crate::contract::initialize::invoke as initialize;
 ```
 
 Some contracts, such as the token contract, also provide a [friendlier interface](https://github.com/stellar/soroban-token-contract/blob/42380647bb817bf01c739c19286f18be881e0e41/src/testutils.rs#L26-L191)

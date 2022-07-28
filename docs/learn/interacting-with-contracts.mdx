@@ -3,6 +3,42 @@ sidebar_position: 4
 title: Interacting with contracts
 ---
 
+## Three types of interactions
+
+### Function call
+
+A function call is the simplest and least expensive kind of contract
+interaction. A function call does exactly what you would expect a contract call
+to do in any other software development context: the contract transfers control
+and data to another part of the _same_ contract. Because a function call always
+transfers control to the same contract, they do not change the values returned
+by `get_current_contract` and `get_invoking_contract`. A function call is the
+only way to access the private methods of a contract.
+
+To perform a function call, simply make a Rust function call.
+
+### Contract invokation
+
+A contract invokation is a more powerful and more expensive kind of contract
+interaction. A contract invokation is similar to starting a new process because
+the code that runs will be in a separate address space, meaning that they do
+not share any data other than what was passed in the invokation. While a
+contract invokation typically transfers control to a _different_ contract, it
+is possible to transfer control to the currently running contract. Regardless
+of whether the contract that receives control is a different contract or the
+currently running contract, the value returned by `get_invoking_contract` will
+be the previous value of `get_current_contract`. A contract invokation can only
+access the public methods of a contract.
+
+If a contract contains a public function `f`, then invoking `f` can be done by
+making a Rust function call to `f::invoke`.
+
+### Operation
+
+An operation is the ultimate entrypoint of every contract interaction. An
+operation transfers control and external data to a contract, allowing execution
+to begin.
+
 ## Testing contracts with our testutils machinery
 
 We provide some machinery in the Soroban

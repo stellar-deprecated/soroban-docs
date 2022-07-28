@@ -13,7 +13,7 @@ const config = {
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.ico",
   organizationName: "stellar", // Usually your GitHub org/user name.
-  projectName: "jump-cannon-docs", // Usually your repo name.
+  projectName: "soroban-docs", // Usually your repo name.
   url: "https://stellar.org", // "https://stellar-docusaurus.vercel.app", // Your website URL
   // i18n: {
   //   defaultLocale: 'en',
@@ -32,7 +32,7 @@ const config = {
           remarkPlugins: [require("mdx-mermaid")],
           sidebarPath: require.resolve("./sidebars.js"),
           // Please change this to your repo.
-          editUrl: "https://github.com/stellar/jump-cannon-docs/tree/main/",
+          editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
         },
         theme: {
           customCss: [require.resolve("./src/css/custom.scss")],

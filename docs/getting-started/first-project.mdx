@@ -148,15 +148,15 @@ WASM using it.
 ```sh
 soroban-cli invoke \
     --file target/wasm32-unknown-unknown/release/first-project.wasm \
-    --contract-id 1
+    --contract-id 01
     --fn hello
-    --arg dev
+    --arg friend
 ```
 
 The following output should occur using the code above.
 
 ```
-Hello Dev
+["Hello","friend"]
 ```
 
 [`soroban-cli`]: install-soroban-cli.mdx

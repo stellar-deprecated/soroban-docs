@@ -35,7 +35,7 @@ test test::test ... ok
 
 ## Code
 
-```
+```rust title="hello_world/src/lib.rs"
 #![no_std]
 use soroban_sdk::{contractimpl, vec, Env, Symbol, Vec};
 
@@ -99,7 +99,7 @@ impl HelloContract {
 
 Open the `hello_world/src/test.rs` file to follow along.
 
-```rust
+```rust title="hello_world/src/test.js"
 #[test]
 fn test() {
     let env = Env::default();

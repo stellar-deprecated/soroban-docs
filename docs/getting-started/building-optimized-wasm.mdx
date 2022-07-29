@@ -10,11 +10,12 @@ Building optimized WASM files requires some additional options and commands, and
 requires installing the `nightly` Rust toolchain and `wasm-opt`.
 
 :::info
-Building optimized WASM is really only necessary when deploying to network. It
-may be helpful for understanding the real size of the contract you're
-developing, but is otherwise not required during the development phase of a
-contract.
+Building optimized WASM is only necessary when deploying to network or when
+analyzing the real size of a contract. It is otherwise not required during
+initial development.
 :::
+
+## Install Rust `nightly`
 
 To install the nightly Rust toolchain use `rustup`.
 
@@ -22,26 +23,40 @@ To install the nightly Rust toolchain use `rustup`.
 rustup install nightly
 ```
 
-To install `wasm-opt` depends on your operating system.
+## Install `wasm-opt`
+
+To install `wasm-opt`, install `binaryen`. Depending on your operating system
+there may be different ways to install it.
 
 <Tabs>
-  <TabItem value="macos" label="macOS" default>
+<TabItem value="macos" label="macOS" default>
+
 ```sh
-brew install wasm-pack
+brew install binaryen
 ```
-  </TabItem>
-  <TabItem value="linux" label="Linux">
+
+</TabItem>
+<TabItem value="linux" label="Linux">
+
+For distributions that use `apt`:
+
 ```sh
-Linux
+sudo apt install binaryen
 ```
-  </TabItem>
-  <TabItem value="windows" label="Windows">
-```sh
-TODO
-```
-  </TabItem>
+
+For other distributions see:  
+https://github.com/WebAssembly/binaryen/releases
+
+</TabItem>
+<TabItem value="windows" label="Windows">
+
+For install options see:
+https://github.com/WebAssembly/binaryen/releases
+
+</TabItem>
 </Tabs>
 
+## Building with `nightly` and `wasm-opt`
 
 Then build your contract using nightly, and the additional options that remove
 unnecessary information from the contract.

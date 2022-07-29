@@ -3,8 +3,10 @@ sidebar_position: 2
 title: Install Soroban CLI
 ---
 
-Install the Soroban CLI that can execute WASM contracts in a local sandbox
-environment.
+The Soroban CLI can execute WASM contracts in the same environment the contract
+will execute on network, however in a local sandbox.
+
+Install the Soroban CLI using `cargo install`.
 
 ```sh
 cargo install --locked --git http://github.com/stellar/soroban-cli soroban-cli
@@ -14,6 +16,8 @@ cargo install --locked --git http://github.com/stellar/soroban-cli soroban-cli
 The soroban-cli is still in early development. Please report any issues
 [here](https://github.com/stellar/soroban-cli).
 :::
+
+## Usage
 
 Run the `soroban-cli` command and you should see output like below.
 

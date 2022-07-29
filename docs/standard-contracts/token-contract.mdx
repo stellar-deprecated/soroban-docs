@@ -3,6 +3,8 @@ sidebar_position: 1
 title: Token Contract
 ---
 
+# Standard Token Contract
+
 The token contract is an implementation of [CAP-54 Smart Contract Standardized Asset].
 
 [CAP-54 Smart Contract Standardized Asset]: https://stellar.org/protocol/cap-54
@@ -12,3 +14,198 @@ The token contract is in early development, has not been audited, and is not
 intended for use. Report issues
 [here](https://github.com/stellar/soroban-token-contract).
 :::
+
+## Overview
+
+Tokens are a vital part of blockchains, and contracts that implement token
+functionality are inevitable on any smart contract platform. Instead of
+expecting a standard to emerge from the ecosystem, we provide our own token
+contract implementation. This has a couple advantages. First, we can special
+case this contract and run it natively instead of running in a WASM VM, reducing
+the cost of using the contract. Second, we can use this native contract to allow
+"classic" Stellar assets to interoperate with smart tokens. The current
+iteration of the standard token contract doesn't run natively or interoperate
+with "classic" Stellar assets, but these improvements will be made in the
+future. 
+
+The standard token contract is similar to the widely used ERC-20 token standard,
+which should make it easier for existing smart contract developers to get
+started on Stellar.
+
+Note that this standard token contract does not prevent the ecosystem from
+developing other token contracts if the one we provide is missing functionality
+they require.
+
+## Token contract authorization semantics 
+
+The token contract contains three kinds of operations
+
+- gettors, such as `balance`, which do not change the state of the contract
+- unprivileged mutators, such as `approve` and `xfer`, which change the state of
+the contract but do not require special privileges
+- privileged mutators, such as `burn` and `set_admin`, which change the state of
+the contract but require special privileges
+
+Gettors require no authorization because they do not change the state of the
+contract and all contract data is public. For example, `balance` simply returns
+the balance of the specified identity without changing it.
+
+Unprivileged mutators require authorization from some identity. The identity
+which must provide authorization will vary depending on the unprivileged
+mutator. For example, a "grantor" can use `approve` to allow a "spender" to spend
+the grantor's money up to some limit. So for approve, the grantor must provide
+authorization. Similarly, a "sender" can use `xfer` to send money to a
+"recipient". So for `xfer`, the sender must provide authorization. The
+authorization for an unprivileged mutator is a [KeyedAuthorization](#keyedauthorization-parameter)
+because the identity that is providing the authorization must be specified.
+
+Priviliged mutators require authorization from a specific privileged identity,
+known as the "administrator". For example, only the administrator can `mint` more
+of the asset. Similarly, only the administrator can appoint a new administrator.
+The authorization for a privileged mutator is an [Authorization](#authorization-parameter)
+because the identity that is providing the authorization is known to be the
+administrator.
+
+[Public types](https://github.com/stellar/soroban-token-contract/blob/main/src/public_types.rs) referenced below for the token contract
+
+### Authorization parameter
+
+Used by `mint`, `burn`, `freeze`, `unfreeze`, and `set_admin`. These functions
+assume the `Authorization` is for the admin `Identifier`, which is why there are
+no keys in `Authorization`.
+
+### KeyedAuthorization parameter
+
+Used by `allowance`, `approve`, `xfer`, and `xfer_from`. `KeyedAuthorization` is
+for contract functions where the user is interacting with a balance or allowance in the token
+contract. The user's identifier is specified as a key for
+`KeyedAuthorization::Ed25519` and `KeyedAuthorization::Account`, while
+`KeyedAuthorization::Contract` implies that the invoking contract's address is
+the user.
+
+### Signatures
+
+For non-Contract authorization types, both `KeyedAuthorization` and
+`Authorization` will include one of more signatures. Those signatures are
+derived by signing the `Message` enum, which has one value at the moment, `V0`.
+`Message::V0` requires the current nonce for the Identifier providing
+authorization, a
+[domain](https://github.com/stellar/soroban-token-contract/blob/main/src/cryptography.rs),
+and the function parameters.
+
+### Nonce
+
+The token contract stores a nonce per `Identifier`. This nonce is required on
+any function that requires authorization (The Signatures section above explain
+how it’s used). The current nonce for an `Identifier` can be retrieved using the
+nonce contract function.
+
+## Contract Interface
+
+```rust
+// Admin interface
+
+// Sets the administrator to "admin". Also sets some metadata
+fn initialize(e: Env, admin: Identifier, decimal: u32, name: Binary, symbol: Binary);
+
+// If "admin" is the administrator, burn "amount" from "from"
+fn burn(e: Env, admin: Authorization, from: Identifier, amount: BigInt);
+
+// If "admin" is the administrator, mint "amount" to "to"
+fn mint(e: Env, admin: Authorization, to: Identifier, amount: BigInt);
+
+// If "admin" is the administrator, set the administrator to "id"
+fn set_admin(e: Env, admin: Authorization, new_admin: Identifier);
+
+// If "admin" is the administrator, freeze "id"
+fn freeze(e: Env, admin: Authorization, id: Identifier);
+
+// If "admin" is the administrator, unfreeze "id"
+fn unfreeze(e: Env, admin: Authorization, id: Identifier);
+
+// Token Interface
+
+// Get the allowance for "spender" to transfer from "from"
+fn allowance(e: Env, from: Identifier, spender: Identifier) -> BigInt;
+
+// Set the allowance to "amount" for "spender" to transfer from "from"
+fn approve(e: Env, from: KeyedAuthorization, spender: Identifier, amount: BigInt);
+
+// Get the balance of "id"
+fn balance(e: Env, id: Identifier) -> BigInt;
+
+// Transfer "amount" from "from" to "to"
+fn xfer(e: Env, from: KeyedAuthorization, to: Identifier, amount: BigInt);
+
+// Transfer "amount" from "from" to "to", consuming the allowance of "spender"
+fn xfer_from(e: Env, spender: KeyedAuthorization, from: Identifier, to: Identifier, amount: BigInt);
+
+// Returns true if "id" is frozen
+fn is_frozen(e: Env, id: Identifier) -> bool;
+
+// Returns the current nonce for "id"
+fn nonce(e: Env, id: Identifier) -> BigInt;
+
+// Descriptive Interface
+
+// Get the number of decimals used to represent amounts of this token
+fn decimals(e: Env) -> u32;
+
+// Get the name for this token
+fn name(e: Env) -> Binary;
+
+// Get the symbol for this token
+fn symbol(e: Env) -> Binary;
+```
+
+## Running the token contract with testutils machinery
+This section has more information about the testutils machinery (TODO: link to interacting-with-contracts.mdx testutils section)
+
+This [test
+case](https://github.com/stellar/soroban-token-contract/blob/37e2cd3580f8e28beea9e8f9194b9cf8547472dd/tests/test.rs#L20)
+shows how the token contract should be used. Note that the actual call into the
+contract is in the
+[Token](https://github.com/stellar/soroban-token-contract/blob/37e2cd3580f8e28beea9e8f9194b9cf8547472dd/src/testutils.rs#L26)
+wrapper test class.
+
+## Signing messages
+
+The two
+[examples](https://github.com/stellar//soroban-token-contract/blob/37e2cd3580f8e28beea9e8f9194b9cf8547472dd/src/testutils.rs#L55)
+from the test `Token` wrapper class demonstrate how you sign a contract function that expects an `Authorization` and a `KeyedAuthorization` type.
+
+### Authorization
+The admin must match the `Identifier` that was used to `initialize` the contract. 
+```rust
+pub fn mint(&self, admin: &Keypair, to: &Identifier, amount: &BigInt) {
+    let mut args: Vec<EnvVal> = Vec::new(&self.env);
+    args.push(to.clone().into_env_val(&self.env));
+    args.push(amount.clone().into_env_val(&self.env));
+    let msg = Message::V0(MessageV0 {
+        nonce: self.nonce(&to_ed25519(&self.env, admin)),
+        domain: Domain::Mint as u32,
+        parameters: args,
+    });
+    let auth = Authorization::Ed25519(admin.sign(msg).unwrap().into_val(&self.env));
+    mint(&self.env, &self.contract_id, &auth, to, amount)
+}
+```
+
+### KeyedAuthorization
+```rust
+ pub fn approve(&self, from: &Keypair, spender: &Identifier, amount: &BigInt) {
+    let mut args: Vec<EnvVal> = Vec::new(&self.env);
+    args.push(spender.clone().into_env_val(&self.env));
+    args.push(amount.clone().into_env_val(&self.env));
+    let msg = Message::V0(MessageV0 {
+        nonce: self.nonce(&to_ed25519(&self.env, from)),
+        domain: Domain::Approve as u32,
+        parameters: args,
+    });
+    let auth = KeyedAuthorization::Ed25519(KeyedEd25519Authorization {
+        public_key: from.public.to_bytes().into_val(&self.env),
+        signature: from.sign(msg).unwrap().into_val(&self.env),
+    });
+    approve(&self.env, &self.contract_id, &auth, spender, amount)
+}
+```

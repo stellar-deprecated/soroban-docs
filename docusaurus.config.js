@@ -57,6 +57,11 @@ const config = {
         },
         items: [
           {
+            to: '/docs', 
+            label: 'Docs', 
+            position: 'left'
+          },
+          {
             href: 'https://github.com/stellar/docs-soroban',
             label: 'GitHub',
             position: 'right',

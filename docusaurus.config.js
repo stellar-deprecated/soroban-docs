@@ -145,7 +145,7 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
-        additionalLanguages: ["rust"],
+        additionalLanguages: ["rust", "toml"],
       },
       tableOfContents: { maxHeadingLevel: 2 },
     }),

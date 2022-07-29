@@ -8,7 +8,7 @@ first Soroban contract.
 
 [Setup]: setup.mdx
 
-## 1. Create Rust library
+## Create New Project
 
 Start by creating a new Rust library using the `cargo new` command.
 
@@ -27,7 +27,7 @@ edition = "2021"
 [dependencies]
 ```
 
-## 2. Add soroban-sdk dependency
+## Add `soroban-sdk` Dependency
 
 Add the following sections to the `Cargo.toml` that will import the `soroban-sdk`.
 
@@ -57,11 +57,9 @@ exposed, which is useful when developing multiple contracts together.
 automatically generated for tests are available in the tests of your contract
 and others that import it.
 
-## 3. Write your first contract
+## Write the Code
 
 Open the `src/lib.rs` file, and copy-paste the following code.
-
-Run `cargo test` and watch the contract run.
 
 ```rust
 #![no_std]
@@ -97,3 +95,25 @@ impl Contract {
 }
 ```
 
+## Run the Tests
+
+Run `cargo test` and watch the contract run. You should see the following output:
+
+```sh
+cargo test
+```
+
+```
+running 1 test
+test test::test ... ok
+```
+
+Try changing the values in the test to see how it works.
+
+## Build WASM
+
+To build the contract into a `.wasm` file, use the `cargo build` command.
+
+```sh
+cargo build --target wasm32-unknown-unknown --release
+```

@@ -45,6 +45,16 @@ soroban-sdk = { git = "https://github.com/stellar/rs-soroban-sdk", rev = "32b766
 
 [dev_dependencies]
 first-project = { path = ".", features = ["testutils"] }
+
+[profile.release]
+opt-level = "z"
+overflow-checks = true
+debug = 0
+strip = "symbols"
+debug-assertions = false
+panic = "abort"
+codegen-units = 1
+lto = true
 ```
 
 The features list and dev_dependencies might look a little strange, but we've
@@ -56,6 +66,9 @@ exposed, which is useful when developing multiple contracts together.
 - And when running tests with `testutils`, so that all the utilities that get
 automatically generated for tests are available in the tests of your contract
 and others that import it.
+
+The config for the `release` profile lean the Rust toolchain towards optimizing
+the size of the resulting code to keep it smaller.
 
 ## Write the Code
 

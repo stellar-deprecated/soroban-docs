@@ -1,4 +1,7 @@
 {
   "position": 5,
-  "label": "Learn"
+  "label": "Learn",
+  "link": {
+    "type": "generated-index"
+  }
 }

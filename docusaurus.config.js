@@ -7,33 +7,32 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "Soroban Documentation",
-  // tagline: "Dinosaurs are cool",
+  // tagline: 'Dinosaurs are cool',
+  url: "https://stellar.org", // Your website URL
   baseUrl: "/",
-  onBrokenLinks: "warn",
+  onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.ico",
   organizationName: "stellar", // Usually your GitHub org/user name.
   projectName: "soroban-docs", // Usually your repo name.
-  url: "https://stellar.org", // "https://stellar-docusaurus.vercel.app", // Your website URL
-  // i18n: {
-  //   defaultLocale: 'en',
-  //   locales: ['en', 'fr'],
-  // },
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en'],
+  },
   plugins: ["docusaurus-plugin-sass"],
   presets: [
     [
       "classic",
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
-        blog: false,
         docs: {
           showLastUpdateTime: true,
           breadcrumbs: true,
-          remarkPlugins: [require("mdx-mermaid")],
+          // remarkPlugins: [require("mdx-mermaid")],
           sidebarPath: require.resolve("./sidebars.js"),
-          // Please change this to your repo.
           editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
         },
+        blog: false,
         theme: {
           customCss: [require.resolve("./src/css/custom.scss")],
         },
@@ -43,7 +42,11 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      docs: { sidebar: { autoCollapseCategories: true } },
+      docs: { 
+        sidebar: { 
+          autoCollapseCategories: false 
+        } 
+      },
       navbar: {
         hideOnScroll: true,
         logo: {
@@ -53,20 +56,11 @@ const config = {
           href: "/docs",
         },
         items: [
-          // {
-          //   href: "https://developers.stellar.org/api",
-          //   label: "API",
-          //   position: "right",
-          // },
-          // {
-          //   href: "https://github.com/jesmarsc/stellar-docusaurus",
-          //   label: "GitHub",
-          //   position: "right",
-          // },
-          // {
-          //   type: "search",
-          //   position: "right",
-          // },
+          {
+            href: 'https://github.com/stellar/docs-soroban',
+            label: 'GitHub',
+            position: 'right',
+          },
         ],
       },
       // algolia: {
@@ -74,80 +68,36 @@ const config = {
       //   apiKey: "1f36375ebbc70d65c5b8165ecf52a1f2",
       //   indexName: "crawler_Docusaurus",
       // },
-      // footer: {
-      //   links: [
-      //     {
-      //       title: "Resources",
-      //       items: [
-      //         {
-      //           label: "Get Started",
-      //           href: "https://www.stellar.org/start",
-      //         },
-      //         {
-      //           label: "Learn",
-      //           href: "https://www.stellar.org/learn/intro-to-stellar",
-      //         },
-      //         {
-      //           label: "Case Studies",
-      //           href: "https://www.stellar.org/case-studies",
-      //         },
-      //         {
-      //           label: "Stellar Quest",
-      //           href: "https://quest.stellar.org/",
-      //         },
-      //       ],
-      //     },
-      //     {
-      //       title: "Tools",
-      //       items: [
-      //         {
-      //           label: "Account Viewer",
-      //           href: "https://accountviewer.stellar.org/",
-      //         },
-      //         {
-      //           label: "Laboratory",
-      //           href: "https://laboratory.stellar.org/",
-      //         },
-      //         {
-      //           label: "Dashboard",
-      //           href: "https://dashboard.stellar.org/",
-      //         },
-      //         {
-      //           label: "Ledger Explorer",
-      //           href: "https://stellar.expert/explorer/public",
-      //         },
-      //         { label: "All Tools", href: "https://www.stellar.org/tools" },
-      //       ],
-      //     },
-      //     {
-      //       title: "Developers",
-      //       items: [
-      //         {
-      //           label: "Developer Resources",
-      //           href: "https://www.stellar.org/developers-legacy",
-      //         },
-      //         {
-      //           label: "Status",
-      //           href: "https://status.stellar.org/",
-      //         },
-      //         {
-      //           label: "Technical Papers",
-      //           to: "https://www.stellar.org/developers/guides/concepts/scp.html",
-      //         },
-      //         {
-      //           label: "Developer Blog",
-      //           href: "https://www.stellar.org/developers-blog",
-      //         },
-      //       ],
-      //     },
-      //   ],
-      // },
+      footer: {
+        style: 'dark',
+        links: [
+          {
+            title: 'Community',
+            items: [
+              {
+                label: 'Discord',
+                href: 'https://discord.gg/6ZCcYqbC96',
+              },
+            ],
+          },
+          {
+            title: 'More',
+            items: [
+              {
+                label: 'GitHub',
+                href: 'https://github.com/stellar',
+              },
+            ],
+          },
+        ],
+        // copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      },
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
         additionalLanguages: ["rust", "toml"],
       },
-      tableOfContents: { maxHeadingLevel: 2 },
+      // tableOfContents: { maxHeadingLevel: 2 },
     }),
 };
 

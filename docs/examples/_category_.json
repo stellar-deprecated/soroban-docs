@@ -1,4 +1,7 @@
 {
   "position": 3,
-  "label": "Examples"
+  "label": "Examples",
+  "link": {
+    "type": "generated-index"
+  }
 }

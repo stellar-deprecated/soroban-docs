@@ -1,4 +1,7 @@
 {
   "position": 6,
-  "label": "Command-line Reference"
+  "label": "Command-line Reference",
+  "link": {
+    "type": "generated-index"
+  }
 }

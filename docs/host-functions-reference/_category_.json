@@ -1,4 +1,7 @@
 {
   "position": 5,
-  "label": "Host Functions Reference"
+  "label": "Host Functions Reference",
+  "link": {
+    "type": "generated-index"
+  }
 }

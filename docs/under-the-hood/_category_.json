@@ -1,4 +1,7 @@
 {
   "position": 6,
-  "label": "Under the Hood"
+  "label": "Under the Hood",
+  "link": {
+    "type": "generated-index"
+  }
 }

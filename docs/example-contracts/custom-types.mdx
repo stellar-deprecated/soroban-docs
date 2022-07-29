@@ -220,3 +220,24 @@ assert_eq!(
     }),
 );
 ```
+
+## Build WASM
+
+To build the contract into a `.wasm` file, use the `cargo build` command.
+
+```sh
+cargo build --target wasm32-unknown-unknown --release
+```
+
+A `.wasm` file should be outputted in the `../target` directory:
+
+```
+../target/wasm32-unknown-unknown/release/soroban_custom_types_contract.wasm
+```
+
+## Run the WASM
+
+The `soroban-cli` is in early development and does not yet accept user-defined
+types as arguments at the command line. Follow the GitHub repository to find out
+about new releases:  
+https://github.com/stellar/soroban-cli

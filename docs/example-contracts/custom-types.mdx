@@ -1,0 +1,98 @@
+---
+sidebar_position: 3
+title: Custom Types
+---
+
+The custom types example demonstrates how to define your own data structures
+that can be stored on the ledger, or used as inputs and outputs to contract
+invocations.
+
+## Run the example
+
+First go through the [Setup] process to get your development environment
+configured, then clone the examples repository:
+
+```
+git clone https://github.com/stellar/soroban-examples
+```
+
+To run the tests for the example, navigate to the `custom_types` directory, and use `cargo test`.
+
+```
+cd custom_types
+cargo test
+```
+
+You should see the output:
+
+```
+running 1 test
+test test::test ... ok
+```
+
+Custom types are defined using the `#[contracttype]` attribute on either a
+`struct` or an `enum`.
+
+## Breaking it Down
+
+### Custom Type: Struct
+
+Structs are stored on ledger as a map of key-value pairs, where the key is a 10
+character string representing the field name, and the value is the value
+encoded.
+
+Field names must be no more than 10 characters.
+
+```rust
+use soroban_sdk::{contracttype};
+
+#[contracttype]
+pub struct Shade {
+    pub value: u32,
+}
+```
+
+### Custom Type: Enum
+
+Structs are stored on ledger as a two element vector, where the first element is
+the name of the enum variant as a string up to 10 characters in length, and the
+value is the value if the variant has one.
+
+Only unit variants and single value variants, like `Red` and `Blue` below, are
+supported.
+
+```rust
+use soroban_sdk::{contracttype};
+
+#[contracttype]
+pub enum Color {
+    Red,
+    Blue(Shade),
+}
+```
+
+### Using Structs and Enums in Functions
+
+When defining a contract function types that have been annotated with
+`#[contracttype]` can be used as inputs, outputs, and the values can be stored
+as contract data and retrieved later.
+
+```rust
+pub struct CustomTypesContract;
+
+const NAME: Symbol = Symbol::from_str("NAME");
+
+#[contractimpl(export_if = "export")]
+impl CustomTypesContract {
+    pub fn store(env: Env, name: Name) {
+        env.contract_data().set(NAME, name);
+    }
+
+    pub fn retrieve(env: Env) -> Name {
+        env.contract_data()
+            .get(NAME) // Get the value associated with key NAME.
+            .unwrap_or(Ok(Name::None)) // If no value, use None instead.
+            .unwrap()
+    }
+}
+```

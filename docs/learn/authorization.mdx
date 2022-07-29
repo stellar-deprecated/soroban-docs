@@ -1,0 +1,67 @@
+---
+sidebar_position: 7
+title: Authorization
+---
+
+The authorization model of Soroban is closely related to its [Standard Token Contract](../standard-contracts/token-contract.mdx); the two are best understood together.
+
+# Authorization
+
+Authorization is the process of judging which operations "should" or "should not" be allowed to occur; it is about judging _permission_.
+
+Authorization differs from _authentication_, which is the narrower problem of judging whether a person "is who they say they are", or whether a message claiming to come from a person "really" came from them.
+
+Authorization often uses cryptographic authentication (via signatures) to support its judgments, but is a broader, more general process.
+
+## Basic authorization: writing to `CONTRACT_DATA`
+
+The basic authorization rule is simple: each contract has an identifier, each `CONTRACT_DATA` ledger entry carries the identifier of a contract, and only the contract with the same identifier as a `CONTRACT_DATA` ledger entry can write to it.
+
+## Complex authorization: multiple users and the impracticality of general rules
+
+Authorization is complicated by the fact that contracts do not exist or execute in isolation: they record data related to multiple users and run transactions that change multiple users' data simultaneously. Each user might reasonably want (and be permitted) to modify some parts of a contract's data, but not other parts.
+
+We might expect the system to have a rich set of built-in authorization rules, to allow modeling individual users, their data, and the sets of data each user of a contract can or cannot modify under a variety of transactions and signatures. This is however impractical in general: each contract has complex and unforeseeable conditions governing access to its data.
+
+As an example, consider a contract holding accounts for users, and exposing a "transfer" operation. If a contract has ledger entries representing account balances for users A and B, then a transfer from A to B probably requires modifying the ledger entries associated with both A and B. But which transfers should be permitted? One possible rule would be to allow transfers from A to B only when A has sufficient funds and A signed the transaction; then B could not initiate the transfer nor could A overspend their balance. But that is not the only possible rule: reasonable contracts might allow "overdraft" on A's account, or could permit A to delegate to B the right to withdraw some of A's funds when necessary.
+
+In general, the conditions in which data associated with each user should or should-not be modified can be quite complex, and vary on a contract-by-contract basis. Indeed, one way of thinking of contracts is as _primarily_ a set of rules for authorizing changes to data. It is therefore not possible (or at least not practical) to capture all plausible authorization patterns with structured, declarative authorization rules "outside the contracts". The contracts _are_ the rules.
+
+Instead, we focus on facilities provided _to_ contracts to _support them_ in making authorization decisions for themselves, in their own code.
+
+## Tools for authorization: identities, messages and authorizations
+
+Several mechanisms are provided to each contract to make authorization decisions. The mechanisms fall into two categories:
+
+  - Common data structures and functions in the SDK and "standard asset" contract.
+  - Host functions that assist in validating aspects of these data structures.
+
+### Common data structures and functions
+
+The common data structures involved in authorization model key concepts used in authorization judgments. They are provided (and used) by the "standard asset" contract, and form a base set of functionality that should be sufficient for expressing many authorization patterns in other contracts, as well as interacting with instances of the standard asset.
+
+These concepts are:
+
+  - **Identities**: these are the parties that can initiate actions subject to authorization judgments. Identities may be one of three types:
+    - **Single-key users**, represented by a single Ed25519 public key
+    - **Account users**, represented by a reference to an existing account on the Stellar network (which stores, in an account ledger entry, a list of weighted authorized signing keys)
+    - **Contracts**, represented by a contract ID (not a public key)
+  - **Messages**: these encode a request from an identity to perform some action, such that the message can have an authorization claim made about it, and an authorization judgment applied to it. Messages include a nonce, a "domain" code number indicating the action to take, and a set of general parameters to that action.
+  - **Authorizations**: these are statements made _about messages_. Each authorization encodes the claim that the action described by the message is authorized to occur, on the authority of some identity. Authorizations may have three forms, corresponding to the three forms of identity: single-key, account, and contract.
+
+Contracts decide when a message is authorized with two separate steps:
+
+  - Validate the provided authorization, by some mixture of checking signatures or examining the invocation context.
+  - Evaluate the operation requested by the message to see if it fits the contract's unique rules for that operation.
+
+The first step often requires host-function support. The second step is always contract-specific, and cannot be provided by the platform in general.
+
+### Authorization-validation host functions
+
+Three families of host function are provided to validate authorizations:
+
+  - **Cryptographic validation** functions. These help validate the "single-key user" form of authorization. Specifically these functions compute SHA256 hashes and verify Ed25519 signatures.
+  - **Account authorization** functions. These help validate the "account user" form of authorization. Specifically these functions allow looking up the signing thresholds and weights for signing keys, as stored in existing account ledger entries in the Stellar blockchain.
+  - **Invoking contract** function. This helps validate the "contract" form of authorization. Specifically this function returns the contract ID of the contract that invoked the currently-executing contract. If no contract invoked the currently-executing contract, this function traps.
+
+This last function deserves further explanation. A contract can be invoked either from a transaction (originating outside of the host) or from a cross-contract call made by some _other_ contract. When some contract X decides to invoke some other contract Y, it is generally sufficient to consider the _fact that X called Y_ as evidence that X authorizes whatever request it is making to Y with that call. After all, if X did not wish to authorize such an invocation, it would not make it! So the only information necessary to evaluate a "contract" authorization is the identity of the (directly) invoking contract.

@@ -11,7 +11,7 @@ const config = {
   url: "https://stellar.org", // Your website URL
   baseUrl: "/",
   onBrokenLinks: "throw",
-  onBrokenMarkdownLinks: "warn",
+  onBrokenMarkdownLinks: "throw",
   favicon: "img/favicon.ico",
   organizationName: "stellar", // Usually your GitHub org/user name.
   projectName: "soroban-docs", // Usually your repo name.

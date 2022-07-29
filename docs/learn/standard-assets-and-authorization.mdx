@@ -89,6 +89,34 @@ they require.
 
 ## Token contract authorization semantics 
 
+The token contract contains three kinds of operations
+
+- gettors, such as `balance`, which do not change the state of the contract
+- unprivileged mutators, such as `approve` and `xfer`, which change the state of
+the contract but do not require special privileges
+- privileged mutators, such as `burn` and `set_admin`, which change the state of
+the contract but require special privileges
+
+Gettors require no authorization because they do not change the state of the
+contract and all contract data is public. For example, `balance` simply returns
+the balance of the specified identity without changing it.
+
+Unprivileged mutators require authorization from some identity. The identity
+which must provide authorization will vary depending on the unprivileged
+mutator. For example, a "grantor" can use `approve` to allow a "spender" to spend
+the grantor's money up to some limit. So for approve, the grantor must provide
+authorization. Similarly, a "sender" can use `xfer` to send money to a
+"recipient". So for `xfer`, the sender must provide authorization. The
+authorization for an unprivileged mutator is a [KeyedAuthorization](#keyedauthorization-parameter)
+because the identity that is providing the authorization must be specified.
+
+Priviliged mutators require authorization from a specific privileged identity,
+known as the "administrator". For example, only the administrator can `mint` more
+of the asset. Similarly, only the administrator can appoint a new administrator.
+The authorization for a privileged mutator is an [Authorization](#authorization-parameter)
+because the identity that is providing the authorization is known to be the
+administrator.
+
 [Public types](https://github.com/stellar/soroban-token-contract/blob/main/src/public_types.rs) referenced below for the token contract
 
 ### Authorization parameter

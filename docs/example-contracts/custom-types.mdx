@@ -46,11 +46,9 @@ encoded.
 Field names must be no more than 10 characters.
 
 ```rust
-use soroban_sdk::{contracttype};
-
 #[contracttype]
-pub struct Shade {
-    pub value: u32,
+pub struct First {
+    pub first: Symbol,
 }
 ```
 
@@ -64,12 +62,11 @@ Only unit variants and single value variants, like `Red` and `Blue` below, are
 supported.
 
 ```rust
-use soroban_sdk::{contracttype};
-
 #[contracttype]
-pub enum Color {
-    Red,
-    Blue(Shade),
+pub enum Name {
+    None,
+    First(First),
+    FirstLast(FirstLast),
 }
 ```
 

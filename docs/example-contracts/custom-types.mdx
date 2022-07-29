@@ -36,7 +36,7 @@ test test::test ... ok
 
 ## Code
 
-```rust
+```rust title="custom_types/src/lib.js"
 #[contracttype]
 pub enum Name {
     None,
@@ -140,7 +140,7 @@ impl CustomTypesContract {
 
 Open the `custom_types/src/test.rs` file to follow along.
 
-```rust
+```rust title="custom_types/src/test.js"
 #[test]
 fn test() {
     let env = Env::default();

@@ -35,7 +35,7 @@ test test::test ... ok
 
 ## Code
 
-```
+```rust title="increment/src/lib.js"
 const COUNTER: Symbol = Symbol::from_str("COUNTER");
 
 pub struct IncrementContract;
@@ -112,7 +112,7 @@ env.contract_data().set(COUNTER, count);
 
 Open the `increment/src/test.rs` file to follow along.
 
-```rust
+```rust title="increment/src/test.js"
 #[test]
 fn test() {
     let env = Env::default();

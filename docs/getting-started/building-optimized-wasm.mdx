@@ -1,10 +1,20 @@
 ---
-sidebar_position: 3
+sidebar_position: 4
 title: Building Optimized WASM
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 Building optimized WASM files requires some additional options and commands, and
-requires installing the nightly Rust toolchain and `wasm-opt`.
+requires installing the `nightly` Rust toolchain and `wasm-opt`.
+
+:::info
+Building optimized WASM is really only necessary when deploying to network. It
+may be helpful for understanding the real size of the contract you're
+developing, but is otherwise not required during the development phase of a
+contract.
+:::
 
 To install the nightly Rust toolchain use `rustup`.
 
@@ -12,11 +22,26 @@ To install the nightly Rust toolchain use `rustup`.
 rustup install nightly
 ```
 
-To install `wasm-opt`.
+To install `wasm-opt` depends on your operating system.
 
+<Tabs>
+  <TabItem value="macos" label="macOS" default>
 ```sh
-TODO: Add instructions for installing wasm-opt.
+brew install wasm-pack
 ```
+  </TabItem>
+  <TabItem value="linux" label="Linux">
+```sh
+Linux
+```
+  </TabItem>
+  <TabItem value="windows" label="Windows">
+```sh
+TODO
+```
+  </TabItem>
+</Tabs>
+
 
 Then build your contract using nightly, and the additional options that remove
 unnecessary information from the contract.

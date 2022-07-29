@@ -18,23 +18,20 @@ intended for use. Report issues
 ## Overview
 
 Tokens are a vital part of blockchains, and contracts that implement token
-functionality are inevitable on any smart contract platform. Instead of
-expecting a standard to emerge from the ecosystem, we provide our own token
-contract implementation. This has a couple advantages. First, we can special
-case this contract and run it natively instead of running in a WASM VM, reducing
-the cost of using the contract. Second, we can use this native contract to allow
-"classic" Stellar assets to interoperate with smart tokens. The current
-iteration of the standard token contract doesn't run natively or interoperate
-with "classic" Stellar assets, but these improvements will be made in the
-future. 
+functionality are inevitable on any smart contract platform. A standard token
+contract has a number of advantages over token contracts written by the
+ecosystem. First, we can special case this contract and run it natively instead
+of running in a WASM VM, reducing the cost of using the contract. Second, we
+can use this native contract to allow "classic" Stellar assets to interoperate
+with Soroban. The current iteration of the standard token contract doesn't run
+natively or interoperate with "classic" Stellar assets, but these improvements
+will be made in the future. Note that this standard token contract does not
+prevent the ecosystem from developing other token contracts if the standard is
+missing functionality they require.
 
 The standard token contract is similar to the widely used ERC-20 token standard,
 which should make it easier for existing smart contract developers to get
 started on Stellar.
-
-Note that this standard token contract does not prevent the ecosystem from
-developing other token contracts if the one we provide is missing functionality
-they require.
 
 ## Token contract authorization semantics 
 

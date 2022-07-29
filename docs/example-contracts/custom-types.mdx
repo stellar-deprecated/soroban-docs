@@ -32,6 +32,42 @@ running 1 test
 test test::test ... ok
 ```
 
+## Code
+
+```rust
+#[contracttype]
+pub enum Name {
+    None,
+    FirstLast(FirstLast),
+}
+
+#[contracttype]
+pub struct FirstLast {
+    pub first: Symbol,
+    pub last: Symbol,
+}
+
+pub struct CustomTypesContract;
+
+const NAME: Symbol = Symbol::from_str("NAME");
+
+#[contractimpl]
+impl CustomTypesContract {
+    pub fn store(env: Env, name: Name) {
+        env.contract_data().set(NAME, name);
+    }
+
+    pub fn retrieve(env: Env) -> Name {
+        env.contract_data()
+            .get(NAME) // Get the value associated with key NAME.
+            .unwrap_or(Ok(Name::None)) // If no value, use None instead.
+            .unwrap()
+    }
+}
+```
+
+Ref: https://github.com/stellar/soroban-examples/tree/main/custom_types
+
 ## How it Works
 
 Custom types are defined using the `#[contracttype]` attribute on either a
@@ -49,8 +85,9 @@ Field names must be no more than 10 characters.
 
 ```rust
 #[contracttype]
-pub struct First {
+pub struct FirstLast {
     pub first: Symbol,
+    pub last: Symbol,
 }
 ```
 
@@ -67,7 +104,6 @@ supported.
 #[contracttype]
 pub enum Name {
     None,
-    First(First),
     FirstLast(FirstLast),
 }
 ```
@@ -96,4 +132,89 @@ impl CustomTypesContract {
             .unwrap()
     }
 }
+```
+
+## Tests
+
+Open the `custom_types/src/test.rs` file to follow along.
+
+```rust
+#[test]
+fn test() {
+    let env = Env::default();
+    let contract_id = FixedBinary::from_array(&env, [0; 32]);
+    env.register_contract(&contract_id, CustomTypesContract);
+
+    assert_eq!(retrieve::invoke(&env, &contract_id), Name::None);
+
+    store::invoke(
+        &env,
+        &contract_id,
+        &Name::FirstLast(FirstLast {
+            first: Symbol::from_str("first"),
+            last: Symbol::from_str("last"),
+        }),
+    );
+
+    assert_eq!(
+        retrieve::invoke(&env, &contract_id),
+        Name::FirstLast(FirstLast {
+            first: Symbol::from_str("first"),
+            last: Symbol::from_str("last"),
+        }),
+    );
+}
+```
+
+In any test the first thing that is always required is an `Env`, which is the
+Host environment that the contract will run it.
+
+```rust
+let env = Env::default();
+```
+
+Contracts must be registered with the environment with a contract ID, which is a
+32-byte value.
+
+```rust
+let contract_id = FixedBinary::from_array(&env, [0; 32]);
+env.register_contract(&contract_id, HelloContract);
+```
+
+All public functions within an `impl` block that is annotated with the
+`#[contractimpl]` attribute have an `invoke` function generated, that can be
+used to invoke the contract function within the environment.
+
+The test invokes the `retrieve` function on the registered contract, and asserts
+that it returns `Name::None`.
+
+```rust
+assert_eq!(retrieve::invoke(&env, &contract_id), Name::None);
+```
+
+The test then invokes the `store` function on the registered contract, to change
+the name that is stored.
+
+```rust
+store::invoke(
+    &env,
+    &contract_id,
+    &Name::FirstLast(FirstLast {
+        first: Symbol::from_str("first"),
+        last: Symbol::from_str("last"),
+    }),
+);
+```
+
+The test invokes the `retrieve` function again, to assert that it returns the
+name that was previously stored.
+
+```rust
+assert_eq!(
+    retrieve::invoke(&env, &contract_id),
+    Name::FirstLast(FirstLast {
+        first: Symbol::from_str("first"),
+        last: Symbol::from_str("last"),
+    }),
+);
 ```

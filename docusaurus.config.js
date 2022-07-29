@@ -51,8 +51,8 @@ const config = {
         hideOnScroll: true,
         logo: {
           width: 100,
-          src: "img/stellar-logo.svg",
-          srcDark: "img/stellar-logo-dark.svg",
+          src: "img/soroban-wordmark-temp.svg",
+          srcDark: "img/soroban-wordmark-temp-dark.svg",
           href: "/docs",
         },
         items: [

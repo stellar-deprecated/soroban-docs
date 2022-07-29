@@ -213,7 +213,7 @@ The two
 from the test `Token` wrapper class demonstrate how you sign a contract
 function that expects an `Authorization` and a `KeyedAuthorization` type.
 
-### Authorization
+#### Authorization
 The admin must match the `Identifier` that was used to `initialize` the contract. 
 ```rust
 pub fn mint(&self, admin: &Keypair, to: &Identifier, amount: &BigInt) {
@@ -230,7 +230,7 @@ pub fn mint(&self, admin: &Keypair, to: &Identifier, amount: &BigInt) {
 }
 ```
 
-### KeyedAuthorization
+#### KeyedAuthorization
 ```rust
  pub fn approve(&self, from: &Keypair, spender: &Identifier, amount: &BigInt) {
     let mut args: Vec<EnvVal> = Vec::new(&self.env);
@@ -307,12 +307,14 @@ fn name(e: Env) -> Binary;
 fn symbol(e: Env) -> Binary;
 ```
 
-## Running the token contract with testutils machinery
-This section has more information about the testutils machinery (TODO: link to interacting-with-contracts.mdx testutils section)
+## Interacting with the token contract in tests
+
+See [interacting with contracts in tests](learn/interacting-with-contracts#interacting-with-contracts-in-tests)
+for more general information on this topic.
 
 This [test
 case](https://github.com/stellar/soroban-token-contract/blob/37e2cd3580f8e28beea9e8f9194b9cf8547472dd/tests/test.rs#L20)
-shows how the token contract should be used. Note that the actual call into the
+shows how the token contract can be used easily in tests. Note that the actual call into the
 contract is in the
 [Token](https://github.com/stellar/soroban-token-contract/blob/37e2cd3580f8e28beea9e8f9194b9cf8547472dd/src/testutils.rs#L26)
 wrapper test class.

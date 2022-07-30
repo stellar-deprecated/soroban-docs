@@ -1,0 +1,266 @@
+---
+sidebar_position: 4
+title: Cross Contract Calls
+---
+
+The [cross contract call example] demonstrates how to call a contract from
+another contract. In this example both contracts will be compiled into a single
+contract binary, but the same principles apply for contracts compiled
+separately.
+
+[cross contract call example]: https://github.com/stellar/soroban-examples/tree/main/cross_contract_calls
+
+## Run the example
+
+First go through the [Setup] process to get your development environment
+configured, then clone the examples repository:
+
+[Setup]: ../getting-started/setup.mdx
+
+```
+git clone https://github.com/stellar/soroban-examples
+```
+
+To run the tests for the example, navigate to the `cross_contract_calls`
+directory, and use `cargo test`.
+
+```
+cd cross_contract_calls
+cargo test
+```
+
+You should see the output:
+
+```
+running 1 test
+test test::test ... ok
+```
+
+## Code
+
+```rust title="cross_contract_calls/src/a.rs"
+pub struct ContractA;
+
+#[contractimpl(export_if = "export")]
+impl ContractA {
+    pub fn add(x: u32, y: u32) -> u32 {
+        x.checked_add(y).expect("no overflow")
+    }
+}
+```
+
+```rust title="cross_contract_calls/src/b.rs"
+pub struct ContractB;
+
+#[contractimpl(export_if = "export")]
+impl ContractB {
+    pub fn add_with(env: Env, x: u32, y: u32, contract_id: FixedBinary<32>) -> u32 {
+        env.invoke_contract(
+            &contract_id,
+            &Symbol::from_str("add"),
+            vec![&env, x.into_env_val(&env), y.into_env_val(&env)],
+        )
+    }
+}
+```
+
+Ref: https://github.com/stellar/soroban-examples/tree/main/cross_contract_calls
+
+## How it Works
+
+Cross contract calls are made by invoking another contract by its contract ID,
+specifying the function to call as a `Symbol`, and passing a series of
+arguments.
+
+Open the `cross_contract_calls/src/lib.rs` file to follow along.
+
+## The Contract to be Called
+
+The contract to be called is a simple contract that accepts `x` and `y`
+parameters, adds them together and returns the result.
+
+```rust title="cross_contract_calls/src/a.rs"
+pub struct ContractA;
+
+#[contractimpl(export_if = "export")]
+impl ContractA {
+    pub fn add(x: u32, y: u32) -> u32 {
+        x.checked_add(y).expect("no overflow")
+    }
+}
+```
+
+:::tip
+The contract uses the `checked_add` method to ensure that there is no overflow,
+and if there is overflow, panics rather than returning an overflowed value.
+Rust's primitive integer types all have checked operations available as
+functions with the prefix `checked_`.
+:::
+
+## The Contract doing the Calling
+
+The contract that does the calling accepts the same parameters to pass through,
+but also accepts a contract ID of the contract to call. In many contracts the
+contract to call might have been stored as contract data and be retrieved, but
+in this simple example it is being passed in as a parameter each time.
+
+The `Env` `invoke_contract` function is used to invoke the other contract.
+
+The function name of the other contract is specified as a `Symbol`.
+
+The arguments are specified as a `Vec<EnvVal>`, which can be created using the
+the `vec![&env, ...]` macro. Each value can be converted into an `EnvVal` using
+the `.into_env_val(&env)` function.
+
+```rust title="cross_contract_calls/src/a.rs"
+pub struct ContractB;
+
+#[contractimpl(export_if = "export")]
+impl ContractB {
+    pub fn add_with(env: Env, x: u32, y: u32, contract_id: FixedBinary<32>) -> u32 {
+        env.invoke_contract(
+            &contract_id,
+            &Symbol::from_str("add"),
+            vec![&env, x.into_env_val(&env), y.into_env_val(&env)],
+        )
+    }
+}
+```
+
+## Tests
+
+Open the `cross_contract_calls/src/test.rs` file to follow along.
+
+```rust title="cross_contract_calls/src/test.js"
+#[test]
+fn test() {
+    let env = Env::default();
+
+    let contract_a = FixedBinary::from_array(&env, [0; 32]);
+    env.register_contract(&contract_a, ContractA);
+
+    let contract_b = FixedBinary::from_array(&env, [1; 32]);
+    env.register_contract(&contract_b, ContractB);
+
+    // Invoke 'add_with' on contract B.
+    let sum = add_with::invoke(
+        &env,
+        &contract_b,
+        // Value X.
+        &5,
+        // Value Y.
+        &7,
+        // Tell contract B to call contract A.
+        &contract_a,
+    );
+
+    assert_eq!(sum, 12);
+}
+```
+
+In any test the first thing that is always required is an `Env`, which is the
+Host environment that the contract will run it.
+
+```rust
+let env = Env::default();
+```
+
+Contracts must be registered with the environment with a contract ID, which is a
+32-byte value. Both contracts `a` and `b` are registered with unique IDs.
+
+```rust
+let contract_a = FixedBinary::from_array(&env, [0; 32]);
+env.register_contract(&contract_a, ContractA);
+```
+
+```rust
+let contract_b = FixedBinary::from_array(&env, [1; 32]);
+env.register_contract(&contract_b, ContractB);
+```
+
+All public functions within an `impl` block that is annotated with the
+`#[contractimpl]` attribute have an `invoke` function generated, that can be
+used to invoke the contract function within the environment.
+
+The test invokes contract `b`'s `add_width` function with two values to add, and
+the contract ID of contract `a`.
+
+```rust
+// Invoke 'add_with' on contract B.
+let sum = add_with::invoke(
+    &env,
+    &contract_b,
+    // Value X.
+    &5,
+    // Value Y.
+    &7,
+    // Tell contract B to call contract A.
+    &contract_a,
+);
+```
+
+The test asserts that the result that is returned is as we expect.
+
+```rust
+assert_eq!(sum, 12);
+```
+
+## Build WASM
+
+To build the contract into a `.wasm` file, use the `cargo build` command.
+
+```sh
+cargo build --target wasm32-unknown-unknown --release
+```
+
+A `.wasm` file should be outputted in the `../target` directory:
+
+```
+../target/wasm32-unknown-unknown/release/soroban_cross_contract_calls_contract.wasm
+```
+
+## Run the WASM
+
+If you have [`soroban-cli`] installed, you can invoke contract functions in the
+WASM using it. Both contracts live in the same compiled contract and so we'll deploy it once
+
+Deploy the contract twice. The first we'll use as the callee, and the second as the caller.
+
+```sh
+soroban-cli deploy \
+    --wasm ../target/wasm32-unknown-unknown/release/soroban_cross_contract_calls_contract.wasm \
+    --id 0
+```
+
+```sh
+soroban-cli deploy \
+    --wasm ../target/wasm32-unknown-unknown/release/soroban_cross_contract_calls_contract.wasm \
+    --id 1
+```
+
+Invoke contract `1`'s `add_with` function, passing in values for `x` and `y`
+(e.g.  as `5` and `7`), and then pass in the contract ID of contract 0.
+
+```sh
+soroban-cli invoke \
+    --id 1 \
+    --fn add_with \
+    --arg 5 \
+    --arg 7 \
+    --arg '[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]'
+```
+
+The following output should occur using the code above.
+
+```json
+12
+```
+
+Contract `1`'s `add_width` function invoked contract `0`'s `add` function to do
+the addition.
+
+:::info
+The `soroban-cli` is under active development and at this time accepts contract
+IDs as JSON formatted number arrays. That's what the long `[0,0,0,...]` value is
+in the invoke command above.
+:::

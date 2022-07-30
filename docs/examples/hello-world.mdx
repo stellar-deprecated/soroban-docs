@@ -166,9 +166,9 @@ WASM using it.
 
 ```sh
 soroban-cli invoke \
-    --file ../target/wasm32-unknown-unknown/release/soroban_hello_world_contract.wasm \
-    --contract-id 1
-    --fn hello
+    --wasm ../target/wasm32-unknown-unknown/release/soroban_hello_world_contract.wasm \
+    --id 1 \
+    --fn hello \
     --arg friend
 ```
 

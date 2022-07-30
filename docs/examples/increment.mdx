@@ -179,8 +179,8 @@ WASM using it.
 
 ```sh
 soroban-cli invoke \
-    --file ../target/wasm32-unknown-unknown/release/soroban_increment_contract.wasm \
-    --contract-id 1
+    --wasm ../target/wasm32-unknown-unknown/release/soroban_increment_contract.wasm \
+    --id 1 \
     --fn increment
 ```
 

@@ -21,7 +21,7 @@ It is highly recommended to use the release profile outlined in [Configure the
 Release Profile], otherwise the contract will be too large to deploy or run.
 :::
 
-[Create a Project]: create-a-project#configure-the-release-profile
+[Configure the Release Profile]: create-a-project#configure-the-release-profile
 
 ## Install Rust `nightly`
 
@@ -29,6 +29,7 @@ To install the nightly Rust toolchain use `rustup`.
 
 ```sh
 rustup install nightly
+rustup target add --toolchain nightly wasm32-unknown-unknown
 ```
 
 ## Install `wasm-opt`
@@ -81,6 +82,6 @@ Then additionally use `wasm-opt` to further minimize the size of the `.wasm`.
 
 ```sh
 wasm-opt -Oz \
-    target/wasm32-unknown-unknown/release/first-project.wasm \
+    target/wasm32-unknown-unknown/release/first_project.wasm \
     -o target/wasm32-unknown-unknown/release/first-project-optimized.wasm
 ```

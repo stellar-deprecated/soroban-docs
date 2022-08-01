@@ -145,9 +145,9 @@ assert_eq!(
 );
 ```
 
-## Build WASM
+## Build the Contract
 
-To build the contract into a `.wasm` file, use the `cargo build` command.
+To build the contract, use the `cargo build` command.
 
 ```sh
 cargo build --target wasm32-unknown-unknown --release
@@ -159,10 +159,10 @@ A `.wasm` file should be outputted in the `../target` directory:
 ../target/wasm32-unknown-unknown/release/soroban_hello_world_contract.wasm
 ```
 
-## Run the WASM
+## Run the Contract
 
 If you have [`soroban-cli`] installed, you can invoke contract functions in the
-WASM using it.
+using it.
 
 ```sh
 soroban-cli invoke \

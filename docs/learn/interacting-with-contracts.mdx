@@ -54,11 +54,14 @@ pub use crate::contract::initialize::invoke as initialize;
 
 This function is then easily [called by the liquidity pool contract](https://github.com/stellar/soroban-examples/blob/4060d3bd5ee7846020b68ee583665a4d4cf4b315/liquidity_pool/src/lib.rs#L164-L171).
 
-### Operation
+### Stellar Operation
 
-An operation is the ultimate entrypoint of every contract interaction. An
+A Stellar operation is the ultimate entrypoint of every contract interaction. An
 operation transfers control and external data to a contract, allowing execution
 to begin.
+
+This kind of interaction is currently supported in experimental versions of
+stellar-core only.
 
 ## Interacting with contracts in tests
 

@@ -74,17 +74,17 @@ pub struct HelloContract;
 
 Contract functions look much like regular Rust functions. They mave have any
 number of arguments, but arguments must support being transmitted to and from
-the Host environment that the contract runs in. The Soroban SDK provides some
-types like `Symbol`, `Vec`, `Map`, `Binary`, `FixedBinary`, etc that can be
-used. Primitive values like `u64`, `i64`, `u32`, `i32`, and `bool` can also be
-used. Floats are not supported.
+the Soroban environment that the contract runs in. The Soroban SDK provides some
+types like `Vec`, `Map`, `BigInt`, `Symbol`, `Binary`, `FixedBinary`, etc that
+can be used. Primitive values like `u64`, `i64`, `u32`, `i32`, and `bool` can
+also be used. Floats are not supported.
 
 Contract inputs must not be references.
 
 If the first argument of a contract function is of the `soroban_sdk::Env` type,
-an `Env` will be provided that provides access to Host functionality. Most
-functionality within the SDK requires an Env, so it is recommended to have it in
-the argument list for most functions.
+an `Env` will be provided that provides access to additional functionality. Most
+functionality within the SDK requires an `Env`, so it is recommended to have it
+in the argument list for most functions.
 
 ```rust
 #[contractimpl]
@@ -115,7 +115,7 @@ fn test() {
 ```
 
 In any test the first thing that is always required is an `Env`, which is the
-Host environment that the contract will run it.
+Soroban environment that the contract will run it.
 
 ```rust
 let env = Env::default();

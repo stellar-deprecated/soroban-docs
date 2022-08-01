@@ -4,9 +4,13 @@ title: Cross Contract Calls
 ---
 
 The [cross contract call example] demonstrates how to call a contract from
-another contract. In this example both contracts will be compiled into a single
+another contract.
+
+:::info
+In this example both contracts will be compiled into a single
 contract binary, but the same principles apply for contracts compiled
 separately.
+:::
 
 [cross contract call example]: https://github.com/stellar/soroban-examples/tree/main/cross_contract_calls
 
@@ -159,7 +163,7 @@ fn test() {
 ```
 
 In any test the first thing that is always required is an `Env`, which is the
-Host environment that the contract will run it.
+Soroban environment that the contract will run in.
 
 ```rust
 let env = Env::default();
@@ -205,7 +209,7 @@ The test asserts that the result that is returned is as we expect.
 assert_eq!(sum, 12);
 ```
 
-## Build WASM
+## Build the Contract
 
 To build the contract into a `.wasm` file, use the `cargo build` command.
 
@@ -219,12 +223,12 @@ A `.wasm` file should be outputted in the `../target` directory:
 ../target/wasm32-unknown-unknown/release/soroban_cross_contract_calls_contract.wasm
 ```
 
-## Run the WASM
+## Run the Contract
 
-If you have [`soroban-cli`] installed, you can invoke contract functions in the
-WASM using it. Both contracts live in the same compiled contract and so we'll deploy it once
-
-Deploy the contract twice. The first we'll use as the callee, and the second as the caller.
+If you have [`soroban-cli`] installed, you can invoke contract functions. Both
+contracts live in the same compiled contract and so we'll deploy the contract
+twice. The first deployment we'll use as the callee, and the second as the
+caller.
 
 ```sh
 soroban-cli deploy \

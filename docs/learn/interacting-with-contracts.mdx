@@ -13,7 +13,7 @@ to do in any other software development context: the contract transfers control
 and data to another part of the _same_ contract. Because a function call always
 transfers control to the same contract, they do not change the values returned
 by `get_current_contract` and `get_invoking_contract`. A function call is the
-only way to access the private methods of a contract, although it can also call
+only way to access the private methods of a contract, although it can also
 be used to access the public methods of a contract.
 
 To perform a function call, simply make a Rust function call.

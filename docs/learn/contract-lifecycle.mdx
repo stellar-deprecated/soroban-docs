@@ -18,7 +18,7 @@ The SDK provides a command-line utility that invokes the Rust compiler with the 
 
 Before submitting to the network, developers should inspect the resulting WASM binary emitted by the Rust compiler to ensure that it contains only the intended code and data, and is as small as possible. The SDK command-line utility contains diagnostic commands to assist with this process.
 
-The SDK command-line utility can also build and submit the transaction deploying a WASM contract to the network. Deployment requires sufficient network credentials to sign a transaction performing the deployment and pay its fees. Contracts should be deployed to test networks and thoroughly tested there being deployed to the live network. 
+The SDK command-line utility can also build and submit the transaction deploying a WASM contract to the network. Deployment requires sufficient network credentials to sign a transaction performing the deployment and pay its fees. Contracts should be deployed to test networks and thoroughly tested there before being deployed to the live network. 
 ## Execution
 Deployed contracts live on chain in a CONTRACT_DATA ledger entry. They are executed within a VM sandbox managed by a host environment inside stellar-core. Each transaction that leads to a contract execution is run in a separate host environment, and each contract called by such a transaction (either directly or indirectly from another contract) is executed in a separate guest WASM VM contained within the transaction’s host environment. 
 

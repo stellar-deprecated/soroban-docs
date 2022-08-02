@@ -186,7 +186,7 @@ All public functions within an `impl` block that is annotated with the
 `#[contractimpl]` attribute have an `invoke` function generated, that can be
 used to invoke the contract function within the environment.
 
-The test invokes contract `b`'s `add_width` function with two values to add, and
+The test invokes contract `b`'s `add_with` function with two values to add, and
 the contract ID of contract `a`.
 
 ```rust
@@ -260,7 +260,7 @@ The following output should occur using the code above.
 12
 ```
 
-Contract `1`'s `add_width` function invoked contract `0`'s `add` function to do
+Contract `1`'s `add_with` function invoked contract `0`'s `add` function to do
 the addition.
 
 :::info

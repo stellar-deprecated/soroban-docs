@@ -28,7 +28,6 @@ const config = {
         docs: {
           showLastUpdateTime: true,
           breadcrumbs: true,
-          // remarkPlugins: [require("mdx-mermaid")],
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
         },

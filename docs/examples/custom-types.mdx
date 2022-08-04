@@ -38,12 +38,14 @@ test test::test ... ok
 
 ```rust title="custom_types/src/lib.rs"
 #[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Name {
     None,
     FirstLast(FirstLast),
 }
 
 #[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct FirstLast {
     pub first: Symbol,
     pub last: Symbol,
@@ -87,6 +89,7 @@ Field names must be no more than 10 characters.
 
 ```rust
 #[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct FirstLast {
     pub first: Symbol,
     pub last: Symbol,
@@ -104,6 +107,7 @@ below, are supported.
 
 ```rust
 #[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Name {
     None,
     FirstLast(FirstLast),

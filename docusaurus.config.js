@@ -61,7 +61,7 @@ const config = {
             position: 'left'
           },
           {
-            href: 'https://github.com/stellar/docs-soroban',
+            href: 'https://github.com/stellar/soroban-docs',
             label: 'GitHub',
             position: 'right',
           },

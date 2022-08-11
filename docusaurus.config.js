@@ -25,13 +25,13 @@ const config = {
       "classic",
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
+        blog: false,
         docs: {
           showLastUpdateTime: true,
           breadcrumbs: true,
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
         },
-        blog: false,
         theme: {
           customCss: [require.resolve("./src/css/custom.scss")],
         },
@@ -47,7 +47,6 @@ const config = {
         } 
       },
       navbar: {
-        hideOnScroll: true,
         logo: {
           width: 100,
           src: "img/soroban-wordmark-temp.svg",
@@ -101,7 +100,6 @@ const config = {
         darkTheme: darkCodeTheme,
         additionalLanguages: ["rust", "toml"],
       },
-      // tableOfContents: { maxHeadingLevel: 2 },
     }),
 };
 

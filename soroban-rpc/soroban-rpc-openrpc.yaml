@@ -1,0 +1,321 @@
+openrpc: 1.0.0-rc1
+
+info:
+  version: 0.0.3
+  title: soroban-rpc
+
+servers:
+- name: cli serve
+  url: http://localhost:8080
+  summary: local sandbox development
+
+methods:
+
+# - name: getAccount
+#   summary: Fetch a minimal set of current info about an account
+#   tags:
+#   - name: account
+#   params:
+#   - name: address
+#     description: Address of the account to look up
+#     required: true
+#     schema:
+#       type: string
+#   result:
+#     name: account
+#     description: An account
+#     schema:
+#       "$ref": "#/components/schemas/Account"
+#   errors:
+#   - code: 404
+#     message: not found
+#   examples:
+#   - name: getAccountExample
+#     description: getAccount example
+#     params:
+#     - name: address
+#       value: GC362OJJ6ZZ5GFK6DOWUYPTJ62H2T3LX425N6Z3VVKGOF6USSRA2OJI4
+#     result:
+#       name: getAccountResultExample
+#       value:
+#         id: GC362OJJ6ZZ5GFK6DOWUYPTJ62H2T3LX425N6Z3VVKGOF6USSRA2OJI4
+#         sequence: '2884517215862875'
+#         balances:
+#         - asset_type: native
+#           smart: '0'
+
+- name: getContractData
+  summary: Read the current value of a contract data ledger entry
+  description: |
+    For reading the current value of contract data ledger entries directly. Allows you to directly inspect the *current state* of a contract. This is a backup way to access your contract data, which may not be available via events of `simulateTransaction`.
+  tags:
+  - name: data
+  params:
+  - name: hash
+    description: Contract ID, in standard hex string format
+    required: true
+    schema:
+      type: string
+  - name: key
+    description: Base64 encoded xdr.ScVal of the contract data ledger entry key
+    required: true
+    schema:
+      type: string
+  result:
+    name: ledgerEntry
+    description: A contract data ledger entry
+    schema:
+      "$ref": "#/components/schemas/LedgerEntry"
+  errors:
+  - code: 404
+    message: not found
+  examples:
+  - name: getContractDataExample
+    description: getContractData example
+    params:
+    # TODO: Fill these in
+    - name: hash
+      value: "TODO"
+    - name: key
+      value: "TODO"
+    result:
+      name: getContractDataResultExample
+      value:
+        # TODO: Fill these in
+        xdr: ""
+        lastModifiedLedgerSeq: 1
+        latestLedger: 1
+
+- name: getTransactionStatus
+  summary: Clients should poll this to tell when a transaction has been completed
+  tags:
+  - name: transaction
+  params:
+  - name: hash
+    description: The hex-encoded transaction hash to query
+    required: true
+    schema:
+      type: string
+  result:
+    name: transactionStatus
+    description: The status of the transaction
+    schema:
+      "$ref": "#/components/schemas/TransactionStatus"
+  errors:
+  - code: 404
+    message: not found
+  examples:
+  - name: getTransactionStatusExample
+    description: getTransactionStatus example
+    params:
+    - name: hash
+      value: b691daf202db898ed5401c4082df61c432d577b895f9b4e5a27e2ddf829a8c2b
+    result:
+      name: getTransactionStatusResultExample
+      value:
+        id: b691daf202db898ed5401c4082df61c432d577b895f9b4e5a27e2ddf829a8c2b
+        status: success
+        results:
+        - xdr: TODO #TODO: Fill this in
+
+- name: sendTransaction
+  summary: Submit a real transaction to the stellar network.
+  description: |
+    This is the only way to make changes "on-chain".
+    
+    Unlike Horizon, this does not wait for transaction completion. It simplity validates and enqueues the transaction. Client should call `getTransactionStatus` to learn about transaction success/failure.
+  tags:
+  - name: transaction
+  params:
+  - name: xdr
+    description: The signed `xdr.Transaction` to be broadcast. Encoded as base64-encoded xdr.
+    required: true
+    schema:
+      type: string
+  result:
+    name: transactionStatus
+    description: The status of the transaction
+    schema:
+      "$ref": "#/components/schemas/TransactionStatus"
+  errors: [] # TODO: Fill in errors here
+  examples:
+  - name: sendTransactionExample
+    description: sendTransaction example
+    params:
+    - name: xdr
+      value: "AAAAAgAAAAC37Tkp9nPTFV4brUw+afaPqe135rrfZ3WqjOL6kpRBpwAPQkAACj90AAAAWwAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAABAAAAABB90WssODNIgi6BHveqzxTRmIpvAFRyVNM+Hm2GVuCcAAAAAAAAAAD5FZuqGQGo8Lv1n7NtHtw5gsSIokFjhHnScGFcX53d6QAAABdIdugAAAAAAAAAAAKSlEGnAAAAQIdfrREhxNjzm5umBmPx+4QAXyypbOA4u6QynwLb05YHbyA9vl16kv7gGlODbdqpczpYx4dVabFexssR3uR3gQiGVuCcAAAAQFQw896VgLBzb2T0pQ4Pso2hDpRhlEYBbS4mSURzF/yGTK8uC6XRUrnW+QsLYVWN2jE/neGFRUletINfvBGSMww="
+    result:
+      name: sendTransactionResultExample
+      value:
+        id: b691daf202db898ed5401c4082df61c432d577b895f9b4e5a27e2ddf829a8c2b
+        status: pending
+
+- name: simulateTransaction
+  summary: Simulate a transaction off-chain to get expected results, footprint, and costs.
+  tags:
+  - name: transaction
+  params:
+  - name: xdr
+    description: The signed `xdr.Transaction` to be simulated. Encoded as base64-encoded xdr.
+    required: true
+    schema:
+      type: string
+  result:
+    name: transactionSimulation
+    description: The result of simulating the transaction
+    schema:
+      "$ref": "#/components/schemas/TransactionSimulation"
+  errors: [] # TODO: Fill in errors here
+  examples:
+  - name: simulateTransactionExample
+    description: simulateTransaction example
+    params:
+    - name: xdr
+      value: "AAAAAgAAAAC37Tkp9nPTFV4brUw+afaPqe135rrfZ3WqjOL6kpRBpwAPQkAACj90AAAAWwAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAABAAAAABB90WssODNIgi6BHveqzxTRmIpvAFRyVNM+Hm2GVuCcAAAAAAAAAAD5FZuqGQGo8Lv1n7NtHtw5gsSIokFjhHnScGFcX53d6QAAABdIdugAAAAAAAAAAAKSlEGnAAAAQIdfrREhxNjzm5umBmPx+4QAXyypbOA4u6QynwLb05YHbyA9vl16kv7gGlODbdqpczpYx4dVabFexssR3uR3gQiGVuCcAAAAQFQw896VgLBzb2T0pQ4Pso2hDpRhlEYBbS4mSURzF/yGTK8uC6XRUrnW+QsLYVWN2jE/neGFRUletINfvBGSMww="
+    result:
+      name: simulateTransactionResultExample
+      value:
+        # TODO: Fill this in
+        cost: {}
+        footprint: 
+          readOnly: []
+          readWrite: []
+        results:
+        - xdr: ""
+        latestLedger: 1
+
+
+components:
+  contentDescriptors: {}
+  schemas:
+
+    Account:
+      type: object
+      required:
+      - id
+      - sequence
+      - balances
+      properties:
+        id:
+          type: string
+        sequence:
+          type: string
+        balances:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Balance"
+
+    Balance:
+      type: object
+      required:
+      - asset_type
+      - smart
+      properties:
+        asset_type:
+          type: string
+        asset_code:
+          type: string
+        asset_issuer:
+          type: string
+        smart:
+          type: string
+          description: This account's current balance of the asset available to smart
+            contracts
+
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: string
+          description: Short unique string represending the type of error
+        message:
+          type: string
+          description: Human friendly summary of the error
+        data:
+          type: object
+          description: More data related to the error if available
+
+    LedgerEntry:
+      type: object
+      required:
+      - xdr
+      - latestLedger
+      properties:
+        xdr:
+          type: string
+          description: Base64 encoded xdr.ScVal of the current value for the contract data ledger entry.
+        lastModifiedLedgerSeq:
+          type: number
+          description: The ledger number of the last time this entry was updated.
+        latestLedger:
+          type: number
+          description: The current latest ledger observed by the node when this response was generated.
+
+    TransactionSimulation:
+      type: object
+      required:
+      - cost
+      - footprint
+      properties:
+        cost:
+          # TODO: Fill this in
+          type: object
+        footprint:
+          type: object
+          required:
+          - readOnly
+          - readWrite
+          properties:
+            readOnly:
+              type: array
+              description: Array of xdr.LedgerKeys expected to be read by this transaction
+              items:
+                type: string
+                description: Base64-encoded xdr.LedgerKey
+            readWrite:
+              type: array
+              description: Array of xdr.LedgerKeys expected to be written by this transaction
+              items:
+                type: string
+                description: Base64-encoded xdr.LedgerKey
+        results:
+          type: array
+          items:
+            type: object
+            required:
+            - xdr
+            properties:
+              xdr:
+                type: string
+                description: Base64 encoded xdr of the contract method's return value.
+        error:
+          "$ref": "#/components/schemas/Error"
+
+    TransactionStatus:
+      type: object
+      required:
+      - id
+      - status
+      properties:
+        id:
+          type: string
+          description: The hex-encoded hash of the transaction
+        status:
+          type: string
+          description: Current status of the transaction. (`pending`, `success`, or `error`)
+        results:
+          type: array
+          items:
+            type: object
+            required:
+            - xdr
+            properties:
+              xdr:
+                type: string
+                description: Base64 encoded xdr of the contract method's return value.
+        error:
+          "$ref": "#/components/schemas/Error"
+

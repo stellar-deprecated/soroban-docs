@@ -259,10 +259,20 @@ components:
       required:
       - cost
       - footprint
+      - latestLedger
       properties:
         cost:
-          # TODO: Fill this in
           type: object
+          required:
+          - cpuInsns
+          - memBytes
+          properties:
+            cpuInsns:
+              type: string
+              description: Number of CPU instructions used by this transaction
+            memBytes:
+              type: string
+              description: Number of bytes allocated by this transaction
         footprint:
           type: object
           required:
@@ -291,8 +301,14 @@ components:
               xdr:
                 type: string
                 description: Base64 encoded xdr of the contract method's return value.
+
         error:
           "$ref": "#/components/schemas/Error"
+
+        latestLedger:
+          type: number
+          description: The current latest ledger observed by the node when this response was generated.
+
 
     TransactionStatus:
       type: object

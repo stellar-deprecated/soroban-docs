@@ -59,11 +59,16 @@ lto = true
 ```
 
 The `features` list includes a `testutils` feature, which will cause additional
-test utilities to be generated for calling the contract in tests. The test
-utilities are automatically available inside Rust unit tests inside the same
-crate as your contract. If you write Rust integration tests, or write tests from
-another crate, you'll need to use the `testutils` feature to be able to use
-those test utilities.
+test utilities to be generated for calling the contract in tests.
+
+:::info
+The `testutils` test utilities are automatically enabled inside [Rust unit
+tests] inside the same crate as your contract. If you write [Rust integration
+tests], or write tests from another crate, you'll need to add `#[cfg(feature =
+"testutils")]` to those tests and enable the `testutils` feature when running
+your tests with `cargo test --features testutils` to be able to use those test
+utilities.
+:::
 
 The config for the `release` profile configures the Rust toolchain to produce
 smaller contracts.
@@ -159,3 +164,6 @@ You should see the following output:
 ```
 
 [`soroban-cli`]: setup#install-the-soroban-cli
+
+[Rust unit tests]: https://doc.rust-lang.org/rust-by-example/testing/unit_testing.html
+[Rust integration tests]: https://doc.rust-lang.org/rust-by-example/testing/integration_testing.html

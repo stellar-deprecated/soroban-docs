@@ -3,7 +3,7 @@ sidebar_position: 1
 title: Token Contract
 ---
 
-# Standard Token Contract
+# Token Contract
 
 The token contract is an implementation of [CAP-54 Smart Contract Standardized Asset].
 
@@ -18,72 +18,25 @@ intended for use. Report issues
 ## Overview
 
 Tokens are a vital part of blockchains, and contracts that implement token
-functionality are inevitable on any smart contract platform. A standard token
+functionality are inevitable on any smart contract platform. A built-in token
 contract has a number of advantages over token contracts written by the
 ecosystem. First, we can special case this contract and run it natively instead
 of running in a WASM VM, reducing the cost of using the contract. Second, we
-can use this native contract to allow "classic" Stellar assets to interoperate
-with Soroban. The current iteration of the standard token contract doesn't run
-natively or interoperate with "classic" Stellar assets, but these improvements
-will be made in the future. Note that this standard token contract does not
-prevent the ecosystem from developing other token contracts if the standard is
-missing functionality they require.
+can use this built-in contract to allow "classic" Stellar assets to interoperate
+with Soroban. The current iteration of the standard token contract doesn't
+interoperate with "classic" Stellar assets, but this feature will be available
+in the future. Note that this standard token contract does not prevent the
+ecosystem from developing other token contracts if the standard is missing
+functionality they require.
 
 The standard token contract is similar to the widely used ERC-20 token standard,
 which should make it easier for existing smart contract developers to get
 started on Stellar.
 
-## Token contract authorization semantics 
+## Token contract authorization semantics
 
-This section describes a specific implementation of the general principles
-discussed in [authorization](../learn/authorization.mdx).
-
-### Identities
-
-```rust
-#[derive(Clone)]
-#[contracttype]
-pub enum Identifier {
-    Contract(U256),
-    Ed25519(U256),
-    Account(U256),
-}
-```
-
-The token contract understands three kinds of identities: contracts, Ed25519
-public keys, and Stellar accounts. For each kind of identity, there is a
-corresponding authorization mechanism. 
-
-#### Contract authorization
-
-A contract identity provides
-authorization simply by being the invoker of the token contract.
-
-#### Ed25519 public key authorization
-
-An Ed25519 public key identity can provide authorization by signing an
-appropriate message with the associated private key. The authorization is
-just the 512-bit signature, referred to as a `U512` in the contract.
-
-#### Stellar account authorization
-
-```rust
-#[derive(Clone)]
-#[contracttype]
-pub struct KeyedEd25519Signature {
-    pub public_key: U256,
-    pub signature: U512,
-}
-
-pub type AccountAuthorization = Vec<KeyedEd25519Signature>;
-```
-
-A Stellar account identity can provide authorization by signing an appropripate
-message with the private keys associated with the signers of that Stellar
-account. The total signing weight of the signers must exceed the medium
-threshold of that Stellar account. The authorization is a vector, where each
-element of the vector contains a public key used to sign the message and the
-corresponding 512-bit signature.
+See the [authorization example](../examples/authorization) for an overview of
+authorization.
 
 ### Token operations
 
@@ -115,39 +68,7 @@ The authorization for a privileged mutator is an [Authorization](#authorization)
 because the identity that is providing the authorization is known to be the
 administrator.
 
-### Messages
-
-```rust
-#[derive(Clone)]
-#[contracttype]
-pub struct MessageV0 {
-    pub nonce: BigInt,
-    pub domain: u32,
-    pub parameters: Vec<EnvVal>,
-}
-
-#[derive(Clone)]
-#[contracttype]
-pub enum Message {
-    V0(MessageV0),
-}
-```
-
-Those signatures are derived by signing the `Message` enum, which has one value
-at the moment, `V0`. `MessageV0` requires the [current nonce](#replay-prevention)
-for the identity providing authorization, a
-[domain](https://github.com/stellar/soroban-token-contract/blob/main/src/cryptography.rs),
-and the function parameters.
-
 ### Replay prevention
-
-Whenever signatures are used to permit an operation, there is a risk of
-"replay". Replay occurs when a single signature is used to permit an operation
-multiple times. Such a situation can be catastrophic. For example, imagine that
-you sign a message permitting 1 dollar to be sent to an acquantaince. If there
-were no replay prevention, then a malicious acquantaince could use that message
-to repeatedly transfer 1 dollar from you to them. In the end, your bank account
-would be empty.
 
 The token contract provides replay prevention by using a [nonce](https://en.wikipedia.org/wiki/Cryptographic_nonce).
 The messages that are signed to provide authorization contain a nonce. The
@@ -156,121 +77,63 @@ contract loads the nonce for the relevant identity. When an operation succeeds,
 the nonce stored in the contract is incremented. This makes it impossible to
 reuse a signature.
 
-The current nonce for an identity can be retrieved using the nonce contract
+The current nonce for an identity can be retrieved using the `nonce` contract
 function.
 
-### Authorization
+### Example: Signing payloads
+
+The [example](https://github.com/stellar/soroban-token-contract/blob/d24fbeaa3cad5406bee8b64e748a71fa38c7c2f3/src/testutils.rs#L48-L70)
+from the test `Token` wrapper class demonstrate how you sign a payload for the
+token contract.
 
 ```rust
-#[derive(Clone)]
-#[contracttype]
-pub enum Authorization {
-    Contract,
-    Ed25519(U512),
-    Account(AccountAuthorization),
-}
-```
+pub fn approve(&self, from: &Keypair, spender: &Identifier, amount: &BigInt) {
+    let from_id = to_ed25519(&self.env, from);
+    let nonce = self.nonce(&from_id);
 
-Used by `mint`, `burn`, `freeze`, `unfreeze`, and `set_admin`. The content of
-the authorization depends on the [identity](#identities) of the administrator.
+    let mut args: Vec<RawVal> = Vec::new(&self.env);
+    args.push_back(from_id.clone().into_val(&self.env));
+    args.push_back(nonce.clone().into_val(&self.env));
+    args.push_back(spender.clone().into_val(&self.env));
+    args.push_back(amount.clone().into_val(&self.env));
 
-### KeyedAuthorization
-
-```rust
-#[derive(Clone)]
-#[contracttype]
-pub struct KeyedEd25519Signature {
-    pub public_key: U256,
-    pub signature: U512,
-}
-
-#[derive(Clone)]
-#[contracttype]
-pub struct KeyedAccountAuthorization {
-    pub public_key: U256,
-    pub signatures: AccountAuthorization,
-}
-
-#[derive(Clone)]
-#[contracttype]
-pub enum KeyedAuthorization {
-    Contract,
-    Ed25519(KeyedEd25519Signature),
-    Account(KeyedAccountAuthorization),
-}
-```
-
-Used by `allowance`, `approve`, `xfer`, and `xfer_from`. The content of
-the authorization depends on the [identity](#identity) of the administrator.
-This is similar to an [Authorization](#authorization) but also includes
-additional information so the contract knows what identity is providing
-authorization.
-
-### Example: Signing messages
-
-The two
-[examples](https://github.com/stellar//soroban-token-contract/blob/37e2cd3580f8e28beea9e8f9194b9cf8547472dd/src/testutils.rs#L55)
-from the test `Token` wrapper class demonstrate how you sign a contract
-function that expects an `Authorization` and a `KeyedAuthorization` type.
-
-#### Authorization
-The admin must match the `Identifier` that was used to `initialize` the contract. 
-```rust
-pub fn mint(&self, admin: &Keypair, to: &Identifier, amount: &BigInt) {
-    let mut args: Vec<EnvVal> = Vec::new(&self.env);
-    args.push(to.clone().into_env_val(&self.env));
-    args.push(amount.clone().into_env_val(&self.env));
-    let msg = Message::V0(MessageV0 {
-        nonce: self.nonce(&to_ed25519(&self.env, admin)),
-        domain: Domain::Mint as u32,
-        parameters: args,
+    let msg = SignaturePayload::V0(SignaturePayloadV0 {
+        function: symbol!("approve"),
+        contract: self.contract_id.clone(),
+        network: self.env.ledger().network_passphrase(),
+        args,
     });
-    let auth = Authorization::Ed25519(admin.sign(msg).unwrap().into_val(&self.env));
-    mint(&self.env, &self.contract_id, &auth, to, amount)
-}
-```
 
-#### KeyedAuthorization
-```rust
- pub fn approve(&self, from: &Keypair, spender: &Identifier, amount: &BigInt) {
-    let mut args: Vec<EnvVal> = Vec::new(&self.env);
-    args.push(spender.clone().into_env_val(&self.env));
-    args.push(amount.clone().into_env_val(&self.env));
-    let msg = Message::V0(MessageV0 {
-        nonce: self.nonce(&to_ed25519(&self.env, from)),
-        domain: Domain::Approve as u32,
-        parameters: args,
-    });
-    let auth = KeyedAuthorization::Ed25519(KeyedEd25519Authorization {
+    let auth = Signature::Ed25519(Ed25519Signature {
         public_key: from.public.to_bytes().into_val(&self.env),
         signature: from.sign(msg).unwrap().into_val(&self.env),
     });
-    approve(&self.env, &self.contract_id, &auth, spender, amount)
+    TokenClient::new(&self.env, &self.contract_id).approve(&auth, &nonce, &spender, &amount)
 }
 ```
 
 ## Contract Interface
 
 ```rust
-// Admin interface
-
 // Sets the administrator to "admin". Also sets some metadata
-fn initialize(e: Env, admin: Identifier, decimal: u32, name: Binary, symbol: Binary);
+fn initialize(e: Env, admin: Identifier, decimal: u32, name: Bytes, symbol: Bytes);
+
+// Admin interface -- these functions are privileged
 
 // If "admin" is the administrator, burn "amount" from "from"
-fn burn(e: Env, admin: Authorization, from: Identifier, amount: BigInt);
+fn burn(e: Env, admin: Signature, nonce: BigInt, from: Identifier, amount: BigInt);
 
 // If "admin" is the administrator, mint "amount" to "to"
-fn mint(e: Env, admin: Authorization, to: Identifier, amount: BigInt);
+fn mint(e: Env, admin: Signature, nonce: BigInt, to: Identifier, amount: BigInt);
 
 // If "admin" is the administrator, set the administrator to "id"
-fn set_admin(e: Env, admin: Authorization, new_admin: Identifier);
+fn set_admin(e: Env, admin: Signature, nonce: BigInt, new_admin: Identifier);
 
 // If "admin" is the administrator, freeze "id"
-fn freeze(e: Env, admin: Authorization, id: Identifier);
+fn freeze(e: Env, admin: Signature, nonce: BigInt, id: Identifier);
 
 // If "admin" is the administrator, unfreeze "id"
-fn unfreeze(e: Env, admin: Authorization, id: Identifier);
+fn unfreeze(e: Env, admin: Signature, nonce: BigInt, id: Identifier);
 
 // Token Interface
 
@@ -278,16 +141,23 @@ fn unfreeze(e: Env, admin: Authorization, id: Identifier);
 fn allowance(e: Env, from: Identifier, spender: Identifier) -> BigInt;
 
 // Set the allowance to "amount" for "spender" to transfer from "from"
-fn approve(e: Env, from: KeyedAuthorization, spender: Identifier, amount: BigInt);
+fn approve(e: Env, from: Signature, nonce: BigInt, spender: Identifier, amount: BigInt);
 
 // Get the balance of "id"
 fn balance(e: Env, id: Identifier) -> BigInt;
 
 // Transfer "amount" from "from" to "to"
-fn xfer(e: Env, from: KeyedAuthorization, to: Identifier, amount: BigInt);
+fn xfer(e: Env, from: Signature, nonce: BigInt, to: Identifier, amount: BigInt);
 
 // Transfer "amount" from "from" to "to", consuming the allowance of "spender"
-fn xfer_from(e: Env, spender: KeyedAuthorization, from: Identifier, to: Identifier, amount: BigInt);
+fn xfer_from(
+    e: Env,
+    spender: Signature,
+    nonce: BigInt,
+    from: Identifier,
+    to: Identifier,
+    amount: BigInt,
+);
 
 // Returns true if "id" is frozen
 fn is_frozen(e: Env, id: Identifier) -> bool;
@@ -301,20 +171,13 @@ fn nonce(e: Env, id: Identifier) -> BigInt;
 fn decimals(e: Env) -> u32;
 
 // Get the name for this token
-fn name(e: Env) -> Binary;
+fn name(e: Env) -> Bytes;
 
 // Get the symbol for this token
-fn symbol(e: Env) -> Binary;
+fn symbol(e: Env) -> Bytes;
 ```
 
 ## Interacting with the token contract in tests
 
 See [interacting with contracts in tests](../learn/interacting-with-contracts#interacting-with-contracts-in-tests)
 for more general information on this topic.
-
-This [test
-case](https://github.com/stellar/soroban-token-contract/blob/37e2cd3580f8e28beea9e8f9194b9cf8547472dd/tests/test.rs#L20)
-shows how the token contract can be used easily in tests. Note that the actual call into the
-contract is in the
-[Token](https://github.com/stellar/soroban-token-contract/blob/37e2cd3580f8e28beea9e8f9194b9cf8547472dd/src/testutils.rs#L26)
-wrapper test class.

@@ -273,7 +273,7 @@ Invoke Contract B's `add_with` function, passing in values for `x` and `y`
 soroban-cli invoke \
     --id b \
     --fn add_with \
-    --arg '[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10]' \
+    --arg a \
     --arg 5 \
     --arg 7
 ```
@@ -286,9 +286,3 @@ The following output should occur using the code above.
 
 Contract B's `add_with` function invoked Contract A's `add` function to do
 the addition.
-
-:::info
-The `soroban-cli` is under active development and at this time accepts contract
-IDs as JSON formatted number arrays. That's what the long `[0,0,0,...]` value is
-in the invoke command above. Contract A's ID is in hex, so `0xa` becomes `10`.
-:::

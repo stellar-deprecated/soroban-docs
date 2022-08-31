@@ -1,0 +1,253 @@
+---
+sidebar_position: 5
+title: Authorization
+---
+
+The [authorization example] demonstrates how to write a contract function that
+verifies an `Identifiers` signature before proceeding with the rest of the
+function. In this example, data is stored under an `Identifier` after
+authorization has been verified. 
+
+[authorization example]: https://github.com/stellar/soroban-examples/tree/main/authorization
+
+## Run the Example
+
+First go through the [Setup] process to get your development environment
+configured, then clone the examples repository:
+
+[Setup]: ../getting-started/setup.mdx
+
+```
+git clone https://github.com/stellar/soroban-examples
+```
+
+To run the tests for the example, navigate to the `authorization` directory, and use `cargo test`.
+
+```
+cd authorization
+cargo test
+```
+
+You should see the output:
+
+```
+running 2 tests
+test test::test ... ok
+test test::bad_data - should panic ... ok
+```
+
+## Code
+
+```rust title="authorization/src/lib.rs"
+#[derive(Clone)]
+#[contracttype]
+pub enum DataKey {
+    Acc(Identifier),
+    Nonce(Identifier),
+    Admin,
+}
+
+fn read_nonce(e: &Env, id: Identifier) -> BigInt {
+    let key = DataKey::Nonce(id);
+    if let Some(nonce) = e.contract_data().get(key) {
+        nonce.unwrap()
+    } else {
+        BigInt::zero(e)
+    }
+}
+struct WrappedAuth(Signature);
+
+impl NonceAuth for WrappedAuth {
+    fn read_nonce(e: &Env, id: Identifier) -> BigInt {
+        read_nonce(e, id)
+    }
+
+    fn read_and_increment_nonce(&self, e: &Env, id: Identifier) -> BigInt {
+        let key = DataKey::Nonce(id.clone());
+        let nonce = Self::read_nonce(e, id);
+        e.contract_data()
+            .set(key, nonce.clone() + BigInt::from_u32(e, 1));
+        nonce
+    }
+
+    fn signature(&self) -> &Signature {
+        &self.0
+    }
+}
+
+pub struct AuthContract;
+
+#[cfg_attr(feature = "export", contractimpl)]
+#[cfg_attr(not(feature = "export"), contractimpl(export = false))]
+impl AuthContract {
+    // Sets the admin identifier
+    pub fn set_admin(e: Env, admin: Identifier) {
+        if e.contract_data().has(DataKey::Admin) {
+            panic!("admin is already set")
+        }
+
+        e.contract_data().set(DataKey::Admin, admin);
+    }
+
+    // Saves data that corresponds to an Identifier, with that Identifiers authorization
+    pub fn save_data(e: Env, auth: Signature, nonce: BigInt, num: BigInt) {
+        let auth_id = auth.get_identifier(&e);
+
+        check_auth(
+            &e,
+            &WrappedAuth(auth),
+            nonce.clone(),
+            Symbol::from_str("save_data"),
+            (auth_id.clone(), nonce, num.clone()).into_val(&e),
+        );
+
+        e.contract_data().set(DataKey::Acc(auth_id), num);
+    }
+
+    // The admin can write data for any Identifier
+    pub fn overwrite(e: Env, auth: Signature, nonce: BigInt, id: Identifier, num: BigInt) {
+        let auth_id = auth.get_identifier(&e);
+        if auth_id != e.contract_data().get_unchecked(DataKey::Admin).unwrap() {
+            panic!("not authorized by admin")
+        }
+
+        check_auth(
+            &e,
+            &WrappedAuth(auth),
+            nonce.clone(),
+            Symbol::from_str("overwrite"),
+            (auth_id, nonce, id.clone(), num.clone()).into_val(&e),
+        );
+
+        e.contract_data().set(DataKey::Acc(id), num);
+    }
+
+    pub fn nonce(e: Env, to: Identifier) -> BigInt {
+        read_nonce(&e, to)
+    }
+}
+```
+
+Ref: https://github.com/stellar/soroban-examples/tree/main/authorization
+
+## How it Works
+
+### Implement NonceAuth
+`NonceAuth` is a trait in the soroban_sdk_auth crate that manages the nonce and
+wraps the `Signature` that the contract will try to verifiy. A struct that
+implements `NonceAuth` is expected by the `check_auth` sdk function. You can see
+below that we have a `DataKey` for the nonce tied to an `Identifier`, and this
+`DataKey` is used to manage the nonces for this contract.
+
+```rust
+#[derive(Clone)]
+#[contracttype]
+pub enum DataKey {
+    Acc(Identifier),
+    Nonce(Identifier),
+    Admin,
+}
+
+fn read_nonce(e: &Env, id: Identifier) -> BigInt {
+    let key = DataKey::Nonce(id);
+    if let Some(nonce) = e.contract_data().get(key) {
+        nonce.unwrap()
+    } else {
+        BigInt::zero(e)
+    }
+}
+struct WrappedAuth(Signature);
+
+impl NonceAuth for WrappedAuth {
+    fn read_nonce(e: &Env, id: Identifier) -> BigInt {
+        read_nonce(e, id)
+    }
+
+    fn read_and_increment_nonce(&self, e: &Env, id: Identifier) -> BigInt {
+        let key = DataKey::Nonce(id.clone());
+        let nonce = Self::read_nonce(e, id);
+        e.contract_data()
+            .set(key, nonce.clone() + BigInt::from_u32(e, 1));
+        nonce
+    }
+
+    fn signature(&self) -> &Signature {
+        &self.0
+    }
+}
+```
+
+### Check authorization in contract function
+The `save_data` function stores data in a `DataKey::Acc` tied to an `Identifier`
+with it's authorization. 
+
+The `check_auth` method in the SDK is used for signature verification, and here
+are the important authorization takeaways from the example below -
+1. The `nonce` is included in the list of parameters for the contract function.
+2. The `Signature` is passed into `check_auth` wrapped in `WrappedAuth`.
+3. The `function` parameter to `check_auth` is the name of the invoked function.
+4. The last argument passed to `check_auth` is a list of arguments that are
+   expected in the signed payload. The interesting thing to note here is that it
+   includes the `Identifier` from the `auth` and the nonce. 
+
+```rust
+// Saves data that corresponds to an Identifier, with that Identifiers authorization
+pub fn save_data(e: Env, auth: Signature, nonce: BigInt, num: BigInt) {
+    let auth_id = auth.get_identifier(&e);
+
+    check_auth(
+        &e,
+        &WrappedAuth(auth),
+        nonce.clone(),
+        Symbol::from_str("save_data"),
+        (auth_id.clone(), nonce, num.clone()).into_val(&e),
+    );
+
+    e.contract_data().set(DataKey::Acc(auth_id), num);
+}
+```
+
+### Admin privileges
+
+Some contracts may want to set an admin account that is allowed special
+privilege. The `set_admin` function here stores an `Identifier` as an admin, and
+that admin is the only one that can call `overwrite`.
+
+```rust
+// Sets the admin identifier
+pub fn set_admin(e: Env, admin: Identifier) {
+    if e.contract_data().has(DataKey::Admin) {
+        panic!("admin is already set")
+    }
+
+    e.contract_data().set(DataKey::Admin, admin);
+}
+
+// The admin can write data for any Identifier
+pub fn overwrite(e: Env, auth: Signature, nonce: BigInt, id: Identifier, num: BigInt) {
+    let auth_id = auth.get_identifier(&e);
+    if auth_id != e.contract_data().get_unchecked(DataKey::Admin).unwrap() {
+        panic!("not authorized by admin")
+    }
+
+    check_auth(
+        &e,
+        &WrappedAuth(auth),
+        nonce.clone(),
+        Symbol::from_str("overwrite"),
+        (auth_id, nonce, id.clone(), num.clone()).into_val(&e),
+    );
+
+    e.contract_data().set(DataKey::Acc(id), num);
+}
+```
+
+### Retrieving the Nonce
+Users of this contract will need to know which nonce to use, so the contract
+exposes this information.
+
+```rust
+pub fn nonce(e: Env, to: Identifier) -> BigInt {
+    read_nonce(&e, to)
+}
+```

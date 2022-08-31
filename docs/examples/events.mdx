@@ -60,8 +60,6 @@ publishes the message (along with some data) as a contract event.
 
 [hello world example]: https://github.com/stellar/soroban-examples/tree/main/hello_world
 
-### Contract Event
-
 Contract events let smart contract developers emit information about what their
 contract is doing.
 
@@ -72,7 +70,7 @@ environment.
 let events = env.events();
 ```
 
-#### Event Topics
+### Event Topics
 An event may contain up to four topics, each topic can be any type except:
 - `Vec`
 - `Map`
@@ -100,7 +98,7 @@ let data = map![&env, (1u32, 2u32)];
 The topics don't have to be made of the same type. You can mix different types as long as the total topic count stays below the limit. 
 :::
 
-### Publish Event
+### Publishing
 Publishing an event is done by calling the `publish` function and giving it the
 topics and data.  The function returns nothing on success, and panics on
 failure. Possible failure reasons can include malformed inputs (e.g. topic count

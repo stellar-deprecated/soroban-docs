@@ -42,22 +42,21 @@ test test::bad_data - should panic ... ok
 #[derive(Clone)]
 #[contracttype]
 pub enum DataKey {
-    Acc(Identifier),
+    SavedNum(Identifier),
     Nonce(Identifier),
     Admin,
 }
 
 fn read_nonce(e: &Env, id: Identifier) -> BigInt {
     let key = DataKey::Nonce(id);
-    if let Some(nonce) = e.contract_data().get(key) {
-        nonce.unwrap()
-    } else {
-        BigInt::zero(e)
-    }
+    e.contract_data()
+        .get(key)
+        .unwrap_or_else(|| Ok(BigInt::zero(e)))
+        .unwrap()
 }
-struct WrappedAuth(Signature);
+struct NonceForSignature(Signature);
 
-impl NonceAuth for WrappedAuth {
+impl NonceAuth for NonceForSignature {
     fn read_nonce(e: &Env, id: Identifier) -> BigInt {
         read_nonce(e, id)
     }
@@ -65,8 +64,7 @@ impl NonceAuth for WrappedAuth {
     fn read_and_increment_nonce(&self, e: &Env, id: Identifier) -> BigInt {
         let key = DataKey::Nonce(id.clone());
         let nonce = Self::read_nonce(e, id);
-        e.contract_data()
-            .set(key, nonce.clone() + BigInt::from_u32(e, 1));
+        e.contract_data().set(key, &nonce + 1);
         nonce
     }
 
@@ -75,12 +73,11 @@ impl NonceAuth for WrappedAuth {
     }
 }
 
-pub struct AuthContract;
+pub struct ExampleContract;
 
-#[cfg_attr(feature = "export", contractimpl)]
-#[cfg_attr(not(feature = "export"), contractimpl(export = false))]
-impl AuthContract {
-    // Sets the admin identifier
+#[contractimpl]
+impl ExampleContract {
+    /// Set the admin identifier. May be called only once.
     pub fn set_admin(e: Env, admin: Identifier) {
         if e.contract_data().has(DataKey::Admin) {
             panic!("admin is already set")
@@ -89,41 +86,41 @@ impl AuthContract {
         e.contract_data().set(DataKey::Admin, admin);
     }
 
-    // Saves data that corresponds to an Identifier, with that Identifiers authorization
-    pub fn save_data(e: Env, auth: Signature, nonce: BigInt, num: BigInt) {
-        let auth_id = auth.get_identifier(&e);
+    /// Save the number for an authenticated [Identifier].
+    pub fn save_num(e: Env, sig: Signature, nonce: BigInt, num: BigInt) {
+        let auth_id = sig.get_identifier(&e);
 
         check_auth(
             &e,
-            &WrappedAuth(auth),
+            &NonceForSignature(sig),
             nonce.clone(),
-            Symbol::from_str("save_data"),
-            (auth_id.clone(), nonce, num.clone()).into_val(&e),
+            symbol!("save_num"),
+            (&auth_id, nonce, &num).into_val(&e),
         );
 
-        e.contract_data().set(DataKey::Acc(auth_id), num);
+        e.contract_data().set(DataKey::SavedNum(auth_id), num);
     }
 
     // The admin can write data for any Identifier
-    pub fn overwrite(e: Env, auth: Signature, nonce: BigInt, id: Identifier, num: BigInt) {
-        let auth_id = auth.get_identifier(&e);
+    pub fn overwrite(e: Env, sig: Signature, nonce: BigInt, id: Identifier, num: BigInt) {
+        let auth_id = sig.get_identifier(&e);
         if auth_id != e.contract_data().get_unchecked(DataKey::Admin).unwrap() {
             panic!("not authorized by admin")
         }
 
         check_auth(
             &e,
-            &WrappedAuth(auth),
+            &NonceForSignature(sig),
             nonce.clone(),
-            Symbol::from_str("overwrite"),
-            (auth_id, nonce, id.clone(), num.clone()).into_val(&e),
+            symbol!("overwrite"),
+            (auth_id, nonce, &id, &num).into_val(&e),
         );
 
-        e.contract_data().set(DataKey::Acc(id), num);
+        e.contract_data().set(DataKey::SavedNum(id), num);
     }
 
-    pub fn nonce(e: Env, to: Identifier) -> BigInt {
-        read_nonce(&e, to)
+    pub fn nonce(e: Env, id: Identifier) -> BigInt {
+        read_nonce(&e, id)
     }
 }
 ```
@@ -182,7 +179,7 @@ pub struct AccountSignatures {
 }
 ```
 
-A Stellar account identity can provide authorization by signing an appropripate
+A Stellar account identity can provide authorization by signing an appropriate
 message with the private keys associated with the signers of that Stellar
 account. The total signing weight of the signers must exceed the medium
 threshold of that Stellar account. The authorization is a vector, where each
@@ -249,22 +246,22 @@ below that we have a `DataKey` for the nonce tied to an `Identifier`, and this
 #[derive(Clone)]
 #[contracttype]
 pub enum DataKey {
-    Acc(Identifier),
+    SavedNum(Identifier),
     Nonce(Identifier),
     Admin,
 }
 
 fn read_nonce(e: &Env, id: Identifier) -> BigInt {
     let key = DataKey::Nonce(id);
-    if let Some(nonce) = e.contract_data().get(key) {
-        nonce.unwrap()
-    } else {
-        BigInt::zero(e)
-    }
+    e.contract_data()
+        .get(key)
+        .unwrap_or_else(|| Ok(BigInt::zero(e)))
+        .unwrap()
 }
-struct WrappedAuth(Signature);
 
-impl NonceAuth for WrappedAuth {
+struct NonceForSignature(Signature);
+
+impl NonceAuth for NonceForSignature {
     fn read_nonce(e: &Env, id: Identifier) -> BigInt {
         read_nonce(e, id)
     }
@@ -272,8 +269,7 @@ impl NonceAuth for WrappedAuth {
     fn read_and_increment_nonce(&self, e: &Env, id: Identifier) -> BigInt {
         let key = DataKey::Nonce(id.clone());
         let nonce = Self::read_nonce(e, id);
-        e.contract_data()
-            .set(key, nonce.clone() + BigInt::from_u32(e, 1));
+        e.contract_data().set(key, &nonce + 1);
         nonce
     }
 
@@ -284,32 +280,32 @@ impl NonceAuth for WrappedAuth {
 ```
 
 ### Check authorization in contract function
-The `save_data` function stores data in a `DataKey::Acc` tied to an `Identifier`
+The `save_num` function stores a number in a `DataKey::SavedNum` tied to an `Identifier`
 with it's authorization. 
 
 The `check_auth` method in the SDK is used for signature verification, and here
 are the important authorization takeaways from the example below -
 1. The `nonce` is included in the list of parameters for the contract function.
-2. The `Signature` is passed into `check_auth` wrapped in `WrappedAuth`.
+2. The `Signature` is passed into `check_auth` wrapped in `NonceForSignature`.
 3. The `function` parameter to `check_auth` is the name of the invoked function.
 4. The last argument passed to `check_auth` is a list of arguments that are
    expected in the signed payload. The interesting thing to note here is that it
-   includes the `Identifier` from the `auth` and the nonce. 
+   includes the `Identifier` from the `sig` and the nonce. 
 
 ```rust
-// Saves data that corresponds to an Identifier, with that Identifiers authorization
-pub fn save_data(e: Env, auth: Signature, nonce: BigInt, num: BigInt) {
-    let auth_id = auth.get_identifier(&e);
+/// Save the number for an authenticated [Identifier].
+pub fn save_num(e: Env, sig: Signature, nonce: BigInt, num: BigInt) {
+    let auth_id = sig.get_identifier(&e);
 
     check_auth(
         &e,
-        &WrappedAuth(auth),
+        &NonceForSignature(sig),
         nonce.clone(),
-        Symbol::from_str("save_data"),
-        (auth_id.clone(), nonce, num.clone()).into_val(&e),
+        symbol!("save_num"),
+        (&auth_id, nonce, &num).into_val(&e),
     );
 
-    e.contract_data().set(DataKey::Acc(auth_id), num);
+    e.contract_data().set(DataKey::SavedNum(auth_id), num);
 }
 ```
 
@@ -329,22 +325,22 @@ pub fn set_admin(e: Env, admin: Identifier) {
     e.contract_data().set(DataKey::Admin, admin);
 }
 
-// The admin can write data for any Identifier
-pub fn overwrite(e: Env, auth: Signature, nonce: BigInt, id: Identifier, num: BigInt) {
-    let auth_id = auth.get_identifier(&e);
+// The admin can write the number for any [Identifier]
+pub fn overwrite(e: Env, sig: Signature, nonce: BigInt, id: Identifier, num: BigInt) {
+    let auth_id = sig.get_identifier(&e);
     if auth_id != e.contract_data().get_unchecked(DataKey::Admin).unwrap() {
         panic!("not authorized by admin")
     }
 
     check_auth(
         &e,
-        &WrappedAuth(auth),
+        &NonceForSignature(sig),
         nonce.clone(),
-        Symbol::from_str("overwrite"),
-        (auth_id, nonce, id.clone(), num.clone()).into_val(&e),
+        symbol!("overwrite"),
+        (auth_id, nonce, &id, &num).into_val(&e),
     );
 
-    e.contract_data().set(DataKey::Acc(id), num);
+    e.contract_data().set(DataKey::SavedNum(id), num);
 }
 ```
 

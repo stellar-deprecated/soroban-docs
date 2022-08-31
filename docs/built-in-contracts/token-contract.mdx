@@ -57,16 +57,11 @@ which must provide authorization will vary depending on the unprivileged
 mutator. For example, a "grantor" can use `approve` to allow a "spender" to spend
 the grantor's money up to some limit. So for approve, the grantor must provide
 authorization. Similarly, a "sender" can use `xfer` to send money to a
-"recipient". So for `xfer`, the sender must provide authorization. The
-authorization for an unprivileged mutator is a [KeyedAuthorization](#keyedauthorization)
-because the identity that is providing the authorization must be specified.
+"recipient". So for `xfer`, the sender must provide authorization.
 
 Priviliged mutators require authorization from a specific privileged identity,
 known as the "administrator". For example, only the administrator can `mint` more
 of the asset. Similarly, only the administrator can appoint a new administrator.
-The authorization for a privileged mutator is an [Authorization](#authorization)
-because the identity that is providing the authorization is known to be the
-administrator.
 
 ### Replay prevention
 
@@ -91,17 +86,11 @@ pub fn approve(&self, from: &Keypair, spender: &Identifier, amount: &BigInt) {
     let from_id = to_ed25519(&self.env, from);
     let nonce = self.nonce(&from_id);
 
-    let mut args: Vec<RawVal> = Vec::new(&self.env);
-    args.push_back(from_id.clone().into_val(&self.env));
-    args.push_back(nonce.clone().into_val(&self.env));
-    args.push_back(spender.clone().into_val(&self.env));
-    args.push_back(amount.clone().into_val(&self.env));
-
     let msg = SignaturePayload::V0(SignaturePayloadV0 {
         function: symbol!("approve"),
         contract: self.contract_id.clone(),
         network: self.env.ledger().network_passphrase(),
-        args,
+        args: (from_id, &nonce, spender, amount).into_val(&self.env),
     });
 
     let auth = Signature::Ed25519(Ed25519Signature {

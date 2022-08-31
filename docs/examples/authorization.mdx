@@ -130,6 +130,112 @@ impl AuthContract {
 
 Ref: https://github.com/stellar/soroban-examples/tree/main/authorization
 
+## Authorization semantics
+
+This section describes a specific implementation of the general principles
+discussed in [authorization](../learn/authorization.mdx).
+
+### Identities
+
+```rust
+#[derive(Clone)]
+#[contracttype]
+pub enum Identifier {
+    Contract(BytesN<32>),
+    Ed25519(BytesN<32>),
+    Account(BytesN<32>),
+}
+```
+
+The token contract understands three kinds of identities: contracts, Ed25519
+public keys, and Stellar accounts. For each kind of identity, there is a
+corresponding authorization mechanism.
+
+#### Contract authorization
+
+A contract identity provides authorization simply by being the invoker of the
+token contract.
+
+#### Ed25519 public key authorization
+
+```rust
+#[derive(Clone)]
+#[contracttype(lib = "soroban_sdk_auth")]
+pub struct Ed25519Signature {
+    pub public_key: BytesN<32>,
+    pub signature: BytesN<64>,
+}
+```
+
+An Ed25519 public key identity can provide authorization by signing an
+appropriate message with the associated private key. The authorization is
+just the 64-byte signature, represented as `BytesN<64>` in the contract.
+
+#### Stellar account authorization
+
+```rust
+#[derive(Clone)]
+#[contracttype(lib = "soroban_sdk_auth")]
+pub struct AccountSignatures {
+    pub account_id: BytesN<32>,
+    pub signatures: Vec<Ed25519Signature>,
+}
+```
+
+A Stellar account identity can provide authorization by signing an appropripate
+message with the private keys associated with the signers of that Stellar
+account. The total signing weight of the signers must exceed the medium
+threshold of that Stellar account. The authorization is a vector, where each
+element of the vector contains an `Ed25519Signature` corresponding to the
+authorization provided by an account signer.
+
+### Payloads
+
+```rust
+#[derive(Clone)]
+#[contracttype(lib = "soroban_sdk_auth")]
+pub struct SignaturePayloadV0 {
+    pub function: Symbol,
+    pub contract: BytesN<32>,
+    pub network: Bytes,
+    pub args: Vec<RawVal>,
+}
+
+#[derive(Clone)]
+#[contracttype(lib = "soroban_sdk_auth")]
+pub enum SignaturePayload {
+    V0(SignaturePayloadV0),
+}
+```
+
+Signatures are derived by signing the `SignaturePayload` enum, which has one
+value at the moment, `V0`. `SignaturePayloadV0` uses the `function`, `contract`,
+and `network` to determine where the signature can be used and the `args` to
+provide additional information specific to that usage.
+
+:::warning
+`SignaturePayloadV0` does not include any
+[replay prevention](#replay-prevention) by default. We recommend using
+nonce-based replay prevention and including the nonce in the `args`.
+:::
+
+### Replay prevention
+
+Whenever signatures are used to permit an operation, there is a risk of
+"replay". Replay occurs when a single signature is used to permit an operation
+multiple times. Such a situation can be catastrophic. For example, imagine that
+you sign a message permitting 1 dollar to be sent to an acquantaince. If there
+were no replay prevention, then a malicious acquantaince could use that message
+to repeatedly transfer 1 dollar from you to them. In the end, your bank account
+would be empty.
+
+Contracts can provide replay prevention by using a [nonce](https://en.wikipedia.org/wiki/Cryptographic_nonce).
+The payloads that are signed to provide authorization contain a nonce. The
+contract also stores a nonce (typically per identity). When checking signatures, the
+contract loads the nonce for the relevant identity. When an operation succeeds,
+the nonce stored in the contract is incremented. This makes it impossible to
+reuse a signature.
+
 ## How it Works
 
 ### Implement NonceAuth

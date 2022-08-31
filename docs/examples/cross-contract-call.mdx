@@ -242,11 +242,11 @@ Both `.wasm` files should be found in the `../target` directory after building
 both contracts:
 
 ```
-../../target/wasm32-unknown-unknown/release/soroban_cross_contract_a_contract.wasm
+target/wasm32-unknown-unknown/release/soroban_cross_contract_a_contract.wasm
 ```
 
 ```
-../../target/wasm32-unknown-unknown/release/soroban_cross_contract_b_contract.wasm
+target/wasm32-unknown-unknown/release/soroban_cross_contract_b_contract.wasm
 ```
 
 ## Run the Contract
@@ -256,13 +256,13 @@ contracts must be deployed.
 
 ```sh
 soroban-cli deploy \
-    --wasm ../target/wasm32-unknown-unknown/release/soroban_cross_contract_a_contract.wasm \
+    --wasm target/wasm32-unknown-unknown/release/soroban_cross_contract_a_contract.wasm \
     --id a
 ```
 
 ```sh
 soroban-cli deploy \
-    --wasm ../target/wasm32-unknown-unknown/release/soroban_cross_contract_b_contract.wasm \
+    --wasm target/wasm32-unknown-unknown/release/soroban_cross_contract_b_contract.wasm \
     --id b
 ```
 

@@ -1,9 +1,9 @@
 ---
 sidebar_position: 4
-title: Contract Events
+title: Events
 ---
 
-The [events example] demonstrates how to publish contract events. 
+The [events example] demonstrates how to publish events from a contract.
 
 [events example]: https://github.com/stellar/soroban-examples/tree/main/events
 
@@ -60,46 +60,56 @@ publishes the message (along with some data) as a contract event.
 
 [hello world example]: https://github.com/stellar/soroban-examples/tree/main/hello_world
 
-### Contract Event
+Contract events let smart contract developers emit information about what their
+contract is doing.
 
-Contract events are introduced in "[CAP-56: Smart Contract Events]", which lets smart contract developers to 
-emit information about what their contract is doing. 
-[CAP-56: Smart Contract Events]: https://github.com/stellar/stellar-protocol/blob/master/core/cap-0056.md
+Contracts can publish events using the `Events` object retrieved from the
+environment.
 
 ```rust
 let events = env.events();
 ```
-creates an `Events` object through the environment, which facilitates publishing of new contract events. 
 
-
-#### topics and data
+### Event Topics
 An event may contain up to four topics, each topic can be any type except:
 - `Vec`
 - `Map`
 - `Bytes` longer than 32 bytes
 - `[contracttype]`
 
-In addition, an event also contains a data object of any value or type including types defined by contracts using `[contracttype]`.
+
+Topics are conveniently defined using a tuple. In the sample code two topics of
+`Symbol` type are used.
 
 ```rust
 let topics = (symbol!("Hello"), to);
+```
+
+### Event Data
+An event also contains a data object of any value or type including types
+defined by contracts using `[contracttype]`. In the sample code the data is a
+small map where key `1` maps to value `2`.
+
+```rust
 let data = map![&env, (1u32, 2u32)];
 ```
-Here we specify two topics of `Symbol` type consist of our greeting message, and a data made of a small map. 
 
-:::info
+:::tip
 The topics don't have to be made of the same type. You can mix different types as long as the total topic count stays below the limit. 
 :::
 
-### Publish Event
+### Publishing
+Publishing an event is done by calling the `publish` function and giving it the
+topics and data.  The function returns nothing on success, and panics on
+failure. Possible failure reasons can include malformed inputs (e.g. topic count
+exceeds limit) and running over the resource budget (TBD). Once successfully
+published, the new event will be recorded by the [host environment].
+
 ```rust
 events.publish(topics, data);
 ```
-publishes a new contract event from previously defined `topics` and `data`. The function returns empty on success and traps on failure. 
-Possible failure reasons can include malformed inputs (e.g. topic count exceeds limit) and running over the resource budget (TBD).
-Once successfully published, the new event will stay in the [host environment]. 
 
-[host environment]: http://localhost:3000/docs/learn/high-level-overview#host-environment
+[host environment]: ../learn/high-level-overview#host-environment
 
 ## Build the Contract
 
@@ -135,9 +145,17 @@ null
 Event #0:
 {"ext":"v0","contractId":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],"type":"contract","body":{"v0":{
     "topics":[{"symbol":[72,101,108,108,111]},{"symbol":[102,114,105,101,110,100]}],
-    "data":{"object":{"map":[{"key":{"u32":1},"val":{"u32":2}}]}}}}}%  
+    "data":{"object":{"map":[{"key":{"u32":1},"val":{"u32":2}}]}}}}}
 ```
 
-The `null` just indicates the `hello` contract function returned empty (which means success). 
-It also retrieves one event `Event #0`, which is the contract event we previously published. 
-To examine it further, we see the event consists of two topics, each a `symbol` (displayed as bytes), and a data object consist of a `map`. 
+The `null` just indicates the `hello` contract function returned nothing (which
+means success).
+
+A single event `Event #0` is outputted, which is the contract event the contract
+published. The event contains the two topics, each a `symbol` (displayed as
+bytes), and the data object containing the `map`.
+
+:::info
+The soroban-cli is under active development and at this time outputs events in
+an unstable JSON format. The format is TBD.
+:::

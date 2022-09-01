@@ -8,7 +8,7 @@
     "start": "docusaurus start",
     "prebuild": "npm run build:openrpc",
     "build": "docusaurus build",
-    "build:openrpc": "cd openrpc && tsc",
+    "build:openrpc": "tsc -p openrpc && docusaurus gen-api-docs all",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",

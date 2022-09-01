@@ -30,9 +30,7 @@ const config = {
           "soroban-rpc": {
             specPath: "soroban-rpc/openrpc.yaml", // Path to designated spec file
             outputDir: "docs/api", // Output directory for generated .mdx docs
-            sidebarOptions: {
-              groupPathsBy: "tag",
-            },
+            sidebarOptions: {},
           },
         }
       },

@@ -1,4 +1,4 @@
-import lodashEscape from "lodash/escape";
+import escape from "lodash/escape";
 
 export type Children = string | undefined | (string | string[] | undefined)[];
 
@@ -36,14 +36,15 @@ export function render(children: Children): string {
   return children ?? "";
 }
 
-export function escape() {
-  return function (text: string, render: (text: string) => string) {
-    return lodashEscape(render(text));
-  };
+export function codeify(item: any) {
+  return escape(
+    JSON.stringify(item, null, 2)
+  )
+    .replaceAll('{', '&#123;')
+    .replaceAll('}', '&#125;')
+    .replaceAll('\n', '<br />');
 }
 
-export function stringify() {
-  return function (text: string, render: (text: string) => string) {
-    return JSON.stringify(render(text));
-  };
+export function paramify(item: any) {
+  return `{${JSON.stringify(item)}}`
 }

@@ -20,7 +20,8 @@ import {
 // import { createTermsOfService } from "./createTermsOfService";
 // import { createVersionBadge } from "./createVersionBadge";
 import { render } from "mustache";
-import { stringify } from "./utils";
+import escape from "lodash/escape";
+import { codeify, paramify } from "./utils";
 
 // interface Props {
 //   title: string;
@@ -59,7 +60,7 @@ import TabItem from "@theme/TabItem";
 ## {{method.name}}
 
 {{#method.deprecated}}
-This method has been deprecated and may be removed in future versions of the API.
+<b>This method has been deprecated and may be removed in future versions of the API.</b>
 {{/method.deprecated}}
 
 {{description}}{{^description}}{{method.summary}}{{/description}}
@@ -75,6 +76,8 @@ No params
 
 ### Result
 
+<!-- TODO: Improve results rendering -->
+
 {{#result}}
 {{{.}}}
 {{/result}}
@@ -83,6 +86,8 @@ No result
 {{/result}}
 
 ### Errors
+
+<!-- TODO: Improve error rendering -->
 
 {{#method.errors}}
 {{code}}
@@ -98,11 +103,11 @@ No result
 
 ##### Params
 
-<ResponseSamples responseExample="{{params}}" />
+<ResponseSamples responseExample={<>{{{params}}}</>} />
 
 ##### Result
 
-<ResponseSamples responseExample="{{result}}" />
+<ResponseSamples responseExample={<>{{{result}}}</>} />
 
 {{/examples}}
 `;
@@ -145,15 +150,14 @@ export function createMethodPageMD({
     infoPath,
     json,
     method,
-    params: method.params.map(p => "{"+JSON.stringify(p)+"}"),
+    params: method.params.map(paramify),
     examples: method.examples?.map(e => 'name' in e && ({
       name: e.name,
       description: e.description,
-      params: JSON.stringify(e.params.map(p => 'value' in p && p.value), null, 2),
-      result: 'value' in e.result && JSON.stringify(e.result.value, null, 2),
+      params: codeify(e.params.map(p => 'value' in p && p.value)),
+      result: 'value' in e.result && codeify(e.result.value),
     })).filter(e => !!e),
     result: JSON.stringify(JSON.stringify(method.result, null, 2)),
-    stringify,
     title,
   });
 }
@@ -210,13 +214,13 @@ export function createInfoPageMD({
 
 const defaultTagPageTemplate = `---
 id: {{{id}}}
-title: {{{description}}}
+title: {{{title}}}
 description: {{{description}}}
 ---
 
-<!--
-createDescription(description)
--->
+# {{title}}
+
+{{#description}}{{.}}{{/description}}
 
 \`\`\`mdx-code-block
 import DocCardList from '@theme/DocCardList';
@@ -227,7 +231,7 @@ import {useCurrentSidebarCategory} from '@docusaurus/theme-common';
 `;
 
 
-export function createTagPageMD({ tag: { id, description } }: TagPageMetadata, templateFile?: string) {
+export function createTagPageMD({ id, description }: TagPageMetadata, templateFile?: string) {
   const template = templateFile ? fs.readFileSync(templateFile).toString() : defaultTagPageTemplate;
   return render(template, {
     id,

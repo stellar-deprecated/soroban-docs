@@ -188,6 +188,14 @@ methods:
 
 components:
   contentDescriptors: {}
+  tags:
+    account:
+      name: Account
+    data:
+      name: Data
+    transaction:
+      name: Transaction
+
   schemas:
 
     Account:

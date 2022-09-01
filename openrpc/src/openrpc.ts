@@ -103,6 +103,8 @@ function createItems(
   const infoId = kebabCase(data.info.title);
 
   const allTags: TagObject[] = Object.values(data.components?.tags ?? {})
+  console.debug({allTags});
+  console.debug({categoryLinkSource: sidebarOptions?.categoryLinkSource});
   if (sidebarOptions?.categoryLinkSource === "tag") {
     // Only create an tag pages if categoryLinkSource set to tag.
     for (let tag of allTags) {
@@ -133,64 +135,34 @@ function createItems(
     items.push(infoPage);
   }
 
-  for (let [method, methodObject] of Object.entries(data.methods)) {
-    if ('$ref' in methodObject) {
-      // It's a reference
-      continue;
-    }
+  for (let method of Object.values(data.methods)) {
+    method = resolveRef(method, data);
     let {
       name,
       description,
       summary,
       servers,
-      tags,
-      // paramStructure,
-      // params,
-      // result,
-      // errors,
-      // links,
-      // examples,
-      // deprecated,
-      // externalDocs,
-      // ...rest,
-    } = methodObject;
-    const title = summary ?? "Missing summary";
-    description = description ?? summary ?? "";
+    } = method;
 
-    // const id = kebabCase($ref ?? name);
     const id = kebabCase(name);
     servers = servers ?? data.servers;
-
-    for (let tag of tags ?? []) {
-      if ('$ref' in tag) {
-        // Assuming refs will have already been captured in the components above.
-        continue;
-      }
-      processTagObject(tag, allTags);
-    }
-    // TODO: examples
-    // let jsonRequestBodyExample;
-    // const body = operationObject.requestBody?.content?.["application/json"];
-    // if (body?.schema) {
-    //   jsonRequestBodyExample = sampleRequestFromSchema(body.schema);
-    // }
 
     const methodPage: PartialPage<MethodPageMetadata> = {
       type: "method",
       id,
       infoId: infoId ?? "",
       unversionedId: id,
-      title,
+      title: method.name,
       description: description ?? "",
       frontMatter: {},
       method: {
-        ...methodObject,
-        summary: summary ?? description ?? "",
-        description: description ?? summary ?? "",
-        tags,
-        method,
-        servers,
+        ...method,
+        description,
         info: data.info,
+        result: resolveRef(method.result, data),
+        servers,
+        summary: summary ?? description ?? "",
+        tags: method.tags?.map((tag) => resolveRef(tag, data)),
       },
     };
 
@@ -236,4 +208,20 @@ function processTagObject(tag: TagObject, tags: TagObject[] = []): PartialPage<T
       ...tag,
     },
   };
+}
+
+function resolveRef<T>(obj: T | {$ref: string}, doc: metaschema.OpenrpcDocument): T {
+  if (!('$ref' in obj)) {
+    return obj;
+  }
+  let ref = obj['$ref'];
+  let ptr = doc;
+  for (const part in ref.slice(2).split('/')) {
+    if (part in ptr) {
+      ptr = ptr[part];
+    } else {
+      throw new Error(`Could not resolve reference ${ref}`);
+    }
+  }
+  return ptr as T;
 }

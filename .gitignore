@@ -3,6 +3,8 @@
 
 # Production
 /build
+/openrpc/lib
+/docs/api
 
 # Generated files
 .docusaurus

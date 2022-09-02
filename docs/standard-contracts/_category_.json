@@ -1,6 +1,6 @@
 {
-  "position": 5,
-  "label": "Built-in Contracts",
+  "position": 3,
+  "label": "Standard Contracts",
   "link": {
     "type": "generated-index"
   }

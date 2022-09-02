@@ -3,6 +3,8 @@ sidebar_position: 7
 title: Authorization
 ---
 
+The authorization model of Soroban is closely related to its [Standard Token Contract](../standard-contracts/token-contract.mdx); the two are best understood together.
+
 # Authorization
 
 Authorization is the process of judging which operations "should" or "should not" be allowed to occur; it is about judging _permission_.
@@ -31,12 +33,12 @@ Instead, we focus on facilities provided _to_ contracts to _support them_ in mak
 
 Several mechanisms are provided to each contract to make authorization decisions. The mechanisms fall into two categories:
 
-  - Common data structures and functions in the SDK.
+  - Common data structures and functions in the SDK and "standard asset" contract.
   - Host functions that assist in validating aspects of these data structures.
 
 ### Common data structures and functions
 
-The common data structures involved in authorization model key concepts used in authorization judgments. They are provided by the SDK, and form a base set of functionality that should be sufficient for expressing many authorization patterns in other contracts.
+The common data structures involved in authorization model key concepts used in authorization judgments. They are provided (and used) by the "standard asset" contract, and form a base set of functionality that should be sufficient for expressing many authorization patterns in other contracts, as well as interacting with instances of the standard asset.
 
 These concepts are:
 
@@ -44,19 +46,13 @@ These concepts are:
     - **Single-key users**, represented by a single Ed25519 public key
     - **Account users**, represented by a reference to an existing account on the Stellar network (which stores, in an account ledger entry, a list of weighted authorized signing keys)
     - **Contracts**, represented by a contract ID (not a public key)
-  - **Payloads**: these encode a request from an identity to perform
-    some action, such that the payload can have an authorization claim made
-    about it, and an authorization judgment applied to it. Payloads
-    include the name of the contract function being invoked, the contract ID,
-    the network passphrase, and a set of general parameters to that action. The
-    set of general parameters should include the Identifier on the Signature, as
-    well as the nonce.
-  - **Authorizations**: these are statements made _about payloads_. Each authorization encodes the claim that the action described by the payload is authorized to occur, on the authority of some identity. Authorizations may have three forms, corresponding to the three forms of identity: single-key, account, and contract.
+  - **Messages**: these encode a request from an identity to perform some action, such that the message can have an authorization claim made about it, and an authorization judgment applied to it. Messages include a nonce, a "domain" code number indicating the action to take, and a set of general parameters to that action.
+  - **Authorizations**: these are statements made _about messages_. Each authorization encodes the claim that the action described by the message is authorized to occur, on the authority of some identity. Authorizations may have three forms, corresponding to the three forms of identity: single-key, account, and contract.
 
-Contracts decide when a payload is authorized with two separate steps:
+Contracts decide when a message is authorized with two separate steps:
 
   - Validate the provided authorization, by some mixture of checking signatures or examining the invocation context.
-  - Evaluate the operation requested by the payload to see if it fits the contract's unique rules for that operation.
+  - Evaluate the operation requested by the message to see if it fits the contract's unique rules for that operation.
 
 The first step often requires host-function support. The second step is always contract-specific, and cannot be provided by the platform in general.
 

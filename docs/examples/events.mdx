@@ -5,17 +5,17 @@ title: Events
 
 The [events example] demonstrates how to publish events from a contract.
 
-[events example]: https://github.com/stellar/soroban-examples/tree/main/events
+[events example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/events
 
 ## Run the Example
 
 First go through the [Setup] process to get your development environment
-configured, then clone the examples repository:
+configured, then clone the `v0.0.4` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
 ```
-git clone https://github.com/stellar/soroban-examples
+git clone -b v0.0.4 https://github.com/stellar/soroban-examples
 ```
 
 To run the tests for the example, navigate to the `events` directory, and use `cargo test`.
@@ -50,7 +50,7 @@ impl EventsContract {
     }
 }
 ```
-Ref: https://github.com/stellar/soroban-examples/tree/main/events
+Ref: https://github.com/stellar/soroban-examples/tree/v0.0.4/events
 
 ## How it Works
 
@@ -58,7 +58,7 @@ This example contract is similar to the [hello world example]. It also contains 
 contract function named `hello`. However, instead of returning the greeting message to the caller, it 
 publishes the message (along with some data) as a contract event.
 
-[hello world example]: https://github.com/stellar/soroban-examples/tree/main/hello_world
+[hello world example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/hello_world
 
 Contract events let smart contract developers emit information about what their
 contract is doing.

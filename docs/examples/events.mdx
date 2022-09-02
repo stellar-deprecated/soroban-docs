@@ -1,0 +1,161 @@
+---
+sidebar_position: 4
+title: Events
+---
+
+The [events example] demonstrates how to publish events from a contract.
+
+[events example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/events
+
+## Run the Example
+
+First go through the [Setup] process to get your development environment
+configured, then clone the `v0.0.4` tag of `soroban-examples` repository:
+
+[Setup]: ../getting-started/setup.mdx
+
+```
+git clone -b v0.0.4 https://github.com/stellar/soroban-examples
+```
+
+To run the tests for the example, navigate to the `events` directory, and use `cargo test`.
+
+```
+cd events
+cargo test
+```
+
+You should see the output:
+
+```
+running 1 test
+test test::test ... ok
+```
+
+## Code
+
+```rust title="events/src/lib.rs"
+#![no_std]
+use soroban_sdk::{contractimpl, map, symbol, Env, Symbol};
+
+pub struct EventsContract;
+
+#[contractimpl]
+impl EventsContract {
+    pub fn hello(env: Env, to: Symbol) -> () {
+        let events = env.events();
+        let topics = (symbol!("Hello"), to);
+        let data = map![&env, (1u32, 2u32)];
+        events.publish(topics, data);
+    }
+}
+```
+Ref: https://github.com/stellar/soroban-examples/tree/v0.0.4/events
+
+## How it Works
+
+This example contract is similar to the [hello world example]. It also contains one 
+contract function named `hello`. However, instead of returning the greeting message to the caller, it 
+publishes the message (along with some data) as a contract event.
+
+[hello world example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/hello_world
+
+Contract events let smart contract developers emit information about what their
+contract is doing.
+
+Contracts can publish events using the `Events` object retrieved from the
+environment.
+
+```rust
+let events = env.events();
+```
+
+### Event Topics
+An event may contain up to four topics, each topic can be any type except:
+- `Vec`
+- `Map`
+- `Bytes` longer than 32 bytes
+- `[contracttype]`
+
+
+Topics are conveniently defined using a tuple. In the sample code two topics of
+`Symbol` type are used.
+
+```rust
+let topics = (symbol!("Hello"), to);
+```
+
+### Event Data
+An event also contains a data object of any value or type including types
+defined by contracts using `[contracttype]`. In the sample code the data is a
+small map where key `1` maps to value `2`.
+
+```rust
+let data = map![&env, (1u32, 2u32)];
+```
+
+:::tip
+The topics don't have to be made of the same type. You can mix different types as long as the total topic count stays below the limit. 
+:::
+
+### Publishing
+Publishing an event is done by calling the `publish` function and giving it the
+topics and data.  The function returns nothing on success, and panics on
+failure. Possible failure reasons can include malformed inputs (e.g. topic count
+exceeds limit) and running over the resource budget (TBD). Once successfully
+published, the new event will be recorded by the [host environment].
+
+```rust
+events.publish(topics, data);
+```
+
+[host environment]: ../learn/high-level-overview#host-environment
+
+## Build the Contract
+
+To build the contract, use the `cargo build` command.
+
+```sh
+cargo build --target wasm32-unknown-unknown --release
+```
+
+A `.wasm` file should be outputted in the `../target` directory:
+
+```
+../target/wasm32-unknown-unknown/release/soroban_events_contract.wasm
+```
+
+## Run the Contract
+
+If you have [`soroban-cli`] installed, you can invoke contract functions in the
+using it.
+
+```sh
+soroban-cli invoke \
+    --wasm ../target/wasm32-unknown-unknown/release/soroban_events_contract.wasm \
+    --id 1 \
+    --fn hello \
+    --arg friend
+```
+
+The following output should occur using the code above.
+
+```json
+null
+Event #0:
+{"ext":"v0","contractId":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],"type":"contract","body":{"v0":{
+    "topics":[{"symbol":[72,101,108,108,111]},{"symbol":[102,114,105,101,110,100]}],
+    "data":{"object":{"map":[{"key":{"u32":1},"val":{"u32":2}}]}}}}}
+```
+
+The `null` just indicates the `hello` contract function returned nothing (which
+means success).
+
+A single event `Event #0` is outputted, which is the contract event the contract
+published. The event contains the two topics, each a `symbol` (displayed as
+bytes), and the data object containing the `map`.
+
+:::info
+The soroban-cli is under active development and at this time outputs events in
+an unstable JSON format. The format is TBD.
+:::

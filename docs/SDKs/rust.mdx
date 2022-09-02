@@ -29,5 +29,8 @@ Add the following sections to the `Cargo.toml` to import the `soroban-sdk`.
 testutils = ["soroban-sdk/testutils"]
 
 [dependencies]
-soroban-sdk = "0.0.3"
+soroban-sdk = "0.0.4"
+
+[dev_dependencies]
+soroban-sdk = { version = "0.0.4", features = ["soroban-sdk/testutils"] }
 ```

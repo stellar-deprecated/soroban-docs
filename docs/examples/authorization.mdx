@@ -36,6 +36,21 @@ test test::test ... ok
 test test::bad_data - should panic ... ok
 ```
 
+## Dependencies
+
+The authorization example uses the Soroban auth SDK, and has the following
+Soroban dependencies in its Cargo.toml file.
+
+```toml title="authorization/src/Cargo.toml
+[dependencies]
+soroban-sdk = "0.0.4"
+soroban-auth = "0.0.4"
+
+[dev_dependencies]
+soroban-sdk = { version = "0.0.4", features = ["testutils"] }
+soroban-auth = { version = "0.0.4", features = ["testutils"] }
+```
+
 ## Code
 
 ```rust title="authorization/src/lib.rs"

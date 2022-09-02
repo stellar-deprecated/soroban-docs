@@ -7,17 +7,17 @@ The [custom types example] demonstrates how to define your own data structures
 that can be stored on the ledger, or used as inputs and outputs to contract
 invocations.
 
-[custom types example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/custom_types
+[custom types example]: https://github.com/stellar/soroban-examples/tree/main/custom_types
 
 ## Run the Example
 
 First go through the [Setup] process to get your development environment
-configured, then clone the `v0.0.4` tag of `soroban-examples` repository:
+configured, then clone the examples repository:
 
 [Setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.0.4 https://github.com/stellar/soroban-examples
+git clone https://github.com/stellar/soroban-examples
 ```
 
 To run the tests for the example, navigate to the `custom_types` directory, and use `cargo test`.
@@ -53,7 +53,7 @@ pub struct FirstLast {
 
 pub struct CustomTypesContract;
 
-const NAME: Symbol = symbol!("NAME");
+const NAME: Symbol = Symbol::from_str("NAME");
 
 #[contractimpl]
 impl CustomTypesContract {
@@ -70,7 +70,7 @@ impl CustomTypesContract {
 }
 ```
 
-Ref: https://github.com/stellar/soroban-examples/tree/v0.0.4/custom_types
+Ref: https://github.com/stellar/soroban-examples/tree/main/custom_types
 
 ## How it Works
 
@@ -123,9 +123,9 @@ retrieved later.
 ```rust
 pub struct CustomTypesContract;
 
-const NAME: Symbol = symbol!("NAME");
+const NAME: Symbol = Symbol::from_str("NAME");
 
-#[contractimpl]
+#[contractimpl(export_if = "export")]
 impl CustomTypesContract {
     pub fn store(env: Env, name: Name) {
         env.contract_data().set(NAME, name);
@@ -148,22 +148,25 @@ Open the `custom_types/src/test.rs` file to follow along.
 #[test]
 fn test() {
     let env = Env::default();
-    let contract_id = BytesN::from_array(&env, &[0; 32]);
+    let contract_id = FixedBinary::from_array(&env, [0; 32]);
     env.register_contract(&contract_id, CustomTypesContract);
-    let client = CustomTypesContractClient::new(&env, &contract_id);
 
-    assert_eq!(client.retrieve(), Name::None);
+    assert_eq!(retrieve::invoke(&env, &contract_id), Name::None);
 
-    client.store(&Name::FirstLast(FirstLast {
-        first: symbol!("first"),
-        last: symbol!("last"),
-    }));
+    store::invoke(
+        &env,
+        &contract_id,
+        &Name::FirstLast(FirstLast {
+            first: Symbol::from_str("first"),
+            last: Symbol::from_str("last"),
+        }),
+    );
 
     assert_eq!(
-        client.retrieve(),
+        retrieve::invoke(&env, &contract_id),
         Name::FirstLast(FirstLast {
-            first: symbol!("first"),
-            last: symbol!("last"),
+            first: Symbol::from_str("first"),
+            last: Symbol::from_str("last"),
         }),
     );
 }
@@ -180,35 +183,33 @@ Contracts must be registered with the environment with a contract ID, which is a
 32-byte value.
 
 ```rust
-let contract_id = BytesN::from_array(&env, [0; 32]);
-env.register_contract(&contract_id, CustomTypesContract);
+let contract_id = FixedBinary::from_array(&env, [0; 32]);
+env.register_contract(&contract_id, HelloContract);
 ```
 
 All public functions within an `impl` block that is annotated with the
-`#[contractimpl]` attribute have a corresponding function generated in a
-generated client type. The client type will be named the same as the contract
-type with `Client` appended. For example, in our contract the contract type is
-`CustomTypesContract`, and the client is named `CustomTypesContractClient`.
-
-```rust
-let client = CustomTypesContractClient::new(&env, &contract_id);
-```
+`#[contractimpl]` attribute have an `invoke` function generated, that can be
+used to invoke the contract function within the environment.
 
 The test invokes the `retrieve` function on the registered contract, and asserts
 that it returns `Name::None`.
 
 ```rust
-assert_eq!(client.retrieve(), Name::None);
+assert_eq!(retrieve::invoke(&env, &contract_id), Name::None);
 ```
 
 The test then invokes the `store` function on the registered contract, to change
 the name that is stored.
 
 ```rust
-client.store(&Name::FirstLast(FirstLast {
-    first: symbol!("first"),
-    last: symbol!("last"),
-}));
+store::invoke(
+    &env,
+    &contract_id,
+    &Name::FirstLast(FirstLast {
+        first: Symbol::from_str("first"),
+        last: Symbol::from_str("last"),
+    }),
+);
 ```
 
 The test invokes the `retrieve` function again, to assert that it returns the
@@ -216,10 +217,10 @@ name that was previously stored.
 
 ```rust
 assert_eq!(
-    client.retrieve(),
+    retrieve::invoke(&env, &contract_id),
     Name::FirstLast(FirstLast {
-        first: symbol!("first"),
-        last: symbol!("last"),
+        first: Symbol::from_str("first"),
+        last: Symbol::from_str("last"),
     }),
 );
 ```

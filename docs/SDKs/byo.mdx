@@ -1,6 +1,6 @@
 ---
 sidebar_position: 3
-title: Build Your Own
+title: Build Your Own SDK
 ---
 
 Soroban currently has one SDK for writing contracts in Rust, which can be found
@@ -21,19 +21,19 @@ guarantee exists at this time.
 
 ## Functionality
 
-1. Value conversions
+### Value Conversions
 
    - [RawVal] encode/decode
    - [Object] encode/decode
    - [Symbol] encode/decode
 
-3. Host functions
+### Host Functions
 
    The host functions defined in [env.rs] are functions callable from within the
    WASM Guest environment. These need to be available to contracts to call, in
    some form, ideally wrapped so that contracts have a nicer interface.
 
-5. SDK Types
+### SDK Types
 
    All the types in [soroban-sdk](https://docs.rs/soroban-sdk) should be
    supported. Notably:
@@ -42,7 +42,7 @@ guarantee exists at this time.
    - [Bytes]
    - [BigInt]
 
-1. User Defined Types
+### User Defined Types
 
    Contracts should be able to create user defined types, such as structs or
    unions, and have them be transmitted to the host for storing and transmitted
@@ -59,13 +59,13 @@ guarantee exists at this time.
    and zero or one additional elements representing a value stored with the
    variant.
 
-7. Meta generation
+### Meta Generation
 
    Contracts must contain a WASM custom section with name `contractenvmetav0`
    and containing a serialized [`SCEnvMetaEntry`].  The interface version stored
    within should match the version of the host functions supported.
 
-9. Contract spec generation
+### Contract Spec Generation
 
    Contracts should contain a WASM custom section with name `contractspecv0` and
    containing a serialized stream of [`SCSpecEntry`].  There should be a

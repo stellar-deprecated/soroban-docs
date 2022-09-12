@@ -64,18 +64,14 @@ guarantee exists at this time.
 7. Meta generation
 
    Contracts must contain a WASM custom section with name `contractenvmetav0`
-   and containing a serialized
-   [`SCEnvMetaEntry`](https://github.com/stellar/rs-stellar-xdr/blob/main/xdr/next/Stellar-contract-env-meta.x).
-   The interface version stored within should match the version of the host
-   functions supported.
+   and containing a serialized [`SCEnvMetaEntry`].  The interface version stored
+   within should match the version of the host functions supported.
 
 9. Contract spec generation
 
    Contracts should contain a WASM custom section with name `contractspecv0` and
-   containing a serialized stream of
-   [`SCSpecEntry`](https://github.com/stellar/rs-stellar-xdr/blob/main/xdr/next/Stellar-contract-spec.x).
-   There should be a `SCSpecEntry` for every function, struct, and union
-   exported by the contract.
+   containing a serialized stream of [`SCSpecEntry`].  There should be a
+   `SCSpecEntry` for every function, struct, and union exported by the contract.
 
 ## Testing
 

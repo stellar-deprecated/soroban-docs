@@ -9,9 +9,10 @@ The [events example] demonstrates how to publish events from a contract.
 
 ## Run the Example
 
-First go through the [Setup] process to get your development environment configured, then clone the `v0.0.4` tag of `soroban-examples` repository:
+First go through the [Setup] process to get your development environment
+configured, then clone the `v0.0.4` tag of `soroban-examples` repository:
 
-[setup]: ../getting-started/setup.mdx
+[Setup]: ../getting-started/setup.mdx
 
 ```
 git clone -b v0.0.4 https://github.com/stellar/soroban-examples
@@ -49,51 +50,60 @@ impl EventsContract {
     }
 }
 ```
-
 Ref: https://github.com/stellar/soroban-examples/tree/v0.0.4/events
 
 ## How it Works
 
-This example contract is similar to the [hello world example]. It also contains one contract function named `hello`. However, instead of returning the greeting message to the caller, it publishes the message (along with some data) as a contract event.
+This example contract is similar to the [hello world example]. It also contains one 
+contract function named `hello`. However, instead of returning the greeting message to the caller, it 
+publishes the message (along with some data) as a contract event.
 
 [hello world example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/hello_world
 
-Contract events let smart contract developers emit information about what their contract is doing.
+Contract events let smart contract developers emit information about what their
+contract is doing.
 
-Contracts can publish events using the `Events` object retrieved from the environment.
+Contracts can publish events using the `Events` object retrieved from the
+environment.
 
 ```rust
 let events = env.events();
 ```
 
 ### Event Topics
-
 An event may contain up to four topics, each topic can be any type except:
-
 - `Vec`
 - `Map`
 - `Bytes` longer than 32 bytes
 - `[contracttype]`
 
-Topics are conveniently defined using a tuple. In the sample code two topics of `Symbol` type are used.
+
+Topics are conveniently defined using a tuple. In the sample code two topics of
+`Symbol` type are used.
 
 ```rust
 let topics = (symbol!("Hello"), to);
 ```
 
 ### Event Data
-
-An event also contains a data object of any value or type including types defined by contracts using `[contracttype]`. In the sample code the data is a small map where key `1` maps to value `2`.
+An event also contains a data object of any value or type including types
+defined by contracts using `[contracttype]`. In the sample code the data is a
+small map where key `1` maps to value `2`.
 
 ```rust
 let data = map![&env, (1u32, 2u32)];
 ```
 
-:::tip The topics don't have to be made of the same type. You can mix different types as long as the total topic count stays below the limit. :::
+:::tip
+The topics don't have to be made of the same type. You can mix different types as long as the total topic count stays below the limit. 
+:::
 
 ### Publishing
-
-Publishing an event is done by calling the `publish` function and giving it the topics and data. The function returns nothing on success, and panics on failure. Possible failure reasons can include malformed inputs (e.g. topic count exceeds limit) and running over the resource budget (TBD). Once successfully published, the new event will be recorded by the [host environment].
+Publishing an event is done by calling the `publish` function and giving it the
+topics and data.  The function returns nothing on success, and panics on
+failure. Possible failure reasons can include malformed inputs (e.g. topic count
+exceeds limit) and running over the resource budget (TBD). Once successfully
+published, the new event will be recorded by the [host environment].
 
 ```rust
 events.publish(topics, data);
@@ -117,7 +127,8 @@ A `.wasm` file should be outputted in the `../target` directory:
 
 ## Run the Contract
 
-If you have [`soroban-cli`] installed, you can invoke contract functions in the using it.
+If you have [`soroban-cli`] installed, you can invoke contract functions in the
+using it.
 
 ```sh
 soroban-cli invoke \
@@ -137,8 +148,14 @@ Event #0:
     "data":{"object":{"map":[{"key":{"u32":1},"val":{"u32":2}}]}}}}}
 ```
 
-The `null` just indicates the `hello` contract function returned nothing (which means success).
+The `null` just indicates the `hello` contract function returned nothing (which
+means success).
 
-A single event `Event #0` is outputted, which is the contract event the contract published. The event contains the two topics, each a `symbol` (displayed as bytes), and the data object containing the `map`.
+A single event `Event #0` is outputted, which is the contract event the contract
+published. The event contains the two topics, each a `symbol` (displayed as
+bytes), and the data object containing the `map`.
 
-:::info The soroban-cli is under active development and at this time outputs events in an unstable JSON format. The format is TBD. :::
+:::info
+The soroban-cli is under active development and at this time outputs events in
+an unstable JSON format. The format is TBD.
+:::

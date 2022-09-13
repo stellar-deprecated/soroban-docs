@@ -3,15 +3,19 @@ sidebar_position: 6
 title: Authorization
 ---
 
-The [authorization example] demonstrates how to write a contract function that verifies an `Identifiers` signature before proceeding with the rest of the function. In this example, data is stored under an `Identifier` after authorization has been verified.
+The [authorization example] demonstrates how to write a contract function that
+verifies an `Identifiers` signature before proceeding with the rest of the
+function. In this example, data is stored under an `Identifier` after
+authorization has been verified. 
 
 [authorization example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/authorization
 
 ## Run the Example
 
-First go through the [Setup] process to get your development environment configured, then clone the `v0.0.4` tag of `soroban-examples` repository:
+First go through the [Setup] process to get your development environment
+configured, then clone the `v0.0.4` tag of `soroban-examples` repository:
 
-[setup]: ../getting-started/setup.mdx
+[Setup]: ../getting-started/setup.mdx
 
 ```
 git clone -b v0.0.4 https://github.com/stellar/soroban-examples
@@ -34,7 +38,8 @@ test test::bad_data - should panic ... ok
 
 ## Dependencies
 
-The authorization example uses the Soroban auth SDK, and has the following Soroban dependencies in its Cargo.toml file.
+The authorization example uses the Soroban auth SDK, and has the following
+Soroban dependencies in its Cargo.toml file.
 
 ```toml title="authorization/src/Cargo.toml
 [dependencies]
@@ -139,7 +144,8 @@ Ref: https://github.com/stellar/soroban-examples/tree/v0.0.4/authorization
 
 ## Authorization semantics
 
-This section describes a specific implementation of the general principles discussed in [authorization](../learn/authorization.mdx).
+This section describes a specific implementation of the general principles
+discussed in [authorization](../learn/authorization.mdx).
 
 ### Identities
 
@@ -153,11 +159,14 @@ pub enum Identifier {
 }
 ```
 
-The token contract understands three kinds of identities: contracts, Ed25519 public keys, and Stellar accounts. For each kind of identity, there is a corresponding authorization mechanism.
+The token contract understands three kinds of identities: contracts, Ed25519
+public keys, and Stellar accounts. For each kind of identity, there is a
+corresponding authorization mechanism.
 
 #### Contract authorization
 
-A contract identity provides authorization simply by being the invoker of the token contract.
+A contract identity provides authorization simply by being the invoker of the
+token contract.
 
 #### Ed25519 public key authorization
 
@@ -170,7 +179,9 @@ pub struct Ed25519Signature {
 }
 ```
 
-An Ed25519 public key identity can provide authorization by signing an appropriate message with the associated private key. The authorization is just the 64-byte signature, represented as `BytesN<64>` in the contract.
+An Ed25519 public key identity can provide authorization by signing an
+appropriate message with the associated private key. The authorization is
+just the 64-byte signature, represented as `BytesN<64>` in the contract.
 
 #### Stellar account authorization
 
@@ -183,7 +194,12 @@ pub struct AccountSignatures {
 }
 ```
 
-A Stellar account identity can provide authorization by signing an appropriate message with the private keys associated with the signers of that Stellar account. The total signing weight of the signers must exceed the medium threshold of that Stellar account. The authorization is a vector, where each element of the vector contains an `Ed25519Signature` corresponding to the authorization provided by an account signer.
+A Stellar account identity can provide authorization by signing an appropriate
+message with the private keys associated with the signers of that Stellar
+account. The total signing weight of the signers must exceed the medium
+threshold of that Stellar account. The authorization is a vector, where each
+element of the vector contains an `Ed25519Signature` corresponding to the
+authorization provided by an account signer.
 
 ### Payloads
 
@@ -204,21 +220,42 @@ pub enum SignaturePayload {
 }
 ```
 
-Signatures are derived by signing the `SignaturePayload` enum, which has one value at the moment, `V0`. `SignaturePayloadV0` uses the `function`, `contract`, and `network` to determine where the signature can be used and the `args` to provide additional information specific to that usage.
+Signatures are derived by signing the `SignaturePayload` enum, which has one
+value at the moment, `V0`. `SignaturePayloadV0` uses the `function`, `contract`,
+and `network` to determine where the signature can be used and the `args` to
+provide additional information specific to that usage.
 
-:::warning `SignaturePayloadV0` does not include any [replay prevention](#replay-prevention) by default. We recommend using nonce-based replay prevention and including the nonce in the `args`. :::
+:::warning
+`SignaturePayloadV0` does not include any
+[replay prevention](#replay-prevention) by default. We recommend using
+nonce-based replay prevention and including the nonce in the `args`.
+:::
 
 ### Replay prevention
 
-Whenever signatures are used to permit an operation, there is a risk of "replay". Replay occurs when a single signature is used to permit an operation multiple times. Such a situation can be catastrophic. For example, imagine that you sign a message permitting 1 dollar to be sent to an acquantaince. If there were no replay prevention, then a malicious acquantaince could use that message to repeatedly transfer 1 dollar from you to them. In the end, your bank account would be empty.
+Whenever signatures are used to permit an operation, there is a risk of
+"replay". Replay occurs when a single signature is used to permit an operation
+multiple times. Such a situation can be catastrophic. For example, imagine that
+you sign a message permitting 1 dollar to be sent to an acquantaince. If there
+were no replay prevention, then a malicious acquantaince could use that message
+to repeatedly transfer 1 dollar from you to them. In the end, your bank account
+would be empty.
 
-Contracts can provide replay prevention by using a [nonce](https://en.wikipedia.org/wiki/Cryptographic_nonce). The payloads that are signed to provide authorization contain a nonce. The contract also stores a nonce (typically per identity). When checking signatures, the contract loads the nonce for the relevant identity. When an operation succeeds, the nonce stored in the contract is incremented. This makes it impossible to reuse a signature.
+Contracts can provide replay prevention by using a [nonce](https://en.wikipedia.org/wiki/Cryptographic_nonce).
+The payloads that are signed to provide authorization contain a nonce. The
+contract also stores a nonce (typically per identity). When checking signatures, the
+contract loads the nonce for the relevant identity. When an operation succeeds,
+the nonce stored in the contract is incremented. This makes it impossible to
+reuse a signature.
 
 ## How it Works
 
 ### Implement NonceAuth
-
-`NonceAuth` is a trait in the soroban_sdk_auth crate that manages the nonce and wraps the `Signature` that the contract will try to verifiy. A struct that implements `NonceAuth` is expected by the `check_auth` sdk function. You can see below that we have a `DataKey` for the nonce tied to an `Identifier`, and this `DataKey` is used to manage the nonces for this contract.
+`NonceAuth` is a trait in the soroban_sdk_auth crate that manages the nonce and
+wraps the `Signature` that the contract will try to verifiy. A struct that
+implements `NonceAuth` is expected by the `check_auth` sdk function. You can see
+below that we have a `DataKey` for the nonce tied to an `Identifier`, and this
+`DataKey` is used to manage the nonces for this contract.
 
 ```rust
 #[derive(Clone)]
@@ -258,15 +295,17 @@ impl NonceAuth for NonceForSignature {
 ```
 
 ### Check authorization in contract function
+The `save_num` function stores a number in a `DataKey::SavedNum` tied to an `Identifier`
+with it's authorization. 
 
-The `save_num` function stores a number in a `DataKey::SavedNum` tied to an `Identifier` with it's authorization.
-
-The `check_auth` method in the SDK is used for signature verification, and here are the important authorization takeaways from the example below -
-
+The `check_auth` method in the SDK is used for signature verification, and here
+are the important authorization takeaways from the example below -
 1. The `nonce` is included in the list of parameters for the contract function.
 2. The `Signature` is passed into `check_auth` wrapped in `NonceForSignature`.
 3. The `function` parameter to `check_auth` is the name of the invoked function.
-4. The last argument passed to `check_auth` is a list of arguments that are expected in the signed payload. The interesting thing to note here is that it includes the `Identifier` from the `sig` and the nonce.
+4. The last argument passed to `check_auth` is a list of arguments that are
+   expected in the signed payload. The interesting thing to note here is that it
+   includes the `Identifier` from the `sig` and the nonce. 
 
 ```rust
 /// Save the number for an authenticated [Identifier].
@@ -287,7 +326,9 @@ pub fn save_num(e: Env, sig: Signature, nonce: BigInt, num: BigInt) {
 
 ### Admin privileges
 
-Some contracts may want to set an admin account that is allowed special privilege. The `set_admin` function here stores an `Identifier` as an admin, and that admin is the only one that can call `overwrite`.
+Some contracts may want to set an admin account that is allowed special
+privilege. The `set_admin` function here stores an `Identifier` as an admin, and
+that admin is the only one that can call `overwrite`.
 
 ```rust
 // Sets the admin identifier
@@ -319,8 +360,8 @@ pub fn overwrite(e: Env, sig: Signature, nonce: BigInt, id: Identifier, num: Big
 ```
 
 ### Retrieving the Nonce
-
-Users of this contract will need to know which nonce to use, so the contract exposes this information.
+Users of this contract will need to know which nonce to use, so the contract
+exposes this information.
 
 ```rust
 pub fn nonce(e: Env, to: Identifier) -> BigInt {

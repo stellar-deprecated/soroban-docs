@@ -31,8 +31,8 @@ Instead, we focus on facilities provided _to_ contracts to _support them_ in mak
 
 Several mechanisms are provided to each contract to make authorization decisions. The mechanisms fall into two categories:
 
-- Common data structures and functions in the SDK.
-- Host functions that assist in validating aspects of these data structures.
+  - Common data structures and functions in the SDK.
+  - Host functions that assist in validating aspects of these data structures.
 
 ### Common data structures and functions
 
@@ -40,17 +40,23 @@ The common data structures involved in authorization model key concepts used in 
 
 These concepts are:
 
-- **Identities**: these are the parties that can initiate actions subject to authorization judgments. Identities may be one of three types:
-  - **Single-key users**, represented by a single Ed25519 public key
-  - **Account users**, represented by a reference to an existing account on the Stellar network (which stores, in an account ledger entry, a list of weighted authorized signing keys)
-  - **Contracts**, represented by a contract ID (not a public key)
-- **Payloads**: these encode a request from an identity to perform some action, such that the payload can have an authorization claim made about it, and an authorization judgment applied to it. Payloads include the name of the contract function being invoked, the contract ID, the network passphrase, and a set of general parameters to that action. The set of general parameters should include the Identifier on the Signature, as well as the nonce.
-- **Authorizations**: these are statements made _about payloads_. Each authorization encodes the claim that the action described by the payload is authorized to occur, on the authority of some identity. Authorizations may have three forms, corresponding to the three forms of identity: single-key, account, and contract.
+  - **Identities**: these are the parties that can initiate actions subject to authorization judgments. Identities may be one of three types:
+    - **Single-key users**, represented by a single Ed25519 public key
+    - **Account users**, represented by a reference to an existing account on the Stellar network (which stores, in an account ledger entry, a list of weighted authorized signing keys)
+    - **Contracts**, represented by a contract ID (not a public key)
+  - **Payloads**: these encode a request from an identity to perform
+    some action, such that the payload can have an authorization claim made
+    about it, and an authorization judgment applied to it. Payloads
+    include the name of the contract function being invoked, the contract ID,
+    the network passphrase, and a set of general parameters to that action. The
+    set of general parameters should include the Identifier on the Signature, as
+    well as the nonce.
+  - **Authorizations**: these are statements made _about payloads_. Each authorization encodes the claim that the action described by the payload is authorized to occur, on the authority of some identity. Authorizations may have three forms, corresponding to the three forms of identity: single-key, account, and contract.
 
 Contracts decide when a payload is authorized with two separate steps:
 
-- Validate the provided authorization, by some mixture of checking signatures or examining the invocation context.
-- Evaluate the operation requested by the payload to see if it fits the contract's unique rules for that operation.
+  - Validate the provided authorization, by some mixture of checking signatures or examining the invocation context.
+  - Evaluate the operation requested by the payload to see if it fits the contract's unique rules for that operation.
 
 The first step often requires host-function support. The second step is always contract-specific, and cannot be provided by the platform in general.
 
@@ -58,8 +64,8 @@ The first step often requires host-function support. The second step is always c
 
 Three families of host function are provided to validate authorizations:
 
-- **Cryptographic validation** functions. These help validate the "single-key user" form of authorization. Specifically these functions compute SHA256 hashes and verify Ed25519 signatures.
-- **Account authorization** functions. These help validate the "account user" form of authorization. Specifically these functions allow looking up the signing thresholds and weights for signing keys, as stored in existing account ledger entries in the Stellar blockchain.
-- **Invoking contract** function. This helps validate the "contract" form of authorization. Specifically this function returns the contract ID of the contract that invoked the currently-executing contract. If no contract invoked the currently-executing contract, this function traps.
+  - **Cryptographic validation** functions. These help validate the "single-key user" form of authorization. Specifically these functions compute SHA256 hashes and verify Ed25519 signatures.
+  - **Account authorization** functions. These help validate the "account user" form of authorization. Specifically these functions allow looking up the signing thresholds and weights for signing keys, as stored in existing account ledger entries in the Stellar blockchain.
+  - **Invoking contract** function. This helps validate the "contract" form of authorization. Specifically this function returns the contract ID of the contract that invoked the currently-executing contract. If no contract invoked the currently-executing contract, this function traps.
 
 This last function deserves further explanation. A contract can be invoked either from a transaction (originating outside of the host) or from a cross-contract call made by some _other_ contract. When some contract X decides to invoke some other contract Y, it is generally sufficient to consider the _fact that X called Y_ as evidence that X authorizes whatever request it is making to Y with that call. After all, if X did not wish to authorize such an invocation, it would not make it! So the only information necessary to evaluate a "contract" authorization is the identity of the (directly) invoking contract.

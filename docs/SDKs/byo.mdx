@@ -3,56 +3,79 @@ sidebar_position: 3
 title: Build Your Own SDK
 ---
 
-Soroban currently has one SDK for writing contracts in Rust, which can be found [here][soroban-sdk].
+Soroban currently has one SDK for writing contracts in Rust, which can be found
+[here][soroban-sdk].
 
-To build SDKs for other languages a few things need to be included in the SDK to provide contracts with the foundation they need to accept inputs, decode them, store data, call other contracts, etc.
+To build SDKs for other languages a few things need to be included in the SDK to
+provide contracts with the foundation they need to accept inputs, decode them,
+store data, call other contracts, etc.
 
-Below is a list of functionality a Soroban SDK needs to support those things, as well as some details on what an SDK can provide in regards to testing capabilities.
+Below is a list of functionality a Soroban SDK needs to support those things, as
+well as some details on what an SDK can provide in regards to testing
+capabilities.
 
-:::caution The Soroban environment is under active development and no API compatibility guarantee exists at this time. :::
+:::caution
+The Soroban environment is under active development and no API compatibility
+guarantee exists at this time.
+:::
 
 ## Functionality
 
 ### Value Conversions
 
-- [RawVal] encode/decode
-- [Object] encode/decode
-- [Symbol] encode/decode
+   - [RawVal] encode/decode
+   - [Object] encode/decode
+   - [Symbol] encode/decode
 
 ### Host Functions
 
-The host functions defined in [env.rs] are functions callable from within the WASM Guest environment. These need to be available to contracts to call, in some form, ideally wrapped so that contracts have a nicer interface.
+   The host functions defined in [env.rs] are functions callable from within the
+   WASM Guest environment. These need to be available to contracts to call, in
+   some form, ideally wrapped so that contracts have a nicer interface.
 
 ### SDK Types
 
-All the types in [soroban-sdk](https://docs.rs/soroban-sdk) should be supported. Notably:
-
-- [Map]
-- [Vec]
-- [Bytes]
-- [BigInt]
+   All the types in [soroban-sdk](https://docs.rs/soroban-sdk) should be
+   supported. Notably:
+   - [Map]
+   - [Vec]
+   - [Bytes]
+   - [BigInt]
 
 ### User Defined Types
 
-Contracts should be able to create user defined types, such as structs or unions, and have them be transmitted to the host for storing and transmitted back for loading.
+   Contracts should be able to create user defined types, such as structs or
+   unions, and have them be transmitted to the host for storing and transmitted
+   back for loading.
 
-SDKs do this by converting objects to and from a `Val`. In the [soroban-sdk] this is referred to as a [RawVal].
+   SDKs do this by converting objects to and from a `Val`. In the [soroban-sdk]
+   this is referred to as a [RawVal].
 
-Structs with named fields should be translated into a `Map` with keys as `Symbol`s and the values as the field value, i.e. `Map<Symbol, V>`.
+   Structs with named fields should be translated into a `Map` with keys as
+   `Symbol`s and the values as the field value, i.e. `Map<Symbol, V>`.
 
-Unions (or enums in some languages) with named variants should be translated into a `Vec` with the first element as a `Symbol` of the name of the variant, and zero or one additional elements representing a value stored with the variant.
+   Unions (or enums in some languages) with named variants should be translated
+   into a `Vec` with the first element as a `Symbol` of the name of the variant,
+   and zero or one additional elements representing a value stored with the
+   variant.
 
 ### Meta Generation
 
-Contracts must contain a WASM custom section with name `contractenvmetav0` and containing a serialized [`SCEnvMetaEntry`]. The interface version stored within should match the version of the host functions supported.
+   Contracts must contain a WASM custom section with name `contractenvmetav0`
+   and containing a serialized [`SCEnvMetaEntry`].  The interface version stored
+   within should match the version of the host functions supported.
 
 ### Contract Spec Generation
 
-Contracts should contain a WASM custom section with name `contractspecv0` and containing a serialized stream of [`SCSpecEntry`]. There should be a `SCSpecEntry` for every function, struct, and union exported by the contract.
+   Contracts should contain a WASM custom section with name `contractspecv0` and
+   containing a serialized stream of [`SCSpecEntry`].  There should be a
+   `SCSpecEntry` for every function, struct, and union exported by the contract.
 
 ## Testing
 
-Any Soroban SDK ideally provides a test environment for executing contract functions in the context of a Soroban runtime environment. The [soroban-sdk] does this by embedding the Soroban environment Rust library, [soroban-env-host].
+Any Soroban SDK ideally provides a test environment for executing contract
+functions in the context of a Soroban runtime environment. The [soroban-sdk]
+does this by embedding the Soroban environment Rust library, [soroban-env-host].
 
 The test environment should include:
 
@@ -61,13 +84,13 @@ The test environment should include:
 
 [soroban-sdk]: https://docs.rs/soroban-sdk.
 [soroban-env-host]: https://github.com/stellar/rs-soroban-env
-[rawval]: https://github.com/stellar/rs-soroban-env/blob/main/soroban-env-common/src/raw_val.rs
-[object]: https://github.com/stellar/rs-soroban-env/blob/main/soroban-env-common/src/object.rs
-[symbol]: https://github.com/stellar/rs-soroban-env/blob/main/soroban-env-common/src/symbol.rs
+[RawVal]: https://github.com/stellar/rs-soroban-env/blob/main/soroban-env-common/src/raw_val.rs
+[Object]: https://github.com/stellar/rs-soroban-env/blob/main/soroban-env-common/src/object.rs
+[Symbol]: https://github.com/stellar/rs-soroban-env/blob/main/soroban-env-common/src/symbol.rs
 [env.rs]: https://github.com/stellar/rs-soroban-env/blob/main/soroban-env-common/src/env.rs
-[map]: https://github.com/stellar/rs-soroban-sdk/blob/main/soroban-sdk/src/map.rs
-[vec]: https://github.com/stellar/rs-soroban-sdk/blob/main/soroban-sdk/src/vec.rs
-[bytes]: https://github.com/stellar/rs-soroban-sdk/blob/main/soroban-sdk/src/bytes.rs
-[bigint]: https://github.com/stellar/rs-soroban-sdk/blob/main/soroban-sdk/src/bigint.rs
-[`scenvmetaentry`]: https://github.com/stellar/rs-stellar-xdr/blob/main/xdr/next/Stellar-contract-env-meta.x
-[`scspecentry`]: https://github.com/stellar/rs-stellar-xdr/blob/main/xdr/next/Stellar-contract-spec.x
+[Map]: https://github.com/stellar/rs-soroban-sdk/blob/main/soroban-sdk/src/map.rs
+[Vec]: https://github.com/stellar/rs-soroban-sdk/blob/main/soroban-sdk/src/vec.rs
+[Bytes]: https://github.com/stellar/rs-soroban-sdk/blob/main/soroban-sdk/src/bytes.rs
+[BigInt]: https://github.com/stellar/rs-soroban-sdk/blob/main/soroban-sdk/src/bigint.rs
+[`SCEnvMetaEntry`]: https://github.com/stellar/rs-stellar-xdr/blob/main/xdr/next/Stellar-contract-env-meta.x
+[`SCSpecEntry`]: https://github.com/stellar/rs-stellar-xdr/blob/main/xdr/next/Stellar-contract-spec.x

@@ -7,43 +7,79 @@ title: Token Contract
 
 The token contract is an implementation of [CAP-54 Smart Contract Standardized Asset].
 
-[cap-54 smart contract standardized asset]: https://stellar.org/protocol/cap-54
+[CAP-54 Smart Contract Standardized Asset]: https://stellar.org/protocol/cap-54
 
-:::caution The token contract is in early development, has not been audited, and is not intended for use. Report issues [here](https://github.com/stellar/soroban-token-contract/issues/new/choose). :::
+:::caution
+The token contract is in early development, has not been audited, and is not
+intended for use. Report issues
+[here](https://github.com/stellar/soroban-token-contract/issues/new/choose).
+:::
 
 ## Overview
 
-Tokens are a vital part of blockchains, and contracts that implement token functionality are inevitable on any smart contract platform. A built-in token contract has a number of advantages over token contracts written by the ecosystem. First, we can special case this contract and run it natively instead of running in a WASM VM, reducing the cost of using the contract. Second, we can use this built-in contract to allow "classic" Stellar assets to interoperate with Soroban. The current iteration of the standard token contract doesn't interoperate with "classic" Stellar assets, but this feature will be available in the future. Note that this standard token contract does not prevent the ecosystem from developing other token contracts if the standard is missing functionality they require.
+Tokens are a vital part of blockchains, and contracts that implement token
+functionality are inevitable on any smart contract platform. A built-in token
+contract has a number of advantages over token contracts written by the
+ecosystem. First, we can special case this contract and run it natively instead
+of running in a WASM VM, reducing the cost of using the contract. Second, we
+can use this built-in contract to allow "classic" Stellar assets to interoperate
+with Soroban. The current iteration of the standard token contract doesn't
+interoperate with "classic" Stellar assets, but this feature will be available
+in the future. Note that this standard token contract does not prevent the
+ecosystem from developing other token contracts if the standard is missing
+functionality they require.
 
-The standard token contract is similar to the widely used ERC-20 token standard, which should make it easier for existing smart contract developers to get started on Stellar.
+The standard token contract is similar to the widely used ERC-20 token standard,
+which should make it easier for existing smart contract developers to get
+started on Stellar.
 
 ## Token contract authorization semantics
 
-See the [authorization example](../examples/authorization) for an overview of authorization.
+See the [authorization example](../examples/authorization) for an overview of
+authorization.
 
 ### Token operations
 
 The token contract contains three kinds of operations
 
 - getters, such as `balance`, which do not change the state of the contract
-- unprivileged mutators, such as `approve` and `xfer`, which change the state of the contract but do not require special privileges
-- privileged mutators, such as `burn` and `set_admin`, which change the state of the contract but require special privileges
+- unprivileged mutators, such as `approve` and `xfer`, which change the state of
+the contract but do not require special privileges
+- privileged mutators, such as `burn` and `set_admin`, which change the state of
+the contract but require special privileges
 
-Gettors require no authorization because they do not change the state of the contract and all contract data is public. For example, `balance` simply returns the balance of the specified identity without changing it.
+Gettors require no authorization because they do not change the state of the
+contract and all contract data is public. For example, `balance` simply returns
+the balance of the specified identity without changing it.
 
-Unprivileged mutators require authorization from some identity. The identity which must provide authorization will vary depending on the unprivileged mutator. For example, a "grantor" can use `approve` to allow a "spender" to spend the grantor's money up to some limit. So for approve, the grantor must provide authorization. Similarly, a "sender" can use `xfer` to send money to a "recipient". So for `xfer`, the sender must provide authorization.
+Unprivileged mutators require authorization from some identity. The identity
+which must provide authorization will vary depending on the unprivileged
+mutator. For example, a "grantor" can use `approve` to allow a "spender" to spend
+the grantor's money up to some limit. So for approve, the grantor must provide
+authorization. Similarly, a "sender" can use `xfer` to send money to a
+"recipient". So for `xfer`, the sender must provide authorization.
 
-Priviliged mutators require authorization from a specific privileged identity, known as the "administrator". For example, only the administrator can `mint` more of the asset. Similarly, only the administrator can appoint a new administrator.
+Priviliged mutators require authorization from a specific privileged identity,
+known as the "administrator". For example, only the administrator can `mint` more
+of the asset. Similarly, only the administrator can appoint a new administrator.
 
 ### Replay prevention
 
-The token contract provides replay prevention by using a [nonce](https://en.wikipedia.org/wiki/Cryptographic_nonce). The messages that are signed to provide authorization contain a nonce. The contract also stores a nonce per identity. When checking signatures, the contract loads the nonce for the relevant identity. When an operation succeeds, the nonce stored in the contract is incremented. This makes it impossible to reuse a signature.
+The token contract provides replay prevention by using a [nonce](https://en.wikipedia.org/wiki/Cryptographic_nonce).
+The messages that are signed to provide authorization contain a nonce. The
+contract also stores a nonce per identity. When checking signatures, the
+contract loads the nonce for the relevant identity. When an operation succeeds,
+the nonce stored in the contract is incremented. This makes it impossible to
+reuse a signature.
 
-The current nonce for an identity can be retrieved using the `nonce` contract function.
+The current nonce for an identity can be retrieved using the `nonce` contract
+function.
 
 ### Example: Signing payloads
 
-The [example](https://github.com/stellar/soroban-token-contract/blob/d24fbeaa3cad5406bee8b64e748a71fa38c7c2f3/src/testutils.rs#L48-L70) from the test `Token` wrapper class demonstrate how you sign a payload for the token contract.
+The [example](https://github.com/stellar/soroban-token-contract/blob/d24fbeaa3cad5406bee8b64e748a71fa38c7c2f3/src/testutils.rs#L48-L70)
+from the test `Token` wrapper class demonstrate how you sign a payload for the
+token contract.
 
 ```rust
 pub fn approve(&self, from: &Keypair, spender: &Identifier, amount: &BigInt) {
@@ -132,4 +168,5 @@ fn symbol(e: Env) -> Bytes;
 
 ## Interacting with the token contract in tests
 
-See [interacting with contracts in tests](../learn/interacting-with-contracts#interacting-with-contracts-in-tests) for more general information on this topic.
+See [interacting with contracts in tests](../learn/interacting-with-contracts#interacting-with-contracts-in-tests)
+for more general information on this topic.

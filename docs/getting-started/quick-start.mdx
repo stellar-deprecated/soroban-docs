@@ -28,9 +28,9 @@ edition = "2021"
 
 Add the following sections to the `Cargo.toml` that will import the `soroban-sdk`.
 
-:::
+:::caution 
 
-caution The `soroban-sdk` is in early development. Report issues [here](https://github.com/stellar/rs-soroban-sdk/issues/new/choose). 
+The `soroban-sdk` is in early development. Report issues [here](https://github.com/stellar/rs-soroban-sdk/issues/new/choose). 
 
 :::
 
@@ -60,7 +60,11 @@ lto = true
 
 The `features` list includes a `testutils` feature, which will cause additional test utilities to be generated for calling the contract in tests.
 
-:::info The `testutils` test utilities are automatically enabled inside [Rust unit tests] inside the same crate as your contract. If you write [Rust integration tests], or write tests from another crate, you'll need to add `#[cfg(feature = "testutils")]` to those tests and enable the `testutils` feature when running your tests with `cargo test --features testutils` to be able to use those test utilities. :::
+:::info 
+
+The `testutils` test utilities are automatically enabled inside [Rust unit tests] inside the same crate as your contract. If you write [Rust integration tests], or write tests from another crate, you'll need to add `#[cfg(feature = "testutils")]` to those tests and enable the `testutils` feature when running your tests with `cargo test --features testutils` to be able to use those test utilities. 
+
+:::
 
 The config for the `release` profile configures the Rust toolchain to produce smaller contracts.
 

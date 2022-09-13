@@ -206,11 +206,7 @@ pub enum SignaturePayload {
 
 Signatures are derived by signing the `SignaturePayload` enum, which has one value at the moment, `V0`. `SignaturePayloadV0` uses the `function`, `contract`, and `network` to determine where the signature can be used and the `args` to provide additional information specific to that usage.
 
-:::warning 
-
-`SignaturePayloadV0` does not include any [replay prevention](#replay-prevention) by default. We recommend using nonce-based replay prevention and including the nonce in the `args`. 
-
-:::
+:::warning `SignaturePayloadV0` does not include any [replay prevention](#replay-prevention) by default. We recommend using nonce-based replay prevention and including the nonce in the `args`. :::
 
 ### Replay prevention
 

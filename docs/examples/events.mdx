@@ -89,11 +89,7 @@ An event also contains a data object of any value or type including types define
 let data = map![&env, (1u32, 2u32)];
 ```
 
-:::tip 
-
-The topics don't have to be made of the same type. You can mix different types as long as the total topic count stays below the limit. 
-
-:::
+:::tip The topics don't have to be made of the same type. You can mix different types as long as the total topic count stays below the limit. :::
 
 ### Publishing
 
@@ -145,8 +141,4 @@ The `null` just indicates the `hello` contract function returned nothing (which 
 
 A single event `Event #0` is outputted, which is the contract event the contract published. The event contains the two topics, each a `symbol` (displayed as bytes), and the data object containing the `map`.
 
-:::info 
-
-The soroban-cli is under active development and at this time outputs events in an unstable JSON format. The format is TBD. 
-
-:::
+:::info The soroban-cli is under active development and at this time outputs events in an unstable JSON format. The format is TBD. :::

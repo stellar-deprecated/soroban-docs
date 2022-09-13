@@ -3,18 +3,15 @@ sidebar_position: 3
 title: Custom Types
 ---
 
-The [custom types example] demonstrates how to define your own data structures
-that can be stored on the ledger, or used as inputs and outputs to contract
-invocations.
+The [custom types example] demonstrates how to define your own data structures that can be stored on the ledger, or used as inputs and outputs to contract invocations.
 
 [custom types example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/custom_types
 
 ## Run the Example
 
-First go through the [Setup] process to get your development environment
-configured, then clone the `v0.0.4` tag of `soroban-examples` repository:
+First go through the [Setup] process to get your development environment configured, then clone the `v0.0.4` tag of `soroban-examples` repository:
 
-[Setup]: ../getting-started/setup.mdx
+[setup]: ../getting-started/setup.mdx
 
 ```
 git clone -b v0.0.4 https://github.com/stellar/soroban-examples
@@ -74,16 +71,13 @@ Ref: https://github.com/stellar/soroban-examples/tree/v0.0.4/custom_types
 
 ## How it Works
 
-Custom types are defined using the `#[contracttype]` attribute on either a
-`struct` or an `enum`.
+Custom types are defined using the `#[contracttype]` attribute on either a `struct` or an `enum`.
 
 Open the `custom_types/src/lib.rs` file to follow along.
 
 ### Custom Type: Struct
 
-Structs are stored on ledger as a map of key-value pairs, where the key is a 10
-character string representing the field name, and the value is the value
-encoded.
+Structs are stored on ledger as a map of key-value pairs, where the key is a 10 character string representing the field name, and the value is the value encoded.
 
 Field names must be no more than 10 characters.
 
@@ -98,12 +92,9 @@ pub struct FirstLast {
 
 ### Custom Type: Enum
 
-Enums are stored on ledger as a two element vector, where the first element is
-the name of the enum variant as a string up to 10 characters in length, and the
-value is the value if the variant has one.
+Enums are stored on ledger as a two element vector, where the first element is the name of the enum variant as a string up to 10 characters in length, and the value is the value if the variant has one.
 
-Only unit variants and single value variants, like `None` and `FirstLast`
-below, are supported.
+Only unit variants and single value variants, like `None` and `FirstLast` below, are supported.
 
 ```rust
 #[contracttype]
@@ -116,9 +107,7 @@ pub enum Name {
 
 ### Using Structs and Enums in Functions
 
-Types that have been annotated with `#[contracttype]` can be used as inputs and
-outputs on contract functions, and the values can be stored as contract data and
-retrieved later.
+Types that have been annotated with `#[contracttype]` can be used as inputs and outputs on contract functions, and the values can be stored as contract data and retrieved later.
 
 ```rust
 pub struct CustomTypesContract;
@@ -169,40 +158,32 @@ fn test() {
 }
 ```
 
-In any test the first thing that is always required is an `Env`, which is the
-Soroban environment that the contract will run in.
+In any test the first thing that is always required is an `Env`, which is the Soroban environment that the contract will run in.
 
 ```rust
 let env = Env::default();
 ```
 
-Contracts must be registered with the environment with a contract ID, which is a
-32-byte value.
+Contracts must be registered with the environment with a contract ID, which is a 32-byte value.
 
 ```rust
 let contract_id = BytesN::from_array(&env, [0; 32]);
 env.register_contract(&contract_id, CustomTypesContract);
 ```
 
-All public functions within an `impl` block that is annotated with the
-`#[contractimpl]` attribute have a corresponding function generated in a
-generated client type. The client type will be named the same as the contract
-type with `Client` appended. For example, in our contract the contract type is
-`CustomTypesContract`, and the client is named `CustomTypesContractClient`.
+All public functions within an `impl` block that is annotated with the `#[contractimpl]` attribute have a corresponding function generated in a generated client type. The client type will be named the same as the contract type with `Client` appended. For example, in our contract the contract type is `CustomTypesContract`, and the client is named `CustomTypesContractClient`.
 
 ```rust
 let client = CustomTypesContractClient::new(&env, &contract_id);
 ```
 
-The test invokes the `retrieve` function on the registered contract, and asserts
-that it returns `Name::None`.
+The test invokes the `retrieve` function on the registered contract, and asserts that it returns `Name::None`.
 
 ```rust
 assert_eq!(client.retrieve(), Name::None);
 ```
 
-The test then invokes the `store` function on the registered contract, to change
-the name that is stored.
+The test then invokes the `store` function on the registered contract, to change the name that is stored.
 
 ```rust
 client.store(&Name::FirstLast(FirstLast {
@@ -211,8 +192,7 @@ client.store(&Name::FirstLast(FirstLast {
 }));
 ```
 
-The test invokes the `retrieve` function again, to assert that it returns the
-name that was previously stored.
+The test invokes the `retrieve` function again, to assert that it returns the name that was previously stored.
 
 ```rust
 assert_eq!(
@@ -240,7 +220,5 @@ A `.wasm` file should be outputted in the `../target` directory:
 
 ## Run the Contract
 
-The `soroban-cli` is in early development and does not yet accept user-defined
-types as arguments at the command line. Follow the GitHub repository to find out
-about new releases:  
+The `soroban-cli` is in early development and does not yet accept user-defined types as arguments at the command line. Follow the GitHub repository to find out about new releases:  
 https://github.com/stellar/soroban-cli

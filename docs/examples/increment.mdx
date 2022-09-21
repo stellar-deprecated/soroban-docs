@@ -138,8 +138,8 @@ Contracts must be registered with the environment with a contract ID, which is a
 32-byte value.
 
 ```rust
-let contract_id = FixedBinary::from_array(&env, [0; 32]);
-env.register_contract(&contract_id, HelloContract);
+let contract_id = BytesN::from_array(&env, &[0; 32]);
+env.register_contract(&contract_id, IncrementContract);
 ```
 
 All public functions within an `impl` block that is annotated with the

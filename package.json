@@ -28,7 +28,6 @@
     "@types/lodash": "^4.14.184",
     "chalk": "4.1.2",
     "clsx": "^1.1.1",
-    "docusaurus-plugin-openapi-docs": "../docusaurus-openapi-docs/packages/docusaurus-plugin-openapi-docs/lib",
     "docusaurus-plugin-sass": "^0.2.2",
     "docusaurus-theme-openapi-docs": "^1.1.8",
     "lodash": "^4.17.21",

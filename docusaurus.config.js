@@ -19,7 +19,23 @@ const config = {
     defaultLocale: 'en',
     locales: ['en'],
   },
-  plugins: ["docusaurus-plugin-sass"],
+  plugins: [
+    "docusaurus-plugin-sass",
+    [
+      "./openrpc/lib/index.js",
+      {
+        id: "apiDocs",
+        docsPluginId: "classic",
+        config: {
+          "soroban-rpc": {
+            specPath: "soroban-rpc/openrpc.yaml", // Path to designated spec file
+            outputDir: "docs/api", // Output directory for generated .mdx docs
+            sidebarOptions: {},
+          },
+        }
+      },
+    ],
+  ],
   presets: [
     [
       "classic",
@@ -38,6 +54,7 @@ const config = {
       }),
     ],
   ],
+  themes: ["docusaurus-theme-openapi-docs"], // Allows use of @theme/ApiItem and other components
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({

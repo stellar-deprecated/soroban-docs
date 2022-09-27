@@ -33,6 +33,12 @@ guarantee exists at this time.
    WASM Guest environment. These need to be available to contracts to call, in
    some form, ideally wrapped so that contracts have a nicer interface.
 
+   Host functions have friendly names in the file above, such as
+   `get_ledger_version`, however in the WASM they are only importable via short
+   names, such as `x.4`. The letter proceeding the dot is the module, and the
+   value after the dot is the function name. The mappins are available in
+   env.rs.
+
 ### SDK Types
 
    All the types in [soroban-sdk](https://docs.rs/soroban-sdk) should be

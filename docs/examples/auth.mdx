@@ -1,20 +1,35 @@
 ---
-sidebar_position: 7
-title: Cross Contract Calls
+sidebar_position: 5
+title: Auth
 ---
 
-The [cross contract call example] demonstrates how to call a contract from
-another contract.
+The [auth example] demonstrates how to verify that a contract invocation is from
+an account or contract.
+
+Participants are identified in `Identifier`'s, and participants presign
+invocations by providing `Siganture`s.
+
+An `Identifier` can represent an:
+- Account ID
+- Contract ID
+- Ed25519 key
+
+A `Signature` can be an:
+- `Invoker` — An invoking transaction source account, or an invoking contract.
+- `Account` – An invocation presigned with account signers.
+– `Ed25519` – An invocation presigned with an ed25519 key.
+
+In this example, data is stored associated with an `Identifier` after
+authorization has been verified. The contract supports auth via all methods
+above.
 
 :::info
-In this example there are two contracts that are compiled separately, deployed
-separately, and then tested together. There are a variety of ways to develop and
-test contracts with dependencies on other contracts, and the Soroban SDK and
-tooling is still building out the tools to support these workflows. Feedback
-appreciated [here](https://github.com/stellar/rs-soroban-sdk/issues/new/choose).
+For contracts needing auth with presigned invocations, see the [advanced auth
+example].
 :::
 
-[cross contract call example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/cross_contract_calls
+[auth example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/auth
+[advanced auth example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/auth_advanced
 
 ## Run the Example
 

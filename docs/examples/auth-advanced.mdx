@@ -1,14 +1,29 @@
 ---
 sidebar_position: 6
-title: Authorization
+title: Auth (Advanced)
 ---
 
-The [authorization example] demonstrates how to write a contract function that
-verifies an `Identifiers` signature before proceeding with the rest of the
-function. In this example, data is stored under an `Identifier` after
-authorization has been verified. 
+The [advanced auth example] demonstrates how to write a contract that
+verifies presigned invocations using the `soroban-auth` crate.
 
-[authorization example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/authorization
+Participants are identified in `Identifier`'s, and participants presign
+invocations by providing `Siganture`s.
+
+An `Identifier` can represent an:
+- Account ID
+- Contract ID
+- Ed25519 key
+
+A `Signature` can be an:
+- Invoker — An invoking transaction source account, or an invoking contract.
+- Account – An invocation presigned with account signers.
+– Ed25519 – An invocation presigned with an ed25519 key.
+
+In this example, data is stored associated with an `Identifier` after
+authorization has been verified. The contract supports auth via all methods
+above.
+
+[advanced auth example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/auth_advanced
 
 ## Run the Example
 

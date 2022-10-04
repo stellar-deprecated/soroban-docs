@@ -23,7 +23,13 @@ In this example, data is stored associated with an `Identifier` after
 authorization has been verified. The contract supports auth via all methods
 above.
 
+:::info
+If you're just starting, checkout the [auth example] that uses a simpler form of
+auth.
+:::
+
 [soroban-auth]: ../SDKs/rust-auth
+[auth example]: auth.mdx
 [advanced auth example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/auth_advanced
 
 ## Run the Example
@@ -37,10 +43,10 @@ configured, then clone the `v0.0.4` tag of `soroban-examples` repository:
 git clone -b v0.0.4 https://github.com/stellar/soroban-examples
 ```
 
-To run the tests for the example, navigate to the `authorization` directory, and use `cargo test`.
+To run the tests for the example, navigate to the `auth_advanced` directory, and use `cargo test`.
 
 ```
-cd authorization
+cd auth_advanced
 cargo test
 ```
 

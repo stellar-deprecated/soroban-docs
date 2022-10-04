@@ -5,8 +5,9 @@ title: Soroban Rust Auth SDK
 
 The `soroban-auth` Rust crate contains the Soroban Rust Auth SDK. It provides
 types and utilities for authenticating participants in a variety of ways including:
-- Authenticating by being the invoker, as an Account ID or a Contract.
-- Presigned invocations with accounts or ed25519 keys.
+- Authenticating by being the invoker, as an account ID or a contract.
+- Presigned invocations with account signers or ed25519 keys, similar to
+[EIP-2612] and [EIP-712] in the Ethereum ecosystem.
 
 The Auth SDK identifies participants with the `Identifier` type, and
 participants choose how they will be authenticated by providing a `Signature`.
@@ -19,11 +20,13 @@ An `Identifier` can represent a:
 A `Signature` can be an:
 - Invoker — An invoking transaction source account, or an invoking contract.
 - Account – An invocation presigned with account signers.
-– Ed25519 – An invocation presigned with an ed25519 key.
+- Ed25519 – An invocation presigned with an ed25519 key.
 
 Intended for use alongside the [`soroban-sdk`].
 
 [`soroban-sdk`]: rust
+[EIP-2612]: https://eips.ethereum.org/EIPS/eip-2612
+[EIP-712]: https://eips.ethereum.org/EIPS/eip-712
 
 :::caution
 The `soroban-auth` crate is in early development. Report issues

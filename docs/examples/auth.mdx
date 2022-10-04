@@ -24,12 +24,13 @@ authorization has been verified. The contract supports auth via all methods
 above.
 
 :::info
-For contracts needing auth with presigned invocations, see the [advanced auth
-example].
+For contracts that would benefit from supporting auth with presigned
+invocations, or ed25519 keys independent of accounts and contracts, see the
+[advanced auth example].
 :::
 
 [auth example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/auth
-[advanced auth example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/auth_advanced
+[advanced auth example]: auth-advanced.mdx
 
 ## Run the Example
 
@@ -42,11 +43,11 @@ configured, then clone the `v0.0.4` tag of `soroban-examples` repository:
 git clone -b v0.0.4 https://github.com/stellar/soroban-examples
 ```
 
-To run the tests for the example, navigate to the `cross_contract/contract_b`
-directory, and use `cargo test`.
+To run the tests for the example, navigate to the `auth` directory, and use
+`cargo test`.
 
 ```
-cd cross_contract/contract_b
+cd auth
 cargo test
 ```
 
@@ -59,29 +60,55 @@ test test::test ... ok
 
 ## Code
 
-```rust title="cross_contract/contract_a/src/lib.rs"
-pub struct ContractA;
+```rust title="auth/src/lib.rs"
+#![no_std]
+
+use soroban_sdk::{contractimpl, contracttype, BigInt, Env, Invoker};
+
+#[contracttype]
+pub enum DataKey {
+    SavedNum(Invoker),
+    Admin,
+}
+
+pub struct ExampleContract;
 
 #[contractimpl]
-impl ContractA {
-    pub fn add(x: u32, y: u32) -> u32 {
-        x.checked_add(y).expect("no overflow")
+impl ExampleContract {
+    /// Set the admin invoker.
+    ///
+    /// May be called only once unauthenticated, and
+    /// then only by current admin.
+    pub fn set_admin(env: Env, new_admin: Invoker) {
+        let admin = Self::admin(&env);
+        if let Some(admin) = admin {
+            assert_eq!(env.invoker(), admin);
+        }
+        env.data().set(DataKey::Admin, new_admin);
     }
-}
-```
 
-```rust title="cross_contract/contract_b/src/lib.rs"
-mod contract_a {
-    soroban_sdk::contractimport!(file = "../../target/wasm32-unknown-unknown/release/soroban_cross_contract_a_contract.wasm");
-}
+    /// Set the number for an authenticated invoker.
+    pub fn set_num(env: Env, num: BigInt) {
+        let id = env.invoker();
+        env.data().set(DataKey::SavedNum(id), num);
+    }
 
-pub struct ContractB;
+    /// Get the number for an invoker.
+    pub fn num(env: Env, id: Invoker) -> Option<BigInt> {
+        env.data().get(DataKey::SavedNum(id)).map(Result::unwrap)
+    }
 
-#[contractimpl]
-impl ContractB {
-    pub fn add_with(env: Env, contract_id: BytesN<32>, x: u32, y: u32) -> u32 {
-        let client = contract_a::ContractClient::new(&env, contract_id);
-        client.add(&x, &y)
+    /// Overwrite any number for an invoker.
+    /// Callable only by admin.
+    pub fn overwrite(env: Env, id: Invoker, num: BigInt) {
+        let admin = Self::admin(&env);
+        assert_eq!(Some(env.invoker()), admin);
+
+        env.data().set(DataKey::SavedNum(id), num);
+    }
+
+    fn admin(env: &Env) -> Option<Invoker> {
+        env.data().get(DataKey::Admin).map(Result::unwrap)
     }
 }
 ```
@@ -90,103 +117,112 @@ Ref: https://github.com/stellar/soroban-examples/tree/v0.0.4/cross_contract
 
 ## How it Works
 
-Cross contract calls are made by invoking another contract by its contract ID.
-
-Contracts to invoke can be imported into your contract with the use of
-`contractimport!(file = "...")`. The import will code generate:
-- A `ContractClient` type that can be used to invoke functions on the contract.
-- Any types in the contract that were annotated with `#[contracttype]`.
-
-:::tip
-The `contractimport!` macro will generate the types in the module it is used, so
-it's a good idea to use the macro inside a `mod { ... }` block, or inside its
-own file, so that the names of generated types don't collide with names of types
-in your own contract.
-:::
+The example contract tracks users with two roles. A single admin exists. Anyone
+can set the admin at deployment, and once set only the admin can set a new
+admin. Any other user can interact with the contract to store a number. Only the
+user and the admin can change the number stored for that user.
 
 Open the files above to follow along.
 
-### Contract A: The Contract to be Called
+### `set_admin` Function
 
-The contract to be called is Contract A. It is a simple contract that accepts
-`x` and `y` parameters, adds them together and returns the result.
+The `set_admin` function is used to set an admin for the contract. It can be
+invoked once without authentication to set the first admin. Subsequent
+invocations must be by the current admin.
 
-```rust title="cross_contract/contract_a/src/lib.rs"
-pub struct ContractA;
+The current admin is retrieved from stored data using the `DataKey::Admin` enum
+key.  If a value is set, the function only continues if the `env.invoker()` is
+the same `Invoker` as `admin`.
 
-#[contractimpl]
-impl ContractA {
-    pub fn add(x: u32, y: u32) -> u32 {
-        x.checked_add(y).expect("no overflow")
+The `env.invoker()` always returns the invoker of the currently executing
+contract. It will return either:
+- `Account` with an `AccountId` if the contract was invoked directly by an
+account.
+- `Contract` with a `BytesN<32>` contract ID if the contract was invoked by
+another contract.
+
+Contracts should use the `Invoker` type and in most cases ignore what type of
+invoker it is.
+
+If the invoker is the admin, or this is the first invocation of the function,
+the `new_admin` `Invoker`, which will be either an account or a contract, will
+be stored.
+
+```rust
+pub fn init(env: Env, new_admin: Invoker) {
+    let admin = Self::admin(&env);
+    if let Some(admin) = admin {
+        assert_eq!(env.invoker(), admin);
     }
+    env.data().set(DataKey::Admin, new_admin);
+}
+
+fn admin(env: &Env) -> Option<Invoker> {
+    env.data().get(DataKey::Admin).map(Result::unwrap)
 }
 ```
 
-:::tip
-The contract uses the `checked_add` method to ensure that there is no overflow,
-and if there is overflow, panics rather than returning an overflowed value.
-Rust's primitive integer types all have checked operations available as
-functions with the prefix `checked_`.
-:::
+### `set_num` Function
 
-### Contract B: The Contract doing the Calling
+The `set_num` function is used by any user who wishes to store a number. The
+number is stored in the contract data map keyed by the invoker. The contract can
+retrieve the number whenever it has the same `Invoker`.
 
-The contract that does the calling is Contract B. It accepts a contract ID that
-it will call, as well as the same parameters to pass through. In many contracts
-the contract to call might have been stored as contract data and be retrieved,
-but in this simple example it is being passed in as a parameter each time.
+The invoker is wrapped in the data key to distinguish this specific piece of
+data from other data the contract might store in the future for invokers.
 
-The contract imports Contract A into the `contract_a` module.
-
-The `contract_a::ContractClient` is constructed pointing at the contract ID
-passed in.
-
-The client is used to execute the `add` function with the `x` and `y` parameters
-on Contract A.
-
-```rust title="cross_contract_calls/src/a.rs"
-mod contract_a {
-    soroban_sdk::contractimport!(
-        file = "../../target/wasm32-unknown-unknown/release/soroban_cross_contract_a_contract.wasm"
-    );
+```rust
+pub fn set_num(env: Env, num: BigInt) {
+    let id = env.invoker();
+    env.data().set(DataKey::SavedNum(id), num);
 }
+```
 
-pub struct ContractB;
+### `num` Function
 
-#[contractimpl]
-impl ContractB {
-    pub fn add_with(env: Env, contract_id: BytesN<32>, x: u32, y: u32) -> u32 {
-        let client = contract_a::ContractClient::new(&env, contract_id);
-        client.add(&x, &y)
-    }
+The `num` function is used by any user who wishes to retrieve the number stored
+against any other user. No authentication occurs because the invoker is not used
+and is otherwise ignored.
+
+```rust
+pub fn num(env: Env, id: Invoker) -> Option<BigInt> {
+    env.data().get(DataKey::SavedNum(id)).map(Result::unwrap)
 }
 ```
 
 ### Tests
 
-Open the `cross_contract/contract_b/src/test.rs` file to follow along.
+Open the `auth/src/test.rs` file to follow along.
 
-```rust title="cross_contract/contract_b/src/test.rs"
+```rust title="auth/src/test.rs"
 #[test]
 fn test() {
     let env = Env::default();
+    let contract_id = BytesN::from_array(&env, &[0; 32]);
+    env.register_contract(&contract_id, ExampleContract);
+    let client = ExampleContractClient::new(&env, contract_id);
 
-    // Define IDs for contract A and B.
-    let contract_a_id = BytesN::from_array(&env, &[0; 32]);
-    let contract_b_id = BytesN::from_array(&env, &[1; 32]);
+    // Initialize contract by setting the admin.
+    let admin = env.accounts().generate();
+    let admin_invoker = &Invoker::Account(admin.clone());
+    client.set_admin(admin_invoker);
 
-    // Register contract A using the imported WASM.
-    env.register_contract_wasm(&contract_a_id, contract_a::WASM);
+    // Check if user 1 has a num, it doesn't yet.
+    let user1 = env.accounts().generate();
+    let user1_invoker = &Invoker::Account(user1.clone());
+    assert_eq!(client.num(user1_invoker), None);
 
-    // Register contract B defined in this crate.
-    env.register_contract(&contract_b_id, ContractB);
+    // Have user 1 set a num for themselves.
+    let five = BigInt::from_u32(&env, 5);
+    client.with_source_account(&user1).set_num(&five);
+    assert_eq!(client.num(user1_invoker), Some(five));
 
-    // Create a client for calling contract B.
-    let client = ContractBClient::new(&env, &contract_b_id);
-
-    // Invoke contract B via its client. Contract B will invoke contract A.
-    let sum = client.add_with(&contract_a_id, &5, &7);
-    assert_eq!(sum, 12);
+    // Have admin overwrite user 1's num.
+    let ten = BigInt::from_u32(&env, 10);
+    client
+        .with_source_account(&admin)
+        .overwrite(user1_invoker, &ten);
+    assert_eq!(client.num(user1_invoker), Some(ten));
 }
 ```
 
@@ -198,106 +234,97 @@ let env = Env::default();
 ```
 
 Contracts must be registered with the environment with a contract ID, which is a
-32-byte value. Both contracts `a` and `b` have IDs defined that are used in the
-rest of the test.
+32-byte value. In this test a zero contract ID is used.
 
 ```rust
-let contract_a_id = BytesN::from_array(&env, &[0; 32]);
-let contract_b_id = BytesN::from_array(&env, &[1; 32]);
+let contract_id = BytesN::from_array(&env, &[0; 32]);
 ```
 
-Contract A is registered with the environment using the imported WASM.
-
-```rust
-env.register_contract_wasm(&contract_a_id, contract_a::WASM);
-```
-
-Contract B is registered with the environment using the type that is in the
+The contract is registered with the environment using the type that is in the
 crate.
 
 ```rust
-env.register_contract(&contract_b_id, ContractB);
+env.register_contract(&contract_id, ExampleContract);
 ```
 
 All public functions within an `impl` block that is annotated with the
 `#[contractimpl]` attribute have a corresponding function generated in a
 generated client type. The client type will be named the same as the contract
 type with `Client` appended. For example, in our contract the contract type is
-`ContractB`, and the client is named `ContractBClient`. The client can be
-constructed and used in the same way that client generated for Contract A can
-be.
+`ExampleContract`, and the client is named `ExampleContractClient`.
 
 ```rust
-let client = ContractBClient::new(&env, &contract_b_id);
+let client = ExampleContractClient::new(&env, &contract_id);
 ```
 
-The client is used to invoke the `add_with` function on Contract B. Contract B
-will invoke Contract A, and the result will be returned.
+The contract generates account IDs for an admin and a user, and invokes the
+`set_admin` and `set_num` functions respectively.
+
+The `generate` function creates a new account ID that the test can use to
+represent an account interacting with the contract.
+```rust
+let _ = env.accounts().generate();
+```
+
+The `set_admin` function is invoked as is since no authentication is required on
+its first call.
 
 ```rust
-let sum = client.add_with(&contract_a_id, &5, &7);
+client.set_admin(admin_invoker);
 ```
 
-The test asserts that the result that is returned is as we expect.
+The `set_num` function is invoked with `user1` configured as the source account
+and therefore the invoker.
 
 ```rust
-assert_eq!(sum, 12);
+let five = BigInt::from_u32(&env, 5);
+client.with_source_account(&user1).set_num(&five);
 ```
 
-## Build the Contracts
+Functions invoked in tests can use `with_source_account(account_id)` to simulate
+an invocation from an account, and the invoked function will see `env.invoker()`
+as `Invoker::Account(account_id)`.
 
-To build the contract into a `.wasm` file, use the `cargo build` command. Both
-`contract_call/contract_a` and `contract_call/contract_b` must be built.
+## Build the Contract
+
+To build the contract into a `.wasm` file, use the `cargo build` command.
 
 ```sh
 cargo build --target wasm32-unknown-unknown --release
 ```
 
-Both `.wasm` files should be found in the `../target` directory after building
-both contracts:
+The `.wasm` file should be found in the `../target` directory after building:
 
 ```
-target/wasm32-unknown-unknown/release/soroban_cross_contract_a_contract.wasm
-```
-
-```
-target/wasm32-unknown-unknown/release/soroban_cross_contract_b_contract.wasm
+target/wasm32-unknown-unknown/release/soroban_auth_contract.wasm
 ```
 
 ## Run the Contract
 
-If you have [`soroban`] installed, you can invoke contract functions. Both
-contracts must be deployed.
-
-```sh
-soroban deploy \
-    --wasm target/wasm32-unknown-unknown/release/soroban_cross_contract_a_contract.wasm \
-    --id a
-```
-
-```sh
-soroban deploy \
-    --wasm target/wasm32-unknown-unknown/release/soroban_cross_contract_b_contract.wasm \
-    --id b
-```
-
-Invoke Contract B's `add_with` function, passing in values for `x` and `y`
-(e.g.  as `5` and `7`), and then pass in the contract ID of Contract A.
+If you have [`soroban`] installed, you can invoke functions on the contract.
 
 ```sh
 soroban invoke \
-    --id b \
-    --fn add_with \
-    --arg a \
-    --arg 5 \
-    --arg 7
+    --wasm ../target/wasm32-unknown-unknown/release/soroban_auth_contract.wasm \
+    --id 1 \
+    --account GDQHNBKFCO666SPX4RS62VTDY7H5W2QXHVVVQCDTADTOI3IYZGEOZL6V \
+    --fn set_num \
+    --arg 5
 ```
 
-The following output should occur using the code above.
-
-```json
-12
+```sh
+soroban invoke \
+    --wasm ../target/wasm32-unknown-unknown/release/soroban_auth_contract.wasm \
+    --id 1 \
+    --account GC24I42QMKKR4NE6IYNPCQHUO4PXWXDGNZ7QVMMSR5EWAYSGKBHPLGHH \
+    --fn set_num \
+    --arg 10
 ```
 
-Contract B's `add_with` function invoked Contract A's `add` function to do
-the addition.
+View the data that has been stored against each user with `soroban read`.
+
+```
+soroban read --id 1
+"[""SavedNum"",[""Account"",""GDQHNBKFCO666SPX4RS62VTDY7H5W2QXHVVVQCDTADTOI3IYZGEOZL6V""]]","""5"""
+"[""SavedNum"",[""Account"",""GC24I42QMKKR4NE6IYNPCQHUO4PXWXDGNZ7QVMMSR5EWAYSGKBHPLGHH""]]","""10"""
+```

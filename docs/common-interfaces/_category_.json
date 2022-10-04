@@ -1,6 +1,6 @@
 {
-  "position": 6,
-  "label": "Built-in Contracts",
+  "position": 5,
+  "label": "Common Interfaces",
   "link": {
     "type": "generated-index"
   }

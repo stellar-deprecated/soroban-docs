@@ -173,11 +173,11 @@ A `.wasm` file should be outputted in the `../target` directory:
 
 ## Run the Contract
 
-If you have [`soroban-cli`] installed, you can invoke contract functions in the
+If you have [`soroban`] installed, you can invoke contract functions in the
 WASM using it.
 
 ```sh
-soroban-cli invoke \
+soroban invoke \
     --wasm ../target/wasm32-unknown-unknown/release/soroban_increment_contract.wasm \
     --id 1 \
     --fn increment
@@ -191,8 +191,8 @@ The following output should occur using the code above.
 
 Run it a few more times to watch the count change.
 
-Use the `soroban-cli` to inspect what the counter is after a few runs.
+Use the `soroban` to inspect what the counter is after a few runs.
 
 ```sh
-soroban-cli read --id 1 --key COUNTER
+soroban read --id 1 --key COUNTER
 ```

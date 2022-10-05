@@ -158,11 +158,11 @@ A `.wasm` file should be outputted in the `../target` directory:
 
 ## Run the Contract
 
-If you have [`soroban`] installed, you can invoke contract functions in the
+If you have [`soroban-cli`] installed, you can invoke contract functions in the
 using it.
 
 ```sh
-soroban invoke \
+soroban-cli invoke \
     --wasm ../target/wasm32-unknown-unknown/release/soroban_hello_world_contract.wasm \
     --id 1 \
     --fn hello \

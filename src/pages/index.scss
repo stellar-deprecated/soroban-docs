@@ -1,0 +1,66 @@
+/**
+ * CSS files with the .module.css suffix will be treated as CSS modules
+ * and scoped locally.
+ */
+
+.homepage {
+  background-color: black;
+  color: white;
+
+  .homepage--maxWidth {
+    max-width: calc(1200px + 100px);
+    margin: 0 auto;
+    padding: 0 50px;
+  }
+  img {
+    display: block;
+  }
+
+  .homepage--hero {
+    background: black url('/img/homepage/bg.png') no-repeat;
+    background-position: top left;
+    background-size: cover;
+    min-height: calc(100vh - 60px);
+    padding-top: 170px;
+  }
+  .homepage--logo {
+    width: 325px;
+    display: block;
+    margin-bottom: 100px;
+  }
+  .homepage--arrows {
+
+  }
+  .homepage--h1 {
+    font-size: 48px;
+    font-weight: 400;
+    line-height: 1;
+    margin-bottom: 25px;
+  }
+  .homepage--h2 {
+    font-size: 20px;
+    font-weight: 400;
+    max-width: 560px;
+    line-height: 1.5;
+  }
+
+  .homepage--designedFor {
+
+    .much-excite {
+      color: black;
+
+      .hidden {
+        display: none;
+      }
+    }
+    .orange {
+      background-color: #DD9A00;
+    }
+    .white {
+      background-color: white;
+    }
+    .red {
+      background-color: #BF3238;
+    }
+  }
+}

@@ -72,7 +72,6 @@ const config = {
       //   indexName: "crawler_Docusaurus",
       // },
       footer: {
-        style: 'dark',
         links: [
           {
             title: 'Community',

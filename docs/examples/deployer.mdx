@@ -224,3 +224,53 @@ let client = contract::Client::new(&env, &contract_id);
 let sum = client.value();
 assert_eq!(sum, 5);
 ```
+
+## Build the Contracts
+
+To build the contract into a `.wasm` file, use the `cargo build` command. Build
+both the deployer contract and the test contract.
+
+```sh
+cargo build --target wasm32-unknown-unknown --release
+```
+
+Both `.wasm` files should be found in the `../target` directory after building
+both contracts:
+
+```
+../target/wasm32-unknown-unknown/release/soroban_deployer_contract.wasm
+```
+
+```
+../target/wasm32-unknown-unknown/release/soroban_deployer_test_contract.wasm
+```
+
+## Run the Contract
+
+If you have [`soroban`] installed, you can invoke the contract function to
+deploy the test contract.
+
+```sh
+soroban invoke \
+    --wasm target/wasm32-unknown-unknown/release/soroban_deployer_contract.wasm \
+    --id 0 \
+    --fn deploy \
+    --arg 0000000000000000000000000000000000000000000000000000000000000000 \
+    --arg $(xxd -p -c- target/wasm32-unknown-unknown/release/soroban_deployer_test_contract.wasm) \
+    --arg init \
+    --arg '[5]'
+```
+
+And then invoke the deployed test contract.
+
+```sh
+soroban invoke \
+    --id e28afe29e3a11a1c1992abc74a9ec6116abb11a348c30bea86e8f17a6bf58666 \
+    --fn value
+```
+
+The following output should occur using the code above.
+
+```json
+5
+```

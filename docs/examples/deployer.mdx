@@ -1,0 +1,276 @@
+---
+sidebar_position: 7
+title: Deployer
+---
+
+The [deployer example] demonstrates how to deploy contracts using a contract.
+
+:::info
+In this example there are two contracts that are compiled separately, and the
+tests deploy one with the other.
+:::
+
+[deployer example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/deployer
+
+## Run the Example
+
+First go through the [Setup] process to get your development environment
+configured, then clone the `v0.0.4` tag of `soroban-examples` repository:
+
+[Setup]: ../getting-started/setup.mdx
+
+```
+git clone -b v0.0.4 https://github.com/stellar/soroban-examples
+```
+
+To run the tests for the example, navigate to the `deployer/deployer`
+directory, and use `cargo test`.
+
+```
+cd deployer/deployer
+cargo test
+```
+
+You should see the output:
+
+```
+running 1 test
+test test::test ... ok
+```
+
+## Code
+
+```rust title="deployer/deployer/src/lib.rs"
+pub struct Deployer;
+
+#[contractimpl]
+impl Deployer {
+    /// Deploy the contract wasm and after deployment invoke the init function
+    /// of the contract with the given arguments. Returns the contract ID and
+    /// result of the init function.
+    pub fn deploy(env: Env, salt: Bytes, wasm: Bytes, init_fn: Symbol, init_args: Vec<RawVal>) -> (BytesN<32>, RawVal) {
+        // Deploy the wasm.
+        let id = env.deployer().with_current_contract(salt).deploy(wasm);
+        // Invoke the init function with the given arguments.
+        let res: RawVal = env.invoke_contract(&id, &init_fn, init_args);
+        // Return the contract ID of the deployed contract and the result of
+        // invoking the init result.
+        (id, res)
+    }
+}
+```
+
+Ref: https://github.com/stellar/soroban-examples/tree/v0.0.4/deployer
+
+## How it Works
+
+Contracts can deploy other contracts by using the SDK.
+
+The contract ID of the deployed contract is deterministic and is derived from
+the deploying contract ID and the provided salt.
+
+Open the `deployer/deployer/src/src.rs` file to follow along.
+
+### Deployer
+
+The `deployer` contract deploys other contracts. It accepts a salt that will be
+used to derive a contract ID, and a WASM bytes to deploy. It also accepts an
+initialization function and arguments to pass to that function.
+
+The contract first gets a deployer using the salt, then calls deploy with the
+WASM bytes. The WASM bytes will be deployed and the contract ID for that new
+contract is returned. The contract ID is deterministic and is derived from the
+deploying contract and the salt.
+
+```rust
+let id = env.deployer().with_current_contract(salt).deploy(wasm);
+```
+
+The contract invokes the new contract's intialization function and passes
+through the arguments.
+
+```rust
+let res: RawVal = env.invoke_contract(&id, &init_fn, init_args);
+```
+
+The contract returns the new contract ID and the result of the initializatio function.
+```rust
+(id, res)
+```
+
+### Tests
+
+Open the `deployer/deployer/src/test.rs` file to follow along.
+
+```rust title="deployer/deployer/src/test.rs"
+// The contract that will be deployed by the deployer contract.
+mod contract {
+    soroban_sdk::contractimport!(
+        file = "../../target/wasm32-unknown-unknown/release/soroban_deployer_test_contract.wasm"
+    );
+}
+
+#[test]
+fn test() {
+    let env = Env::default();
+    let deployer_id = BytesN::from_array(&env, &[0; 32]);
+    env.register_contract(&deployer_id, Deployer);
+    let client = DeployerClient::new(&env, &deployer_id);
+
+    // Deploy contract using deployer, and include an init function to call.
+    let salt = Bytes::from_array(&env, &[0; 32]);
+    let wasm: Bytes = contract::WASM.into_val(&env);
+    let init_fn = symbol!("init");
+    let init_fn_args = (5u32,).into_val(&env);
+    let (contract_id, init_result) = client.deploy(&salt, &wasm, &init_fn, &init_fn_args);
+    assert_eq!(
+        contract_id,
+        bytesn!(&env, 0xead19f55aec09bfcb555e09f230149ba7f72744a5fd639804ce1e934e8fe9c5d)
+    );
+    assert!(init_result.is_void());
+
+    // Invoke contract to check that it is initialized.
+    let client = contract::Client::new(&env, &contract_id);
+    let sum = client.value();
+    assert_eq!(sum, 5);
+}
+```
+
+The test imports a test contract from the `soroban_deployer_test_contract.wasm`
+file.
+
+```rust
+mod contract {
+    soroban_sdk::contractimport!(
+        file = "../../target/wasm32-unknown-unknown/release/soroban_deployer_test_contract.wasm"
+    );
+}
+```
+
+That contract contains the following code, which exports a couple
+functions that sets a value in the initialization function and allows the value
+to be retrieved from another function. The test contract will be used when
+testing the deployer, by deploying the contract and then checking if the
+contract is deployed by invoking its functions.
+
+```rust title="deployer/contract/src/lib.rs"
+pub struct Contract;
+
+const KEY: Symbol = symbol!("value");
+
+#[contractimpl]
+impl Contract {
+    pub fn init(env: Env, value: u32) {
+        env.data().set(KEY, value);
+    }
+    pub fn value(env: Env) -> u32 {
+        env.data().get_unchecked(KEY).unwrap()
+    }
+}
+```
+
+In any test the first thing that is always required is an `Env`, which is the
+Soroban environment that the contract will run in.
+
+```rust
+let env = Env::default();
+```
+
+Contracts must be registered with the environment with a contract ID, which is a
+32-byte value.
+
+```rust
+let deployer_id = BytesN::from_array(&env, &[0; 32]);
+```
+
+The deployer contract is registered with the environment.
+
+```rust
+env.register_contract(&deployer_id, Deployer);
+```
+
+All public functions within an `impl` block that is annotated with the
+`#[contractimpl]` attribute have a corresponding function generated in a
+generated client type. The client type will be named the same as the contract
+type with `Client` appended. For example, in our contract the contract type is
+`Deployer`, and the client is named `DeployerClient`.
+
+```rust
+let client = DeployerClient::new(&env, &deployer_id);
+```
+
+The client is used to invoke the `deploy` function. The contract will deploy the
+test contract WASM bytes, call the `"init"` function, and pass in a single
+`5u32` argument.
+
+```rust
+let salt = Bytes::from_array(&env, &[0; 32]);
+let wasm: Bytes = contract::WASM.into_val(&env);
+let init_fn = symbol!("init");
+let init_fn_args = (5u32,).into_val(&env);
+let (contract_id, init_result) = client.deploy(&salt, &wasm, &init_fn, &init_fn_args);
+assert_eq!(
+    contract_id,
+    bytesn!(&env, 0xead19f55aec09bfcb555e09f230149ba7f72744a5fd639804ce1e934e8fe9c5d)
+);
+assert!(init_result.is_void());
+```
+
+The test checks that the test contract was deployed by using its client to
+invoke it and get back the value set during initialization.
+
+```rust
+let client = contract::Client::new(&env, &contract_id);
+let sum = client.value();
+assert_eq!(sum, 5);
+```
+
+## Build the Contracts
+
+To build the contract into a `.wasm` file, use the `cargo build` command. Build
+both the deployer contract and the test contract.
+
+```sh
+cargo build --target wasm32-unknown-unknown --release
+```
+
+Both `.wasm` files should be found in the `../target` directory after building
+both contracts:
+
+```
+../target/wasm32-unknown-unknown/release/soroban_deployer_contract.wasm
+```
+
+```
+../target/wasm32-unknown-unknown/release/soroban_deployer_test_contract.wasm
+```
+
+## Run the Contract
+
+If you have [`soroban`] installed, you can invoke the contract function to
+deploy the test contract.
+
+```sh
+soroban invoke \
+    --wasm target/wasm32-unknown-unknown/release/soroban_deployer_contract.wasm \
+    --id 0 \
+    --fn deploy \
+    --arg 0000000000000000000000000000000000000000000000000000000000000000 \
+    --arg $(xxd -p -c- target/wasm32-unknown-unknown/release/soroban_deployer_test_contract.wasm) \
+    --arg init \
+    --arg '[5]'
+```
+
+And then invoke the deployed test contract.
+
+```sh
+soroban invoke \
+    --id e28afe29e3a11a1c1992abc74a9ec6116abb11a348c30bea86e8f17a6bf58666 \
+    --fn value
+```
+
+The following output should occur using the code above.
+
+```json
+5
+```

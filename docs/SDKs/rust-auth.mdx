@@ -4,10 +4,29 @@ title: Soroban Rust Auth SDK
 ---
 
 The `soroban-auth` Rust crate contains the Soroban Rust Auth SDK. It provides
-utilities for verifying signatures on invocations of smart contracts.  It is
-intended for use alongside the [`soroban-sdk`].
+types and utilities for authenticating participants in a variety of ways including:
+- Authenticating by being the invoker, as an account ID or a contract.
+- Presigned invocations with account signers or ed25519 keys, similar to
+[EIP-2612] and [EIP-712] in the Ethereum ecosystem.
+
+The Auth SDK identifies participants with the `Identifier` type, and
+participants choose how they will be authenticated by providing a `Signature`.
+
+An `Identifier` can represent a:
+- Account ID
+- Contract ID
+- Ed25519 key
+
+A `Signature` can be an:
+- Invoker — An invoking transaction source account, or an invoking contract.
+- Account – An invocation presigned with account signers.
+- Ed25519 – An invocation presigned with an ed25519 key.
+
+Intended for use alongside the [`soroban-sdk`].
 
 [`soroban-sdk`]: rust
+[EIP-2612]: https://eips.ethereum.org/EIPS/eip-2612
+[EIP-712]: https://eips.ethereum.org/EIPS/eip-712
 
 :::caution
 The `soroban-auth` crate is in early development. Report issues
@@ -33,8 +52,10 @@ Add the following sections to the `Cargo.toml` to import `soroban-auth`.
 testutils = ["soroban-auth/testutils"]
 
 [dependencies]
+soroban-sdk = "0.0.4"
 soroban-auth = "0.0.4"
 
 [dev_dependencies]
+soroban-sdk = { version = "0.0.4", features = ["testutils"] }
 soroban-auth = { version = "0.0.4", features = ["testutils"] }
 ```

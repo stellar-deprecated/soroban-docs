@@ -127,11 +127,11 @@ A `.wasm` file should be outputted in the `../target` directory:
 
 ## Run the Contract
 
-If you have [`soroban-cli`] installed, you can invoke contract functions in the
+If you have [`soroban`] installed, you can invoke contract functions in the
 using it.
 
 ```sh
-soroban-cli invoke \
+soroban invoke \
     --wasm ../target/wasm32-unknown-unknown/release/soroban_events_contract.wasm \
     --id 1 \
     --fn hello \
@@ -156,6 +156,6 @@ published. The event contains the two topics, each a `symbol` (displayed as
 bytes), and the data object containing the `map`.
 
 :::info
-The soroban-cli is under active development and at this time outputs events in
+The soroban is under active development and at this time outputs events in
 an unstable JSON format. The format is TBD.
 :::

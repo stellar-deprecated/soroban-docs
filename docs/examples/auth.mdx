@@ -1,0 +1,320 @@
+---
+sidebar_position: 5
+title: Auth
+---
+
+The [auth example] demonstrates how to tell who has invoked a contract, and
+verify that a contract has been invoked by an account or contract.
+
+The participant who invoked a contract is the `Invoker`, and is one-of a:
+- Account ID
+- Contract ID
+
+In this example, data is stored associated with an `Invoker` after
+authorization has been verified.
+
+:::info
+For contracts that would benefit from supporting auth with presigned
+invocations, or ed25519 keys independent of accounts and contracts, see the
+[advanced auth example].
+:::
+
+[auth example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/auth
+[advanced auth example]: auth-advanced.mdx
+
+## Run the Example
+
+First go through the [Setup] process to get your development environment
+configured, then clone the `v0.0.4` tag of `soroban-examples` repository:
+
+[Setup]: ../getting-started/setup.mdx
+
+```
+git clone -b v0.0.4 https://github.com/stellar/soroban-examples
+```
+
+To run the tests for the example, navigate to the `auth` directory, and use
+`cargo test`.
+
+```
+cd auth
+cargo test
+```
+
+You should see the output:
+
+```
+running 1 test
+test test::test ... ok
+```
+
+## Code
+
+```rust title="auth/src/lib.rs"
+#![no_std]
+
+use soroban_sdk::{contractimpl, contracttype, BigInt, Env, Invoker};
+
+#[contracttype]
+pub enum DataKey {
+    SavedNum(Invoker),
+    Admin,
+}
+
+pub struct ExampleContract;
+
+#[contractimpl]
+impl ExampleContract {
+    /// Set the admin invoker.
+    ///
+    /// May be called only once unauthenticated, and
+    /// then only by current admin.
+    pub fn set_admin(env: Env, new_admin: Invoker) {
+        let admin = Self::admin(&env);
+        if let Some(admin) = admin {
+            assert_eq!(env.invoker(), admin);
+        }
+        env.data().set(DataKey::Admin, new_admin);
+    }
+
+    /// Set the number for an authenticated invoker.
+    pub fn set_num(env: Env, num: BigInt) {
+        let id = env.invoker();
+        env.data().set(DataKey::SavedNum(id), num);
+    }
+
+    /// Get the number for an invoker.
+    pub fn num(env: Env, id: Invoker) -> Option<BigInt> {
+        env.data().get(DataKey::SavedNum(id)).map(Result::unwrap)
+    }
+
+    /// Overwrite any number for an invoker.
+    /// Callable only by admin.
+    pub fn overwrite(env: Env, id: Invoker, num: BigInt) {
+        let admin = Self::admin(&env);
+        assert_eq!(Some(env.invoker()), admin);
+
+        env.data().set(DataKey::SavedNum(id), num);
+    }
+
+    fn admin(env: &Env) -> Option<Invoker> {
+        env.data().get(DataKey::Admin).map(Result::unwrap)
+    }
+}
+```
+
+Ref: https://github.com/stellar/soroban-examples/tree/v0.0.4/auth
+
+## How it Works
+
+The example contract tracks users with two roles. A single admin exists. Anyone
+can set the admin at deployment, and once set only the admin can set a new
+admin. Any other user can interact with the contract to store a number. Only the
+user and the admin can change the number stored for that user.
+
+Open the files above to follow along.
+
+### `set_admin` Function
+
+The `set_admin` function is used to set an admin for the contract. It can be
+invoked once without authentication to set the first admin. Subsequent
+invocations must be by the current admin.
+
+The current admin is retrieved from stored data using the `DataKey::Admin` enum
+key.  If a value is set, the function only continues if the `env.invoker()` is
+the same `Invoker` as `admin`.
+
+The `env.invoker()` always returns the invoker of the currently executing
+contract. It will return either:
+- `Account` with an `AccountId` if the contract was invoked directly by an
+account.
+- `Contract` with a `BytesN<32>` contract ID if the contract was invoked by
+another contract.
+
+Contracts should use the `Invoker` type and in most cases ignore what type of
+invoker it is.
+
+If the invoker is the admin, or this is the first invocation of the function,
+the `new_admin` `Invoker`, which will be either an account or a contract, will
+be stored.
+
+```rust
+pub fn init(env: Env, new_admin: Invoker) {
+    let admin = Self::admin(&env);
+    if let Some(admin) = admin {
+        assert_eq!(env.invoker(), admin);
+    }
+    env.data().set(DataKey::Admin, new_admin);
+}
+
+fn admin(env: &Env) -> Option<Invoker> {
+    env.data().get(DataKey::Admin).map(Result::unwrap)
+}
+```
+
+### `set_num` Function
+
+The `set_num` function is used by any user who wishes to store a number. The
+number is stored in the contract data map keyed by the invoker. The contract can
+retrieve the number whenever it has the same `Invoker`.
+
+The invoker is wrapped in the data key to distinguish this specific piece of
+data from other data the contract might store in the future for invokers.
+
+```rust
+pub fn set_num(env: Env, num: BigInt) {
+    let id = env.invoker();
+    env.data().set(DataKey::SavedNum(id), num);
+}
+```
+
+### `num` Function
+
+The `num` function is used by any user who wishes to retrieve the number stored
+against any other user. No authentication occurs because the invoker is not used
+and is otherwise ignored.
+
+```rust
+pub fn num(env: Env, id: Invoker) -> Option<BigInt> {
+    env.data().get(DataKey::SavedNum(id)).map(Result::unwrap)
+}
+```
+
+### Tests
+
+Open the `auth/src/test.rs` file to follow along.
+
+```rust title="auth/src/test.rs"
+#[test]
+fn test() {
+    let env = Env::default();
+    let contract_id = BytesN::from_array(&env, &[0; 32]);
+    env.register_contract(&contract_id, ExampleContract);
+    let client = ExampleContractClient::new(&env, contract_id);
+
+    // Initialize contract by setting the admin.
+    let admin = env.accounts().generate();
+    let admin_invoker = &Invoker::Account(admin.clone());
+    client.set_admin(admin_invoker);
+
+    // Check if user 1 has a num, it doesn't yet.
+    let user1 = env.accounts().generate();
+    let user1_invoker = &Invoker::Account(user1.clone());
+    assert_eq!(client.num(user1_invoker), None);
+
+    // Have user 1 set a num for themselves.
+    let five = BigInt::from_u32(&env, 5);
+    client.with_source_account(&user1).set_num(&five);
+    assert_eq!(client.num(user1_invoker), Some(five));
+
+    // Have admin overwrite user 1's num.
+    let ten = BigInt::from_u32(&env, 10);
+    client
+        .with_source_account(&admin)
+        .overwrite(user1_invoker, &ten);
+    assert_eq!(client.num(user1_invoker), Some(ten));
+}
+```
+
+In any test the first thing that is always required is an `Env`, which is the
+Soroban environment that the contract will run in.
+
+```rust
+let env = Env::default();
+```
+
+Contracts must be registered with the environment with a contract ID, which is a
+32-byte value. In this test a zero contract ID is used.
+
+```rust
+let contract_id = BytesN::from_array(&env, &[0; 32]);
+```
+
+The contract is registered with the environment using the type that is in the
+crate.
+
+```rust
+env.register_contract(&contract_id, ExampleContract);
+```
+
+All public functions within an `impl` block that is annotated with the
+`#[contractimpl]` attribute have a corresponding function generated in a
+generated client type. The client type will be named the same as the contract
+type with `Client` appended. For example, in our contract the contract type is
+`ExampleContract`, and the client is named `ExampleContractClient`.
+
+```rust
+let client = ExampleContractClient::new(&env, &contract_id);
+```
+
+The contract generates account IDs for an admin and a user, and invokes the
+`set_admin` and `set_num` functions respectively.
+
+The `generate` function creates a new account ID that the test can use to
+represent an account interacting with the contract.
+```rust
+let _ = env.accounts().generate();
+```
+
+The `set_admin` function is invoked as is since no authentication is required on
+its first call.
+
+```rust
+client.set_admin(admin_invoker);
+```
+
+The `set_num` function is invoked with `user1` configured as the source account
+and therefore the invoker.
+
+```rust
+let five = BigInt::from_u32(&env, 5);
+client.with_source_account(&user1).set_num(&five);
+```
+
+Functions invoked in tests can use `with_source_account(account_id)` to simulate
+an invocation from an account, and the invoked function will see `env.invoker()`
+as `Invoker::Account(account_id)`.
+
+## Build the Contract
+
+To build the contract into a `.wasm` file, use the `cargo build` command.
+
+```sh
+cargo build --target wasm32-unknown-unknown --release
+```
+
+The `.wasm` file should be found in the `../target` directory after building:
+
+```
+target/wasm32-unknown-unknown/release/soroban_auth_contract.wasm
+```
+
+## Run the Contract
+
+If you have [`soroban`] installed, you can invoke functions on the contract.
+
+```sh
+soroban invoke \
+    --wasm ../target/wasm32-unknown-unknown/release/soroban_auth_contract.wasm \
+    --id 1 \
+    --account GDQHNBKFCO666SPX4RS62VTDY7H5W2QXHVVVQCDTADTOI3IYZGEOZL6V \
+    --fn set_num \
+    --arg 5
+```
+
+```sh
+soroban invoke \
+    --wasm ../target/wasm32-unknown-unknown/release/soroban_auth_contract.wasm \
+    --id 1 \
+    --account GC24I42QMKKR4NE6IYNPCQHUO4PXWXDGNZ7QVMMSR5EWAYSGKBHPLGHH \
+    --fn set_num \
+    --arg 10
+```
+
+View the data that has been stored against each user with `soroban read`.
+
+```
+soroban read --id 1
+"[""SavedNum"",[""Account"",""GDQHNBKFCO666SPX4RS62VTDY7H5W2QXHVVVQCDTADTOI3IYZGEOZL6V""]]","""5"""
+"[""SavedNum"",[""Account"",""GC24I42QMKKR4NE6IYNPCQHUO4PXWXDGNZ7QVMMSR5EWAYSGKBHPLGHH""]]","""10"""
+```

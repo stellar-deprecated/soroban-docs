@@ -3,25 +3,15 @@ sidebar_position: 5
 title: Auth
 ---
 
-The [auth example] demonstrates how to verify that a contract invocation is from
-an account or contract.
+The [auth example] demonstrates how to tell who has invoked a contract, and
+verify that a contract has been invoked by an account or contract.
 
-Participants are identified in `Identifier`'s, and participants presign
-invocations by providing `Siganture`s.
-
-An `Identifier` can represent an:
+The participant who invoked a contract is the `Invoker`, and is one-of a:
 - Account ID
 - Contract ID
-- Ed25519 key
 
-A `Signature` can be an:
-- `Invoker` — An invoking transaction source account, or an invoking contract.
-- `Account` – An invocation presigned with account signers.
-– `Ed25519` – An invocation presigned with an ed25519 key.
-
-In this example, data is stored associated with an `Identifier` after
-authorization has been verified. The contract supports auth via all methods
-above.
+In this example, data is stored associated with an `Invoker` after
+authorization has been verified.
 
 :::info
 For contracts that would benefit from supporting auth with presigned

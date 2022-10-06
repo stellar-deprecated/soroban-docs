@@ -194,7 +194,7 @@
       font-size: 32px;
       font-weight: 300;
     }
-    img {
+    .hp--imgLink {
       margin: 0 0 50px;
     }
     h1 {
@@ -208,6 +208,10 @@
       font-size: 22px;
       text-align: center;
       max-width: 800px;
+    }
+
+    &:last-of-type {
+      margin-bottom: 200px;
     }
   }
 

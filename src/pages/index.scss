@@ -55,7 +55,8 @@
   .hp--hero {
     background-position: top left;
     background-size: cover;
-    min-height: calc(100vh - 60px);
+    height: calc(100vh - 60px);
+    max-height: 900px;
     padding-top: 170px;
     position: relative;
   }
@@ -84,7 +85,7 @@
   }
 
   .hp--designedFor {
-    margin: 120px auto 100px;
+    margin: 100px auto;
 
     h1 {
       font-size: 40px;

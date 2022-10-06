@@ -20,6 +20,33 @@ export default function Home() {
           </div>
         </div>
 
+        <div className='hp--cta hp--maxWidth'>
+          <h2>Tinker &amp; Earn Rewards</h2>
+          <a href="https://github.com/stellar/sorobanathon" className='hp--imgLink'>
+            <img src='./img/homepage/sorobanathon.svg' />
+          </a>
+          <h1>Sorobanathon: First Light</h1>
+          <p>
+            Between now and December 15, 2022, join <i>Sorobanathon: First Light</i>. Experiment with Soroban and submit a code example, issue, tutorial, blog post, issue, or video documenting your experience. Qualified submissions will receive $25-300 worth of USDC. It's a fun, low-lift way to learn, test things out, and provide valuable feedback to both the Soroban development team and the Soroban ecosystem as a whole. Let's bootstrap this thing together!
+          </p>
+          <a href="https://github.com/stellar/sorobanathon" className='hp--button'>Join the Sorobanathon</a>
+        </div>
+
+        <div className='hp--cta hp--maxWidth'>
+          <h2>
+            Connect with developers, <br />
+            be the first to get updates
+          </h2>
+          <a href="https://discord.gg/6ZCcYqbC96" className='hp--imgLink'>
+            <img src='./img/homepage/discord.svg' />
+          </a>
+          <h1>Join the Discord</h1>
+          <p>
+            <i>Sorobanathon: First Light</i> is the first of many programs that draws from the $100M Soroban Adoption Fund, which the Stellar Development Foundation created to support the growth and development of the Soroban ecosystem. We'll be sharing more about additional Adoption Fund programs on the Stellar Dev Discord in the not-too-distant future, so make sure to join today to be the first to hear those announcements.
+          </p>
+          <a href="https://discord.gg/6ZCcYqbC96" className='hp--button'>Join the Discord</a>
+        </div>
+
         <div className='hp--designedFor hp--maxWidth'>
           <h1>Designed For</h1>
 
@@ -69,33 +96,6 @@ export default function Home() {
           <p className="hp--disclaim">
             The Soroban test network has launched! Start experimenting and earning rewards now!
           </p>
-        </div>
-
-        <div className='hp--cta hp--maxWidth'>
-          <h2>Tinker &amp; Earn Rewards</h2>
-          <a href="https://github.com/stellar/sorobanathon" className='hp--imgLink'>
-            <img src='./img/homepage/sorobanathon.svg' />
-          </a>
-          <h1>Sorobanathon: First Light</h1>
-          <p>
-            Between now and December 15, 2022, join Sorobanathon: First Light. Experiment with Soroban and submit a code example, issue, tutorial, blog post, issue, or video documenting your experience. Qualified submissions will receive $25-300 worth of USDC. It's a fun, low-lift way to learn, test things out, and provide valuable feedback to both the Soroban development team and the Soroban ecosystem as a whole. Let's bootstrap this thing together!
-          </p>
-          <a href="https://github.com/stellar/sorobanathon" className='hp--button'>Join the Sorobanathon</a>
-        </div>
-
-        <div className='hp--cta hp--maxWidth'>
-          <h2>
-            Connect with developers, <br />
-            be the first to get updates
-          </h2>
-          <a href="https://discord.gg/6ZCcYqbC96" className='hp--imgLink'>
-            <img src='./img/homepage/discord.svg' />
-          </a>
-          <h1>Join the Discord</h1>
-          <p>
-            Sorobanathon: First Light is the first of many programs that draws from the $100M Soroban Adoption Fund, which the Stellar Development Foundation created to support the growth and development of the Soroban ecosystem. We'll be sharing more about additional Adoption Fund programs on the Stellar Dev Discord in the not-too-distant future, so make sure to join today to be the first to hear those announcements.
-          </p>
-          <a href="https://discord.gg/6ZCcYqbC96" className='hp--button'>Join the Discord</a>
         </div>
 
         <div className='hp--cta hp--maxWidth'>

@@ -3,6 +3,12 @@
  * and scoped locally.
  */
 
+@mixin breakpoint($value, $width : max-width) {
+  @media only screen and ($width : $value) {
+    @content;
+  }
+}
+
 .homepage {
   background-color: black;
   color: white;
@@ -35,8 +41,7 @@
   }
   .hp--arrows {
     top: 30%;
-    left: 50%;
-    transform: translate(-135%, -30%);
+    transform: translate(-20%, -50%);
   }
   .hp--topRight {
     top: 0;
@@ -62,6 +67,8 @@
     width: 325px;
     display: block;
     margin-bottom: 100px;
+    position: relative;
+    z-index: 1;
   }
   .hp--h1 {
     font-size: 48px;
@@ -161,6 +168,19 @@
       margin: 40px 0 0;
       line-height: 1.5;
     }
+
+    @include breakpoint(1200px) {
+      max-width: 800px;
+
+      .hp--features {
+        flex-direction: column;
+        width: 100%;
+        margin-left: 0;
+      }
+      .hp--muchExcite {
+        margin: 0 0 30px;
+      }
+    }
   }
 
   .hp--cta {
@@ -181,6 +201,7 @@
       margin: 0 0 50px;
       font-size: 55px;
       font-weight: 800;
+      text-align: center;
     }
     p {
       margin: 0 0 50px;

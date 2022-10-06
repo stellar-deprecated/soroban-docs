@@ -11,10 +11,10 @@ export default function Home() {
         <div className="hp--hero">
           <img className='hp--topRight' src="./img/homepage/top-right.svg" />
           <img className='hp--bottomLeft' src="./img/homepage/bottom-left.svg" />
-          <img className='hp--arrows' src="./img/homepage/arrows.svg" />
 
           <div className="hp--heroInfo hp--maxWidth">
             <img className='hp--logo' src="./img/homepage/soroban-white.svg" alt='Soroban' />
+            <img className='hp--arrows' src="./img/homepage/arrows.svg" />
             <h1 className="hp--h1">Introducing Soroban</h1>
             <h2 className="hp--h2">Soroban is a smart contracts platform that is designed with purpose and built to perform.</h2>
           </div>

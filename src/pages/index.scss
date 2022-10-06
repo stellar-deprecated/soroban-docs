@@ -168,12 +168,6 @@
       background-color: #BF3238;
     }
 
-    .hp--disclaim {
-      font-size: 24px;
-      margin: 40px 0 0;
-      line-height: 1.5;
-    }
-
     @include breakpoint(1200px) {
       max-width: 800px;
 

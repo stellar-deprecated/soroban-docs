@@ -16,7 +16,7 @@ export default function Home() {
             <img className='hp--logo' src="./img/homepage/soroban-white.svg" alt='Soroban' />
             <img className='hp--arrows' src="./img/homepage/arrows.svg" />
             <h1 className="hp--h1">Introducing Soroban</h1>
-            <h2 className="hp--h2">Soroban is a smart contracts platform that is designed with purpose and built to perform.</h2>
+            <h2 className="hp--h2">Soroban is a smart contracts platform that is designed with purpose and built to perform.  The test network has launched! Start experimenting and earning rewards now!</h2>
           </div>
         </div>
 
@@ -92,10 +92,6 @@ export default function Home() {
               </ul>
             </div>
           </div>
-
-          <p className="hp--disclaim">
-            The Soroban test network has launched! Start experimenting and earning rewards now!
-          </p>
         </div>
 
         <div className='hp--cta hp--maxWidth'>

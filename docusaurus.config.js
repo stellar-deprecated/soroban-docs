@@ -60,8 +60,18 @@ const config = {
             position: 'left'
           },
           {
+            href: 'https://github.com/stellar/sorobanathon', 
+            label: 'Sorobanathon', 
+            position: 'left'
+          },
+          {
             href: 'https://github.com/stellar/soroban-docs',
             label: 'GitHub',
+            position: 'right',
+          },
+          {
+            href: 'https://discord.gg/6ZCcYqbC96',
+            label: 'Discord',
             position: 'right',
           },
         ],

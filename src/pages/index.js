@@ -16,11 +16,12 @@ export default function Home() {
             <img className='hp--logo' src="./img/homepage/soroban-white.svg" alt='Soroban' />
             <img className='hp--arrows' src="./img/homepage/arrows.svg" />
             <h1 className="hp--h1">Introducing Soroban</h1>
-            <h2 className="hp--h2">Soroban is a smart contracts platform that is designed with purpose and built to perform.  The test network has launched! Start experimenting and earning rewards now!</h2>
+            <h2 className="hp--h2">Soroban is a smart contracts platform that is designed with purpose and built to perform. The test network has launched! Start experimenting and earning rewards now!</h2>
+            <a href="/#tinker-and-earn" className='hp--button'>Tinker &amp; Earn</a>
           </div>
         </div>
 
-        <div className='hp--cta hp--maxWidth'>
+        <div id="tinker-and-earn" className='hp--cta hp--maxWidth'>
           <h2>Tinker &amp; Earn Rewards</h2>
           <a href="https://github.com/stellar/sorobanathon" className='hp--imgLink'>
             <img src='./img/homepage/sorobanathon.svg' />

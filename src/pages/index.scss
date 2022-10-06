@@ -86,6 +86,7 @@
     font-weight: 400;
     max-width: 560px;
     line-height: 1.5;
+    margin-bottom: 30px;
   }
 
   .hp--designedFor {
@@ -165,7 +166,7 @@
       background-color: white;
     }
     .red {
-      background-color: #BF3238;
+      background-color: #D55A5F;
     }
 
     @include breakpoint(1200px) {

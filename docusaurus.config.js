@@ -51,7 +51,7 @@ const config = {
           width: 100,
           src: "img/soroban-wordmark-temp.svg",
           srcDark: "img/soroban-wordmark-temp-dark.svg",
-          href: "/docs",
+          href: "/",
         },
         items: [
           {

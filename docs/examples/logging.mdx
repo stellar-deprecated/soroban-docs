@@ -1,5 +1,5 @@
 ---
-sidebar_position: 1
+sidebar_position: 3
 title: Logging
 ---
 
@@ -17,7 +17,7 @@ be step-through debugged in your Rust-enabled IDE. See [testing] for more
 details.
 :::
 
-:::tip
+:::caution
 Logs are not accessible by dapps and other applications. See the [events
 example] for how to produce structured events.
 :::
@@ -37,7 +37,8 @@ configured, then clone the `v0.0.4` tag of `soroban-examples` repository:
 git clone -b v0.0.4 https://github.com/stellar/soroban-examples
 ```
 
-To run the tests for the example, navigate to the `logging` directory, and use `cargo test`.
+To run the tests for the example, navigate to the `logging` directory, and use
+`cargo test`.
 
 ```
 cd logging
@@ -61,6 +62,9 @@ debug-assertions = true
 ```
 
 ```rust title="logging/src/lib.rs"
+#![no_std]
+use soroban_sdk::{contractimpl, log, Env, Symbol};
+
 pub struct Contract;
 
 #[contractimpl]
@@ -79,8 +83,8 @@ outputted to stdout in the [`soroban`] CLI and available for tests to assert on
 or print.
 
 Logs are only outputted if the contract is built with the `debug-assertions`
-compiler option is enabled. This makes them efficient to include in code since a
-regular `release` build will omit them.
+compiler option enabled. This makes them efficient to leave in code permanently
+since a regular `release` build will omit them.
 
 Logs are only recorded in Soroban environments that have logging enabled. The
 only Soroban environments where logging is enabled is in Rust tests, and in the
@@ -90,8 +94,10 @@ Open the files above to follow along.
 
 ### `Cargo.toml` Profile
 
-To enable the `debug-assertions` compiler option a new `release-with-logs`
-profile is added to `Cargo.toml` that inherits from the `release` profile.
+Logs are only outputted if the contract is built with the `debug-assertions`
+compiler option enabled. A new `release-with-logs` profile is added to
+`Cargo.toml` that inherits from the `release` profile, and enables
+`debug-assertions`.
 
 ```toml
 [profile.release-with-logs]
@@ -99,9 +105,9 @@ inherits = "release"
 debug-assertions = true
 ```
 
-To build with logs use the `--profile release-with-logs` option.
+To build without logs use the `--release` or `--profile release` option.
 
-To build for deployment use the `--release` or `--profile release` option.
+To build with logs use the `--profile release-with-logs` option.
 
 ### Using the `log!` Macro
 
@@ -113,11 +119,18 @@ format string.
 log!(&env, "Hello {}", value);
 ```
 
-:::warning
+The above log will render as follows if `value` is a `Symbol` containing
+`"Dev"`.
+
+```
+Hello Symbol(Dev)
+```
+
+:::caution
 The values outputted are currently relatively limited. While primitive values
 like `u32`, `u64`, `bool`, and `Symbol`s will render clearly in the log output,
-more complex types like `Bytes`, `Vec`, `Map`, or custom types will render only
-their handle identifier. The capabilities of logging is in development.
+`Bytes`, `Vec`, `Map`, and custom types will render only their handle
+number. Logging capabilities are in early development.
 :::
 
 ## Tests
@@ -142,6 +155,15 @@ fn test() {
 }
 ```
 
+The `std` crate, which contains the Rust standard library, is imported so that
+the test can use the `std::vec!` and `std::println!` macros. Since contracts are
+required to use `#![no_std]`, tests in contracts must manually import `std` to
+use std functionality like printing to stdout.
+
+```rust
+extern crate std;
+```
+
 In any test the first thing that is always required is an `Env`, which is the
 Soroban environment that the contract will run in.
 
@@ -153,7 +175,7 @@ Contracts must be registered with the environment with a contract ID, which is a
 32-byte value.
 
 ```rust
-let contract_id = FixedBinary::from_array(&env, [0; 32]);
+let contract_id = BytesN::from_array(&env, [0; 32]);
 env.register_contract(&contract_id, HelloContract);
 ```
 

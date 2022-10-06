@@ -6,11 +6,11 @@ title: Auth
 The [auth example] demonstrates how to tell who has invoked a contract, and
 verify that a contract has been invoked by an account or contract.
 
-The participant who invoked a contract is the `Invoker`, and is one-of a:
+The participant who invoked a contract is an `Address` containing one-of a:
 - Account ID
 - Contract ID
 
-In this example, data is stored associated with an `Invoker` after
+In this example, data is stored associated with an `Address` after
 authorization has been verified.
 
 :::info
@@ -51,13 +51,9 @@ test test::test ... ok
 ## Code
 
 ```rust title="auth/src/lib.rs"
-#![no_std]
-
-use soroban_sdk::{contractimpl, contracttype, BigInt, Env, Invoker};
-
 #[contracttype]
 pub enum DataKey {
-    SavedNum(Invoker),
+    SavedNum(Address),
     Admin,
 }
 
@@ -65,11 +61,11 @@ pub struct ExampleContract;
 
 #[contractimpl]
 impl ExampleContract {
-    /// Set the admin invoker.
+    /// Set the admin Address.
     ///
     /// May be called only once unauthenticated, and
     /// then only by current admin.
-    pub fn set_admin(env: Env, new_admin: Invoker) {
+    pub fn set_admin(env: Env, new_admin: Address) {
         let admin = Self::admin(&env);
         if let Some(admin) = admin {
             assert_eq!(env.invoker(), admin);
@@ -77,27 +73,27 @@ impl ExampleContract {
         env.data().set(DataKey::Admin, new_admin);
     }
 
-    /// Set the number for an authenticated invoker.
+    /// Set the number for an authenticated address.
     pub fn set_num(env: Env, num: BigInt) {
         let id = env.invoker();
         env.data().set(DataKey::SavedNum(id), num);
     }
 
-    /// Get the number for an invoker.
-    pub fn num(env: Env, id: Invoker) -> Option<BigInt> {
+    /// Get the number for an Address.
+    pub fn num(env: Env, id: Address) -> Option<BigInt> {
         env.data().get(DataKey::SavedNum(id)).map(Result::unwrap)
     }
 
-    /// Overwrite any number for an invoker.
+    /// Overwrite any number for an Address.
     /// Callable only by admin.
-    pub fn overwrite(env: Env, id: Invoker, num: BigInt) {
+    pub fn overwrite(env: Env, id: Address, num: BigInt) {
         let admin = Self::admin(&env);
         assert_eq!(Some(env.invoker()), admin);
 
         env.data().set(DataKey::SavedNum(id), num);
     }
 
-    fn admin(env: &Env) -> Option<Invoker> {
+    fn admin(env: &Env) -> Option<Address> {
         env.data().get(DataKey::Admin).map(Result::unwrap)
     }
 }
@@ -139,7 +135,7 @@ the `new_admin` `Invoker`, which will be either an account or a contract, will
 be stored.
 
 ```rust
-pub fn init(env: Env, new_admin: Invoker) {
+pub fn init(env: Env, new_admin: Address) {
     let admin = Self::admin(&env);
     if let Some(admin) = admin {
         assert_eq!(env.invoker(), admin);
@@ -147,7 +143,7 @@ pub fn init(env: Env, new_admin: Invoker) {
     env.data().set(DataKey::Admin, new_admin);
 }
 
-fn admin(env: &Env) -> Option<Invoker> {
+fn admin(env: &Env) -> Option<Address> {
     env.data().get(DataKey::Admin).map(Result::unwrap)
 }
 ```
@@ -163,8 +159,8 @@ data from other data the contract might store in the future for invokers.
 
 ```rust
 pub fn set_num(env: Env, num: BigInt) {
-    let id = env.invoker();
-    env.data().set(DataKey::SavedNum(id), num);
+    let addr = env.invoker();
+    env.data().set(DataKey::SavedNum(addr), num);
 }
 ```
 
@@ -175,8 +171,8 @@ against any other user. No authentication occurs because the invoker is not used
 and is otherwise ignored.
 
 ```rust
-pub fn num(env: Env, id: Invoker) -> Option<BigInt> {
-    env.data().get(DataKey::SavedNum(id)).map(Result::unwrap)
+pub fn num(env: Env, addr: Address) -> Option<BigInt> {
+    env.data().get(DataKey::SavedNum(addr)).map(Result::unwrap)
 }
 ```
 
@@ -194,25 +190,25 @@ fn test() {
 
     // Initialize contract by setting the admin.
     let admin = env.accounts().generate();
-    let admin_invoker = &Invoker::Account(admin.clone());
-    client.set_admin(admin_invoker);
+    let admin_address = &Address::Account(admin.clone());
+    client.set_admin(admin_address);
 
     // Check if user 1 has a num, it doesn't yet.
     let user1 = env.accounts().generate();
-    let user1_invoker = &Invoker::Account(user1.clone());
-    assert_eq!(client.num(user1_invoker), None);
+    let user1_address = &Address::Account(user1.clone());
+    assert_eq!(client.num(user1_address), None);
 
     // Have user 1 set a num for themselves.
     let five = BigInt::from_u32(&env, 5);
     client.with_source_account(&user1).set_num(&five);
-    assert_eq!(client.num(user1_invoker), Some(five));
+    assert_eq!(client.num(user1_address), Some(five));
 
     // Have admin overwrite user 1's num.
     let ten = BigInt::from_u32(&env, 10);
     client
         .with_source_account(&admin)
-        .overwrite(user1_invoker, &ten);
-    assert_eq!(client.num(user1_invoker), Some(ten));
+        .overwrite(user1_address, &ten);
+    assert_eq!(client.num(user1_address), Some(ten));
 }
 ```
 
@@ -260,7 +256,7 @@ The `set_admin` function is invoked as is since no authentication is required on
 its first call.
 
 ```rust
-client.set_admin(admin_invoker);
+client.set_admin(admin_address);
 ```
 
 The `set_num` function is invoked with `user1` configured as the source account
@@ -273,7 +269,7 @@ client.with_source_account(&user1).set_num(&five);
 
 Functions invoked in tests can use `with_source_account(account_id)` to simulate
 an invocation from an account, and the invoked function will see `env.invoker()`
-as `Invoker::Account(account_id)`.
+as `Address::Account(account_id)`.
 
 ## Build the Contract
 

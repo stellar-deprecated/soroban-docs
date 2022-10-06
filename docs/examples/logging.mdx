@@ -6,7 +6,7 @@ title: Logging
 The [logging example] demonstrates how to log for the purpose of debugging.
 
 Logs in contracts are only visible in tests, or when executing contracts using
-the [`soroban`] CLI. Logs are only compiled into the contract if the
+[`soroban-cli`]. Logs are only compiled into the contract if the
 `debug-assertions` Rust compiler option is enabled.
 
 [logging example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/hello_world
@@ -24,7 +24,6 @@ example] for how to produce structured events.
 
 [testing]: ../tutorials/testing.mdx
 [events example]: events.mdx
-[`soroban`]: ../getting-started/setup#install-the-soroban-cli
 
 ## Run the Example
 
@@ -79,7 +78,7 @@ Ref: https://github.com/stellar/soroban-examples/tree/v0.0.4/logging
 ## How it Works
 
 The [`log!`] macro logs a string. Any logs that occur during execution are
-outputted to stdout in the [`soroban`] CLI and available for tests to assert on
+outputted to stdout in [`soroban-cli`] and available for tests to assert on
 or print.
 
 Logs are only outputted if the contract is built with the `debug-assertions`
@@ -88,7 +87,7 @@ since a regular `release` build will omit them.
 
 Logs are only recorded in Soroban environments that have logging enabled. The
 only Soroban environments where logging is enabled is in Rust tests, and in the
-[`soroban`] CLI.
+[`soroban-cli`].
 
 Open the files above to follow along.
 
@@ -240,7 +239,7 @@ A `.wasm` file should be outputted in the `../target` directory, in the
 
 ## Run the Contract
 
-If you have [`soroban`] installed, you can invoke contract functions in the
+If you have [`soroban-cli`] installed, you can invoke contract functions in the
 using it.
 
 ```sh
@@ -259,3 +258,4 @@ null
 ```
 
 [`log!`]: https://docs.rs/soroban-sdk/latest/soroban_sdk/macro.log.html
+[`soroban-cli`]: ../getting-started/setup#install-the-soroban-cli

@@ -156,15 +156,11 @@ Open the `cross_contract/contract_b/src/test.rs` file to follow along.
 fn test() {
     let env = Env::default();
 
-    // Define IDs for contract A and B.
-    let contract_a_id = BytesN::from_array(&env, &[0; 32]);
-    let contract_b_id = BytesN::from_array(&env, &[1; 32]);
-
     // Register contract A using the imported WASM.
-    env.register_contract_wasm(&contract_a_id, contract_a::WASM);
+    let contract_a_id = env.register_contract_wasm(None, contract_a::WASM);
 
     // Register contract B defined in this crate.
-    env.register_contract(&contract_b_id, ContractB);
+    let contract_b_id = env.register_contract(None, ContractB);
 
     // Create a client for calling contract B.
     let client = ContractBClient::new(&env, &contract_b_id);
@@ -182,26 +178,16 @@ Soroban environment that the contract will run in.
 let env = Env::default();
 ```
 
-Contracts must be registered with the environment with a contract ID, which is a
-32-byte value. Both contracts `a` and `b` have IDs defined that are used in the
-rest of the test.
-
-```rust
-let contract_a_id = BytesN::from_array(&env, &[0; 32]);
-let contract_b_id = BytesN::from_array(&env, &[1; 32]);
-```
-
 Contract A is registered with the environment using the imported WASM.
 
 ```rust
-env.register_contract_wasm(&contract_a_id, contract_a::WASM);
+let contract_a_id = env.register_contract_wasm(None, contract_a::WASM);
 ```
 
-Contract B is registered with the environment using the type that is in the
-crate.
+Contract B is registered with the environment using the contract type.
 
 ```rust
-env.register_contract(&contract_b_id, ContractB);
+let contract_b_id = env.register_contract(None, ContractB);
 ```
 
 All public functions within an `impl` block that is annotated with the

@@ -143,8 +143,7 @@ extern crate std;
 #[test]
 fn test() {
     let env = Env::default();
-    let contract_id = BytesN::from_array(&env, &[0; 32]);
-    env.register_contract(&contract_id, Contract);
+    let contract_id = env.register_contract(None, Contract);
     let client = ContractClient::new(&env, &contract_id);
 
     client.hello(&symbol!("Dev"));
@@ -171,12 +170,10 @@ Soroban environment that the contract will run in.
 let env = Env::default();
 ```
 
-Contracts must be registered with the environment with a contract ID, which is a
-32-byte value.
+The contract is registered with the environment using the contract type.
 
 ```rust
-let contract_id = BytesN::from_array(&env, [0; 32]);
-env.register_contract(&contract_id, HelloContract);
+let contract_id = env.register_contract(None, HelloContract);
 ```
 
 All public functions within an `impl` block that is annotated with the

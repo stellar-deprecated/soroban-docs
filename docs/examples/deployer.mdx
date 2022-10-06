@@ -176,8 +176,9 @@ Soroban environment that the contract will run in.
 let env = Env::default();
 ```
 
-Contracts must be registered with the environment with a contract ID, which is a
-32-byte value.
+A fixed contract ID is used so that we can assert on the contract ID of the
+contract that gets deployed, which will be derived in part from the deployers
+contract ID.
 
 ```rust
 let deployer_id = BytesN::from_array(&env, &[0; 32]);

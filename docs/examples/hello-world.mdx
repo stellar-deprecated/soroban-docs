@@ -102,8 +102,7 @@ Open the `hello_world/src/test.rs` file to follow along.
 #[test]
 fn test() {
     let env = Env::default();
-    let contract_id = BytesN::from_array(&env, &[0; 32]);
-    env.register_contract(&contract_id, HelloContract);
+    let contract_id = env.register_contract(None, HelloContract);
     let client = HelloContractClient::new(&env, &contract_id);
 
     let words = client.hello(&symbol!("SourBun"));
@@ -118,12 +117,10 @@ Soroban environment that the contract will run in.
 let env = Env::default();
 ```
 
-Contracts must be registered with the environment with a contract ID, which is a
-32-byte value.
+The contract is registered with the environment using the contract type.
 
 ```rust
-let contract_id = FixedBinary::from_array(&env, [0; 32]);
-env.register_contract(&contract_id, HelloContract);
+let contract_id = env.register_contract(None, HelloContract);
 ```
 
 All public functions within an `impl` block that is annotated with the

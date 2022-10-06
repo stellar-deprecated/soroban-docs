@@ -184,8 +184,7 @@ Open the `auth/src/test.rs` file to follow along.
 #[test]
 fn test() {
     let env = Env::default();
-    let contract_id = BytesN::from_array(&env, &[0; 32]);
-    env.register_contract(&contract_id, ExampleContract);
+    let contract_id = env.register_contract(None, ExampleContract);
     let client = ExampleContractClient::new(&env, contract_id);
 
     // Initialize contract by setting the admin.
@@ -219,18 +218,10 @@ Soroban environment that the contract will run in.
 let env = Env::default();
 ```
 
-Contracts must be registered with the environment with a contract ID, which is a
-32-byte value. In this test a zero contract ID is used.
+The contract is registered with the environment using the contract type.
 
 ```rust
-let contract_id = BytesN::from_array(&env, &[0; 32]);
-```
-
-The contract is registered with the environment using the type that is in the
-crate.
-
-```rust
-env.register_contract(&contract_id, ExampleContract);
+let contract_id = env.register_contract(None, ExampleContract);
 ```
 
 All public functions within an `impl` block that is annotated with the

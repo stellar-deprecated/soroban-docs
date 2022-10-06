@@ -6,16 +6,17 @@ title: Auth (Advanced)
 The [advanced auth example] demonstrates how to write a contract that
 verifies presigned invocations using the [soroban-auth] crate.
 
-Participants are identified in `Identifier`'s, and participants presign
-invocations by providing `Siganture`s.
+Participants are identified with `Identifier`'s, that are a superset of an
+`Address`. Participants can be identified by being the invoker, or by presigning
+invocations. Both are provided by specifying a `Siganture` as an argument.
 
 An `Identifier` can represent an:
 - Account ID
 - Contract ID
 - Ed25519 key
 
-A `Signature` can be an:
-- Invoker — An invoking transaction source account, or an invoking contract.
+A `Signature` can be a:
+- Invoker — An invoking address (account ID or contract ID).
 - Account – An invocation presigned with account signers.
 – Ed25519 – An invocation presigned with an ed25519 key.
 
@@ -24,8 +25,8 @@ authorization has been verified. The contract supports auth via all methods
 above.
 
 :::info
-If you're just starting, checkout the [auth example] that uses a simpler form of
-auth.
+If you're just starting to explore Soroban, checkout the [auth example] that
+uses a simpler form of invoker auth.
 :::
 
 [soroban-auth]: ../SDKs/rust-auth

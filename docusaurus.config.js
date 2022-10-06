@@ -99,6 +99,10 @@ const config = {
                 label: 'GitHub',
                 href: 'https://github.com/stellar',
               },
+              {
+                label: 'Sorobanathon',
+                href: 'https://github.com/stellar/sorobanathon', 
+              },
             ],
           },
         ],

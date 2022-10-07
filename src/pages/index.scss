@@ -207,12 +207,14 @@
       position: absolute;
       top: 0;
       right: 0;
+      z-index: 0;
     }
     .hp--topRight {
       transform: scaleX(-1) scaleY(-1);
       position: absolute;
       bottom: 0;
       left: 0;
+      z-index: 0;
     }
   }
   .hp--cta {
@@ -220,6 +222,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
+    z-index: 1;
 
     h2 {
       margin: 0 0 75px;

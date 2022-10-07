@@ -75,7 +75,7 @@ export default function Home() {
           </a>
           <h1>Sorobanathon: First Light</h1>
           <p>
-            Between now and December 15, 2022, join <i>Sorobanathon: First Light</i>. Experiment with Soroban and submit a code example, issue, tutorial, blog post, issue, or video documenting your experience. Qualified submissions will receive awards of 250-3,000 XLM. It's a fun, low-lift way to learn, test things out, and provide valuable feedback to both the Soroban development team and the Soroban ecosystem as a whole. Let's bootstrap this thing together!
+            Between now and December 15, 2022, join <i>Sorobanathon: First Light</i>. Experiment with Soroban and submit a code example, issue, tutorial, blog post, or video documenting your experience. Qualified submissions will receive awards of 250-3,000 XLM. It's a fun, low-lift way to learn, test things out, and provide valuable feedback to both the Soroban development team and the Soroban ecosystem as a whole. Let's bootstrap this thing together!
           </p>
           <a href="https://github.com/stellar/sorobanathon" className='hp--button'>Join the Sorobanathon</a>
         </div>

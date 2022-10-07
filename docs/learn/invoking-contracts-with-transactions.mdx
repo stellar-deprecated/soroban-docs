@@ -4,7 +4,7 @@ title: Invoking Contracts with Stellar Transactions
 ---
 
 Stellar supports invoking and deploying contracts with a new Operation named `InvokeHostFunctionOp`. The [`soroban-cli`] abstracts these details away from the
-user, but SDKs do not yet and if you're building a dapp you'll probably find yourself building the XDR transaction and to submit to
+user, but SDKs do not yet and if you're building a dapp you'll probably find yourself building the XDR transaction to submit to
 the network.
 
 The `InvokeHostFunctionOp` can be used to invoke host functions. Host functions are built-in to Soroban and give the invoker access to:
@@ -16,9 +16,18 @@ The `InvokeHostFunctionOp` can be used to invoke host functions. Host functions 
 
 ## InvokeHostFunctionOp
 
-The XDR of the operation below can be found
-[here](https://github.com/stellar/stellar-xdr-next/blob/161e2e5b64425a49f9ccfef7f732ae742ed5eec4/Stellar-transaction.x#L486)
+The XDR of `HostFunction` and `InvokeHostFunctionOp` below can be found
+[here](https://github.com/stellar/stellar-xdr-next/blob/161e2e5b64425a49f9ccfef7f732ae742ed5eec4/Stellar-transaction.x#L477-L496)
 ```c++
+enum HostFunction
+{
+    HOST_FN_INVOKE_CONTRACT = 0,
+    HOST_FN_CREATE_CONTRACT_WITH_ED25519 = 1,
+    HOST_FN_CREATE_CONTRACT_WITH_SOURCE_ACCOUNT = 2,
+    HOST_FN_CREATE_TOKEN_CONTRACT_WITH_SOURCE_ACCOUNT = 3,
+    HOST_FN_CREATE_TOKEN_CONTRACT_WITH_ASSET = 4
+};
+
 struct InvokeHostFunctionOp
 {
     // The host function to invoke

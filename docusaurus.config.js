@@ -7,8 +7,8 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "Soroban Documentation",
-  // tagline: 'Dinosaurs are cool',
-  url: "https://stellar.org", // Your website URL
+  tagline: 'Soroban is a smart contracts platform that is designed with purpose and built to perform.',
+  url: "https://soroban.stellar.org", // Your website URL
   baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "throw",
@@ -76,11 +76,11 @@ const config = {
           },
         ],
       },
-      // algolia: {
-      //   appId: "testingPJZPDNR7VG",
-      //   apiKey: "1f36375ebbc70d65c5b8165ecf52a1f2",
-      //   indexName: "crawler_Docusaurus",
-      // },
+      algolia: {
+        appId: "VNSJF5AWIZ",
+        apiKey: "db75a11b3ff4c5428be43896849862dc",
+        indexName: "crawler_Soroban Docs",
+      },
       footer: {
         links: [
           {
@@ -106,7 +106,6 @@ const config = {
             ],
           },
         ],
-        // copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
       },
       prism: {
         theme: lightCodeTheme,

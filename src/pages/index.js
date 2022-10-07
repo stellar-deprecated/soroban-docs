@@ -60,7 +60,7 @@ export default function Home() {
               </div>
 
               <ul className="hp--back">
-                <li>Stellar speed and reliability – with 5 seconds to finality per contract –</li>
+                <li>Stellar speed and reliability – with 5 seconds to finality per contract</li>
                 <li>On a proven  network that has been live since 2015 and is processing 150 tps as we speak</li>
                 <li>A global anchor network of on/off ramps and assets, including worldwide cash access</li>
               </ul>
@@ -94,53 +94,6 @@ export default function Home() {
           </p>
           <a href="https://discord.gg/6ZCcYqbC96" className='hp--button'>Join the Discord</a>
         </div>
-
-        {/* <div className='hp--designedFor hp--maxWidth'>
-          <h1>Designed For</h1>
-
-          <div className='hp--features'>
-            <div className='hp--muchExcite orange'>
-              <div className="hp--front">
-                <img src="./img/homepage/battery.svg" />
-                <p>Batteries-Included Developer Experience</p>
-              </div>
-
-              <ul className="hp--back">
-                <li>A local sandbox for fast setup and iterative development</li>
-                <li>Plug-and-play SDKs for simple and complex authorization</li>
-                <li>Flexibility to reuse common functionality between contracts and access to built-in/out-of-the box contracts</li>
-                <li>Written in Rust from end-to-end, for Rust developers, which taps into a growing ecosystem of safe and efficient tooling</li>
-              </ul>
-            </div>
-
-            <div className='hp--muchExcite white'>
-              <div className="hp--front">
-                <img src="./img/homepage/scale.svg" />
-                <p>Scale</p>
-              </div>
-
-              <ul className="hp--back">
-                <li>Transaction footprints allow scaling to multiple cores</li>
-                <li>Contracts without deserialization / serialization loops</li>
-                <li>A calibrated fee model that represents compute and maximizes throughput while reducing cost</li>
-                <li>Solving state bloat: the elephant in the room</li>
-              </ul>
-            </div>
-
-            <div className='hp--muchExcite red'>
-              <div className="hp--front">
-                <img src="./img/homepage/railroad.svg" />
-                <p>Access to Financial Rails via Stellar</p>
-              </div>
-
-              <ul className="hp--back">
-                <li>Stellar speed and reliability – with 5 seconds to finality per contract –</li>
-                <li>On a proven  network that has been live since 2015 and is processing 150 tps as we speak</li>
-                <li>A global anchor network of on/off ramps and assets, including worldwide cash access</li>
-              </ul>
-            </div>
-          </div>
-        </div> */}
 
         <div className='bp--startYourJourney'>
           <img className='hp--topRight' src="./img/homepage/top-right.svg" />

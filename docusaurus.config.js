@@ -68,7 +68,7 @@ const config = {
       },
       algolia: {
         appId: "VNSJF5AWIZ",
-        apiKey: "db75a11b3ff4c5428be43896849862dc",
+        apiKey: "a305ee37f0ac993099385788d84de722",
         indexName: "crawler_Soroban Docs",
       },
       footer: {

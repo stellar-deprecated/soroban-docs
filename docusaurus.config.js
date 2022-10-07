@@ -66,11 +66,11 @@ const config = {
           },
         ],
       },
-      // algolia: {
-      //   appId: "testingPJZPDNR7VG",
-      //   apiKey: "1f36375ebbc70d65c5b8165ecf52a1f2",
-      //   indexName: "crawler_Docusaurus",
-      // },
+      algolia: {
+        appId: "VNSJF5AWIZ",
+        apiKey: "db75a11b3ff4c5428be43896849862dc",
+        indexName: "crawler_Soroban Docs",
+      },
       footer: {
         style: 'dark',
         links: [

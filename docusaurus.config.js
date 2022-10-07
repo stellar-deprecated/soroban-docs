@@ -8,7 +8,7 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 const config = {
   title: "Soroban Documentation",
   tagline: 'Soroban is a smart contracts platform that is designed with purpose and built to perform.',
-  url: "https://stellar.org", // Your website URL
+  url: "https://soroban.stellar.org", // Your website URL
   baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "throw",

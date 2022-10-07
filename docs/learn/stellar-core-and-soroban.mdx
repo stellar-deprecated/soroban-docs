@@ -3,12 +3,16 @@ sidebar_position: 11
 title: Using Stellar Core to interact with Soroban
 ---
 
-Stellar Core has an new Operation named `InvokeHostFunctionOp` that can be used to interact with
-Soroban. The [Soroban CLI] abstracts these details away from the
-user, but you may find the need to build the XDR transaction and submit it to
-the network directly.
+Stellar supports invoking and deploying contracts with a new Operation named `InvokeHostFunctionOp`. The [`soroban-cli`] abstracts these details away from the
+user, but SDKs do not yet and if you're building a dapp you'll probably find yourself building the XDR transaction and to submit to
+the network.
 
-[Soroban CLI]: ../getting-started/setup#install-the-soroban-cli
+The `InvokeHostFunctionOp` can be used to invoke host functions. Host functions are built-in to Soroban and give the invoker access to:
+- Invoking contract functions.
+- Deploying new contracts.
+- Deploying token contracts for Stellar Assets.
+
+[`soroban-cli`]: ../getting-started/setup#install-the-soroban-cli
 
 ## InvokeHostFunctionOp
 

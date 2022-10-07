@@ -14,6 +14,11 @@ The example supports authentication by:
 [EIP-2612]: https://eips.ethereum.org/EIPS/eip-2612
 [EIP-712]: https://eips.ethereum.org/EIPS/eip-712
 
+:::info
+If you're just starting to explore Soroban, checkout the [auth example] that
+uses a simpler form of invoker auth.
+:::
+
 Participants are identified with `Identifier`'s, that are a superset of an
 `Address`. An `Identifier` can represent an:
 - Account ID
@@ -30,11 +35,6 @@ a:
 In this example, data is stored associated with an `Identifier` after
 authorization has been verified. The contract supports auth via all methods
 above.
-
-:::info
-If you're just starting to explore Soroban, checkout the [auth example] that
-uses a simpler form of invoker auth.
-:::
 
 [soroban-auth]: ../SDKs/rust-auth
 [auth example]: auth.mdx

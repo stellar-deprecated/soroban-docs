@@ -19,7 +19,6 @@ const config = {
     defaultLocale: 'en',
     locales: ['en'],
   },
-  trailingSlash: false,
   plugins: ["docusaurus-plugin-sass"],
   presets: [
     [

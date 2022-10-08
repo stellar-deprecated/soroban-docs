@@ -239,7 +239,7 @@ WASM using it.
 
 ```sh
 soroban invoke \
-    --wasm ../target/wasm32-unknown-unknown/release/soroban_increment_contract.wasm \
+    --wasm ../target/wasm32-unknown-unknown/release/soroban_custom_types_contract.wasm \
     --id 1 \
     --fn increment
     --arg 5
@@ -258,6 +258,10 @@ Use the `soroban` to inspect what the counter is after a few runs.
 
 ```sh
 soroban read --id 1 --key STATE
+```
+
+```
+STATE,"{""count"":25,""last_incr"":15}"
 ```
 
 [`soroban-cli`]: ../getting-started/setup#install-the-soroban-cli

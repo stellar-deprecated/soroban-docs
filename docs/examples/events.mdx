@@ -3,9 +3,11 @@ sidebar_position: 3
 title: Events
 ---
 
-The [events example] demonstrates how to publish events from a contract.
+The [events example] demonstrates how to publish events from a contract.  This
+example is an extension of the [storing data example].
 
 [events example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/events
+[storing data example]: storing-data.mdx
 
 ## Run the Example
 
@@ -35,18 +37,22 @@ test test::test ... ok
 ## Code
 
 ```rust title="events/src/lib.rs"
-#![no_std]
-use soroban_sdk::{contractimpl, map, symbol, Env, Symbol};
+const COUNTER: Symbol = symbol!("COUNTER");
 
-pub struct EventsContract;
+pub struct IncrementContract;
 
 #[contractimpl]
-impl EventsContract {
-    pub fn hello(env: Env, to: Symbol) -> () {
-        let events = env.events();
-        let topics = (symbol!("Hello"), to);
-        let data = map![&env, (1u32, 2u32)];
-        events.publish(topics, data);
+impl IncrementContract {
+    pub fn increment(env: Env) -> u32 {
+        let mut count: u32 = env
+            .data()
+            .get(COUNTER)
+            .unwrap_or(Ok(0)) // If no value set, assume 0.
+            .unwrap(); // Panic if the value of COUNTER is not u32.
+        count += 1;
+        env.data().set(COUNTER, count);
+        env.events().publish((COUNTER, symbol!("increment")), count);
+        count
     }
 }
 ```
@@ -54,62 +60,140 @@ Ref: https://github.com/stellar/soroban-examples/tree/v0.0.4/events
 
 ## How it Works
 
-This example contract is similar to the [hello world example]. It also contains one 
-contract function named `hello`. However, instead of returning the greeting message to the caller, it 
-publishes the message (along with some data) as a contract event.
+This example contract extends the increment example by publishing an event each
+time the counter is incremented.
 
-[hello world example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/hello_world
+Contract events let contracts emit information about what their contract is
+doing.
 
-Contract events let smart contract developers emit information about what their
-contract is doing.
-
-Contracts can publish events using the `Events` object retrieved from the
-environment.
+Contracts can publish events using the environments events publish function.
 
 ```rust
-let events = env.events();
+env.events().publish(topics, data);
 ```
 
 ### Event Topics
-An event may contain up to four topics, each topic can be any type except:
-- `Vec`
-- `Map`
-- `Bytes` longer than 32 bytes
-- `[contracttype]`
-
+An event may contain up to four topics.
 
 Topics are conveniently defined using a tuple. In the sample code two topics of
 `Symbol` type are used.
 
 ```rust
-let topics = (symbol!("Hello"), to);
+env.events().publish((COUNTER, symbol!("increment")), ...);
 ```
 
 ### Event Data
 An event also contains a data object of any value or type including types
-defined by contracts using `[contracttype]`. In the sample code the data is a
-small map where key `1` maps to value `2`.
+defined by contracts using `#[contracttype]`. In the example the data is the
+`u32` count.
 
 ```rust
-let data = map![&env, (1u32, 2u32)];
+env.events().publish(..., count);
 ```
 
 :::tip
-The topics don't have to be made of the same type. You can mix different types as long as the total topic count stays below the limit. 
+The topics don't have to be made of the same type. You can mix different types
+as long as the total topic count stays below the limit.
 :::
 
 ### Publishing
 Publishing an event is done by calling the `publish` function and giving it the
-topics and data.  The function returns nothing on success, and panics on
-failure. Possible failure reasons can include malformed inputs (e.g. topic count
-exceeds limit) and running over the resource budget (TBD). Once successfully
-published, the new event will be recorded by the [host environment].
+topics and data. The function returns nothing on success, and panics on failure.
+Possible failure reasons can include malformed inputs (e.g. topic count exceeds
+limit) and running over the resource budget (TBD). Once successfully published,
+the new event will be available to applications consuming the events.
 
 ```rust
-events.publish(topics, data);
+env.events().publish((COUNTER, symbol!("increment")), count);
 ```
 
-[host environment]: ../learn/high-level-overview#host-environment
+:::caution
+Published events are discarded if a contract invocation fails due to a panic,
+budget exhaustion, or when the contract returns an error.
+:::
+
+## Tests
+
+Open the `events/src/test.rs` file to follow along.
+
+```rust title="events/src/test.rs"
+#[test]
+fn test() {
+    let env = Env::default();
+    let contract_id = env.register_contract(None, IncrementContract);
+    let client = IncrementContractClient::new(&env, &contract_id);
+
+    assert_eq!(client.increment(), 1);
+    assert_eq!(client.increment(), 2);
+    assert_eq!(client.increment(), 3);
+
+    assert_eq!(
+        env.events().all(),
+        vec![
+            &env,
+            (
+                contract_id.clone(),
+                (symbol!("COUNTER"), symbol!("increment")).into_val(&env),
+                1u32.into_val(&env)
+            ),
+            (
+                contract_id.clone(),
+                (symbol!("COUNTER"), symbol!("increment")).into_val(&env),
+                2u32.into_val(&env)
+            ),
+            (
+                contract_id.clone(),
+                (symbol!("COUNTER"), symbol!("increment")).into_val(&env),
+                3u32.into_val(&env)
+            ),
+        ]
+    );
+}
+```
+
+In any test the first thing that is always required is an `Env`, which is the
+Soroban environment that the contract will run in.
+
+```rust
+let env = Env::default();
+```
+
+The contract is registered with the environment using the contract type.
+
+```rust
+let contract_id = env.register_contract(None, IncrementContract);
+```
+
+All public functions within an `impl` block that is annotated with the
+`#[contractimpl]` attribute have a corresponding function generated in a
+generated client type. The client type will be named the same as the contract
+type with `Client` appended. For example, in our contract the contract type is
+`IncrementContract`, and the client is named `IncrementContractClient`.
+
+```rust
+let client = IncrementContractClient::new(&env, &contract_id);
+```
+
+The example invokes the contract several times.
+```rust
+assert_eq!(client.increment(), 1);
+```
+
+The example asserts that the events were published.
+```rust
+assert_eq!(
+    env.events().all(),
+    vec![
+        &env,
+        (
+            contract_id.clone(),
+            (symbol!("COUNTER"), symbol!("increment")).into_val(&env),
+            1u32.into_val(&env)
+        ),
+        // ...
+    ]
+);
+```
 
 ## Build the Contract
 
@@ -134,26 +218,19 @@ using it.
 soroban invoke \
     --wasm ../target/wasm32-unknown-unknown/release/soroban_events_contract.wasm \
     --id 1 \
-    --fn hello \
-    --arg friend
+    --fn increment
 ```
 
 The following output should occur using the code above.
 
 ```json
-null
-Event #0:
-{"ext":"v0","contractId":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],"type":"contract","body":{"v0":{
-    "topics":[{"symbol":[72,101,108,108,111]},{"symbol":[102,114,105,101,110,100]}],
-    "data":{"object":{"map":[{"key":{"u32":1},"val":{"u32":2}}]}}}}}
+1
+#0: event: {"ext":"v0","contractId":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],"type":"contract","body":{"v0":{"topics":[{"symbol":[67,79,85,78,84,69,82]},{"symbol":[105,110,99,114,101,109,101,110,116]}],"data":{"u32":1}}}}
 ```
 
-The `null` just indicates the `hello` contract function returned nothing (which
-means success).
-
-A single event `Event #0` is outputted, which is the contract event the contract
+A single event `#0` is outputted, which is the contract event the contract
 published. The event contains the two topics, each a `symbol` (displayed as
-bytes), and the data object containing the `map`.
+bytes), and the data object containing the `u32`.
 
 :::info
 The soroban is under active development and at this time outputs events in

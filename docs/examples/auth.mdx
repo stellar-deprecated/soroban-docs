@@ -212,9 +212,11 @@ users have no access to each others data.
 assert_eq!(client.with_source_account(&user_2).increment(), 1);
 ```
 
+:::tip
 Functions invoked in tests can use `with_source_account(account_id)` to simulate
 an invocation from an account, and the invoked function will see `env.invoker()`
 as `Address::Account(account_id)`.
+:::
 
 ## Build the Contract
 

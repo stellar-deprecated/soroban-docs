@@ -24,13 +24,16 @@ To run the tests for the example, navigate to the `increment` directory, and use
 
 ```
 cd increment
-cargo test
+cargo test -- --nocapture
 ```
 
 You should see the output:
 
 ```
 running 1 test
+count: U32(0)
+count: U32(1)
+count: U32(2)
 test test::test ... ok
 ```
 
@@ -49,6 +52,7 @@ impl IncrementContract {
             .get(COUNTER)
             .unwrap_or(Ok(0)) // If no value set, assume 0.
             .unwrap(); // Panic if the value of COUNTER is not u32.
+        log!(&env, "count: {}", count);
         count += 1;
         env.data().set(COUNTER, count);
         count

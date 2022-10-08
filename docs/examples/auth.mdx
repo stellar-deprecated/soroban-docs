@@ -123,6 +123,14 @@ The example contract only reads and writes data for the authenticated invoker,
 and so the only thing that can access or change the data for an invoker, is the
 invoker themselves.
 
+:::tip
+Enum keys like `DataKey` can be a helpful way to store a variety of different
+types of data keyed against the same or similar things. In the example the
+counter for each address is stored against `DataKey::Counter(Address)`. If the
+contract needs to start storing other types of data for `Address`es, it can do
+so by adding additional variants to the enum.
+:::
+
 ### Tests
 
 Open the `auth/src/test.rs` file to follow along.

@@ -232,7 +232,7 @@ let env = Env::default();
 The contract is registered with the environment using the contract type.
 
 ```rust
-env.register_contract(&contract_id, IncrementContract);
+let contract_id = env.register_contract(None, IncrementContract);
 ```
 
 All public functions within an `impl` block that is annotated with the

@@ -4,7 +4,11 @@ title: Auth
 ---
 
 The [auth example] demonstrates how to tell who has invoked a contract, and
-verify that a contract has been invoked by an account or contract.
+verify that a contract has been invoked by an account or contract. This example
+is an extension of the [storing data example].
+
+[events example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/events
+[storing data example]: storing-data.mdx
 
 The participant who invoked a contract is an `Address` containing one-of a:
 - Account ID
@@ -53,48 +57,35 @@ test test::test ... ok
 ```rust title="auth/src/lib.rs"
 #[contracttype]
 pub enum DataKey {
-    SavedNum(Address),
-    Admin,
+    Counter(Address),
 }
 
-pub struct ExampleContract;
+pub struct IncrementContract;
 
 #[contractimpl]
-impl ExampleContract {
-    /// Set the admin Address.
-    ///
-    /// May be called only once unauthenticated, and
-    /// then only by current admin.
-    pub fn set_admin(env: Env, new_admin: Address) {
-        let admin = Self::admin(&env);
-        if let Some(admin) = admin {
-            assert_eq!(env.invoker(), admin);
-        }
-        env.data().set(DataKey::Admin, new_admin);
-    }
+impl IncrementContract {
+    /// Increment increments a counter for the invoker, and returns the value.
+    pub fn increment(env: Env) -> u32 {
+        // Construct a key for the data being stored. Use an enum to set the
+        // contract up well for adding other types of data to be stored.
+        let invoker = env.invoker();
+        let key = DataKey::Counter(invoker);
 
-    /// Set the number for an authenticated address.
-    pub fn set_num(env: Env, num: BigInt) {
-        let id = env.invoker();
-        env.data().set(DataKey::SavedNum(id), num);
-    }
+        // Get the current count for the invoker.
+        let mut count: u32 = env
+            .data()
+            .get(&key)
+            .unwrap_or(Ok(0)) // If no value set, assume 0.
+            .unwrap(); // Panic if the value of COUNTER is not u32.
 
-    /// Get the number for an Address.
-    pub fn num(env: Env, id: Address) -> Option<BigInt> {
-        env.data().get(DataKey::SavedNum(id)).map(Result::unwrap)
-    }
+        // Increment the count.
+        count += 1;
 
-    /// Overwrite any number for an Address.
-    /// Callable only by admin.
-    pub fn overwrite(env: Env, id: Address, num: BigInt) {
-        let admin = Self::admin(&env);
-        assert_eq!(Some(env.invoker()), admin);
+        // Save the count.
+        env.data().set(&key, count);
 
-        env.data().set(DataKey::SavedNum(id), num);
-    }
-
-    fn admin(env: &Env) -> Option<Address> {
-        env.data().get(DataKey::Admin).map(Result::unwrap)
+        // Return the count to the caller.
+        count
     }
 }
 ```
@@ -103,22 +94,18 @@ Ref: https://github.com/stellar/soroban-examples/tree/v0.0.4/auth
 
 ## How it Works
 
-The example contract tracks users with two roles. A single admin exists. Anyone
-can set the admin at deployment, and once set only the admin can set a new
-admin. Any other user can interact with the contract to store a number. Only the
-user and the admin can change the number stored for that user.
+The example contract tracks a counter for each invoker.
 
-Open the files above to follow along.
+Open the `auth/src/lib.rs` file to follow along.
 
-### `set_admin` Function
+### Invoker
 
-The `set_admin` function is used to set an admin for the contract. It can be
-invoked once without authentication to set the first admin. Subsequent
-invocations must be by the current admin.
+The invoker is an `Address` of the account or contract that directly
+invoked the contract function.
 
-The current admin is retrieved from stored data using the `DataKey::Admin` enum
-key.  If a value is set, the function only continues if the `env.invoker()` is
-the same `Invoker` as `admin`.
+```rust
+let invoker = env.invoker();
+```
 
 The `env.invoker()` always returns the invoker of the currently executing
 contract. It will return either:
@@ -127,54 +114,14 @@ account.
 - `Contract` with a `BytesN<32>` contract ID if the contract was invoked by
 another contract.
 
-Contracts should use the `Invoker` type and in most cases ignore what type of
-invoker it is.
+Contracts should not need to unpack the `Address` for most use cases. Contracts
+should treat the value as opaque wherever possible so that they are
+interoperable with accounts and contracts.
 
-If the invoker is the admin, or this is the first invocation of the function,
-the `new_admin` `Invoker`, which will be either an account or a contract, will
-be stored.
-
-```rust
-pub fn init(env: Env, new_admin: Address) {
-    let admin = Self::admin(&env);
-    if let Some(admin) = admin {
-        assert_eq!(env.invoker(), admin);
-    }
-    env.data().set(DataKey::Admin, new_admin);
-}
-
-fn admin(env: &Env) -> Option<Address> {
-    env.data().get(DataKey::Admin).map(Result::unwrap)
-}
-```
-
-### `set_num` Function
-
-The `set_num` function is used by any user who wishes to store a number. The
-number is stored in the contract data map keyed by the invoker. The contract can
-retrieve the number whenever it has the same `Invoker`.
-
-The invoker is wrapped in the data key to distinguish this specific piece of
-data from other data the contract might store in the future for invokers.
-
-```rust
-pub fn set_num(env: Env, num: BigInt) {
-    let addr = env.invoker();
-    env.data().set(DataKey::SavedNum(addr), num);
-}
-```
-
-### `num` Function
-
-The `num` function is used by any user who wishes to retrieve the number stored
-against any other user. No authentication occurs because the invoker is not used
-and is otherwise ignored.
-
-```rust
-pub fn num(env: Env, addr: Address) -> Option<BigInt> {
-    env.data().get(DataKey::SavedNum(addr)).map(Result::unwrap)
-}
-```
+The `Address` value can be used as a key in storage to store data for a user.
+The example contract only reads and writes data for the authenticated invoker,
+and so the only thing that can access or change the data for an invoker, is the
+invoker themselves.
 
 ### Tests
 
@@ -184,31 +131,18 @@ Open the `auth/src/test.rs` file to follow along.
 #[test]
 fn test() {
     let env = Env::default();
-    let contract_id = env.register_contract(None, ExampleContract);
-    let client = ExampleContractClient::new(&env, contract_id);
+    let contract_id = env.register_contract(None, IncrementContract);
+    let client = IncrementContractClient::new(&env, &contract_id);
 
-    // Initialize contract by setting the admin.
-    let admin = env.accounts().generate();
-    let admin_address = &Address::Account(admin.clone());
-    client.set_admin(admin_address);
+    let user_1 = env.accounts().generate();
+    let user_2 = env.accounts().generate();
 
-    // Check if user 1 has a num, it doesn't yet.
-    let user1 = env.accounts().generate();
-    let user1_address = &Address::Account(user1.clone());
-    assert_eq!(client.num(user1_address), None);
-
-    // Have user 1 set a num for themselves.
-    let five = BigInt::from_u32(&env, 5);
-    client.with_source_account(&user1).set_num(&five);
-    assert_eq!(client.num(user1_address), Some(five));
-
-    // Have admin overwrite user 1's num.
-    let ten = BigInt::from_u32(&env, 10);
-    client
-        .with_source_account(&admin)
-        .overwrite(user1_address, &ten);
-    assert_eq!(client.num(user1_address), Some(ten));
+    assert_eq!(client.with_source_account(&user_1).increment(), 1);
+    assert_eq!(client.with_source_account(&user_1).increment(), 2);
+    assert_eq!(client.with_source_account(&user_2).increment(), 1);
+    assert_eq!(client.with_source_account(&user_1).increment(), 3);
 }
+
 ```
 
 In any test the first thing that is always required is an `Env`, which is the
@@ -221,21 +155,20 @@ let env = Env::default();
 The contract is registered with the environment using the contract type.
 
 ```rust
-let contract_id = env.register_contract(None, ExampleContract);
+let contract_id = env.register_contract(None, IncrementContract);
 ```
 
 All public functions within an `impl` block that is annotated with the
 `#[contractimpl]` attribute have a corresponding function generated in a
 generated client type. The client type will be named the same as the contract
 type with `Client` appended. For example, in our contract the contract type is
-`ExampleContract`, and the client is named `ExampleContractClient`.
+`IncrementContract`, and the client is named `IncrementContractClient`.
 
 ```rust
-let client = ExampleContractClient::new(&env, &contract_id);
+let client = IncrementContractClient::new(&env, &contract_id);
 ```
 
-The contract generates account IDs for an admin and a user, and invokes the
-`set_admin` and `set_num` functions respectively.
+The contract generates account IDs for two users.
 
 The `generate` function creates a new account ID that the test can use to
 represent an account interacting with the contract.
@@ -243,19 +176,21 @@ represent an account interacting with the contract.
 let _ = env.accounts().generate();
 ```
 
-The `set_admin` function is invoked as is since no authentication is required on
-its first call.
+The `increment` function is invoked twice with `user_1` configured as the source
+account and therefore the invoker. The results are asserted to be `1` and `2`
+because it is the first increment for the user.
 
 ```rust
-client.set_admin(admin_address);
+assert_eq!(client.with_source_account(&user_1).increment(), 1);
+assert_eq!(client.with_source_account(&user_1).increment(), 2);
 ```
 
-The `set_num` function is invoked with `user1` configured as the source account
-and therefore the invoker.
+The `increment` function is invoked once with `user_2` configured as the source
+account. The results are asserted to be `1` because it is the first increment
+for the user. The first users data is separate to that of the second users.
 
 ```rust
-let five = BigInt::from_u32(&env, 5);
-client.with_source_account(&user1).set_num(&five);
+assert_eq!(client.with_source_account(&user_2).increment(), 1);
 ```
 
 Functions invoked in tests can use `with_source_account(account_id)` to simulate
@@ -285,8 +220,7 @@ soroban invoke \
     --wasm ../target/wasm32-unknown-unknown/release/soroban_auth_contract.wasm \
     --id 1 \
     --account GDQHNBKFCO666SPX4RS62VTDY7H5W2QXHVVVQCDTADTOI3IYZGEOZL6V \
-    --fn set_num \
-    --arg 5
+    --fn increment
 ```
 
 ```sh
@@ -294,16 +228,17 @@ soroban invoke \
     --wasm ../target/wasm32-unknown-unknown/release/soroban_auth_contract.wasm \
     --id 1 \
     --account GC24I42QMKKR4NE6IYNPCQHUO4PXWXDGNZ7QVMMSR5EWAYSGKBHPLGHH \
-    --fn set_num \
-    --arg 10
+    --fn increment
 ```
+
+Run these commands several times to increment the counters for each account.
 
 View the data that has been stored against each user with `soroban read`.
 
 ```
 soroban read --id 1
-"[""SavedNum"",[""Account"",""GDQHNBKFCO666SPX4RS62VTDY7H5W2QXHVVVQCDTADTOI3IYZGEOZL6V""]]","""5"""
-"[""SavedNum"",[""Account"",""GC24I42QMKKR4NE6IYNPCQHUO4PXWXDGNZ7QVMMSR5EWAYSGKBHPLGHH""]]","""10"""
+"[""Counter"",[""Account"",""GC24I42QMKKR4NE6IYNPCQHUO4PXWXDGNZ7QVMMSR5EWAYSGKBHPLGHH""]]",1
+"[""Counter"",[""Account"",""GDQHNBKFCO666SPX4RS62VTDY7H5W2QXHVVVQCDTADTOI3IYZGEOZL6V""]]",3
 ```
 
 [`soroban-cli`]: ../getting-started/setup#install-the-soroban-cli

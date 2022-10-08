@@ -5,9 +5,10 @@ title: Custom Types
 
 The [custom types example] demonstrates how to define your own data structures
 that can be stored on the ledger, or used as inputs and outputs to contract
-invocations.
+invocations. This example is an extension of the [storing data example].
 
 [custom types example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/custom_types
+[storing data example]: storing-data.mdx
 
 ## Run the Example
 
@@ -38,34 +39,31 @@ test test::test ... ok
 
 ```rust title="custom_types/src/lib.rs"
 #[contracttype]
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub enum Name {
-    None,
-    FirstLast(FirstLast),
+#[derive(Clone, Default, Debug, Eq, PartialEq)]
+pub struct State {
+    pub count: u32,
+    pub last_incr: u32,
 }
 
-#[contracttype]
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct FirstLast {
-    pub first: Symbol,
-    pub last: Symbol,
-}
+const STATE: Symbol = symbol!("STATE");
 
-pub struct CustomTypesContract;
-
-const NAME: Symbol = symbol!("NAME");
+pub struct IncrementContract;
 
 #[contractimpl]
-impl CustomTypesContract {
-    pub fn store(env: Env, name: Name) {
-        env.contract_data().set(NAME, name);
+impl IncrementContract {
+    pub fn increment(env: Env, incr: u32) -> u32 {
+        let mut state = Self::get_state(env.clone());
+        state.count += incr;
+        state.last_incr = incr;
+        env.data().set(STATE, &state);
+        state.count
     }
 
-    pub fn retrieve(env: Env) -> Name {
-        env.contract_data()
-            .get(NAME) // Get the value associated with key NAME.
-            .unwrap_or(Ok(Name::None)) // If no value, use None instead.
-            .unwrap()
+    pub fn get_state(env: Env) -> State {
+        env.data()
+            .get(STATE)
+            .unwrap_or_else(|| Ok(State::default())) // If no value set, assume 0.
+            .unwrap() // Panic if the value of COUNTER is not a State.
     }
 }
 ```
@@ -89,54 +87,67 @@ Field names must be no more than 10 characters.
 
 ```rust
 #[contracttype]
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct FirstLast {
-    pub first: Symbol,
-    pub last: Symbol,
+#[derive(Clone, Default, Debug, Eq, PartialEq)]
+pub struct State {
+    pub count: u32,
+    pub last_incr: u32,
 }
 ```
 
 ### Custom Type: Enum
 
-Enums are stored on ledger as a two element vector, where the first element is
-the name of the enum variant as a string up to 10 characters in length, and the
-value is the value if the variant has one.
+The example does not contain enums, but enums may also be contract types.
 
-Only unit variants and single value variants, like `None` and `FirstLast`
+Enums containing unit and tuple variants are are stored on ledger as a two
+element vector, where the first element is the name of the enum variant as a
+string up to 10 characters in length, and the value is the value if the variant
+has one.
+
+Only unit variants and single value variants, like `A` and `B`
 below, are supported.
 
 ```rust
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub enum Name {
-    None,
-    FirstLast(FirstLast),
+pub enum Enum {
+    A,
+    B(...),
 }
 ```
 
-### Using Structs and Enums in Functions
-
-Types that have been annotated with `#[contracttype]` can be used as inputs and
-outputs on contract functions, and the values can be stored as contract data and
-retrieved later.
+Enums containing integer values are stored on ledger as the `u32` value.
 
 ```rust
-pub struct CustomTypesContract;
+#[contracttype]
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+#[repr(u32)]
+pub enum Enum {
+    A = 1,
+    B = 2,
+}
+```
 
-const NAME: Symbol = symbol!("NAME");
+### Using Types in Functions
 
-#[contractimpl]
-impl CustomTypesContract {
-    pub fn store(env: Env, name: Name) {
-        env.contract_data().set(NAME, name);
-    }
+Types that have been annotated with `#[contracttype]` can be stored as contract
+data and retrieved later.
 
-    pub fn retrieve(env: Env) -> Name {
-        env.contract_data()
-            .get(NAME) // Get the value associated with key NAME.
-            .unwrap_or(Ok(Name::None)) // If no value, use None instead.
-            .unwrap()
-    }
+Types can also be used as inputs and outputs on contract functions.
+
+```rust
+pub fn increment(env: Env, incr: u32) -> u32 {
+    let mut state = Self::get_state(env.clone());
+    state.count += incr;
+    state.last_incr = incr;
+    env.data().set(STATE, &state);
+    state.count
+}
+
+pub fn get_state(env: Env) -> State {
+    env.data()
+        .get(STATE)
+        .unwrap_or_else(|| Ok(State::default())) // If no value set, assume 0.
+        .unwrap() // Panic if the value of COUNTER is not a State.
 }
 ```
 
@@ -148,22 +159,17 @@ Open the `custom_types/src/test.rs` file to follow along.
 #[test]
 fn test() {
     let env = Env::default();
-    let contract_id = env.register_contract(None, CustomTypesContract);
-    let client = CustomTypesContractClient::new(&env, &contract_id);
+    let contract_id = env.register_contract(None, IncrementContract);
+    let client = IncrementContractClient::new(&env, &contract_id);
 
-    assert_eq!(client.retrieve(), Name::None);
-
-    client.store(&Name::FirstLast(FirstLast {
-        first: symbol!("first"),
-        last: symbol!("last"),
-    }));
-
+    assert_eq!(client.increment(&1), 1);
+    assert_eq!(client.increment(&10), 11);
     assert_eq!(
-        client.retrieve(),
-        Name::FirstLast(FirstLast {
-            first: symbol!("first"),
-            last: symbol!("last"),
-        }),
+        client.get_state(),
+        State {
+            count: 11,
+            last_incr: 10
+        }
     );
 }
 ```
@@ -178,46 +184,37 @@ let env = Env::default();
 The contract is registered with the environment using the contract type.
 
 ```rust
-let contract_id = env.register_contract(None, CustomTypesContract);
+let contract_id = env.register_contract(None, IncrementContract);
 ```
 
 All public functions within an `impl` block that is annotated with the
 `#[contractimpl]` attribute have a corresponding function generated in a
 generated client type. The client type will be named the same as the contract
 type with `Client` appended. For example, in our contract the contract type is
-`CustomTypesContract`, and the client is named `CustomTypesContractClient`.
+`IncrementContract`, and the client is named `IncrementContractClient`.
 
 ```rust
-let client = CustomTypesContractClient::new(&env, &contract_id);
+let client = IncrementContractClient::new(&env, &contract_id);
 ```
 
-The test invokes the `retrieve` function on the registered contract, and asserts
-that it returns `Name::None`.
+The test invokes the `increment` function on the registered contract that causes
+the `State` type to be stored and updated a couple times.
 
 ```rust
-assert_eq!(client.retrieve(), Name::None);
+assert_eq!(client.increment(&1), 1);
+assert_eq!(client.increment(&10), 11);
 ```
 
-The test then invokes the `store` function on the registered contract, to change
-the name that is stored.
-
-```rust
-client.store(&Name::FirstLast(FirstLast {
-    first: symbol!("first"),
-    last: symbol!("last"),
-}));
-```
-
-The test invokes the `retrieve` function again, to assert that it returns the
-name that was previously stored.
+The test then invokes the `get_state` function to get the `State` value that was
+stored, and can assert on its values.
 
 ```rust
 assert_eq!(
-    client.retrieve(),
-    Name::FirstLast(FirstLast {
-        first: symbol!("first"),
-        last: symbol!("last"),
-    }),
+    client.get_state(),
+    State {
+        count: 11,
+        last_incr: 10
+    }
 );
 ```
 
@@ -237,7 +234,34 @@ A `.wasm` file should be outputted in the `../target` directory:
 
 ## Run the Contract
 
-The `soroban` is in early development and does not yet accept user-defined
-types as arguments at the command line. Follow the GitHub repository to find out
-about new releases:  
-https://github.com/stellar/soroban
+If you have [`soroban-cli`] installed, you can invoke contract functions in the
+WASM using it.
+
+```sh
+soroban invoke \
+    --wasm ../target/wasm32-unknown-unknown/release/soroban_custom_types_contract.wasm \
+    --id 1 \
+    --fn increment
+    --arg 5
+```
+
+The following output should occur using the code above.
+
+```
+5
+```
+
+Run it a few more times with different increment amounts to watch the count
+change.
+
+Use the `soroban` to inspect what the counter is after a few runs.
+
+```sh
+soroban read --id 1 --key STATE
+```
+
+```
+STATE,"{""count"":25,""last_incr"":15}"
+```
+
+[`soroban-cli`]: ../getting-started/setup#install-the-soroban-cli

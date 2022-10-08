@@ -107,7 +107,7 @@ This example is an extension of the [increment example].
 
 Open the `errors/src/lib.rs` file to follow along.
 
-### Defining a Contract Error
+### Defining an Error
 
 Contract errors are Rust u32 enums where every variant of the enum is assigned
 an integer. The `#[contracterror]` attribute is used to set the error up so it
@@ -136,7 +136,7 @@ back. If ledger entries have been altered, or contract data stored, all those
 changes are reverted and will not be persisted.
 :::
 
-### Returning a Contract Error
+### Returning an Error
 
 Errors can be returned from contract functions by returning `Result<_, E>`.
 
@@ -156,7 +156,7 @@ pub fn increment(env: Env) -> Result<u32, Error> {
 }
 ```
 
-### Panicking with a Contract Error
+### Panicking with an Error
 
 Errors can also be panicked instead of being returned from the function.
 

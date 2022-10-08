@@ -1,10 +1,11 @@
 ---
 sidebar_position: 2
-title: Increment
+title: Storing Data
 ---
 
-The [increment example] demonstrates how to write a simple contract, with a
-single function that increments an internal counter and returns the value.
+The [increment example] demonstrates how to write a simple contract that stores
+data, with a single function that increments an internal counter and returns the
+value.
 
 [increment example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/increment
 
@@ -23,13 +24,16 @@ To run the tests for the example, navigate to the `increment` directory, and use
 
 ```
 cd increment
-cargo test
+cargo test -- --nocapture
 ```
 
 You should see the output:
 
 ```
 running 1 test
+count: U32(0)
+count: U32(1)
+count: U32(2)
 test test::test ... ok
 ```
 
@@ -44,12 +48,13 @@ pub struct IncrementContract;
 impl IncrementContract {
     pub fn increment(env: Env) -> u32 {
         let mut count: u32 = env
-            .contract_data()
+            .data()
             .get(COUNTER)
             .unwrap_or(Ok(0)) // If no value set, assume 0.
             .unwrap(); // Panic if the value of COUNTER is not u32.
+        log!(&env, "count: {}", count);
         count += 1;
-        env.contract_data().set(COUNTER, count);
+        env.data().set(COUNTER, count);
         count
     }
 }
@@ -76,7 +81,7 @@ const COUNTER: Symbol = symbol!("COUNTER");
 
 ### Contract Data Access
 
-The `Env` `contract_data()` function is used to retrieve access and update a
+The `Env` `data()` function is used to retrieve access and update a
 counter. The executing contract is the only contract that can query or modify
 contract data that it has stored. The data stored is viewable on ledger anywhere
 the ledger is viewable, but contracts executing within the Soroban environment
@@ -86,7 +91,7 @@ The `get()` function gets the current value associated with the counter key.
 
 ```rust
 let mut count: u32 = env
-    .contract_data()
+    .data()
     .get(COUNTER)
     .unwrap_or(Ok(0)) // If no value set, assume 0.
     .unwrap(); // Panic if the value of COUNTER is not u32.
@@ -106,7 +111,7 @@ The `set()` function stores the new count value against the key, replacing the
 existing value.
 
 ```rust
-env.contract_data().set(COUNTER, count);
+env.data().set(COUNTER, count);
 ```
 
 ## Tests

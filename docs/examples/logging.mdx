@@ -1,5 +1,5 @@
 ---
-sidebar_position: 3
+sidebar_position: 6
 title: Logging
 ---
 
@@ -41,7 +41,7 @@ To run the tests for the example, navigate to the `logging` directory, and use
 
 ```
 cd logging
-cargo test --profile release-with-logs -- --nocapture
+cargo test -- --nocapture
 ```
 
 You should see the output:
@@ -94,9 +94,14 @@ Open the files above to follow along.
 ### `Cargo.toml` Profile
 
 Logs are only outputted if the contract is built with the `debug-assertions`
-compiler option enabled. A new `release-with-logs` profile is added to
-`Cargo.toml` that inherits from the `release` profile, and enables
-`debug-assertions`.
+compiler option enabled.
+
+The `test` profile that is activated when running `cargo test` has
+`debug-assertions` enabled, so when running tests logs are enabled by default.
+
+A new `release-with-logs` profile is added to `Cargo.toml` that inherits from
+the `release` profile, and enables `debug-assertions`. It can be used to build a
+`.wasm` file that has logs enabled.
 
 ```toml
 [profile.release-with-logs]

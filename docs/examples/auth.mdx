@@ -196,7 +196,7 @@ let _ = env.accounts().generate();
 
 The `increment` function is invoked twice with `user_1` configured as the source
 account and therefore the invoker. The results are asserted to be `1` and `2`
-because it is the first increment for the user.
+because it is the first and second increments for the user.
 
 ```rust
 assert_eq!(client.with_source_account(&user_1).increment(), 1);
@@ -205,7 +205,8 @@ assert_eq!(client.with_source_account(&user_1).increment(), 2);
 
 The `increment` function is invoked once with `user_2` configured as the source
 account. The results are asserted to be `1` because it is the first increment
-for the user. The first users data is separate to that of the second users.
+for the user. The first users data is separate to that of the second users. The
+users have no access to each others data.
 
 ```rust
 assert_eq!(client.with_source_account(&user_2).increment(), 1);

@@ -3,10 +3,12 @@ sidebar_position: 4
 title: Errors
 ---
 
-The [errors example] demonstrates how to define and generate errors in a contract that
-invokers of the contract can understand and handle.
+The [errors example] demonstrates how to define and generate errors in a
+contract that invokers of the contract can understand and handle. This example
+is an extension of the [increment example].
 
 [errors example]: https://github.com/stellar/soroban-examples/tree/v0.0.4/errors
+[increment example]: increment.mdx
 
 ## Run the Example
 
@@ -50,6 +52,9 @@ Debug events (newest first):
    2: "count: U32(4)"
    3: "count: U32(3)"
 ...
+test test::test_panic - should panic ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.33s
 ```
 
 ## Code
@@ -100,10 +105,6 @@ impl IncrementContract {
 Ref: https://github.com/stellar/soroban-examples/tree/v0.0.4/errors
 
 ## How it Works
-
-This example is an extension of the [increment example].
-
-[increment example]: increment.mdx
 
 Open the `errors/src/lib.rs` file to follow along.
 

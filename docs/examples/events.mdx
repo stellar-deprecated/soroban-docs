@@ -82,6 +82,11 @@ Topics are conveniently defined using a tuple. In the sample code two topics of
 env.events().publish((COUNTER, symbol!("increment")), ...);
 ```
 
+:::tip
+The topics don't have to be made of the same type. You can mix different types
+as long as the total topic count stays below the limit.
+:::
+
 ### Event Data
 An event also contains a data object of any value or type including types
 defined by contracts using `#[contracttype]`. In the example the data is the
@@ -90,11 +95,6 @@ defined by contracts using `#[contracttype]`. In the example the data is the
 ```rust
 env.events().publish(..., count);
 ```
-
-:::tip
-The topics don't have to be made of the same type. You can mix different types
-as long as the total topic count stays below the limit.
-:::
 
 ### Publishing
 Publishing an event is done by calling the `publish` function and giving it the

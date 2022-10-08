@@ -191,6 +191,28 @@ The following output should occur using the code above.
 1
 ```
 
+Rerun the invoke with the `--footprint` option to view the [footprint] of the invocation,
+which is the ledger entries that the contract will have read or written to.
+
+```sh
+soroban invoke \
+    --wasm ../target/wasm32-unknown-unknown/release/soroban_increment_contract.wasm \
+    --id 1 \
+    --fn increment \
+    --footprint
+```
+
+```
+Footprint: {"readOnly":[{"contractData":{"contractId":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],"key":{"static":"ledgerKeyContractCode"}}}],"readWrite":[{"contractData":{"contractId":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],"key":{"symbol":[67,79,85,78,84,69,82]}}}]}
+```
+
+:::info
+Soroban is a pre-release and at this time outputs footprints in an unstable JSON
+format.
+:::
+
+[footprint]: ../learn/persisting-data.mdx#footprints-and-parallel-contention
+
 Run it a few more times to watch the count change.
 
 Use the `soroban` to inspect what the counter is after a few runs.

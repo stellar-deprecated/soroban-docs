@@ -165,14 +165,14 @@ value. The error can be passed to the environment using the `panic_error!`
 macro.
 
 ```rust
-pub fn increment(env: Env) -> Result<u32, Error> {
+pub fn increment(env: Env) -> u32 {
     // ...
     if count <= MAX {
         // ...
-        Ok(count)
+        count
     } else {
         // ...
-        Err(Error::LimitReached)
+        panic_error!(&env, Error::LimitReached)
     }
 }
 ```
@@ -180,7 +180,9 @@ pub fn increment(env: Env) -> Result<u32, Error> {
 :::caution
 Functions that do not return a `Result<_, E>` type do not include in their
 specification what the possible error values are. This makes it more difficult
-for other contracts and clients to integrate with the contract.
+for other contracts and clients to integrate with the contract. However, this
+might be ideal if the errors are diagnostic and debugging, and not intended to
+be handled.
 :::
 
 ## Tests

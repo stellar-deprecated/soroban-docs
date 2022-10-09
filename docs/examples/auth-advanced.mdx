@@ -19,22 +19,41 @@ If you're just starting to explore Soroban, checkout the [auth example] that
 uses a simpler form of invoker auth.
 :::
 
-Participants are identified with `Identifier`'s, that are a superset of an
-`Address`. An `Identifier` can represent an:
+Participants are identified with `Identifier`s that can represent an:
 - Account ID
 - Contract ID
 - Ed25519 key
 
+:::tip
+The `Identifier` type is a superset of the `Address` type used by the simpler
+invoker-only auth. This means that contracts that store data using `Address` as
+a key can often be updated to use `soroban-auth` without any impact to already
+stored data. See the [auth example] more details.
+:::
+
 Participants specify how they are authenticating, and provide authentication by
 including a `Siganture` as an argument in the invocation. A `Signature` can be
-a:
-- Invoker — An invoking address (account ID or contract ID).
+an:
+- Invoker – An invoking address (account ID or contract ID).
 - Account – An invocation presigned with account signers.
-– Ed25519 – An invocation presigned with an ed25519 key.
+- Ed25519 – An invocation presigned with an ed25519 key.
 
 In this example, data is stored associated with an `Identifier` after
 authorization has been verified. The contract supports auth via all methods
 above.
+
+:::info
+This example describes a specific implementation of the general principles of
+[authorization](../learn/authorization.mdx).
+:::
+
+:::caution
+The [soroban-auth] crate does not provide any functionality to prevent the
+replay of valid signatures. This example implements a form of [replay
+prevention](#verifying-the-nonce). Contracts must implement replay prevention that
+is appropriate for themselves.
+:::
+
 
 [soroban-auth]: ../SDKs/rust-auth
 [auth example]: auth.mdx
@@ -61,15 +80,23 @@ cargo test
 You should see the output:
 
 ```
-running 2 tests
-test test::test ... ok
-test test::bad_data - should panic ... ok
+running 4 tests
+test test::test_auth_with_invoker ... ok
+test test::test_auth_with_ed25519 ... ok
+thread 'test::test_auth_with_ed25519_wrong_signer' panicked at 'called `Result::unwrap()` on an `Err` value: HostError
+Value: Status(UnknownError(0))
+...
+test test::test_auth_with_ed25519_wrong_signer - should panic ... ok
+thread 'test::test_auth_with_ed25519_wrong_nonce' panicked at 'called `Result::unwrap()` on an `Err` value: HostError
+Value: Status(ContractError(2))
+...
+test test::test_auth_with_ed25519_wrong_nonce - should panic ... ok
 ```
 
 ## Dependencies
 
-The authorization example uses the Soroban auth SDK, and has the following
-Soroban dependencies in its Cargo.toml file.
+The example uses the Soroban auth SDK, and has the following dependencies in its
+`Cargo.toml` file.
 
 ```toml title="authorization/src/Cargo.toml
 [dependencies]
@@ -84,317 +111,555 @@ soroban-auth = { version = "0.0.4", features = ["testutils"] }
 ## Code
 
 ```rust title="authorization/src/lib.rs"
-#[derive(Clone)]
 #[contracttype]
 pub enum DataKey {
-    SavedNum(Identifier),
+    Counter(Identifier),
     Nonce(Identifier),
-    Admin,
 }
 
-fn read_nonce(e: &Env, id: Identifier) -> BigInt {
-    let key = DataKey::Nonce(id);
-    e.contract_data()
-        .get(key)
-        .unwrap_or_else(|| Ok(BigInt::zero(e)))
-        .unwrap()
-}
-struct NonceForSignature(Signature);
-
-impl NonceAuth for NonceForSignature {
-    fn read_nonce(e: &Env, id: Identifier) -> BigInt {
-        read_nonce(e, id)
-    }
-
-    fn read_and_increment_nonce(&self, e: &Env, id: Identifier) -> BigInt {
-        let key = DataKey::Nonce(id.clone());
-        let nonce = Self::read_nonce(e, id);
-        e.contract_data().set(key, &nonce + 1);
-        nonce
-    }
-
-    fn signature(&self) -> &Signature {
-        &self.0
-    }
+#[contracterror]
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Error {
+    IncorrectNonceForInvoker = 1,
+    IncorrectNonce = 2,
 }
 
-pub struct ExampleContract;
+pub struct IncrementContract;
 
 #[contractimpl]
-impl ExampleContract {
-    /// Set the admin identifier. May be called only once.
-    pub fn set_admin(e: Env, admin: Identifier) {
-        if e.contract_data().has(DataKey::Admin) {
-            panic!("admin is already set")
+impl IncrementContract {
+    /// Increment increments a counter for the invoker, and returns the value.
+    pub fn increment(env: Env, sig: Signature, nonce: BigInt) -> u32 {
+        // Verify that the signature signs and authorizes this invocation.
+        let id = sig.identifier(&env);
+        verify(&env, &sig, symbol!("increment"), (&id, &nonce));
+
+        // Verify that the nonce has not been consumed to prevent replay of the
+        // same presigned invocation more than once.
+        verify_and_consume_nonce(&env, &sig, &nonce);
+
+        // Construct a key for the data being stored. Use an enum to set the
+        // contract up well for adding other types of data to be stored.
+        let key = DataKey::Counter(id);
+
+        // Get the current count for the invoker.
+        let mut count: u32 = env
+            .data()
+            .get(&key)
+            .unwrap_or(Ok(0)) // If no value set, assume 0.
+            .unwrap(); // Panic if the value of COUNTER is not u32.
+
+        // Increment the count.
+        count += 1;
+
+        // Save the count.
+        env.data().set(&key, count);
+
+        // Return the count to the caller.
+        count
+    }
+
+    pub fn nonce(env: Env, id: Identifier) -> BigInt {
+        get_nonce(&env, &id)
+    }
+}
+
+fn verify_and_consume_nonce(env: &Env, sig: &Signature, nonce: &BigInt) {
+    match sig {
+        Signature::Invoker => {
+            if BigInt::zero(env) != nonce {
+                panic_error!(env, Error::IncorrectNonceForInvoker);
+            }
         }
-
-        e.contract_data().set(DataKey::Admin, admin);
-    }
-
-    /// Save the number for an authenticated [Identifier].
-    pub fn save_num(e: Env, sig: Signature, nonce: BigInt, num: BigInt) {
-        let auth_id = sig.get_identifier(&e);
-
-        check_auth(
-            &e,
-            &NonceForSignature(sig),
-            nonce.clone(),
-            symbol!("save_num"),
-            (&auth_id, nonce, &num).into_val(&e),
-        );
-
-        e.contract_data().set(DataKey::SavedNum(auth_id), num);
-    }
-
-    // The admin can write data for any Identifier
-    pub fn overwrite(e: Env, sig: Signature, nonce: BigInt, id: Identifier, num: BigInt) {
-        let auth_id = sig.get_identifier(&e);
-        if auth_id != e.contract_data().get_unchecked(DataKey::Admin).unwrap() {
-            panic!("not authorized by admin")
+        Signature::Ed25519(_) | Signature::Account(_) => {
+            let id = sig.identifier(env);
+            if nonce != &get_nonce(env, &id) {
+                panic_error!(env, Error::IncorrectNonce);
+            }
+            set_nonce(env, &id, nonce + 1);
         }
-
-        check_auth(
-            &e,
-            &NonceForSignature(sig),
-            nonce.clone(),
-            symbol!("overwrite"),
-            (auth_id, nonce, &id, &num).into_val(&e),
-        );
-
-        e.contract_data().set(DataKey::SavedNum(id), num);
     }
+}
 
-    pub fn nonce(e: Env, id: Identifier) -> BigInt {
-        read_nonce(&e, id)
-    }
+fn get_nonce(env: &Env, id: &Identifier) -> BigInt {
+    let key = DataKey::Nonce(id.clone());
+    env.data()
+        .get(key)
+        .unwrap_or_else(|| Ok(BigInt::zero(env)))
+        .unwrap()
+}
+
+fn set_nonce(env: &Env, id: &Identifier, nonce: BigInt) {
+    let key = DataKey::Nonce(id.clone());
+    env.data().set(key, nonce);
 }
 ```
 
-Ref: https://github.com/stellar/soroban-examples/tree/v0.0.4/authorization
+Ref: https://github.com/stellar/soroban-examples/tree/v0.0.4/auth_advanced
 
-## Authorization semantics
+## How it Works
 
-This section describes a specific implementation of the general principles
-discussed in [authorization](../learn/authorization.mdx).
+This example contract tracks a counter for each `Identifier`. It uses the
+`soroban-auth` crate to verify proof of identity through a `Signature`. How a
+signature is formed is different for different types of identifier.
 
-### Identities
+### `soroban-auth`
+
+Follow along in the docs for [soroban-auth].
+
+#### Identifiers
+
+The `soroban-auth` crate provides the `Identifier` type. Participants to be
+authenticated are one of these.
 
 ```rust
-#[derive(Clone)]
-#[contracttype]
 pub enum Identifier {
+    Account(AccountId),
     Contract(BytesN<32>),
     Ed25519(BytesN<32>),
-    Account(BytesN<32>),
 }
 ```
 
-The token contract understands three kinds of identities: contracts, Ed25519
-public keys, and Stellar accounts. For each kind of identity, there is a
-corresponding authorization mechanism.
-
-#### Contract authorization
-
-A contract identity provides authorization simply by being the invoker of the
-token contract.
-
-#### Ed25519 public key authorization
+The `Identifier` type is a superset of the `Address` type used by the simpler
+invoker-only auth. This means that contracts that store data using `Address` as
+a key can often be updated to use `soroban-auth` without any impact to already
+stored data. See the [auth example] more details.
 
 ```rust
-#[derive(Clone)]
-#[contracttype(lib = "soroban_sdk_auth")]
+pub enum Address {
+    Account(AccountId),
+    Contract(BytesN<32>),
+}
+```
+
+#### Signature
+
+The `soroban-auth` crate provides the `Signature` type. Participants submit a
+signature for the identifier they are proving.
+
+```rust
+pub enum Signature {
+    Invoker,
+    Account(AccountSignatures),
+    Ed25519(Ed25519Signature),
+}
+```
+
+`Signature` values map to `Identifier` values:
+
+- Invoker
+   - Account – Maps to `Identifier::Account`.
+   - Contract – Maps to `Identifier::Contract`.
+- Account – Maps to `Identifier::Account`.
+- Ed25519 – Maps to `Identifier::Ed25519`.
+
+##### Contract
+
+A contract identifier provides authenticates itself simply by being the invoker
+of the contract.
+
+##### Ed25519
+
+An ed25519 identifier provides a ed25519 signature using the private key
+corresponding to the public key included in the signature. The signature payload
+is the XDR serialized value of the `SignaturePayload` type.
+
+```rust
 pub struct Ed25519Signature {
     pub public_key: BytesN<32>,
     pub signature: BytesN<64>,
 }
 ```
 
-An Ed25519 public key identity can provide authorization by signing an
-appropriate message with the associated private key. The authorization is
-just the 64-byte signature, represented as `BytesN<64>` in the contract.
+##### Account
 
-#### Stellar account authorization
+An account identifier provides ed25519 signatures for each ed25519 signer of the
+account.  Verification works the same as verification of ed25519 signers on the
+Stellar network. The total signing weight of the signers must exceed the medium
+threshold of the account. The signature payload is the XDR serialized value of
+the `SignaturePayload` type.
 
 ```rust
-#[derive(Clone)]
-#[contracttype(lib = "soroban_sdk_auth")]
 pub struct AccountSignatures {
-    pub account_id: BytesN<32>,
+    pub account_id: AccountId,
     pub signatures: Vec<Ed25519Signature>,
 }
 ```
 
-A Stellar account identity can provide authorization by signing an appropriate
-message with the private keys associated with the signers of that Stellar
-account. The total signing weight of the signers must exceed the medium
-threshold of that Stellar account. The authorization is a vector, where each
-element of the vector contains an `Ed25519Signature` corresponding to the
-authorization provided by an account signer.
+#### Signature Payload
 
-### Payloads
+The signature payload is the payload that ed25519 signers sign for both the
+account and ed25519 signature types.
+
+The `network`, `contract`, and `name` fields of the payload act as a domain
+separator to prevent the signature for a set of arguments for the invocation of
+one function or contract being valid for another function or contract.
+
+The `name` field should be a value that sufficiently scopes where within a
+contract the signature should be valid. In some cases it may be the name of the
+function being invoked. It could be some other value depending on the needs of
+the contract.
 
 ```rust
-#[derive(Clone)]
-#[contracttype(lib = "soroban_sdk_auth")]
-pub struct SignaturePayloadV0 {
-    pub function: Symbol,
-    pub contract: BytesN<32>,
-    pub network: Bytes,
-    pub args: Vec<RawVal>,
-}
-
-#[derive(Clone)]
-#[contracttype(lib = "soroban_sdk_auth")]
 pub enum SignaturePayload {
     V0(SignaturePayloadV0),
 }
+
+pub struct SignaturePayloadV0 {
+    pub network: Bytes,
+    pub contract: BytesN<32>,
+    pub name: Symbol,
+    pub args: Vec<RawVal>,
+}
 ```
 
-Signatures are derived by signing the `SignaturePayload` enum, which has one
-value at the moment, `V0`. `SignaturePayloadV0` uses the `function`, `contract`,
-and `network` to determine where the signature can be used and the `args` to
-provide additional information specific to that usage.
+### Contract
 
-:::warning
-`SignaturePayloadV0` does not include any
-[replay prevention](#replay-prevention) by default. We recommend using
-nonce-based replay prevention and including the nonce in the `args`.
-:::
+Open the `auth_advanced/src/lib.rs` file to follow along.
 
-### Replay prevention
+#### Data
 
-Whenever signatures are used to permit an operation, there is a risk of
-"replay". Replay occurs when a single signature is used to permit an operation
-multiple times. Such a situation can be catastrophic. For example, imagine that
-you sign a message permitting 1 dollar to be sent to an acquantaince. If there
-were no replay prevention, then a malicious acquantaince could use that message
-to repeatedly transfer 1 dollar from you to them. In the end, your bank account
-would be empty.
+The example stores two types of data, and uses an enum to distinguish keys
+for the two types of data scoped by an `Identifier`.
 
-Contracts can provide replay prevention by using a [nonce](https://en.wikipedia.org/wiki/Cryptographic_nonce).
-The payloads that are signed to provide authorization contain a nonce. The
-contract also stores a nonce (typically per identity). When checking signatures, the
-contract loads the nonce for the relevant identity. When an operation succeeds,
-the nonce stored in the contract is incremented. This makes it impossible to
-reuse a signature.
+Each identifier will store a counter value, which is the value being incremented
+by the invocation.
 
-## How it Works
-
-### Implement NonceAuth
-`NonceAuth` is a trait in the soroban_sdk_auth crate that manages the nonce and
-wraps the `Signature` that the contract will try to verifiy. A struct that
-implements `NonceAuth` is expected by the `check_auth` sdk function. You can see
-below that we have a `DataKey` for the nonce tied to an `Identifier`, and this
-`DataKey` is used to manage the nonces for this contract.
+Each identifier will store a nonce value, which is the next expected nonce and
+will be used for replay prevention.
 
 ```rust
-#[derive(Clone)]
 #[contracttype]
 pub enum DataKey {
-    SavedNum(Identifier),
+    Counter(Identifier),
     Nonce(Identifier),
-    Admin,
+}
+```
+
+#### Verify
+
+The `increment` contract function increments a number for each `Identifier`
+stored with key `DataKey::Counter`.
+
+The `soroban_auth::verify` method verifies the input `Signature`.
+
+```rust
+pub fn increment(env: Env, sig: Signature, nonce: BigInt) -> u32 {
+    let id = sig.identifier(&env);
+    verify(&env, &sig, symbol!("increment"), (&id, &nonce));
+    // ...
+}
+```
+
+The function inputs are:
+- `nonce` – Included in the arguments of the function to prevent replay.
+- `sig` – The `Signature` that proves the `Identifier` it contains. The contract
+
+The verification inputs are:
+- `&sig` – The `Signature` to verify.
+- `symbol!("increment")` – The scope of where the signature should be valid
+within this contract. In this example the scope is the name of this function.
+- `&id` – The identifier the `Signature` signs approving the operation to
+increment that identifiers number.
+- `&nonce` – The nonce to ensure the replay prevention value is included in the
+`SignaturePayload`.
+
+#### Verifying the Nonce
+
+The `increment` function verifies the nonce passed in and signed in the
+`SignaturePayload` is the next expected nonce for the identifier.
+
+:::caution
+Whenever signatures are used to permit an operation, there is a risk of replay.
+Replay occurs when a signature is used to permit an operation multiple times.
+Such a situation can be catastrophic. For example, if you produce a signature
+that permits $1 to be sent to an acquantaince and there is no replay prevention,
+then a malicious acquantaince could use that signature to repeatedly transfer $1
+from you to them. In the end, your account would be empty.
+
+Contracts can provide replay prevention by numerous methods. One approach is by
+including a sequential [nonce] as an argument in the `SignaturePayload` and
+writing the contract such that it will not allow that nonce to be used more than
+once. A sequential nonce is incremented on each use. The `SignaturePayload`
+includes the nonce as a number.  The contract stores the next expected nonce,
+for each identifier. After verifying the signature, the contract loads the nonce
+for the relevant identifier, checks that it matches the value in the signature,
+and increments the value stored. This prevents reuse of the signature.
+
+This example uses a sequential nonce for replay prevention.
+
+[nonce]: https://en.wikipedia.org/wiki/Cryptographic_nonce
+:::
+
+```rust
+pub fn increment(env: Env, sig: Signature, nonce: BigInt) -> u32 {
+    // ...
+    verify_and_consume_nonce(&env, &sig, &nonce);
+    // ...
+}
+```
+
+When determining the next expected nonce the type of `Signature` is considered.
+
+Invokers need no replay prevention. Invocations directly from an account in a
+Stellar transaction get replay prevention from the Stellar transaction they are
+submitted in, because Stellar transactions contain a sequence number that
+operates like a nonce for the account. Contract invokers control when an
+invocation occurs so also do not provide a nonce.
+
+Presigned ed25519 signatures and account signatures get the stored nonce, verify
+it matches the nonce included in this invocation, and error if not. The nonce is
+incremented so that the value is consumed and cannot be reused.
+
+```rust
+fn verify_and_consume_nonce(env: &Env, sig: &Signature, nonce: &BigInt) {
+    match sig {
+        Signature::Invoker => {
+            if BigInt::zero(env) != nonce {
+                panic_error!(env, Error::IncorrectNonceForInvoker);
+            }
+        }
+        Signature::Ed25519(_) | Signature::Account(_) => {
+            let id = sig.identifier(env);
+            if nonce != &get_nonce(env, &id) {
+                panic_error!(env, Error::IncorrectNonce);
+            }
+            set_nonce(env, &id, nonce + 1);
+        }
+    }
 }
 
-fn read_nonce(e: &Env, id: Identifier) -> BigInt {
-    let key = DataKey::Nonce(id);
-    e.contract_data()
+fn get_nonce(env: &Env, id: &Identifier) -> BigInt {
+    let key = DataKey::Nonce(id.clone());
+    env.data()
         .get(key)
-        .unwrap_or_else(|| Ok(BigInt::zero(e)))
+        .unwrap_or_else(|| Ok(BigInt::zero(env)))
         .unwrap()
 }
 
-struct NonceForSignature(Signature);
-
-impl NonceAuth for NonceForSignature {
-    fn read_nonce(e: &Env, id: Identifier) -> BigInt {
-        read_nonce(e, id)
-    }
-
-    fn read_and_increment_nonce(&self, e: &Env, id: Identifier) -> BigInt {
-        let key = DataKey::Nonce(id.clone());
-        let nonce = Self::read_nonce(e, id);
-        e.contract_data().set(key, &nonce + 1);
-        nonce
-    }
-
-    fn signature(&self) -> &Signature {
-        &self.0
-    }
+fn set_nonce(env: &Env, id: &Identifier, nonce: BigInt) {
+    let key = DataKey::Nonce(id.clone());
+    env.data().set(key, nonce);
 }
 ```
 
-### Check authorization in contract function
-The `save_num` function stores a number in a `DataKey::SavedNum` tied to an `Identifier`
-with it's authorization. 
+:::info
+If a contract function errors by returning an error or panicking with an error
+or string, any operations the contract has performed such as emitting events or
+storing data are rolled back. This also applies to incrementing of the nonce.
+If a contract needs the nonce to be consumed on failed invocations, the contract
+needs to be written so that an error is not returned and the invocation does not
+fail.
+:::
 
-The `check_auth` method in the SDK is used for signature verification, and here
-are the important authorization takeaways from the example below -
-1. The `nonce` is included in the list of parameters for the contract function.
-2. The `Signature` is passed into `check_auth` wrapped in `NonceForSignature`.
-3. The `function` parameter to `check_auth` is the name of the invoked function.
-4. The last argument passed to `check_auth` is a list of arguments that are
-   expected in the signed payload. The interesting thing to note here is that it
-   includes the `Identifier` from the `sig` and the nonce. 
+#### Storing Data Scoped by Identifier
+
+The `increment` function stores the counter for each identifier using the
+`DataKey::Counter` enum variant. If the contract evolves to store other data new
+enum variants can be added for any new data items.
 
 ```rust
-/// Save the number for an authenticated [Identifier].
-pub fn save_num(e: Env, sig: Signature, nonce: BigInt, num: BigInt) {
-    let auth_id = sig.get_identifier(&e);
+// Construct a key for the data being stored. Use an enum to set the
+// contract up well for adding other types of data to be stored.
+let key = DataKey::Counter(id);
 
-    check_auth(
-        &e,
-        &NonceForSignature(sig),
-        nonce.clone(),
-        symbol!("save_num"),
-        (&auth_id, nonce, &num).into_val(&e),
+// Get the current count for the invoker.
+let mut count: u32 = env
+    .data()
+    .get(&key)
+    .unwrap_or(Ok(0)) // If no value set, assume 0.
+    .unwrap(); // Panic if the value of COUNTER is not u32.
+
+// Increment the count.
+count += 1;
+
+// Save the count.
+env.data().set(&key, count);
+```
+
+#### Retrieving the Nonce
+Users of this contract will need to know which nonce to use. The contract could
+expect users to keep track of the next nonce to use, but that may not be
+trivial, so the contract exports a function that provides the information.
+
+```rust
+pub fn nonce(env: Env, id: Identifier) -> BigInt {
+    get_nonce(&env, &id)
+}
+```
+
+### Tests
+
+Open the `auth_advanced/src/test.rs` file to follow along.
+
+#### Testing Auth by Invoker
+
+The contract supports authentication with an invoker. The way this works is very
+similar to the simpler [auth example].
+
+```rust title="auth/src/test.rs"
+#[test]
+fn test_auth_with_invoker() {
+    let env = Env::default();
+    let contract_id = env.register_contract(None, IncrementContract);
+    let client = IncrementContractClient::new(&env, &contract_id);
+
+    let user_1 = env.accounts().generate();
+    let user_2 = env.accounts().generate();
+
+    assert_eq!(
+        client
+            .with_source_account(&user_1)
+            .increment(&Signature::Invoker, &BigInt::zero(&env)),
+        1
     );
-
-    e.contract_data().set(DataKey::SavedNum(auth_id), num);
+    // ...
 }
 ```
 
-### Admin privileges
+The test generates account IDs for two users.
 
-Some contracts may want to set an admin account that is allowed special
-privilege. The `set_admin` function here stores an `Identifier` as an admin, and
-that admin is the only one that can call `overwrite`.
+The `generate` function creates a new account ID that the test can use to
+represent an account interacting with the contract.
+```rust
+let _ = env.accounts().generate();
+```
+
+The `increment` function is invoked with the users configured as the source
+account and therefore the invoker. The invocation still requires a `Signature`
+and `nonce` to be provided, but for an invoker in this example these values are
+very simple.
 
 ```rust
-// Sets the admin identifier
-pub fn set_admin(e: Env, admin: Identifier) {
-    if e.contract_data().has(DataKey::Admin) {
-        panic!("admin is already set")
-    }
+client
+    .with_source_account(&user_1)
+    .increment(&Signature::Invoker, &BigInt::zero(&env)),
+```
 
-    e.contract_data().set(DataKey::Admin, admin);
-}
+:::tip
+Functions invoked in tests can use `with_source_account(account_id)` to simulate
+an invocation from an account, and the invoked function will see `env.invoker()`
+as `Address::Account(account_id)`.
+:::
 
-// The admin can write the number for any [Identifier]
-pub fn overwrite(e: Env, sig: Signature, nonce: BigInt, id: Identifier, num: BigInt) {
-    let auth_id = sig.get_identifier(&e);
-    if auth_id != e.contract_data().get_unchecked(DataKey::Admin).unwrap() {
-        panic!("not authorized by admin")
-    }
+#### Testing Auth by Ed25519
 
-    check_auth(
-        &e,
-        &NonceForSignature(sig),
-        nonce.clone(),
-        symbol!("overwrite"),
-        (auth_id, nonce, &id, &num).into_val(&e),
+The contract supports authentication with an ed25519 signature. This form of
+auth can be useful for situations where a participant has no existence on
+network.
+
+```rust title="auth/src/test.rs"
+#[test]
+fn test_auth_with_ed25519() {
+    let env = Env::default();
+    let contract_id = BytesN::from_array(&env, &[0; 32]);
+    env.register_contract(&contract_id, IncrementContract);
+    let client = IncrementContractClient::new(&env, contract_id.clone());
+
+    let (user_1_id, user_1_sign) = soroban_auth::testutils::ed25519::generate(&env);
+    let (user_2_id, user_2_sign) = soroban_auth::testutils::ed25519::generate(&env);
+
+    let nonce = BigInt::from_u32(&env, 0);
+    let sig = soroban_auth::testutils::ed25519::sign(
+        &env,
+        &user_1_sign,
+        &contract_id,
+        symbol!("increment"),
+        (&user_1_id, &nonce),
     );
+    assert_eq!(client.increment(&sig, &nonce), 1);
 
-    e.contract_data().set(DataKey::SavedNum(id), num);
+    // ...
 }
 ```
 
-### Retrieving the Nonce
-Users of this contract will need to know which nonce to use, so the contract
-exposes this information.
+The test generates ed25519 keys and identifiers for two users.
+
+The `generate` function creates a new random ed25519 key that the test can use
+to produce signatures and verify to an identifier. The generate function
+provides the identifier that the signer can sign for.
+```rust
+let (user_1_id, user_1_sign) = soroban_auth::testutils::ed25519::generate(&env);
+```
+
+The `sign` function produces a valid signature for the inputs. These inputs
+should match the inputs that the `verify` function within the contract will
+use.
+```rust
+let sig = soroban_auth::testutils::ed25519::sign(
+    &env,
+    &user_1_sign,
+    &contract_id,
+    symbol!("increment"),
+    (&user_1_id, &nonce),
+);
+```
+
+The `increment` function is invoked with the signature and the nonce.
 
 ```rust
-pub fn nonce(e: Env, to: Identifier) -> BigInt {
-    read_nonce(&e, to)
-}
+client.increment(&sig, &nonce)
 ```
+
+Open the `auth_advanced/src/test.rs` file to view other tests that demonstrate
+how to test signature and nonce failure.
+
+## Build the Contract
+
+To build the contract into a `.wasm` file, use the `cargo build` command.
+
+```sh
+cargo build --target wasm32-unknown-unknown --release
+```
+
+The `.wasm` file should be found in the `../target` directory after building:
+
+```
+target/wasm32-unknown-unknown/release/soroban_auth_advanced_contract.wasm
+```
+
+## Run the Contract
+
+If you have [`soroban-cli`] installed, you can invoke functions on the contract.
+
+:::caution
+The [`soroban-cli`] is in development and passing enum and struct values as
+inputs requires typing their raw JSON representation. Improvements are planned.
+:::
+
+To invoke the contract as an account invoker the `Signature` to be passed must
+be a single-element `Vec` containing the `Symbol` `"Invoker"`.
+
+```sh
+soroban invoke \
+    --wasm target/wasm32-unknown-unknown/release/soroban_auth_advanced_contract.wasm \
+    --id 1 \
+    --account GC24I42QMKKR4NE6IYNPCQHUO4PXWXDGNZ7QVMMSR5EWAYSGKBHPLGHH \
+    --fn increment \
+    --arg '{"object":{"vec":[{"symbol":[73,110,118,111,107,101,114]}]}}' \
+    --arg 0
+```
+
+```sh
+soroban invoke \
+    --wasm target/wasm32-unknown-unknown/release/soroban_auth_advanced_contract.wasm \
+    --id 1 \
+    --account GC24I42QMKKR4NE6IYNPCQHUO4PXWXDGNZ7QVMMSR5EWAYSGKBHPLGHH \
+    --fn increment \
+    --arg '{"object":{"vec":[{"symbol":[73,110,118,111,107,101,114]}]}}' \
+    --arg 0
+```
+
+Run these commands several times to increment the counters for each account.
+
+View the data that has been stored against each user with `soroban read`.
+
+```sh
+soroban read --id 1
+```
+```
+"[""Counter"",[""Account"",""GC24I42QMKKR4NE6IYNPCQHUO4PXWXDGNZ7QVMMSR5EWAYSGKBHPLGHH""]]",1
+"[""Counter"",[""Account"",""GDQHNBKFCO666SPX4RS62VTDY7H5W2QXHVVVQCDTADTOI3IYZGEOZL6V""]]",3
+```
+
+[`soroban-cli`]: ../getting-started/setup#install-the-soroban-cli

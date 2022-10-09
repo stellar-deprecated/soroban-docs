@@ -50,7 +50,7 @@ This example describes a specific implementation of the general principles of
 :::caution
 The [soroban-auth] crate does not provide any functionality to prevent the
 replay of valid signatures. This example implements a form of [replay
-prevention](#replay-prevention). Contracts must implement replay prevention that
+prevention](#verifying-the-nonce). Contracts must implement replay prevention that
 is appropriate for themselves.
 :::
 
@@ -369,7 +369,7 @@ increment that identifiers number.
 The `increment` function verifies the nonce passed in and signed in the
 `SignaturePayload` is the next expected nonce for the identifier.
 
-:::info
+:::caution
 Whenever signatures are used to permit an operation, there is a risk of replay.
 Replay occurs when a signature is used to permit an operation multiple times.
 Such a situation can be catastrophic. For example, if you produce a signature
@@ -386,7 +386,7 @@ for each identifier. After verifying the signature, the contract loads the nonce
 for the relevant identifier, checks that it matches the value in the signature,
 and increments the value stored. This prevents reuse of the signature.
 
-This exampe uses a sequential nonce for replay prevention.
+This example uses a sequential nonce for replay prevention.
 
 [nonce]: https://en.wikipedia.org/wiki/Cryptographic_nonce
 :::
@@ -600,6 +600,9 @@ The `increment` function is invoked with the signature and the nonce.
 ```rust
 client.increment(&sig, &nonce)
 ```
+
+Open the `auth_advanced/src/test.rs` file to view other tests that demonstrate
+how to test signature and nonce failure.
 
 ## Build the Contract
 

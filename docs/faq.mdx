@@ -1,16 +1,14 @@
 ---
-sidebar_position: 10
-title: Soroban on Stellar FAQ
+sidebar_position: 8
+title: FAQ
 ---
 
-
 :::caution
-Soroban's Stellar integration is under active-development and may change
+Soroban's Stellar integration is under active-development and may change.
 :::
 
-
-### What is Soroban to Stellar? Is it a new blockchain? 
-Soroban is not a new blockchain. Soroban is a Smart contract platform that is integrated into the existing Stellar blockchain. It is an *additive* feature that lives alongside, and doesn’t replace, the existing set of Stellar operations. 
+### What is Soroban to Stellar? Is it a new blockchain?
+Soroban is not a new blockchain. Soroban is a Smart contract platform that is integrated into the existing Stellar blockchain. It is an *additive* feature that lives alongside, and doesn't replace, the existing set of Stellar operations. 
 
 ### How do I invoke a Soroban contract on Stellar?
 A Soroban contract can be invoked by submitting a transaction that contains the new operation: `InvokeContractOp`.
@@ -29,14 +27,14 @@ Yes. Issuers retain the same level of control on Soroban as they have on Classic
 ### Can Soroban contracts interact with any other Stellar operations?
 No. Aside from the interactions with Accounts and Assets as mentioned above. This means that Soroban contracts can not interact with SDEX, AMMs, Claimable Balances or Sponsorships.  
 
-### Does the Stellar base reserve apply to Soroban contracts? 
-No. Soroban has a different fee structure and ledger entries that are allocated by Soroban contracts do not add to an account’s required minimal balance.
+### Does the Stellar base reserve apply to Soroban contracts?
+No. Soroban has a different fee structure and ledger entries that are allocated by Soroban contracts do not add to an account's required minimal balance.
 
-### Should I issue my token as a Stellar Asset or a Soroban token? 
+### Should I issue my token as a Stellar Asset or a Soroban token?
 We recommend, to the extent possible, issuing tokens as Stellar assets. These tokens will benefit from being interopable with the existing ecosystem of tools available in the Stellar ecosystem, and will be usable on Soroban through import/export functionality. 
 
-### How should Wallets handle Accounts having a Stellar and Soroban balance? 
+### How should Wallets handle Accounts having a Stellar and Soroban balance?
 Best practices are still being explored. At this time we recommend: (1) displaying separate balances for Soroban and Stellar Assets, (2) allowing users to import/export between them and (3) executing payments based on the origin: Stellar payments for trust lines and Soroban token transfers for Soroban token balances  
 
-### Haven’t found what you’re looking for? 
+### Haven't found what you're looking for?
 Join #soroban on the Stellar developer discord

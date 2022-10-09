@@ -444,8 +444,8 @@ fn set_nonce(env: &Env, id: &Identifier, nonce: BigInt) {
 ```
 
 :::info
-If a contract function errors by returning an error or panicing with an error or
-string, any operations the contract has performed such as emitting events or
+If a contract function errors by returning an error or panicking with an error
+or string, any operations the contract has performed such as emitting events or
 storing data are rolled back. This also applies to incrementing of the nonce.
 If a contract needs the nonce to be consumed on failed invocations, the contract
 needs to be written so that an error is not returned and the invocation does not

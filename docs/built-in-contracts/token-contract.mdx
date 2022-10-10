@@ -148,7 +148,9 @@ exception of the `import`/`export` functions).
 
 ## Contract Interface
 
-This interface can be found in the [SDK](https://github.com/stellar/rs-soroban-sdk/blob/47895a87b98a2fb8dd882839df7abde03f6c7fc6/soroban-token-spec/src/lib.rs#L27).
+This interface can be found in the [SDK](https://github.com/stellar/rs-soroban-sdk/blob/47895a87b98a2fb8dd882839df7abde03f6c7fc6/soroban-token-spec/src/lib.rs#L27). It
+extends the common [token interface](../common-interfaces/token.mdx) with
+`import`/`export` functions for classic asset interactions.
 
 ```rust
 // The metadata used to initialize token (doesn't apply to contracts representing 

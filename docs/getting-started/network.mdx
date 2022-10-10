@@ -1,0 +1,37 @@
+---
+sidebar_position: 4
+title: Connect to the Network
+---
+
+A Quickstart Docker package is available with a built-in Soroban RPC client that enables you to connect to a Soroban test network for development purposes.
+
+:::info
+At this current stage, the following are available:
+
+`Standalone` is a local Stellar network hosted on your device.
+`Futurenet` is a shared Stellar network with validator node(s) hosted by SDF. 
+:::
+
+## Get the Quickstart Docker package:
+
+Quickstart `Soroban Developer` image is available on [dockerhub quickstart repo] published as tag `soroban-dev`.
+
+[dockerhub quickstart repo]: https://hub.docker.com/r/stellar/quickstart/
+
+For details on running the `soroban-dev` image, please refer to the Soroban Development section for [Quickstart usage]. 
+
+[Quickstart usage]: https://github.com/stellar/quickstart#soroban-development
+
+## Run a HelloWorld test via the Quickstart RPC:
+
+Deploy a HelloWorld contract, invoke the hello() method, and get the transaction results. A test script can be found [here].
+
+[here]: https://github.com/stellar/go/issues/4650#issuecomment-1272165182
+
+## Run an example DApp:
+
+Ready to run a sample DApp? 
+
+This section will walk you through how to run the [example Soroban Crowdfunding DApp] that provides an end-to-end React DApp running on Soroban, interacting with the JS SDK that works with the Freighter Wallet.
+
+[example Soroban Crowdfunding DApp]: https://github.com/stellar/soroban-example-dapp

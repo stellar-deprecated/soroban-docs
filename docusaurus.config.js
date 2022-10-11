@@ -19,7 +19,17 @@ const config = {
     defaultLocale: 'en',
     locales: ['en'],
   },
-  plugins: ["docusaurus-plugin-sass"],
+  plugins: [
+    "docusaurus-plugin-sass",
+    [
+      '@docusaurus/plugin-google-analytics',
+      {
+        trackingID: 'UA-53373928-1',
+        anonymizeIP: true,
+      },
+    ],
+    require('./src/analytics-module')
+  ],
   presets: [
     [
       "classic",

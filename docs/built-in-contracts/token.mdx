@@ -10,8 +10,8 @@ The token contract is an implementation of [CAP-54 Smart Contract Standardized A
 [CAP-54 Smart Contract Standardized Asset]: https://stellar.org/protocol/cap-54
 
 :::caution
-The token contract is in early development, has not been audited, and is not
-intended for use. Report issues
+The token contract is in early development, has not been audited, and is
+intended for use in development and testing only at this stage.. Report issues
 [here](https://github.com/stellar/soroban-token-contract/issues/new/choose).
 :::
 
@@ -23,9 +23,7 @@ contract has a number of advantages over token contracts written by the
 ecosystem. First, we can special case this contract and run it natively instead
 of running in a WASM VM, reducing the cost of using the contract. Second, we
 can use this built-in contract to allow "classic" Stellar assets to interoperate
-with Soroban. The current iteration of the standard token contract doesn't
-interoperate with "classic" Stellar assets, but this feature will be available
-in the future. Note that this standard token contract does not prevent the
+with Soroban. Note that this standard token contract does not prevent the
 ecosystem from developing other token contracts if the standard is missing
 functionality they require.
 
@@ -48,7 +46,7 @@ the contract but do not require special privileges
 - privileged mutators, such as `burn` and `set_admin`, which change the state of
 the contract but require special privileges
 
-Gettors require no authorization because they do not change the state of the
+Getters require no authorization because they do not change the state of the
 contract and all contract data is public. For example, `balance` simply returns
 the balance of the specified identity without changing it.
 
@@ -75,37 +73,112 @@ reuse a signature.
 The current nonce for an identity can be retrieved using the `nonce` contract
 function.
 
-### Example: Signing payloads
+### Example: Invoker auth
 
-The [example](https://github.com/stellar/soroban-token-contract/blob/d24fbeaa3cad5406bee8b64e748a71fa38c7c2f3/src/testutils.rs#L48-L70)
-from the test `Token` wrapper class demonstrate how you sign a payload for the
-token contract.
+The easiest way to use the built-in token with classic accounts is to just use
+the [invoker](../examples/auth.mdx#invoker) auth. In this way there won't be
+a need to sign the contract payload, so the contract call would look like this:
 
 ```rust
-pub fn approve(&self, from: &Keypair, spender: &Identifier, amount: &BigInt) {
-    let from_id = to_ed25519(&self.env, from);
-    let nonce = self.nonce(&from_id);
-
-    let msg = SignaturePayload::V0(SignaturePayloadV0 {
-        function: symbol!("approve"),
-        contract: self.contract_id.clone(),
-        network: self.env.ledger().network_passphrase(),
-        args: (from_id, &nonce, spender, amount).into_val(&self.env),
-    });
-
-    let auth = Signature::Ed25519(Ed25519Signature {
-        public_key: from.public.to_bytes().into_val(&self.env),
-        signature: from.sign(msg).unwrap().into_val(&self.env),
-    });
-    TokenClient::new(&self.env, &self.contract_id).approve(&auth, &nonce, &spender, &amount)
-}
+// `with_source_account` is a testing utility, but the contract call arguments
+// would be the same for the real contract call too.
+token.with_source_account(&token_admin_id).mint(
+    // No signature needed, just a flag that invoker auth should be used, i.e.
+    // `token_admin_id` in this case.
+    &Signature::Invoker,
+    // Nonce is always 0 for invokers.
+    &BigInt::zero(&env),
+    &user_id,
+    &BigInt::from_u32(&env, 1000),
+);
 ```
+
+See a more complete example that uses invoker auth in the tests 
+[here](https://github.com/stellar/soroban-examples/blob/2499ed4b6b185ac8959ad90c465728ace01e3922/timelock/src/test.rs#L71).
+
+### Example: Signing payloads
+
+The payload signature semantics is the same as for regular contracts using 
+[advanced auth](../examples/auth-advanced.mdx). The following snippet shows how
+should the signature payload look like:
+
+```rust
+let nonce = token.nonce(&token_admin_id);
+// This is the test call, but the contract call arguments and signature payload
+// would be the same for the real contract call too.
+let sig = soroban_auth::testutils::ed25519::sign(
+    &env,
+    // Signer has the private key of the admin.
+    &token_admin_signer,
+    // Identifier of the token contract.
+    &token_contract_id,
+    // Name of the contract function we call.
+    symbol!("mint"),
+    // Arguments of the contract function call.
+    // Notice that instead of the signature (first `mint` argument), public key
+    // is used as the first argument here.
+    (&token_admin_id, &nonce, &user_id, &BigInt::from_u32(&env, 1000)),
+);
+// Call the contract with signature we computed above.
+token.mint(
+    &sig,
+    &nonce,
+    &user_id,
+    &BigInt::from_u32(&env, 1000),
+);
+```
+
+## Interacting with classic Stellar assets
+
+Token contract is the only way to interact with 'classic' Stellar assets in 
+Soroban. 'Classic' assets include native Stellar token (lumens) and all the 
+existing trustlines.
+
+For every 'classic' asset exactly one respective token contract can be deployed
+via `create_token_from_asset` host function. The resulting token will have a
+deterministic identifier. The issuer of the asset will be the administrator of
+the deployed contract. Native Stellar token doesn't have an administrator.
+
+After the contract has been deployed the users can use `import` function to move
+part of their existing balance to the contract or `export` to move the token 
+balance back to their 'classic' balance. Otherwise, the token will behave in
+exactly the same way as any other token, i.e. users that don't have a 
+corresponding trustline or even a Stellar account can still use it (with the 
+exception of the `import`/`export` functions).
 
 ## Contract Interface
 
+This interface can be found in the [SDK](https://github.com/stellar/rs-soroban-sdk/blob/47895a87b98a2fb8dd882839df7abde03f6c7fc6/soroban-token-spec/src/lib.rs#L27). It
+extends the common [token interface](../common-interfaces/token.mdx) with
+`import`/`export` functions for classic asset interactions.
+
 ```rust
-// Sets the administrator to "admin". Also sets some metadata
-fn initialize(e: Env, admin: Identifier, decimal: u32, name: Bytes, symbol: Bytes);
+// The metadata used to initialize token (doesn't apply to contracts representing 
+// 'classic' Stellar assets).
+pub struct TokenMetadata {
+    pub name: Bytes,
+    pub symbol: Bytes,
+    pub decimals: u32,
+}
+
+// Initializes a 'smart-only' token by setting its admin and metadata.
+// Tokens that represent 'classic' Stellar assets don't need to call this, as
+// their metadata is inherited from the existing assets.
+fn init(env: Env, admin: Identifier, metadata: TokenMetadata);
+
+// Functions that apply on for tokens representing classic assets.
+
+// Moves the `amount` from classic asset balance to the token balance of `id`
+// user.
+// `id` must be a classic Stellar account (i.e. an account invoker or signature 
+// signed by an account).
+fn import(env: Env, id: Signature, nonce: BigInt, amount: i64);
+
+// Moves the `amount` from token balance to the classic asset balance of `id`
+// user.
+// `id` must be a classic Stellar account (i.e. an account invoker or signature 
+// signed by an account).
+fn export(env: Env, id: Signature, nonce: BigInt, amount: i64);
 
 // Admin interface -- these functions are privileged
 

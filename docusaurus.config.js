@@ -51,7 +51,7 @@ const config = {
           width: 100,
           src: "img/soroban-wordmark-temp.svg",
           srcDark: "img/soroban-wordmark-temp-dark.svg",
-          href: "/docs",
+          href: "/",
         },
         items: [
           {
@@ -60,8 +60,18 @@ const config = {
             position: 'left'
           },
           {
+            href: 'https://github.com/stellar/sorobanathon', 
+            label: 'Sorobanathon', 
+            position: 'left'
+          },
+          {
             href: 'https://github.com/stellar/soroban-docs',
             label: 'GitHub',
+            position: 'right',
+          },
+          {
+            href: 'https://discord.gg/6ZCcYqbC96',
+            label: 'Discord',
             position: 'right',
           },
         ],
@@ -72,7 +82,6 @@ const config = {
         indexName: "crawler_Soroban Docs",
       },
       footer: {
-        style: 'dark',
         links: [
           {
             title: 'Community',
@@ -84,11 +93,15 @@ const config = {
             ],
           },
           {
-            title: 'More',
+            title: 'Resources',
             items: [
               {
                 label: 'GitHub',
                 href: 'https://github.com/stellar',
+              },
+              {
+                label: 'Sorobanathon',
+                href: 'https://github.com/stellar/sorobanathon', 
               },
             ],
           },

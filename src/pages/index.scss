@@ -1,0 +1,267 @@
+/**
+ * CSS files with the .module.css suffix will be treated as CSS modules
+ * and scoped locally.
+ */
+
+@mixin breakpoint($value, $width : max-width) {
+  @media only screen and ($width : $value) {
+    @content;
+  }
+}
+
+.homepage {
+  background-color: black;
+  color: white;
+  display: flex;
+  flex-direction: column;
+
+  .hp--maxWidth {
+    max-width: calc(1200px + 100px);
+    margin: 0 auto;
+    padding: 0 50px;
+
+    @include breakpoint(500px) {
+      padding: 0 30px;
+    }
+  }
+  img {
+    display: block;
+  }
+  .hp--button {
+    background-color: #3E1BDB;
+    color: white;
+    font-weight: 500;
+    height: 45px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 25px;
+  }
+
+  .hp--hero {
+    background-position: top left;
+    background-size: cover;
+    padding: 150px 0 250px;
+    position: relative;
+    z-index: 0;
+
+    &::after {
+      content: '';
+      position: absolute;
+      background: linear-gradient(rgba(#000000, 0), #000000);
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 150px;
+    }
+
+    .hp--arrows,
+    .hp--topRight,
+    .hp--bottomLeft {
+      position: absolute;
+      z-index: 0;
+    }
+    .hp--arrows {
+      top: 90px;
+      transform: translate(-20%, -50%);
+    }
+    .hp--topRight {
+      top: 0;
+      right: 0;
+    }
+    .hp--bottomLeft {
+      bottom: 0;
+      left: 0;
+    }
+
+    .hp--heroInfo {
+      position: relative;
+    }
+    .hp--logo {
+      width: 325px;
+      display: block;
+      margin-bottom: 80px;
+      position: relative;
+      z-index: 1;
+    }
+    .hp--h1 {
+      font-size: 48px;
+      font-weight: 400;
+      line-height: 1;
+      margin-bottom: 30px;
+      z-index: 1;
+      position: relative;
+    }
+    .hp--h2 {
+      font-size: 20px;
+      font-weight: 400;
+      max-width: 560px;
+      line-height: 1.5;
+      margin-bottom: 30px;
+      z-index: 1;
+      position: relative;
+    }
+  }
+
+  .hp--designedFor {
+    margin: 100px auto;
+    position: relative;
+    z-index: 1;
+    margin-top: -100px;
+
+    h1 {
+      font-size: 40px;
+      font-weight: 400;
+      margin-bottom: 30px;
+    }
+
+    .hp--features {
+      display: flex;
+      width: calc(100% + 30px);
+      margin-left: -15px;
+    }
+    .hp--muchExcite {
+      color: black;
+      width: 100%;
+      margin: 0 15px;
+      border-radius: 15px;
+      padding: 25px;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      
+      .hp--front,
+      .hp--back {
+        pointer-events: none;
+        transition: opacity 0.2s;
+      }
+      .hp--front {
+        opacity: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        flex-grow: 1;
+
+        p {
+          font-size: 32px;
+          line-height: 1.2;
+          margin: auto 0 0 0;
+        }
+      }
+      .hp--back {
+        opacity: 0;
+        position: absolute;
+        top: 25px;
+        right: 25px;
+        left: 0;
+
+        li {
+          margin-bottom: 20px;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
+
+      &:hover {
+
+        .hp--front {
+          opacity: 0;
+        }
+        .hp--back {
+          opacity: 1;
+        }
+      }
+    }
+    .orange {
+      background-color: #DD9A00;
+    }
+    .white {
+      background-color: white;
+    }
+    .red {
+      background-color: #D55A5F;
+    }
+
+    @include breakpoint(1200px) {
+      max-width: 800px;
+
+      .hp--features {
+        flex-direction: column;
+        width: 100%;
+        margin-left: 0;
+      }
+      .hp--muchExcite {
+        margin: 0 0 30px;
+      }
+    }
+  }
+
+  .bp--startYourJourney {
+    position: relative;
+
+    .hp--arrows {
+      transform: scaleX(-1) translateX(10%);
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 0;
+    }
+    .hp--topRight {
+      transform: scaleX(-1) scaleY(-1);
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      z-index: 0;
+    }
+  }
+  .hp--cta {
+    margin: 100px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+
+    h2 {
+      margin: 0 0 75px;
+      font-size: 32px;
+      font-weight: 300;
+      text-align: center;
+    }
+    .hp--imgLink {
+      margin: 0 0 50px;
+    }
+    h1 {
+      margin: 0 0 50px;
+      font-size: 55px;
+      font-weight: 800;
+      text-align: center;
+    }
+    p {
+      margin: 0 0 50px;
+      font-size: 22px;
+      text-align: center;
+      max-width: 800px;
+    }
+
+    &:last-of-type {
+      margin-bottom: 200px;
+    }
+
+    @include breakpoint(500px) {
+      
+      h2 {
+        font-size: 24px;
+      }
+      h1 {
+        font-size: 35px;
+      }
+      p {
+        font-size: 18px;
+      }
+    }
+  }
+}

@@ -6,8 +6,8 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "Soroban Documentation",
-  tagline: 'Soroban is a smart contracts platform that is designed with purpose and built to perform.',
+  title: "Soroban - Smart Contracts Platform for Developers",
+  tagline: 'Soroban is a smart contracts platform designed to be sensible, built-to-scale, batteries-included, and developer-friendly. Experiment and earn rewards!',
   url: "https://soroban.stellar.org", // Your website URL
   baseUrl: "/",
   onBrokenLinks: "throw",

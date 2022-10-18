@@ -1,4 +1,5 @@
 import React from 'react'
+import Head from '@docusaurus/Head';
 import Layout from '@theme/Layout'
 import clsx from 'clsx'
 
@@ -7,6 +8,21 @@ import './index.scss'
 export default function Home() {
   return (
     <Layout>
+      <Head>
+        <meta
+          name="description"
+          content="Soroban is a smart contracts platform designed to be sensible, built-to-scale, batteries-included, and developer-friendly. Experiment and earn rewards!"
+        />
+        <meta
+          property="og:description"
+          content="Soroban is a smart contracts platform designed to be sensible, built-to-scale, batteries-included, and developer-friendly. Experiment and earn rewards!"
+        />
+        <meta
+          name="twitter:description"
+          content="Soroban is a smart contracts platform designed to be sensible, built-to-scale, batteries-included, and developer-friendly. Experiment and earn rewards!"
+        />
+      </Head>
+      
       <main className='homepage'>
         <div className="hp--hero">
           <img className='hp--topRight' src="./img/homepage/top-right.svg" />

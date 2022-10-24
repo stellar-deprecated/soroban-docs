@@ -96,7 +96,7 @@ pub struct Contract;
 #[contractimpl]
 impl Contract {
     pub fn hello(env: Env, to: Symbol) -> Vec<Symbol> {
-        vec![&env, symbol!("Hello"), to]
+        vec![&env, symbol!("Hello"), to].into()
     }
 }
 

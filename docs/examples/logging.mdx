@@ -5,11 +5,14 @@ title: Logging
 
 The [logging example] demonstrates how to log for the purpose of debugging.
 
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.1.1
+
 Logs in contracts are only visible in tests, or when executing contracts using
 [`soroban-cli`]. Logs are only compiled into the contract if the
 `debug-assertions` Rust compiler option is enabled.
 
-[logging example]: https://github.com/stellar/soroban-examples/tree/v0.1.0/hello_world
+[logging example]: https://github.com/stellar/soroban-examples/tree/v0.1.1/hello_world
 
 :::tip
 Logs are no a substitute for step-through debugging. Rust tests for Soroban can
@@ -28,13 +31,16 @@ example] for how to produce structured events.
 ## Run the Example
 
 First go through the [Setup] process to get your development environment
-configured, then clone the `v0.1.0` tag of `soroban-examples` repository:
+configured, then clone the `v0.1.1` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.1.0 https://github.com/stellar/soroban-examples
+git clone -b v0.1.1 https://github.com/stellar/soroban-examples
 ```
+
+Or, skip the development environment setup and open this example in Gitpod.  
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
 
 To run the tests for the example, navigate to the `logging` directory, and use
 `cargo test`.
@@ -73,7 +79,7 @@ impl Contract {
     }
 }
 ```
-Ref: https://github.com/stellar/soroban-examples/tree/v0.1.0/logging
+Ref: https://github.com/stellar/soroban-examples/tree/v0.1.1/logging
 
 ## How it Works
 

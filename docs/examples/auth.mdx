@@ -7,7 +7,10 @@ The [auth example] demonstrates how to tell who has invoked a contract, and
 verify that a contract has been invoked by an account or contract. This example
 is an extension of the [storing data example].
 
-[events example]: https://github.com/stellar/soroban-examples/tree/v0.1.0/events
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.1.1
+
+[events example]: https://github.com/stellar/soroban-examples/tree/v0.1.1/events
 [storing data example]: storing-data.mdx
 
 The participant who invoked a contract is an `Address` containing one-of a:
@@ -23,19 +26,21 @@ invocations, or ed25519 keys independent of accounts and contracts, see the
 [advanced auth example].
 :::
 
-[auth example]: https://github.com/stellar/soroban-examples/tree/v0.1.0/auth
+[auth example]: https://github.com/stellar/soroban-examples/tree/v0.1.1/auth
 [advanced auth example]: auth-advanced.mdx
 
 ## Run the Example
 
 First go through the [Setup] process to get your development environment
-configured, then clone the `v0.1.0` tag of `soroban-examples` repository:
+configured, then clone the `v0.1.1` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.1.0 https://github.com/stellar/soroban-examples
+git clone -b v0.1.1 https://github.com/stellar/soroban-examples
 ```
+
+Or, skip the development environment setup and open this example in [Gitpod][oigp].
 
 To run the tests for the example, navigate to the `auth` directory, and use
 `cargo test`.
@@ -90,7 +95,7 @@ impl IncrementContract {
 }
 ```
 
-Ref: https://github.com/stellar/soroban-examples/tree/v0.1.0/auth
+Ref: https://github.com/stellar/soroban-examples/tree/v0.1.1/auth
 
 ## How it Works
 

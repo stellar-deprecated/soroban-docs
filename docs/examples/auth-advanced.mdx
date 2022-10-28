@@ -6,6 +6,9 @@ title: Auth (Advanced)
 The [advanced auth example] demonstrates how to write a contract that supports
 multiple forms of authentication using the [soroban-auth] crate.
 
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.1.1
+
 The example supports authentication by:
 - Being the invoker, as a transaction source account or a contract.
 - Presigned invocations with account signers or ed25519 keys, similar to
@@ -57,18 +60,20 @@ is appropriate for themselves.
 
 [soroban-auth]: ../SDKs/rust-auth
 [auth example]: auth.mdx
-[advanced auth example]: https://github.com/stellar/soroban-examples/tree/v0.1.0/auth_advanced
+[advanced auth example]: https://github.com/stellar/soroban-examples/tree/v0.1.1/auth_advanced
 
 ## Run the Example
 
 First go through the [Setup] process to get your development environment
-configured, then clone the `v0.1.0` tag of `soroban-examples` repository:
+configured, then clone the `v0.1.1` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.1.0 https://github.com/stellar/soroban-examples
+git clone -b v0.1.1 https://github.com/stellar/soroban-examples
 ```
+
+Or, skip the development environment setup and open this example in [Gitpod][oigp].
 
 To run the tests for the example, navigate to the `auth_advanced` directory, and use `cargo test`.
 
@@ -195,7 +200,7 @@ fn set_nonce(env: &Env, id: &Identifier, nonce: BigInt) {
 }
 ```
 
-Ref: https://github.com/stellar/soroban-examples/tree/v0.1.0/auth_advanced
+Ref: https://github.com/stellar/soroban-examples/tree/v0.1.1/auth_advanced
 
 ## How it Works
 

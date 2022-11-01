@@ -34,6 +34,7 @@ export default function Home() {
             <h1 className="hp--h1">Introducing Soroban</h1>
             <h2 className="hp--h2">Soroban is a smart contracts platform that is designed with purpose and built to perform. The futurenet has launched! Start experimenting and earning rewards now!</h2>
             <a href="/#tinker-and-earn" className='hp--button'>Tinker &amp; Earn</a>
+            <a href="/docs" className='hp--button button--gray'>Docs</a>
           </div>
         </div>
 

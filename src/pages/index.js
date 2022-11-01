@@ -33,6 +33,7 @@ export default function Home() {
             <img className='hp--arrows' src="./img/homepage/arrows.svg" />
             <h1 className="hp--h1">Introducing Soroban</h1>
             <h2 className="hp--h2">Soroban is a smart contracts platform that is designed with purpose and built to perform. The futurenet has launched! Start experimenting and earning rewards now!</h2>
+            <a href="/docs" className='hp--button'>Docs</a>
             <a href="/#tinker-and-earn" className='hp--button'>Tinker &amp; Earn</a>
           </div>
         </div>

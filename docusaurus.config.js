@@ -71,6 +71,11 @@ const config = {
             position: 'left'
           },
           {
+            href: 'https://quest.stellar.org/live',
+            label: 'Stellar Quest',
+            position: 'left',
+          },
+          {
             href: 'https://github.com/stellar/sorobanathon', 
             label: 'Sorobanathon', 
             position: 'left'
@@ -109,6 +114,10 @@ const config = {
               {
                 label: 'GitHub',
                 href: 'https://github.com/stellar',
+              },
+              {
+                label: 'Stellar Quest',
+                href: 'https://quest.stellar.org/live',
               },
               {
                 label: 'Sorobanathon',

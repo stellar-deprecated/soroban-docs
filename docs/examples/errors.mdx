@@ -8,20 +8,20 @@ contract that invokers of the contract can understand and handle. This example
 is an extension of the [storing data example].
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.1.1
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.2.1
 
-[errors example]: https://github.com/stellar/soroban-examples/tree/v0.1.1/errors
+[errors example]: https://github.com/stellar/soroban-examples/tree/v0.2.1/errors
 [storing data example]: storing-data.mdx
 
 ## Run the Example
 
 First go through the [Setup] process to get your development environment
-configured, then clone the `v0.1.1` tag of `soroban-examples` repository:
+configured, then clone the `v0.2.1` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.1.1 https://github.com/stellar/soroban-examples
+git clone -b v0.2.1 https://github.com/stellar/soroban-examples
 ```
 
 Or, skip the development environment setup and open this example in [Gitpod][oigp].
@@ -96,7 +96,7 @@ impl IncrementContract {
     }
 }
 ```
-Ref: https://github.com/stellar/soroban-examples/tree/v0.1.1/errors
+Ref: https://github.com/stellar/soroban-examples/tree/v0.2.1/errors
 
 ## How it Works
 
@@ -156,7 +156,7 @@ pub fn increment(env: Env) -> Result<u32, Error> {
 Errors can also be panicked instead of being returned from the function.
 
 The increment function could also be written as follows with a `u32` return
-value. The error can be passed to the environment using the `panic_error!`
+value. The error can be passed to the environment using the `panic_with_error!`
 macro.
 
 ```rust
@@ -167,7 +167,7 @@ pub fn increment(env: Env) -> u32 {
         count
     } else {
         // ...
-        panic_error!(&env, Error::LimitReached)
+        panic_with_error!(&env, Error::LimitReached)
     }
 }
 ```

@@ -26,7 +26,34 @@ and provide feedback.
 | Stellar Quickstart | `stellar/quickstart:soroban-dev@sha256:0993d3350148af6ffeab5dc8f0b835236b28dade6dcae77ff8a09317162f768d` |
 
 ### Changelog
-- TODO
+
+#### XDR
+
+* Trivial whitespace changes
+
+#### Soroban Environment
+
+* Vm tuning
+* Add token events
+* Catch panics from native contracts in try_call
+* Improved built-in token error reporting
+* Add missing conversion from Status->ScStatus for the ContractError variant
+* Capture user panic-strings in native builds, avoid spurious NoContractRunning error
+* Few small fixes to error debug events
+
+See https://github.com/stellar/rs-soroban-env/releases v0.0.7, v0.0.8, v0.0.9 for more details.
+
+#### Soroban Rust SDK
+
+* Add Logger::print in testutils
+* Add conversion from Address to Identifier
+* Remove deprecated functions
+* Remove panic-catching and fix tests that use newly-working native try_call
+* Reintroduce an optimized aborting unwrap
+* Add assert_with_error! macro
+* Rename panic_error! to panic_with_error!
+
+See https://github.com/stellar/rs-soroban-sdk/releases v0.2.0, v0.2.1 for more details.
 
 ## Preview Release 1 (October 11th, 2022)
 

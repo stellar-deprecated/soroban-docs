@@ -82,27 +82,30 @@ the deploying contract ID and the provided salt.
 
 Open the `deployer/deployer/src/lib.rs` file to follow along.
 
-### Contract code installation
+### Contract Code Installation
 
 Before deploying the new contract instances, the WASM code needs to be installed
-on-chain. Then it can be reused to deploy an arbitrary number of contract 
+on-chain. Then it can be used to deploy an arbitrary number of contract 
 instances. The installation typically should happen outside of the deployer
 contract, as it needs to happen just once.
 while the deployer contract can be called multiple times.
 
-[Below](#tests) is the example of installing the contract code in tests. For the actual
-installation see the general deployment [tutorial](https://soroban.stellar.org/docs/tutorials/deploy-to-futurenet).
+See the [tests](#tests) for an example of installing the contract code in tests.
+For the actual on-chain installation see the general deployment
+[tutorial](https://soroban.stellar.org/docs/tutorials/deploy-to-futurenet).
 
 ### Deployer
 
-The `deployer` contract deploys other contracts. It accepts a salt that will be
-used to derive a contract ID, and a hash-based identifier of the installed WASM
-code to deploy. It also accepts an initialization function and arguments to pass 
-to that function.
+The `Deployer` contract deploys other contracts. It accepts a salt that will be
+used to derive a contract ID and a hash-based identifier of the installed WASM
+(note, that this is not just the hash of the WASM file).
+It also accepts an initialization function and arguments to pass to that function.
 
 The contract first gets a deployer using the salt, then calls deploy with the
-WASM hash. The contract that with the code corresponding to the `wasm_hash` will
-be deployed and the contract ID for that new contract is returned.
+WASM hash. The contract ID for the new contract is returned. The implementation
+of the new contract is defined by the WASM file installed under `wasm_hash` (
+only the `wasm_hash` itself is stored per contract ID thus saving the ledger
+space and fees).
 
 The contract ID is deterministic and is derived from the deploying contract and
 the salt.
@@ -141,7 +144,7 @@ fn test() {
     let env = Env::default();
     let client = DeployerClient::new(&env, &env.register_contract(None, Deployer));
 
-    // Install the WASM code to be deployed from the deployer contract.
+    // Install the WASM that will be deployed by the deployer contract.
     let wasm_hash = env.install_contract_wasm(contract::WASM);
 
     // Deploy contract using deployer, and include an init function to call.
@@ -203,17 +206,17 @@ Install the code of the test contract that we have imported above via
 `contractimport!` and get the hash of the installed WASM code:
 
 ```rust
-// Install the WASM code to be deployed from the deployer contract.
+// Install the WASM that will be deployed by the deployer contract.
 let wasm_hash = env.install_contract_wasm(contract::WASM);
 ```
 
-Register the deployer contract with the environment:
+Register the deployer contract with the environment.
 
 ```rust
 env.register_contract(&deployer_id, Deployer);
 ```
 
-...and created a client for it:
+Create a client to invoke the `Deployer` contract.
 
 ```rust
 let client = DeployerClient::new(&env, &deployer_id);

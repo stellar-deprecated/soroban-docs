@@ -79,8 +79,8 @@ pub struct HelloContract;
 Contract functions look much like regular Rust functions. They mave have any
 number of arguments, but arguments must support being transmitted to and from
 the Soroban environment that the contract runs in. The Soroban SDK provides some
-types like `Vec`, `Map`, `BigInt`, `Symbol`, `Bytes`, `BytesN`, etc that
-can be used. Primitive values like `u64`, `i64`, `u32`, `i32`, and `bool` can
+types like `Vec`, `Map`, `Symbol`, `Bytes`, `BytesN`, etc that can be used.
+Primitive values like `u128`, `i128`, `u64`, `i64`, `u32`, `i32`, and `bool` can
 also be used. Floats are not supported.
 
 Contract inputs must not be references.

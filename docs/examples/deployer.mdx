@@ -275,15 +275,18 @@ both contracts:
 If you have [`soroban-cli`] installed, you can invoke the contract function to
 deploy the test contract.
 
-Before the contract can be deployed, you need to install the child contract WASM.
+Before deploying the test contract with the deployer, install the test contract
+WASM using the `install` command. The `install` command will print out the 
+hash derived from the WASM file (it's not just the hash of the WASM file itself 
+though) which should be used by the deployer.
 
 ```sh
 soroban install --wasm target/wasm32-unknown-unknown/release/soroban_deployer_test_contract.wasm
 ```
 
-This command will return the hash of the installed WASM(`edce149b183ea03dfd896a263d2e17c1f08229da52afa6f822d9cbc67c103806` here).
+The command prints out the hash as hex. It will look something like `edce149b183ea03dfd896a263d2e17c1f08229da52afa6f822d9cbc67c103806`.
 
-Then the deployer contract may be invoked with the WASM hash above.
+Then the deployer contract may be invoked with the WASM hash value above.
 
 ```sh
 soroban invoke \

@@ -87,9 +87,9 @@ token.with_source_account(&token_admin_id).mint(
     // `token_admin_id` in this case.
     &Signature::Invoker,
     // Nonce is always 0 for invokers.
-    &BigInt::zero(&env),
+    &0,
     &user_id,
-    &BigInt::from_u32(&env, 1000),
+    &1000,
 );
 ```
 
@@ -117,14 +117,14 @@ let sig = soroban_auth::testutils::ed25519::sign(
     // Arguments of the contract function call.
     // Notice that instead of the signature (first `mint` argument), public key
     // is used as the first argument here.
-    (&token_admin_id, &nonce, &user_id, &BigInt::from_u32(&env, 1000)),
+    (&token_admin_id, &nonce, &user_id, &1000),
 );
 // Call the contract with signature we computed above.
 token.mint(
     &sig,
     &nonce,
     &user_id,
-    &BigInt::from_u32(&env, 1000),
+    &1000,
 );
 ```
 
@@ -172,60 +172,60 @@ fn init(env: Env, admin: Identifier, metadata: TokenMetadata);
 // user.
 // `id` must be a classic Stellar account (i.e. an account invoker or signature 
 // signed by an account).
-fn import(env: Env, id: Signature, nonce: BigInt, amount: i64);
+fn import(env: Env, id: Signature, nonce: i128, amount: i64);
 
 // Moves the `amount` from token balance to the classic asset balance of `id`
 // user.
 // `id` must be a classic Stellar account (i.e. an account invoker or signature 
 // signed by an account).
-fn export(env: Env, id: Signature, nonce: BigInt, amount: i64);
+fn export(env: Env, id: Signature, nonce: i128, amount: i64);
 
 // Admin interface -- these functions are privileged
 
 // If "admin" is the administrator, burn "amount" from "from"
-fn burn(e: Env, admin: Signature, nonce: BigInt, from: Identifier, amount: BigInt);
+fn burn(e: Env, admin: Signature, nonce: i128, from: Identifier, amount: i128);
 
 // If "admin" is the administrator, mint "amount" to "to"
-fn mint(e: Env, admin: Signature, nonce: BigInt, to: Identifier, amount: BigInt);
+fn mint(e: Env, admin: Signature, nonce: i128, to: Identifier, amount: i128);
 
 // If "admin" is the administrator, set the administrator to "id"
-fn set_admin(e: Env, admin: Signature, nonce: BigInt, new_admin: Identifier);
+fn set_admin(e: Env, admin: Signature, nonce: i128, new_admin: Identifier);
 
 // If "admin" is the administrator, freeze "id"
-fn freeze(e: Env, admin: Signature, nonce: BigInt, id: Identifier);
+fn freeze(e: Env, admin: Signature, nonce: i128, id: Identifier);
 
 // If "admin" is the administrator, unfreeze "id"
-fn unfreeze(e: Env, admin: Signature, nonce: BigInt, id: Identifier);
+fn unfreeze(e: Env, admin: Signature, nonce: i128, id: Identifier);
 
 // Token Interface
 
 // Get the allowance for "spender" to transfer from "from"
-fn allowance(e: Env, from: Identifier, spender: Identifier) -> BigInt;
+fn allowance(e: Env, from: Identifier, spender: Identifier) -> i128;
 
 // Set the allowance to "amount" for "spender" to transfer from "from"
-fn approve(e: Env, from: Signature, nonce: BigInt, spender: Identifier, amount: BigInt);
+fn approve(e: Env, from: Signature, nonce: i128, spender: Identifier, amount: i128);
 
 // Get the balance of "id"
-fn balance(e: Env, id: Identifier) -> BigInt;
+fn balance(e: Env, id: Identifier) -> i128;
 
 // Transfer "amount" from "from" to "to"
-fn xfer(e: Env, from: Signature, nonce: BigInt, to: Identifier, amount: BigInt);
+fn xfer(e: Env, from: Signature, nonce: i128, to: Identifier, amount: i128);
 
 // Transfer "amount" from "from" to "to", consuming the allowance of "spender"
 fn xfer_from(
     e: Env,
     spender: Signature,
-    nonce: BigInt,
+    nonce: i128,
     from: Identifier,
     to: Identifier,
-    amount: BigInt,
+    amount: i128,
 );
 
 // Returns true if "id" is frozen
 fn is_frozen(e: Env, id: Identifier) -> bool;
 
 // Returns the current nonce for "id"
-fn nonce(e: Env, id: Identifier) -> BigInt;
+fn nonce(e: Env, id: Identifier) -> i128;
 
 // Descriptive Interface
 

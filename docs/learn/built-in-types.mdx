@@ -27,6 +27,10 @@ The following primitive types are supported:
 
 ### Signed 64-bit Integer (`i64`)
 
+### Unsigned 128-bit Integer (`u128`)
+
+### Signed 128-bit Integer (`i128`)
+
 ### Bool (`bool`)
 
 ## Symbol (`Symbol`)
@@ -76,14 +80,6 @@ will fail if they are not. Most functions on Map return a Result due to this.
 
 Maps have at most one entry per key. Setting a value for a key in the map that
 already has a value for that key replaces the value.
-
-## BigInt (`BigInt`)
-
-BigInt is an arbitrary sized signed integer.
-
-The value is stored in the Host and available to the Guest through functions on
-the type. Operations between BigInts are performed inside the Host and do not
-consume Guest resources such as memory.
 
 ## Address (`Address`)
 

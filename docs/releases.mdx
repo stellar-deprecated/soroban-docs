@@ -26,45 +26,70 @@ network passphrase changes.
 
 | Software | Version |
 | -------- | ------- |
-| XDR | https://github.com/stellar/stellar-xdr/tree/026c9cd074bdb28ddde8ee52f2a4502d9e518a09 |
+| XDR | [026c9cd074bdb28ddde8ee52f2a4502d9e518a09](https://github.com/stellar/stellar-xdr/tree/026c9cd074bdb28ddde8ee52f2a4502d9e518a09) |
 | Soroban Environment | `v0.0.10` |
 | Stellar Core | `stellar-core_19.5.1-1137.b3a6bc281.focal~soroban` |
-| Soroban Rust SDK | `` |
-| Soroban CLI | `` |
-| Soroban RPC | `` |
+| Soroban Rust SDK | `v0.3.1` |
+| Soroban CLI | `v0.3.1` |
+| Soroban RPC | `0.3.1-32` |
 | Stellar Horizon | `stellar-horizon:2.22.0~soroban-318` |
-| Stellar Quickstart | `stellar/quickstart:soroban-dev@sha256:...` |
+| Stellar Friendbot | `soroban-v0.0.2-alpha` |
+| Stellar Quickstart | `stellar/quickstart:soroban-dev@sha256:8046391718f8e58b2b88b9c379abda3587bb874689fa09b2ed4871a764ebda27` |
+| Stellar JS Stellar Base | `8.0.1-soroban.5` |
+| Stellar JS Soroban Client | `v0.2.0` |
 | Futurenet Network Passphrase | `Test SDF Future Network ; October 2022` |
 
 ### Changelog
 
 #### XDR
 
-* ...
+- Remove BigInt from ScVal
+- Add u128 and i128 to ScVal
+- Change the structure of events in meta
+- Change transaction operation structure for Soroban deployments and invocations
+
+See https://github.com/stellar/stellar-xdr/compare/48d5e17ae63bba0aa9725cd9d18d7438f44c07b1...026c9cd074bdb28ddde8ee52f2a4502d9e518a09 for more details.
 
 #### Soroban Environment
 
-* ...
+- Add Host::with_artificial_test_contract_frame
+- Restructure benchmark framework, add calibration code for all CostTypes
+- Disable budget costs for object cmp
+- Env changes to decouple contract instance from source
+- Remove BigInt, switch everything to u128 and i128
 
-See https://github.com/stellar/rs-soroban-env/releases v... for more details.
+See https://github.com/stellar/rs-soroban-env/releases v0.0.10 for more details.
 
 #### Soroban Rust SDK
 
-* ...
+- Add Env::as_contract for testutils by @leighmcculloch in #761
+- Update contract deployment to match the Env changes by @dmkozh in #766
+- Make contract_id public in contract clients. by @dmkozh in #768
+- Remove BigInt by @sisuresh in #770
+- Add soroban-ledger-snapshot
+- Change gen JSON output from stream to array (contribution by [@vinamogit])
+- Contributions from [@vinamogit]
 
-See https://github.com/stellar/rs-soroban-sdk/releases v... for more details.
+See https://github.com/stellar/rs-soroban-sdk/releases v0.3.0, v0.3.1 for more details.
 
 #### Soroban RPC
 
-* ...
+- Add soroban-rpc version subcommand
+- Add a new getLedgerEntry jsonrpc method, deprecating and replacing getContractData allowing an application to fetch any ledger entry
+- Added new getEvents method currently backed by horizon
 
-See https://github.com/stellar/soroban-tools/releases v... for more details.
+See https://github.com/stellar/soroban-tools/releases v0.3.0, v0.3.1 for more details.
 
 #### Soroban CLI
 
-* ...
+- Added type description to errors when using --arg (contribution by [@waldmatias])
+- Additional CLI support for the contract deployment changes
+- Adds support for soroban deploy --wasm-hash, as well as soroban install --wasm
+- Add xdr and env version to version subcommand output
+- Fix that the footpoint was not set correctly when deploying the wrapped token contract (contribution by [@overcat])
+- Contributions from [@waldmatias], [@willemneal], [@overcat], [@brson]
 
-See https://github.com/stellar/soroban-tools/releases v... for more details.
+See https://github.com/stellar/soroban-tools/releases v0.3.0, v0.3.1 for more details.
 
 ## Preview 4 (November 15th, 2022)
 
@@ -77,7 +102,7 @@ See https://github.com/stellar/soroban-tools/releases v... for more details.
 | Stellar Core | `19.5.1-1111.eba1d3de9.focal~soroban` |
 | Soroban Rust SDK | `v0.2.1` |
 | Soroban CLI | `v0.2.1` |
-| Soroban RPC | ??? |
+| Soroban RPC | `0.3.1-32` |
 | Stellar Horizon | `2.22.0~soroban-304` |
 | Stellar Quickstart | `stellar/quickstart:soroban-dev@sha256:0993d3350148af6ffeab5dc8f0b835236b28dade6dcae77ff8a09317162f768d` |
 | Futurenet Network Passphrase | `Test SDF Future Network ; October 2022` |
@@ -154,3 +179,9 @@ See https://www.stellar.org/developers-blog/soroban-preview-release-2.
 ## Preview 1 (August 1st, 2022)
 
 See https://www.stellar.org/blog/project-jump-cannon-soroban-preview-release.
+
+[@waldmatias]: https://github.com/waldmatias
+[@willemneal]: https://github.com/willemneal
+[@overcat]: https://github.com/overcat
+[@brson]: https://github.com/brson
+[@vinamogit]: https://github.com/vinamogit

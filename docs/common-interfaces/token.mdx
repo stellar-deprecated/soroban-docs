@@ -23,25 +23,25 @@ pub trait Contract {
     fn burn(
         env: soroban_sdk::Env,
         admin: soroban_auth::Signature,
-        nonce: soroban_sdk::BigInt,
+        nonce: i128,
         from: soroban_auth::Identifier,
-        amount: soroban_sdk::BigInt,
+        amount: i128,
     );
 
     /// If "admin" is the administrator, mint "amount" to "to".
     fn mint(
         env: soroban_sdk::Env,
         admin: soroban_auth::Signature,
-        nonce: soroban_sdk::BigInt,
+        nonce: i128,
         to: soroban_auth::Identifier,
-        amount: soroban_sdk::BigInt,
+        amount: i128,
     );
 
     /// If "admin" is the administrator, set the administrator to "id".
     fn set_admin(
         env: soroban_sdk::Env,
         admin: soroban_auth::Signature,
-        nonce: soroban_sdk::BigInt,
+        nonce: i128,
         new_admin: soroban_auth::Identifier,
     );
 
@@ -49,7 +49,7 @@ pub trait Contract {
     fn freeze(
         env: soroban_sdk::Env,
         admin: soroban_auth::Signature,
-        nonce: soroban_sdk::BigInt,
+        nonce: i128,
         id: soroban_auth::Identifier,
     );
 
@@ -57,7 +57,7 @@ pub trait Contract {
     fn unfreeze(
         env: soroban_sdk::Env,
         admin: soroban_auth::Signature,
-        nonce: soroban_sdk::BigInt,
+        nonce: i128,
         id: soroban_auth::Identifier,
     );
 
@@ -70,44 +70,44 @@ pub trait Contract {
         env: soroban_sdk::Env,
         from: soroban_auth::Identifier,
         spender: soroban_auth::Identifier,
-    ) -> soroban_sdk::BigInt;
+    ) -> i128;
 
     /// Set the allowance to "amount" for "spender" to transfer from "from".
     fn approve(
         env: soroban_sdk::Env,
         from: soroban_auth::Signature,
-        nonce: soroban_sdk::BigInt,
+        nonce: i128,
         spender: soroban_auth::Identifier,
-        amount: soroban_sdk::BigInt,
+        amount: i128,
     );
 
     /// Get the balance of "id".
-    fn balance(env: soroban_sdk::Env, id: soroban_auth::Identifier) -> soroban_sdk::BigInt;
+    fn balance(env: soroban_sdk::Env, id: soroban_auth::Identifier) -> i128;
 
     /// Transfer "amount" from "from" to "to.
     fn xfer(
         env: soroban_sdk::Env,
         from: soroban_auth::Signature,
-        nonce: soroban_sdk::BigInt,
+        nonce: i128,
         to: soroban_auth::Identifier,
-        amount: soroban_sdk::BigInt,
+        amount: i128,
     );
 
     /// Transfer "amount" from "from" to "to", consuming the allowance of "spender".
     fn xfer_from(
         env: soroban_sdk::Env,
         spender: soroban_auth::Signature,
-        nonce: soroban_sdk::BigInt,
+        nonce: i128,
         from: soroban_auth::Identifier,
         to: soroban_auth::Identifier,
-        amount: soroban_sdk::BigInt,
+        amount: i128,
     );
 
     // Returns true if "id" is frozen.
     fn is_frozen(env: soroban_sdk::Env, id: soroban_auth::Identifier) -> bool;
 
     // Returns the current nonce for "id".
-    fn nonce(env: soroban_sdk::Env, id: soroban_auth::Identifier) -> soroban_sdk::BigInt;
+    fn nonce(env: soroban_sdk::Env, id: soroban_auth::Identifier) -> i128;
 
     // --------------------------------------------------------------------------------
     // Descriptive Interface

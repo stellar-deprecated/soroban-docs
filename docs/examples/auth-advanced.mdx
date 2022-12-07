@@ -7,7 +7,7 @@ The [advanced auth example] demonstrates how to write a contract that supports
 multiple forms of authentication using the [soroban-auth] crate.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.2.1
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.3.1
 
 The example supports authentication by:
 - Being the invoker, as a transaction source account or a contract.
@@ -60,12 +60,12 @@ is appropriate for themselves.
 
 [soroban-auth]: ../SDKs/rust-auth
 [auth example]: auth.mdx
-[advanced auth example]: https://github.com/stellar/soroban-examples/tree/v0.2.1/auth_advanced
+[advanced auth example]: https://github.com/stellar/soroban-examples/tree/v0.3.1/auth_advanced
 
 ## Run the Example
 
 First go through the [Setup] process to get your development environment
-configured, then clone the `v0.2.1` tag of `soroban-examples` repository:
+configured, then clone the `v0.3.1` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
@@ -105,12 +105,12 @@ The example uses the Soroban auth SDK, and has the following dependencies in its
 
 ```toml title="authorization/src/Cargo.toml
 [dependencies]
-soroban-sdk = "0.2.1"
-soroban-auth = "0.2.1"
+soroban-sdk = "0.3.1"
+soroban-auth = "0.3.1"
 
 [dev_dependencies]
-soroban-sdk = { version = "0.2.1", features = ["testutils"] }
-soroban-auth = { version = "0.2.1", features = ["testutils"] }
+soroban-sdk = { version = "0.3.1", features = ["testutils"] }
+soroban-auth = { version = "0.3.1", features = ["testutils"] }
 ```
 
 ## Code
@@ -134,14 +134,14 @@ pub struct IncrementContract;
 #[contractimpl]
 impl IncrementContract {
     /// Increment increments a counter for the invoker, and returns the value.
-    pub fn increment(env: Env, sig: Signature, nonce: BigInt) -> u32 {
+    pub fn increment(env: Env, sig: Signature, nonce: i128) -> u32 {
         // Verify that the signature signs and authorizes this invocation.
         let id = sig.identifier(&env);
         verify(&env, &sig, symbol!("increment"), (&id, &nonce));
 
         // Verify that the nonce has not been consumed to prevent replay of the
         // same presigned invocation more than once.
-        verify_and_consume_nonce(&env, &sig, &nonce);
+        verify_and_consume_nonce(&env, &sig, nonce);
 
         // Construct a key for the data being stored. Use an enum to set the
         // contract up well for adding other types of data to be stored.
@@ -164,21 +164,21 @@ impl IncrementContract {
         count
     }
 
-    pub fn nonce(env: Env, id: Identifier) -> BigInt {
+    pub fn nonce(env: Env, id: Identifier) -> i128 {
         get_nonce(&env, &id)
     }
 }
 
-fn verify_and_consume_nonce(env: &Env, sig: &Signature, nonce: &BigInt) {
+fn verify_and_consume_nonce(env: &Env, sig: &Signature, nonce: i128) {
     match sig {
         Signature::Invoker => {
-            if BigInt::zero(env) != nonce {
+            if nonce != 0 {
                 panic_with_error!(env, Error::IncorrectNonceForInvoker);
             }
         }
         Signature::Ed25519(_) | Signature::Account(_) => {
             let id = sig.identifier(env);
-            if nonce != &get_nonce(env, &id) {
+            if nonce != get_nonce(env, &id) {
                 panic_with_error!(env, Error::IncorrectNonce);
             }
             set_nonce(env, &id, nonce + 1);
@@ -186,21 +186,18 @@ fn verify_and_consume_nonce(env: &Env, sig: &Signature, nonce: &BigInt) {
     }
 }
 
-fn get_nonce(env: &Env, id: &Identifier) -> BigInt {
+fn get_nonce(env: &Env, id: &Identifier) -> i128 {
     let key = DataKey::Nonce(id.clone());
-    env.data()
-        .get(key)
-        .unwrap_or_else(|| Ok(BigInt::zero(env)))
-        .unwrap()
+    env.data().get(key).unwrap_or(Ok(0)).unwrap()
 }
 
-fn set_nonce(env: &Env, id: &Identifier, nonce: BigInt) {
+fn set_nonce(env: &Env, id: &Identifier, nonce: i128) {
     let key = DataKey::Nonce(id.clone());
     env.data().set(key, nonce);
 }
 ```
 
-Ref: https://github.com/stellar/soroban-examples/tree/v0.2.1/auth_advanced
+Ref: https://github.com/stellar/soroban-examples/tree/v0.3.1/auth_advanced
 
 ## How it Works
 
@@ -349,7 +346,7 @@ stored with key `DataKey::Counter`.
 The `soroban_auth::verify` method verifies the input `Signature`.
 
 ```rust
-pub fn increment(env: Env, sig: Signature, nonce: BigInt) -> u32 {
+pub fn increment(env: Env, sig: Signature, nonce: i128) -> u32 {
     let id = sig.identifier(&env);
     verify(&env, &sig, symbol!("increment"), (&id, &nonce));
     // ...
@@ -397,7 +394,7 @@ This example uses a sequential nonce for replay prevention.
 :::
 
 ```rust
-pub fn increment(env: Env, sig: Signature, nonce: BigInt) -> u32 {
+pub fn increment(env: Env, sig: Signature, nonce: i128) -> u32 {
     // ...
     verify_and_consume_nonce(&env, &sig, &nonce);
     // ...
@@ -417,16 +414,16 @@ it matches the nonce included in this invocation, and error if not. The nonce is
 incremented so that the value is consumed and cannot be reused.
 
 ```rust
-fn verify_and_consume_nonce(env: &Env, sig: &Signature, nonce: &BigInt) {
+fn verify_and_consume_nonce(env: &Env, sig: &Signature, nonce: i128) {
     match sig {
         Signature::Invoker => {
-            if BigInt::zero(env) != nonce {
+            if nonce != 0 {
                 panic_with_error!(env, Error::IncorrectNonceForInvoker);
             }
         }
         Signature::Ed25519(_) | Signature::Account(_) => {
             let id = sig.identifier(env);
-            if nonce != &get_nonce(env, &id) {
+            if nonce != get_nonce(env, &id) {
                 panic_with_error!(env, Error::IncorrectNonce);
             }
             set_nonce(env, &id, nonce + 1);
@@ -434,15 +431,12 @@ fn verify_and_consume_nonce(env: &Env, sig: &Signature, nonce: &BigInt) {
     }
 }
 
-fn get_nonce(env: &Env, id: &Identifier) -> BigInt {
+fn get_nonce(env: &Env, id: &Identifier) -> i128 {
     let key = DataKey::Nonce(id.clone());
-    env.data()
-        .get(key)
-        .unwrap_or_else(|| Ok(BigInt::zero(env)))
-        .unwrap()
+    env.data().get(key).unwrap_or(Ok(0)).unwrap()
 }
 
-fn set_nonce(env: &Env, id: &Identifier, nonce: BigInt) {
+fn set_nonce(env: &Env, id: &Identifier, nonce: i128) {
     let key = DataKey::Nonce(id.clone());
     env.data().set(key, nonce);
 }
@@ -488,7 +482,7 @@ expect users to keep track of the next nonce to use, but that may not be
 trivial, so the contract exports a function that provides the information.
 
 ```rust
-pub fn nonce(env: Env, id: Identifier) -> BigInt {
+pub fn nonce(env: Env, id: Identifier) -> i128 {
     get_nonce(&env, &id)
 }
 ```
@@ -515,7 +509,7 @@ fn test_auth_with_invoker() {
     assert_eq!(
         client
             .with_source_account(&user_1)
-            .increment(&Signature::Invoker, &BigInt::zero(&env)),
+            .increment(&Signature::Invoker, &0),
         1
     );
     // ...
@@ -538,7 +532,7 @@ very simple.
 ```rust
 client
     .with_source_account(&user_1)
-    .increment(&Signature::Invoker, &BigInt::zero(&env)),
+    .increment(&Signature::Invoker, &0),
 ```
 
 :::tip
@@ -564,7 +558,7 @@ fn test_auth_with_ed25519() {
     let (user_1_id, user_1_sign) = soroban_auth::testutils::ed25519::generate(&env);
     let (user_2_id, user_2_sign) = soroban_auth::testutils::ed25519::generate(&env);
 
-    let nonce = BigInt::from_u32(&env, 0);
+    let nonce = 0;
     let sig = soroban_auth::testutils::ed25519::sign(
         &env,
         &user_1_sign,

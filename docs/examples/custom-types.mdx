@@ -60,12 +60,12 @@ impl IncrementContract {
         let mut state = Self::get_state(env.clone());
         state.count += incr;
         state.last_incr = incr;
-        env.data().set(STATE, &state);
+        env.storage().set(STATE, &state);
         state.count
     }
 
     pub fn get_state(env: Env) -> State {
-        env.data()
+        env.storage()
             .get(STATE)
             .unwrap_or_else(|| Ok(State::default())) // If no value set, assume 0.
             .unwrap() // Panic if the value of COUNTER is not a State.
@@ -144,12 +144,12 @@ pub fn increment(env: Env, incr: u32) -> u32 {
     let mut state = Self::get_state(env.clone());
     state.count += incr;
     state.last_incr = incr;
-    env.data().set(STATE, &state);
+    env.storage().set(STATE, &state);
     state.count
 }
 
 pub fn get_state(env: Env) -> State {
-    env.data()
+    env.storage()
         .get(STATE)
         .unwrap_or_else(|| Ok(State::default())) // If no value set, assume 0.
         .unwrap() // Panic if the value of COUNTER is not a State.

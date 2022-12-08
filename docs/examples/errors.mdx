@@ -81,14 +81,14 @@ pub struct IncrementContract;
 impl IncrementContract {
     pub fn increment(env: Env) -> Result<u32, Error> {
         let mut count: u32 = env
-            .data()
+            .storage()
             .get(COUNTER)
             .unwrap_or(Ok(0)) // If no value set, assume 0.
             .unwrap(); // Panic if the value of COUNTER is not u32.
         log!(&env, "count: {}", count);
         count += 1;
         if count <= MAX {
-            env.data().set(COUNTER, count);
+            env.storage().set(COUNTER, count);
             Ok(count)
         } else {
             Err(Error::LimitReached)

@@ -53,13 +53,13 @@ pub struct IncrementContract;
 impl IncrementContract {
     pub fn increment(env: Env) -> u32 {
         let mut count: u32 = env
-            .data()
+            .storage()
             .get(COUNTER)
             .unwrap_or(Ok(0)) // If no value set, assume 0.
             .unwrap(); // Panic if the value of COUNTER is not u32.
         log!(&env, "count: {}", count);
         count += 1;
-        env.data().set(COUNTER, count);
+        env.storage().set(COUNTER, count);
         count
     }
 }
@@ -96,7 +96,7 @@ The `get()` function gets the current value associated with the counter key.
 
 ```rust
 let mut count: u32 = env
-    .data()
+    .storage()
     .get(COUNTER)
     .unwrap_or(Ok(0)) // If no value set, assume 0.
     .unwrap(); // Panic if the value of COUNTER is not u32.
@@ -116,7 +116,7 @@ The `set()` function stores the new count value against the key, replacing the
 existing value.
 
 ```rust
-env.data().set(COUNTER, count);
+env.storage().set(COUNTER, count);
 ```
 
 ## Tests

@@ -11,15 +11,15 @@ export default function Home() {
       <Head>
         <meta
           name="description"
-          content="Soroban is a smart contracts platform designed to be sensible, built-to-scale, batteries-included, and developer-friendly. Experiment and earn rewards!"
+          content="Soroban is a smart contracts platform that is designed with purpose and built to perform. The Futurenet has launched! Start experimenting now!"
         />
         <meta
           property="og:description"
-          content="Soroban is a smart contracts platform designed to be sensible, built-to-scale, batteries-included, and developer-friendly. Experiment and earn rewards!"
+          content="Soroban is a smart contracts platform that is designed with purpose and built to perform. The Futurenet has launched! Start experimenting now!"
         />
         <meta
           name="twitter:description"
-          content="Soroban is a smart contracts platform designed to be sensible, built-to-scale, batteries-included, and developer-friendly. Experiment and earn rewards!"
+          content="Soroban is a smart contracts platform that is designed with purpose and built to perform. The Futurenet has launched! Start experimenting now!"
         />
       </Head>
       
@@ -32,8 +32,8 @@ export default function Home() {
             <img className='hp--logo' src="./img/homepage/soroban-white.svg" alt='Soroban' />
             <img className='hp--arrows' src="./img/homepage/arrows.svg" />
             <h1 className="hp--h1">Introducing Soroban</h1>
-            <h2 className="hp--h2">Soroban is a smart contracts platform that is designed with purpose and built to perform. The futurenet has launched! Start experimenting and earning rewards now!</h2>
-            <a href="/#tinker-and-earn" className='hp--button'>Tinker &amp; Earn</a>
+            <h2 className="hp--h2">Soroban is a smart contracts platform that is designed with purpose and built to perform. The Futurenet has launched! Start experimenting now!</h2>
+            <a href="/#build-and-earn-rewards" className='hp--button'>Build &amp; Earn Rewards</a>
             <a href="/docs" className='hp--button button--gray'>Docs</a>
           </div>
         </div>
@@ -85,16 +85,16 @@ export default function Home() {
           </div>
         </div>
 
-        <div id="tinker-and-earn" className='hp--cta hp--maxWidth'>
-          <h2>Tinker &amp; Earn Rewards</h2>
-          <a href="https://github.com/stellar/sorobanathon" className='hp--imgLink'>
+        <div id="build-and-earn-rewards" className='hp--cta hp--maxWidth'>
+          <h2>Build & Earn Rewards</h2>
+          <a href="https://share.hsforms.com/1U3FFLQBPQzCLKtv1vS8T-Q4u978" className='hp--imgLink'>
             <img src='./img/homepage/sorobanathon.svg' />
           </a>
-          <h1>Sorobanathon: First Light</h1>
+          <h1>Soroban Adoption Fund</h1>
           <p>
-            Between now and December 15, 2022, join <i>Sorobanathon: First Light</i>. Experiment with Soroban and submit a code example, issue, tutorial, blog post, or video documenting your experience. Qualified submissions will receive awards of 250-3,000 XLM. It's a fun, low-lift way to learn, test things out, and provide valuable feedback to both the Soroban development team and the Soroban ecosystem as a whole. Let's bootstrap this thing together!
+            SDF recently launched a $100 million Soroban Adoption Fund with the goal of accelerating Soroban’s adoption. Our first rewards program, <a href='https://github.com/stellar/sorobanathon'><i>Sorobanathon: First Light</i></a>, ended December 15, but fear not!  We'll be launching new Soroban-related programs soon.  In the meantime, if you or your organization is interested in building new tools or applications on Soroban and would like to receive additional information on Soroban Adoption Fund programs as they are rolled out, please complete the Soroban Adoption Fund interest form.
           </p>
-          <a href="https://github.com/stellar/sorobanathon" className='hp--button'>Join the Sorobanathon</a>
+          <a href="https://share.hsforms.com/1U3FFLQBPQzCLKtv1vS8T-Q4u978" className='hp--button'>Fill out the Soroban Adoption Fund Interest Form</a>
         </div>
 
         <div className='hp--cta hp--maxWidth'>
@@ -107,7 +107,8 @@ export default function Home() {
           </a>
           <h1>Join the Discord</h1>
           <p>
-            <i>Sorobanathon: First Light</i> is the first of many programs that draws from the $100M Soroban Adoption Fund, which the Stellar Development Foundation created to support the growth and development of the Soroban ecosystem. We'll be sharing more about additional Adoption Fund programs on the Stellar Dev Discord in the not-too-distant future, so make sure to join today to be the first to hear those announcements.
+             is the first of many programs that draws from the $100M Soroban Adoption Fund, which the Stellar Development Foundation created to support the growth and development of the Soroban ecosystem. We'll be sharing more about additional Adoption Fund programs on the Stellar Dev Discord in the not-too-distant future, so make sure to join today to be the first to hear those announcements.
+            Our lively Discord server is the place to interact with the vibrant community of Soroban developers, stay on top of important announcements, and share your feedback about Soroban. 
           </p>
           <a href="https://discord.gg/6ZCcYqbC96" className='hp--button'>Join the Discord</a>
         </div>

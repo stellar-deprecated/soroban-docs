@@ -94,7 +94,7 @@ export default function Home() {
           <p>
             SDF recently launched a $100 million Soroban Adoption Fund with the goal of accelerating Soroban’s adoption. Our first rewards program, <a href='https://github.com/stellar/sorobanathon'><i>Sorobanathon: First Light</i></a>, ended December 15, but fear not!  We'll be launching new Soroban-related programs soon.  In the meantime, if you or your organization is interested in building new tools or applications on Soroban and would like to receive additional information on Soroban Adoption Fund programs as they are rolled out, please complete the Soroban Adoption Fund interest form.
           </p>
-          <a href="https://share.hsforms.com/1U3FFLQBPQzCLKtv1vS8T-Q4u978" className='hp--button'>Fill out the Soroban Adoption Fund Interest Form</a>
+          <a href="https://share.hsforms.com/1U3FFLQBPQzCLKtv1vS8T-Q4u978" className='hp--button'>Fill out the Form</a>
         </div>
 
         <div className='hp--cta hp--maxWidth'>

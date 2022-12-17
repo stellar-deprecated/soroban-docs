@@ -107,8 +107,7 @@ export default function Home() {
           </a>
           <h1>Join the Discord</h1>
           <p>
-             is the first of many programs that draws from the $100M Soroban Adoption Fund, which the Stellar Development Foundation created to support the growth and development of the Soroban ecosystem. We'll be sharing more about additional Adoption Fund programs on the Stellar Dev Discord in the not-too-distant future, so make sure to join today to be the first to hear those announcements.
-            Our lively Discord server is the place to interact with the vibrant community of Soroban developers, stay on top of important announcements, and share your feedback about Soroban. 
+            Our lively Discord server is the place to interact with the vibrant community of Soroban developers, stay on top of important announcements, and share your feedback about Soroban.  
           </p>
           <a href="https://discord.gg/6ZCcYqbC96" className='hp--button'>Join the Discord</a>
         </div>

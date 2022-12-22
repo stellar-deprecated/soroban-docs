@@ -20,6 +20,7 @@ pub trait Contract {
     // --------------------------------------------------------------------------------
 
     /// If "admin" is the administrator, burn "amount" from "from".
+    /// Emit event with topics = ["burn", from: Identifier, to: Identifier], data = [amount: i128]
     fn burn(
         env: soroban_sdk::Env,
         admin: soroban_auth::Signature,
@@ -29,6 +30,7 @@ pub trait Contract {
     );
 
     /// If "admin" is the administrator, mint "amount" to "to".
+    /// Emit event with topics = ["mint", admin: Identifier, to: Identifier], data = [amount: i128]
     fn mint(
         env: soroban_sdk::Env,
         admin: soroban_auth::Signature,
@@ -38,6 +40,7 @@ pub trait Contract {
     );
 
     /// If "admin" is the administrator, set the administrator to "id".
+    /// Emit event with topics = ["set_admin", admin: Identifier], data = [new_admin: Identifier]
     fn set_admin(
         env: soroban_sdk::Env,
         admin: soroban_auth::Signature,
@@ -46,6 +49,7 @@ pub trait Contract {
     );
 
     /// If "admin" is the administrator, freeze "id".
+    /// Emit event with topics = ["freeze", admin: Identifier], data = [id: Identifier]
     fn freeze(
         env: soroban_sdk::Env,
         admin: soroban_auth::Signature,
@@ -54,6 +58,7 @@ pub trait Contract {
     );
 
     /// If "admin" is the administrator, unfreeze "id".
+    /// Emit event with topics = ["unfreeze", admin: Identifier], data = [id: Identifier]
     fn unfreeze(
         env: soroban_sdk::Env,
         admin: soroban_auth::Signature,
@@ -73,6 +78,7 @@ pub trait Contract {
     ) -> i128;
 
     /// Set the allowance to "amount" for "spender" to transfer from "from".
+    /// Emit event with topics = ["approve", from: Identifier, spender: Identifier], data = [amount: i128]
     fn approve(
         env: soroban_sdk::Env,
         from: soroban_auth::Signature,
@@ -85,6 +91,7 @@ pub trait Contract {
     fn balance(env: soroban_sdk::Env, id: soroban_auth::Identifier) -> i128;
 
     /// Transfer "amount" from "from" to "to.
+    /// Emit event with topics = ["transfer", from: Identifier, to: Identifier], data = [amount: i128]
     fn xfer(
         env: soroban_sdk::Env,
         from: soroban_auth::Signature,
@@ -94,6 +101,7 @@ pub trait Contract {
     );
 
     /// Transfer "amount" from "from" to "to", consuming the allowance of "spender".
+    /// Emit event with topics = ["transfer", from: Identifier, to: Identifier], data = [amount: i128]
     fn xfer_from(
         env: soroban_sdk::Env,
         spender: soroban_auth::Signature,

@@ -2,4 +2,29 @@
 sidebar_position: 10
 ---
 
-`sendTransaction` method
+Submit a real transaction to the stellar network. This is the only way to make changes "on-chain".
+
+Unlike Horizon, this does not wait for transaction completion. It simply validates and enqueues the transaction. Clients should call getTransactionStatus to learn about transaction success/failure.
+
+This should support all transactions, not only smart contract-related transactions.
+
+- TODO: Decide on submit-vs-send for naming
+- TODO: Add a return value that would represent the minimal amount of time the client would need to wait before calling getTransactionStatus
+
+## Parameters
+
+- `<xdr.TransactionEnvelope>` - The signed transaction to broadcast (serialized in base64)
+
+## Returns
+
+- `<object>`
+  - `id`: `<hash>` The transaction hash (in an hex-encoded string), and the initial transaction status, ("pending" or something), unless we can reject it immediately.
+  - `status`: `<status>` - the current status of the transaction by hash, one of:
+    - `pending`
+    - `success`
+    - `error`
+  - `error`: `<object>` -  (optional) If the transaction was rejected immediately, this will be an error object. See [`getTransactionStatus`](getTransactionStatus) for format.
+
+## Possible Errors
+
+- TODO: Fewer than existing txsub as not waiting for completion

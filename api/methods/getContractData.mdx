@@ -2,4 +2,22 @@
 sidebar_position: 5
 ---
 
-`getContractData` method
+:::danger warning
+The `getContractData` method will soon be deprecated in favor of [`getLedgerEntry`](getLedgerEntry).
+:::
+
+For reading the current value of contract data ledger entries directly. Allows you to directly inspect the current state of a contract. This is a backup way to access your contract data which may not be available via events or simulateTransaction.
+
+To fetch contract wasm byte-code, use the xdr ContractCode ledger entry key.
+
+## Parameters
+
+- `contractId`: `<hash>` - (in standard hex string format)
+- `key`: `<xdr.ScVal>` - The key of the contract data ledger entry you wish to retrieve (serialized in a base64 string)
+
+## Return
+
+- `<object>`
+  - `xdr`: `<xdr.ScVal>` - The current value of the given contract data ledger entry  (serialized in a base64 string)
+  - `lastModifiedLedgerSeq`: `<number>` - The ledger number of the last time this entry was updated (optional)
+  - `latestLedger`: `<number>` - The current latest ledger observed by the node when this response was generated.

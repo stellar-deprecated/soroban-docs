@@ -2,4 +2,32 @@
 sidebar_position: 8
 ---
 
-`getTransactionStatus` method
+:::note
+The `getTransactionStatus` method is still a work-in-progress.
+:::
+
+Clients will poll this to tell when the transaction has been completed.
+
+- TODO: Figure out result/error and how that fits into the jsonrpc response object
+- TODO: Figure out return values for non-contract-invocation transactions
+
+## Parameters
+
+- `<hash>` - transaction hash to query
+
+## Returns
+
+- `<object>`
+  - `id`: `<hash>` - hash of the transaction as a hex-encoded string
+  - `status`: `<status>` - the current status of the transaction by hash, one of:
+    - pending
+    - success
+    - error
+  - `results`: `<object[]>` - (optional) Will be present on completed successful transactions.
+    - xdr: `<xdr.ScVal`> - xdr-encoded return value of the contract call
+    - TODO: Anything else we should include? Gas spent?
+    - TODO: How does this work for classic transactions?
+  - `error`: `<object>` - (optional) Will be present on failed transactions.
+    - `code`: `<string>` - Short unique string representing the type of error
+    - `message`: `<string>` - Human friendly summary of the error
+    - `data`: `<object>` - (optional) More data related to the error if available

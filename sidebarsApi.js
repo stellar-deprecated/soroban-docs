@@ -8,6 +8,7 @@ module.exports = {
       link: {
         type: 'generated-index',
         title: 'Introduction',
+        description: 'A public discussion about the design of soroban-rpc.',
         slug: '/',
       },
       items: [

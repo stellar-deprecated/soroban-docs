@@ -1,0 +1,23 @@
+---
+sidebar_position: 1
+---
+
+Fetch a minimal set of current info about a stellar account.
+
+Needed to get the current sequence number, and balance for the account so you can build a successful transaction.
+
+## Parameters
+
+- `<address>` - Address of the account to lookup
+
+## Returns
+
+- `<object>`
+  - id: `<address>`
+  - sequence: `<string>` - Current sequence number of the account
+  - balances: `<object[]>` - Balances for the account (same format as in horizon).
+    - Do we need all classic asset balances? or just lumens, maybe? How does this work with new "smart" assets?
+      - Yes. We need classic asset balances, for planning import/export-using contracts.
+      - We need classic lumen balances for planning/paying fees.
+      - But, these could be found by querying the soroban token wrapper, so maybe this doesn't need to be broken out as a separate thing.
+  - TODO: Do we need signers/flags/thresholds/etc?

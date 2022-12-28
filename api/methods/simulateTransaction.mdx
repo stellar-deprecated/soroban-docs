@@ -2,4 +2,22 @@
 sidebar_position: 11
 ---
 
-`simulateTransaction` method
+Submit a trial contract invocation to get back return values, expected ledger footprint, and expected costs.
+
+- TODO: Should/can we offer to auto-calculate the footprint as part of sendTransaction to save round-trips? Solana does this, but it might conflict with our signature scheme?
+
+## Parameters
+
+- `<xdr.TransactionEnvelope>` - The transaction to be simulated (serialized in base64)
+
+## Returns
+
+- `<object>`
+  - `cost`: `<object>` - Information about the fees expected, instructions used, etc.
+    - `cpuInsns`: `<string>` - Stringified-number of the total cpu instructions consumed by this transaction
+    - `memBytes`: `<string>` - Stringified-number of the total memory bytes allocated by this transaction
+  - `footprint`: `<xdr.LedgerFootprint>` -Array of ledger keys expected to be written by this transaction. (serialized in base64)
+  - `results`: `<object[]>` - If error is present then results will not be in the response
+    - `xdr`: `<xdr.ScVal>` - (optional) Only present on success. xdr-encoded return value of the contract call
+  - `latestLedger`: `<string>` - Stringified-number of the current latest ledger observed by the node when this response was generated.
+  - `error`: `<string>` - (optional) only present if the transaction failed. This field will include more details from stellar-core about why the invoke host function call failed.

@@ -7,7 +7,7 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "Soroban - Smart Contracts Platform for Developers",
-  tagline: 'Soroban is a smart contracts platform designed to be sensible, built-to-scale, batteries-included, and developer-friendly. Experiment and earn rewards!',
+  tagline: 'Soroban is a smart contracts platform that is designed with purpose and built to perform. The Futurenet has launched! Start experimenting now!',
   url: "https://soroban.stellar.org", // Your website URL
   baseUrl: "/",
   onBrokenLinks: "throw",
@@ -28,6 +28,7 @@ const config = {
         anonymizeIP: true,
       },
     ],
+    require('./src/dev-server-plugin'),
     require('./src/analytics-module')
   ],
   presets: [
@@ -75,11 +76,11 @@ const config = {
             label: 'Stellar Quest',
             position: 'left',
           },
-          {
-            href: 'https://github.com/stellar/sorobanathon', 
-            label: 'Sorobanathon', 
-            position: 'left'
-          },
+          // {
+          //   href: 'https://github.com/stellar/sorobanathon', 
+          //   label: 'Sorobanathon', 
+          //   position: 'left'
+          // },
           {
             href: 'https://github.com/stellar/soroban-docs',
             label: 'GitHub',
@@ -119,10 +120,10 @@ const config = {
                 label: 'Stellar Quest',
                 href: 'https://quest.stellar.org/live',
               },
-              {
-                label: 'Sorobanathon',
-                href: 'https://github.com/stellar/sorobanathon', 
-              },
+              // {
+              //   label: 'Sorobanathon',
+              //   href: 'https://github.com/stellar/sorobanathon', 
+              // },
             ],
           },
         ],

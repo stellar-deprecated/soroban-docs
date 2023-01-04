@@ -7,7 +7,7 @@ The [advanced auth example] demonstrates how to write a contract that supports
 multiple forms of authentication using the [soroban-auth] crate.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.2.1
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.3.2
 
 The example supports authentication by:
 - Being the invoker, as a transaction source account or a contract.
@@ -60,17 +60,17 @@ is appropriate for themselves.
 
 [soroban-auth]: ../SDKs/rust-auth
 [auth example]: auth.mdx
-[advanced auth example]: https://github.com/stellar/soroban-examples/tree/v0.2.1/auth_advanced
+[advanced auth example]: https://github.com/stellar/soroban-examples/tree/v0.3.2/auth_advanced
 
 ## Run the Example
 
 First go through the [Setup] process to get your development environment
-configured, then clone the `v0.2.1` tag of `soroban-examples` repository:
+configured, then clone the `v0.3.2` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.2.1 https://github.com/stellar/soroban-examples
+git clone -b v0.3.2 https://github.com/stellar/soroban-examples
 ```
 
 Or, skip the development environment setup and open this example in [Gitpod][oigp].
@@ -105,12 +105,12 @@ The example uses the Soroban auth SDK, and has the following dependencies in its
 
 ```toml title="authorization/src/Cargo.toml
 [dependencies]
-soroban-sdk = "0.3.1"
-soroban-auth = "0.3.1"
+soroban-sdk = "0.3.2"
+soroban-auth = "0.3.2"
 
 [dev_dependencies]
-soroban-sdk = { version = "0.3.1", features = ["testutils"] }
-soroban-auth = { version = "0.3.1", features = ["testutils"] }
+soroban-sdk = { version = "0.3.2", features = ["testutils"] }
+soroban-auth = { version = "0.3.2", features = ["testutils"] }
 ```
 
 ## Code
@@ -149,7 +149,7 @@ impl IncrementContract {
 
         // Get the current count for the invoker.
         let mut count: u32 = env
-            .data()
+            .storage()
             .get(&key)
             .unwrap_or(Ok(0)) // If no value set, assume 0.
             .unwrap(); // Panic if the value of COUNTER is not u32.
@@ -158,7 +158,7 @@ impl IncrementContract {
         count += 1;
 
         // Save the count.
-        env.data().set(&key, count);
+        env.storage().set(&key, count);
 
         // Return the count to the caller.
         count
@@ -188,16 +188,16 @@ fn verify_and_consume_nonce(env: &Env, sig: &Signature, nonce: i128) {
 
 fn get_nonce(env: &Env, id: &Identifier) -> i128 {
     let key = DataKey::Nonce(id.clone());
-    env.data().get(key).unwrap_or(Ok(0)).unwrap()
+    env.storage().get(key).unwrap_or(Ok(0)).unwrap()
 }
 
 fn set_nonce(env: &Env, id: &Identifier, nonce: i128) {
     let key = DataKey::Nonce(id.clone());
-    env.data().set(key, nonce);
+    env.storage().set(key, nonce);
 }
 ```
 
-Ref: https://github.com/stellar/soroban-examples/tree/v0.2.1/auth_advanced
+Ref: https://github.com/stellar/soroban-examples/tree/v0.3.2/auth_advanced
 
 ## How it Works
 
@@ -433,12 +433,12 @@ fn verify_and_consume_nonce(env: &Env, sig: &Signature, nonce: i128) {
 
 fn get_nonce(env: &Env, id: &Identifier) -> i128 {
     let key = DataKey::Nonce(id.clone());
-    env.data().get(key).unwrap_or(Ok(0)).unwrap()
+    env.storage().get(key).unwrap_or(Ok(0)).unwrap()
 }
 
 fn set_nonce(env: &Env, id: &Identifier, nonce: i128) {
     let key = DataKey::Nonce(id.clone());
-    env.data().set(key, nonce);
+    env.storage().set(key, nonce);
 }
 ```
 
@@ -464,7 +464,7 @@ let key = DataKey::Counter(id);
 
 // Get the current count for the invoker.
 let mut count: u32 = env
-    .data()
+    .storage()
     .get(&key)
     .unwrap_or(Ok(0)) // If no value set, assume 0.
     .unwrap(); // Panic if the value of COUNTER is not u32.
@@ -473,7 +473,7 @@ let mut count: u32 = env
 count += 1;
 
 // Save the count.
-env.data().set(&key, count);
+env.storage().set(&key, count);
 ```
 
 #### Retrieving the Nonce

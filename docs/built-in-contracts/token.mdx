@@ -27,17 +27,21 @@ The SAC implements the [token interface](../common-interfaces/token.mdx), which 
 similar to the widely used ERC-20 token standard. This should make it easier for
 existing smart contract developers to get started on Stellar.
 
+## Deployment
+
+For every 'classic' asset exactly one respective Stellar Asset Contract can be
+deployed. It can be deployed using the `InvokeHostFunctionOp` with
+`HOST_FUNCTION_TYPE_CREATE_CONTRACT` and `CONTRACT_ID_FROM_ASSET` specified
+[here](../tutorials/invoking-contracts-with-transactions). The resulting token
+will have a deterministic identifier, which will be the sha256 hash of
+`HashIDPreimage::ENVELOPE_TYPE_CONTRACT_ID_FROM_ASSET` xdr specified
+[here](https://github.com/stellar/stellar-xdr/blob/026c9cd074bdb28ddde8ee52f2a4502d9e518a09/Stellar-transaction.x#L637).
+
 ## Interacting with classic Stellar assets
 
 The Stellar Asset Contract is the only way to interact with 'classic' Stellar assets in 
 Soroban. 'Classic' assets include native Stellar token (lumens) and all the 
-existing trustlines.
-
-For every 'classic' asset exactly one respective token contract can be deployed.
-It can be deployed using the `InvokeHostFunctionOp` with
-`HOST_FUNCTION_TYPE_CREATE_CONTRACT` and `CONTRACT_ID_FROM_ASSET` specified
-[here](../tutorials/invoking-contracts-with-transactions). The resulting token
-will have a deterministic identifier. The issuer of the asset will be the
+existing trustlines. The issuer of the asset will be the
 administrator of the deployed contract. Because the the Native Stellar token
 doesn't have an issuer, it will not have an administrator either. It also cannot
 be burned.

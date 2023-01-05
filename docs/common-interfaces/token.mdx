@@ -3,7 +3,7 @@ sidebar_position: 1
 title: Token Interface
 ---
 
-Token contracts, including the built-in token and example token implementations
+Token contracts, including the Stellar Asset Contract and example token implementations
 expose the following common interface.
 
 Tokens deployed on Soroban can implement any interface they choose, however,
@@ -12,16 +12,13 @@ built to support Soroban's built-in tokens.
 
 ```rust
 pub trait Contract {
-    /// Sets the administrator to "admin" and metadata.
-    fn init(env: soroban_sdk::Env, admin: soroban_auth::Identifier, metadata: TokenMetadata);
-
     // --------------------------------------------------------------------------------
     // Admin interface – privileged functions.
     // --------------------------------------------------------------------------------
 
-    /// If "admin" is the administrator, burn "amount" from "from".
-    /// Emit event with topics = ["burn", from: Identifier, to: Identifier], data = [amount: i128]
-    fn burn(
+    /// If "admin" is the administrator, clawback "amount" from "from". "amount" is burned.
+    /// Emit event with topics = ["clawback", from: Identifier, to: Identifier], data = [amount: i128]
+    fn clawback(
         env: soroban_sdk::Env,
         admin: soroban_auth::Signature,
         nonce: i128,
@@ -48,22 +45,15 @@ pub trait Contract {
         new_admin: soroban_auth::Identifier,
     );
 
-    /// If "admin" is the administrator, freeze "id".
-    /// Emit event with topics = ["freeze", admin: Identifier], data = [id: Identifier]
-    fn freeze(
+    /// If "admin" is the administrator, set the authorize state of "id" to "authorize".
+    /// If "authorize" is true, "id" should be able to use its balance.
+    /// Emit event with topics = ["set_auth", admin: Identifier, id: Identifier], data = [authorize: bool]
+    fn set_auth(
         env: soroban_sdk::Env,
         admin: soroban_auth::Signature,
         nonce: i128,
         id: soroban_auth::Identifier,
-    );
-
-    /// If "admin" is the administrator, unfreeze "id".
-    /// Emit event with topics = ["unfreeze", admin: Identifier], data = [id: Identifier]
-    fn unfreeze(
-        env: soroban_sdk::Env,
-        admin: soroban_auth::Signature,
-        nonce: i128,
-        id: soroban_auth::Identifier,
+        authorize: bool,
     );
 
     // --------------------------------------------------------------------------------
@@ -77,9 +67,20 @@ pub trait Contract {
         spender: soroban_auth::Identifier,
     ) -> i128;
 
-    /// Set the allowance to "amount" for "spender" to transfer from "from".
-    /// Emit event with topics = ["approve", from: Identifier, spender: Identifier], data = [amount: i128]
-    fn approve(
+    /// Increase the allowance by "amount" for "spender" to transfer/burn from "from".
+    /// Emit event with topics = ["incr_allow", from: Identifier, spender: Identifier], data = [amount: i128]
+    fn incr_allow(
+        env: soroban_sdk::Env,
+        from: soroban_auth::Signature,
+        nonce: i128,
+        spender: soroban_auth::Identifier,
+        amount: i128,
+    );
+
+    /// Decrease the allowance by "amount" for "spender" to transfer/burn from "from".
+    /// If "amount" is greater than the current allowance, set the allowance to 0.
+    /// Emit event with topics = ["decr_allow", from: Identifier, spender: Identifier], data = [amount: i128]
+    fn decr_allow(
         env: soroban_sdk::Env,
         from: soroban_auth::Signature,
         nonce: i128,
@@ -89,6 +90,11 @@ pub trait Contract {
 
     /// Get the balance of "id".
     fn balance(env: soroban_sdk::Env, id: soroban_auth::Identifier) -> i128;
+
+    /// Get the spendable balance of "id". This will return the same value as balance()
+    /// unless this is called on the Stellar Asset Contract, in which case this can
+    /// be less due to reserves/liabilities.
+    fn spendable(env: soroban_sdk::Env, id: soroban_auth::Identifier) -> i128;
 
     /// Transfer "amount" from "from" to "to.
     /// Emit event with topics = ["transfer", from: Identifier, to: Identifier], data = [amount: i128]
@@ -111,8 +117,27 @@ pub trait Contract {
         amount: i128,
     );
 
-    // Returns true if "id" is frozen.
-    fn is_frozen(env: soroban_sdk::Env, id: soroban_auth::Identifier) -> bool;
+    /// Burn "amount" from "from".
+    /// Emit event with topics = ["burn", from: Identifier], data = [amount: i128]
+    fn burn(
+        env: soroban_sdk::Env,
+        from: soroban_auth::Signature,
+        nonce: i128,
+        amount: i128,
+    );
+
+    /// Burn "amount" from "from", consuming the allowance of "spender".
+    /// Emit event with topics = ["burn", from: Identifier], data = [amount: i128]
+    fn burn_from(
+        env: soroban_sdk::Env,
+        spender: soroban_auth::Signature,
+        nonce: i128,
+        from: soroban_auth::Identifier,
+        amount: i128,
+    );
+
+    // Returns true if "id" is authorized to use its balance.
+    fn authorized(env: soroban_sdk::Env, id: soroban_auth::Identifier) -> bool;
 
     // Returns the current nonce for "id".
     fn nonce(env: soroban_sdk::Env, id: soroban_auth::Identifier) -> i128;
@@ -133,17 +158,7 @@ pub trait Contract {
 ```
 
 Most types that a token implementation utilizes are provided by the
-[soroban-sdk] and [soroban-auth] crates. The following type is also used during
-initialization.
-
-```rust
-#[soroban_sdk::contracttype]
-pub struct TokenMetadata {
-    pub name: soroban_sdk::Bytes,
-    pub symbol: soroban_sdk::Bytes,
-    pub decimals: u32,
-}
-```
+[soroban-sdk] and [soroban-auth] crates.
 
 [soroban-sdk]: ../SDKs/rust
 [soroban-auth]: ../SDKs/rust-auth

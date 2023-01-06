@@ -32,7 +32,7 @@ network passphrase changes.
 | Soroban Rust SDK | `v0.4.1` |
 | Soroban CLI | `v0.4.0` |
 | Soroban RPC | `0.4.0-9e680fa53ad7b29b5c951cb0ca38c90cdf21cbea` |
-| Stellar Horizon | todo:`tbd` |
+| Stellar Horizon | `stellar-horizon:2.22.0~soroban-323` |
 | Stellar Friendbot | `soroban-v0.0.2-alpha` |
 | Stellar Quickstart | todo:`stellar/quickstart:soroban-dev@sha256:8046391718f8e58b2b88b9c379abda3587bb874689fa09b2ed4871a764ebda27` |
 | Stellar JS Stellar Base | `8.0.1-soroban.6` |
@@ -41,33 +41,53 @@ network passphrase changes.
 
 ### Changelog
 
-#### XDR
-
-- 
-
-See https://github.com/stellar/stellar-xdr/compare/48d5e17ae63bba0aa9725cd9d18d7438f44c07b1...026c9cd074bdb28ddde8ee52f2a4502d9e518a09 for more details.
-
 #### Soroban Environment
 
-- 
+- Wasm instruction level calibration
+- Replace `im` containers with `Vec`
+- Remove EnvVal
+- Fix first/last_index_of functions to use deep object comparison
+- Export type aliases for Storage and Footprint
+- Add env.json
+- Remove built-in soroban token
+- Update rust-version
+- Use single balances in the Stellar Asset Contract
+- Remove unnecessary i128 clone
 
-See https://github.com/stellar/rs-soroban-env/releases v0.0.10, v0.0.11 for more details.
+See https://github.com/stellar/rs-soroban-env/releases v0.0.10, v0.0.11, v0.0.12 for more details.
 
 #### Soroban Rust SDK
 
-- 
+- Fix contractimpl for empty impl blocks
+- bump env and fix token interface
+- Remove init from the token interface
+- Update rust-version
+- Require only a borrow of Host when updating ledger snapshot
+- Fix doc comments and clippy warnings on ledger snapshot
+- Add LedgerSnapshot::update(Host)
+- undo token deploy revert
+- Revert deploy and update env
+- Remove token deploy in anticipation of removal of the soroban only built-in token
+- Make ledger snapshot write file create dir path
+- Make errors explicit in ledger snapshot functions
+- Update env to include delete-im, remove-EnvVal changes
 
-See https://github.com/stellar/rs-soroban-sdk/releases v0.3.0, v0.3.1, v0.3.2 for more details.
+See https://github.com/stellar/rs-soroban-sdk/releases v0.3.0, v0.3.1, v0.3.2, v0.4.0, v0.4.1 for more details.
 
 #### Soroban RPC
 
-- 
+- Add GitHub linting for GO code
 
 See https://github.com/stellar/soroban-tools/releases v0.3.0, v0.3.1 for more details.
 
 #### Soroban CLI
 
-- 
+- Update rust version
+- StrValError --> Error and implemented using thiserror
+- Use soroban-ledger-snapshot for managing ledger.json
+- Use LedgerSnapshot::update to update snapshot instead of unpacking the host and updating ledger info and entries separately.
+- Add events subcommand for local and remote event viewing
+- Deprecate token create command
 
 See https://github.com/stellar/soroban-tools/releases v0.3.0, v0.3.1, 0.3.3 for more details.
 

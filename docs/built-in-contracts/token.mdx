@@ -51,9 +51,10 @@ trustline balance. There are some differences depending on if you are using a
 classic account identifier vs a non-account identifier like a contract. 
 
 - Using `Identifier::Account`
-  - The balance must exist in a trustline or an account. This means the contract
-    will not store the balance in ContractData. If the trustline or account is
-    missing, any function that tries to interact with that balance will fail.
+  - The balance must exist in a trustline (or an account for the native balance).
+    This means the contract will not store the balance in ContractData. If the
+    trustline or account is missing, any function that tries to interact with
+    that balance will fail.
   - Classic trustline semantics will be followed.
     - Transfers will only succeed if the corresponding
       trustline(s) have the `AUTHORIZED_FLAG` set.
@@ -67,10 +68,14 @@ classic account identifier vs a non-account identifier like a contract.
       set to avoid having to pull offers and redeeming pool shares.
     - Transfers to the issuer account will burn the token, while transfers from
       the issuer account will mint.
-    - Trustline balances are stored in a 64-bit signed integer.
+    - Trustline balances are stored in a 64-bit signed integer even though the
+      interface accepts 128-bit signed integers. Any operation that attempts to
+      send or recieve an amount more than the maximum amount that can be
+      represented by a 64-bit signed integer will fail.
 - Using `Identifier::Ed25519` or `Identifier::Contract`
   - The balance and authorization state will be stored in ContractData, as
     opposed to a trustline.
+  - `AUTH_REVOCABLE` is not required to be set on the issuer to deauthorize a balance.
   - These balances are stored in a 128-bit signed integer.
 
 ## Authorization semantics

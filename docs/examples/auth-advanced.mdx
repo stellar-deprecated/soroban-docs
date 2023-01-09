@@ -7,7 +7,7 @@ The [advanced auth example] demonstrates how to write a contract that supports
 multiple forms of authentication using the [soroban-auth] crate.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.3.2
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.4.2
 
 The example supports authentication by:
 - Being the invoker, as a transaction source account or a contract.
@@ -60,17 +60,17 @@ is appropriate for themselves.
 
 [soroban-auth]: ../SDKs/rust-auth
 [auth example]: auth.mdx
-[advanced auth example]: https://github.com/stellar/soroban-examples/tree/v0.3.2/auth_advanced
+[advanced auth example]: https://github.com/stellar/soroban-examples/tree/v0.4.2/auth_advanced
 
 ## Run the Example
 
 First go through the [Setup] process to get your development environment
-configured, then clone the `v0.3.2` tag of `soroban-examples` repository:
+configured, then clone the `v0.4.2` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.3.2 https://github.com/stellar/soroban-examples
+git clone -b v0.4.2 https://github.com/stellar/soroban-examples
 ```
 
 Or, skip the development environment setup and open this example in [Gitpod][oigp].
@@ -105,12 +105,12 @@ The example uses the Soroban auth SDK, and has the following dependencies in its
 
 ```toml title="authorization/src/Cargo.toml
 [dependencies]
-soroban-sdk = "0.3.2"
-soroban-auth = "0.3.2"
+soroban-sdk = "0.4.2"
+soroban-auth = "0.4.2"
 
 [dev_dependencies]
-soroban-sdk = { version = "0.3.2", features = ["testutils"] }
-soroban-auth = { version = "0.3.2", features = ["testutils"] }
+soroban-sdk = { version = "0.4.2", features = ["testutils"] }
+soroban-auth = { version = "0.4.2", features = ["testutils"] }
 ```
 
 ## Code
@@ -197,7 +197,7 @@ fn set_nonce(env: &Env, id: &Identifier, nonce: i128) {
 }
 ```
 
-Ref: https://github.com/stellar/soroban-examples/tree/v0.3.2/auth_advanced
+Ref: https://github.com/stellar/soroban-examples/tree/v0.4.2/auth_advanced
 
 ## How it Works
 

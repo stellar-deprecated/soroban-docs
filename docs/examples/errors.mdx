@@ -240,7 +240,7 @@ type with `Client` appended. For example, in our contract the contract type is
 let client = IncrementContractClient::new(&env, &contract_id);
 ```
 
-Two funtions are generated for every contract function, one that returns a
+Two functions are generated for every contract function, one that returns a
 `Result<>`, and the other that does not handle errors and panicks if an
 error occurs.
 

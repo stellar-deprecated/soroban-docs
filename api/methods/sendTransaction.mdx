@@ -6,7 +6,7 @@ Submit a real transaction to the Stellar network. This is the only way to make c
 
 Unlike Horizon, this does not wait for transaction completion. It simply validates and enqueues the transaction. Clients should call getTransactionStatus to learn about transaction success/failure.
 
-This should support all transactions, not only smart contract-related transactions.
+This supports all transactions, not only smart contract-related transactions.
 
 - TODO: Decide on submit-vs-send for naming
 - TODO: Add a return value that would represent the minimal amount of time the client would need to wait before calling getTransactionStatus

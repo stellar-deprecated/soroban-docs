@@ -26,7 +26,9 @@ Clients will poll this to tell when the transaction has been completed.
   - `results`: `<object[]>` - (optional) Will be present on completed successful transactions.
     - xdr: `<xdr.ScVal`> - xdr-encoded return value of the contract call
     - TODO: Anything else we should include? Gas spent?
-    - TODO: How does this work for classic transactions?
+  - `envelopeXdr`: `<xdr.TransactionEnvelope>` - (optional) A base64 encoded string of the raw TransactionEnvelope XDR struct for this transaction.
+  - `resultXdr`: `<xdr.TransactionResult>` - (optional) A base64 encoded string of the raw TransactionResult XDR struct for this transaction.
+  - `resultMetaXdr`: `<xdr.TransactionResultMeta>` - (optional) A base64 encoded string of the raw TransactionResultMeta XDR struct for this transaction.
   - `error`: `<object>` - (optional) Will be present on failed transactions.
     - `code`: `<string>` - Short unique string representing the type of error
     - `message`: `<string>` - Human friendly summary of the error

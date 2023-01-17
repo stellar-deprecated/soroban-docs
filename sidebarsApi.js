@@ -16,7 +16,6 @@ module.exports = {
         'anti-goals',
         'json-rpc',
         'pagination',
-        'outstanding-questions',
       ],
     },
     {

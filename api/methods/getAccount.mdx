@@ -15,12 +15,8 @@ Needed to get the current sequence number, and balance for the account so you ca
 - `<object>`
   - `id`: `<address>`
   - `sequence`: `<string>` - Current sequence number of the account
-  - `balances`: `<object[]>` - Balances for the account (same format as in horizon).
-    - Do we need all classic asset balances? or just lumens, maybe? How does this work with new "smart" assets?
-      - Yes. We need classic asset balances, for planning import/export-using contracts.
-      - We need classic lumen balances for planning/paying fees.
-      - But, these could be found by querying the soroban token wrapper, so maybe this doesn't need to be broken out as a separate thing.
-  - TODO: Do we need signers/flags/thresholds/etc?
+  - TODO: Balances for the account (same format as in horizon) should be displayed
+  - TODO: signers/flags/thresholds/etc?
 
 ## Examples
 

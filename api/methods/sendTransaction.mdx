@@ -33,7 +33,7 @@ This supports all transactions, not only smart contract-related transactions.
 
 ### Request
 
-The following example request is a very simple _Classic Stellar_ transaction, containing a single `manageData` operation, setting the `dataName` to "hello" and the `dataValue` to "soroban."
+The following example request uses a transaction to invoke the `increment` method of the [`increment` example contract].
 
 ```json
 {
@@ -41,7 +41,7 @@ The following example request is a very simple _Classic Stellar_ transaction, co
   "id": 8675309,
   "method": "sendTransaction",
   "params": {
-    "transaction": "AAAAAgAAAAAdq+kGxmBG/ikQNdYHQ2fBAG+8Av/xp1ZfPZ9Xt42ragAAAGQAAoAqAAAAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAACgAAAAVoZWxsbwAAAAAAAAEAAAAHc29yb2JhbgAAAAAAAAAAAbeNq2oAAABAPNvxJvmiMkx/+qM1sJwDyfqD4T3lJDXmtHBMUfOofG7fRyUr8/SKYes+yE8qtlNrHZXsltE480TpE/q8Ka2YBQ=="
+    "transaction": "AAAAAgAAAAAdq+kGxmBG/ikQNdYHQ2fBAG+8Av/xp1ZfPZ9Xt42ragAAJxAAAoAqAAAAEAAAAAEAAAAAAAAAAAAAAABjzuUjAAAAAAAAAAEAAAAAAAAAGAAAAAAAAAACAAAABAAAAAEAAAAGAAAAIBv6ziOnWcVRdGMZjtFKSWnLSndMp9JPVLLXxQqAvKqJAAAABQAAAAlpbmNyZW1lbnQAAAAAAAACAAAABhv6ziOnWcVRdGMZjtFKSWnLSndMp9JPVLLXxQqAvKqJAAAAAwAAAAMAAAAH1CpZRz0BSN27PmqtsmBhv+AAJJwHgmrvJNPrHRAl9l8AAAABAAAABhv6ziOnWcVRdGMZjtFKSWnLSndMp9JPVLLXxQqAvKqJAAAABQAAAAdDT1VOVEVSAAAAAAAAAAABt42ragAAAECMEuou2IDSTtqTu62ZOBkJZJc3aYL10ZlsRg9CMXXYwk1Lv6c23Iy3HawBPKOE2DQKhbi49cdPkMI5n/QtnkgE"
   }
 }
 ```
@@ -53,9 +53,11 @@ The following example request is a very simple _Classic Stellar_ transaction, co
   "jsonrpc": "2.0",
   "id": 8675309,
   "result": {
-    "id": "97eb77da26e21d6a032fc0c311831d94a702ba336037da7c8a5ec51b3e39c485",
+    "id": "d70916f8b8aa55c13d5974a38e32a3efe440ef6870c0f0a07075d1c128d23698",
     "status": "pending",
     "error": null
   }
 }
 ```
+
+[`increment` example contract]: </docs/examples/storing-data>

@@ -33,3 +33,57 @@ Clients will poll this to tell when the transaction has been completed.
     - `code`: `<string>` - Short unique string representing the type of error
     - `message`: `<string>` - Human friendly summary of the error
     - `data`: `<object>` - (optional) More data related to the error if available
+
+## Examples
+
+### Request
+
+```json
+{
+    "jsonrpc": "2.0",
+    "id": 8675309,
+    "method": "getTransactionStatus",
+    "params": {
+        "hash": "97eb77da26e21d6a032fc0c311831d94a702ba336037da7c8a5ec51b3e39c485"
+    }
+}
+```
+
+### Response
+
+#### Success
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 8675309,
+  "result": {
+    "id": "97eb77da26e21d6a032fc0c311831d94a702ba336037da7c8a5ec51b3e39c485",
+    "status": "success"
+  }
+}
+```
+
+#### Error
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 8675309,
+  "result": {
+    "id": "48dd243d4683745b7efa9f4fe6182f944b03cfd169135657e39c974e9b1fc50d",
+    "status": "error",
+    "error": {
+      "code": "tx_submission_failed",
+      "message": "Transaction submission failed",
+      "data": {
+        "envelope_xdr": "AAAAAgAAAAAdq+kGxmBG/ikQNdYHQ2fBAG+8Av/xp1ZfPZ9Xt42ragAAAGQAAoAp/////gAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAACgAAAAVoZWxsbwAAAAAAAAEAAAAHc29yb2JhbgAAAAAAAAAAAbeNq2oAAABAc6zcO/sTKyF26B1iJygLVrhhcVfK05rNW9gyeNwqSVeMFkHXpZ6D/6mqSB0KtvacxK4/VoiwWPrBQGPelnktBQ==",
+        "result_codes": {
+          "transaction": "tx_bad_seq"
+        },
+        "result_xdr": "AAAAAAAAAAD////7AAAAAA=="
+      }
+    }
+  }
+}
+```

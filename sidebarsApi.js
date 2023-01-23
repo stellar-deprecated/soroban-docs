@@ -32,7 +32,6 @@ module.exports = {
         'methods/getAccount',
         'methods/getHealth',
         'methods/getLedgerEntry',
-        'methods/getContractData',
         'methods/getEvents',
         'methods/getTransactionStatus',
         'methods/sendTransaction',

@@ -21,3 +21,33 @@ To fetch contract wasm byte-code, use the xdr ContractCode ledger entry key.
   - `xdr`: `<xdr.ScVal>` - The current value of the given contract data ledger entry  (serialized in a base64 string)
   - `lastModifiedLedgerSeq`: `<number>` - The ledger number of the last time this entry was updated (optional)
   - `latestLedger`: `<number>` - The current latest ledger observed by the node when this response was generated.
+
+## Examples
+
+### Request
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 8675309,
+  "method": "getContractData",
+  "params": {
+    "contractId": "1bface23a759c5517463198ed14a4969cb4a774ca7d24f54b2d7c50a80bcaa89",
+    "key": "AAAABQAAAAdDT1VOVEVSAA=="
+  }
+}
+```
+
+### Response
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 8675309,
+  "result": {
+    "xdr": "AAAAAQAAAAM=",
+    "lastModifiedLedgerSeq": "164986",
+    "latestLedger": "164987"
+  }
+}
+```

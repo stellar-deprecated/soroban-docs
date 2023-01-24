@@ -28,6 +28,15 @@ const config = {
         anonymizeIP: true,
       },
     ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'api',
+        path: 'api',
+        routeBasePath: 'api',
+        sidebarPath: require.resolve('./sidebarsApi.js'),
+      },
+    ],
     require('./src/dev-server-plugin'),
     require('./src/analytics-module')
   ],
@@ -53,10 +62,10 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       image: 'img/meta.png',
-      docs: { 
-        sidebar: { 
-          autoCollapseCategories: false 
-        } 
+      docs: {
+        sidebar: {
+          autoCollapseCategories: false
+        }
       },
       navbar: {
         logo: {
@@ -67,9 +76,15 @@ const config = {
         },
         items: [
           {
-            to: '/docs', 
-            label: 'Docs', 
+            to: '/docs',
+            label: 'Docs',
             position: 'left'
+          },
+          {
+            to: '/api',
+            label: 'API',
+            position: 'left',
+            docsPluginId: 'api'
           },
           {
             href: 'https://quest.stellar.org/live',
@@ -77,8 +92,8 @@ const config = {
             position: 'left',
           },
           // {
-          //   href: 'https://github.com/stellar/sorobanathon', 
-          //   label: 'Sorobanathon', 
+          //   href: 'https://github.com/stellar/sorobanathon',
+          //   label: 'Sorobanathon',
           //   position: 'left'
           // },
           {
@@ -122,7 +137,7 @@ const config = {
               },
               // {
               //   label: 'Sorobanathon',
-              //   href: 'https://github.com/stellar/sorobanathon', 
+              //   href: 'https://github.com/stellar/sorobanathon',
               // },
             ],
           },

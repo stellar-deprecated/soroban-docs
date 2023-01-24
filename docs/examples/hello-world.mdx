@@ -4,7 +4,11 @@ title: Hello World
 ---
 
 The [hello world example] demonstrates how to write a simple contract, with a
-single function that takes one input and returns it as an output.
+single function that takes one input and returns it as an output.  To learn more
+about how a Soroban smart contract works, check out this link for a 
+[High Level Overview]
+
+[High Level Overview]: https://soroban.stellar.org/docs/learn/high-level-overview
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
 [oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.4.2
@@ -81,14 +85,18 @@ number of arguments, but arguments must support being transmitted to and from
 the Soroban environment that the contract runs in. The Soroban SDK provides some
 types like `Vec`, `Map`, `Symbol`, `Bytes`, `BytesN`, etc that can be used.
 Primitive values like `u128`, `i128`, `u64`, `i64`, `u32`, `i32`, and `bool` can
-also be used. Floats are not supported.
+also be used. Floats and floating point math are not supported.
 
-Contract inputs must not be references.
+Contract inputs must not be references.  They must be passed by xxxx by using the
+& prefix.
 
 If the first argument of a contract function is of the `soroban_sdk::Env` type,
 an `Env` will be provided that provides access to additional functionality. Most
 functionality within the SDK requires an `Env`, so it is recommended to have it
-in the argument list for most functions.
+in the argument list for most functions.  You can learn more about how the Env
+functions here [Soroban Env]
+
+[Soroban Env]: https://soroban.stellar.org/docs/learn/environment-concepts
 
 ```rust
 #[contractimpl]
@@ -116,13 +124,16 @@ fn test() {
 ```
 
 In any test the first thing that is always required is an `Env`, which is the
-Soroban environment that the contract will run in.
+Soroban environment that the contract will run in.  Here we create a default
+environment.  Addition arguments can be passed to customize it like this...
 
 ```rust
 let env = Env::default();
 ```
 
-The contract is registered with the environment using the contract type.
+The contract is registered with the environment using the contract type.  The
+first argument is the xxx, and the second argument is the contract name, the 
+same as in the lib.rs file, impl HelloContract
 
 ```rust
 let contract_id = env.register_contract(None, HelloContract);
@@ -161,7 +172,13 @@ A `.wasm` file should be outputted in the `../target` directory:
 ## Run the Contract
 
 If you have [`soroban-cli`] installed, you can invoke contract functions in the
-using it.
+using it.  The parameters supplied to the invoke are
+--wasm This is the code for the smart contract to be run on the blockchain env
+--id  This is the smart contract id, in this case 1 because (explain why)
+--fn This is the function inside the smart contract that is being called.
+--arg This is the first argument passed into the hello function
+
+From a overview perspective, the CLI is basically calling HelloContract.hello('friend');
 
 ```sh
 soroban invoke \

@@ -102,9 +102,16 @@ console.log(getLedgerKeySymbol(
 
 ### Requesting a Contract's WASM Code
 
-This can be a bit tricky to wrap your head around, but the conventions make sense once you let it sink in. The examples below are provided only in Python, for the sake of brevity.
+This can be a bit tricky to wrap your head around, but the conventions do make sense once you let it sink in.
 
-In the previous examples, the `COUNTER` _key_ was used as a `LedgerKey` while the incremented _value_ was stored in a **`LedgerEntry`**. "Ledger Entry" is the relevant term to keep in mind during this discussion. That `LedgerEntry` was stored on the Stellar ledger, and was associated with a corresponding `LedgerKey`. `LedgerKey: LedgerEntry` works the same way you would think of almost any `key: value` storage system. In addition to whatever `ContractData` `LedgerEntry`s a contract may (or may not) store on the ledger, there is also a `ContractCode` entry that identifies the relevant WASM byte-code. We retrieve that byte-code by _first_ retrieving the `LedgerKey` associated with it.
+In the previous examples, the `COUNTER` _key_ was used as a `LedgerKey` while the incremented _value_ was stored in a **`LedgerEntry`**. "Ledger Entry" is the relevant term to keep in mind during this discussion. That `LedgerEntry` was stored on the Stellar ledger, and was associated with a corresponding `LedgerKey`. `LedgerKey: LedgerEntry` works the same way you would think of almost any `key: value` storage system.
+
+#### How Soroban Contract Deployment Works
+
+When you deploy a contract, first the code is "installed" (i.e. it is uploaded onto the blockchain). This creates a `LedgerEntry` containing the WASM byte-code, which is uniquely identified by its hash (that is, the hash of the uploaded code itself). Then, when the contract is "deployed," we create a `LedgerEntry` with a reference to that code's hash. So fetching the contract code is a two-step process:
+
+1. First, we look up the contract itself, to see which code hash it is referencing.
+2. Then, we can look up the raw WASM byte-code using that hash.
 
 #### Request the `LedgerKey` for the Contract Code
 

@@ -116,11 +116,36 @@ const config = {
       footer: {
         links: [
           {
+            title: 'About',
+            items: [
+              {
+                label: 'About SDF',
+                href: 'https://stellar.org/foundation',
+              },
+              {
+                label: 'Careers',
+                href: 'https://stellar.org/foundation/careers',
+              },
+              {
+                label: 'Events',
+                href: 'https://stellar.org/events',
+              },
+              {
+                label: 'Grants and Funding',
+                href: 'https://stellar.org/foundation/grants-and-funding',
+              },
+            ],
+          },
+          {
             title: 'Community',
             items: [
               {
-                label: 'Discord',
-                href: 'https://discord.gg/6ZCcYqbC96',
+                label: 'Developer Discord',
+                href: 'https://discord.gg/stellardev',
+              },
+              {
+                label: 'Developer Google Group',
+                href: 'https://groups.google.com/g/stellar-dev?pli=1',
               },
             ],
           },
@@ -130,6 +155,10 @@ const config = {
               {
                 label: 'GitHub',
                 href: 'https://github.com/stellar',
+              },
+              {
+                label: 'Developer Blog',
+                href: 'https://www.stellar.org/developers-blog',
               },
               {
                 label: 'Stellar Quest',

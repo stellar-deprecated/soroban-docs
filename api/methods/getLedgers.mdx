@@ -1,0 +1,21 @@
+---
+sidebar_position: 7
+---
+
+:::note
+The `getLedgers` method is proposed but not yet implemented.
+:::
+
+
+Clients can request a list of ledgers. Soroban-RPC will support querying within a maximum 24 hours of recent ledgers.
+
+## Parameters
+
+- `startLedger`: `<string>` - Stringified ledger sequence number to fetch events after (inclusive).
+- `endLedger`: `<string>` - Stringified ledger sequence number to fetch events before (inclusive). endLedger must be less than or equal to startLedger + 720 (about 1 hour of ledgers).
+
+## Returns
+
+- `<object>`
+  - `ledgers`: `<object[]>`
+    - TODO: Figure out the object returned here.

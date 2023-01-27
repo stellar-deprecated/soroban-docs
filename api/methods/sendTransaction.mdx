@@ -24,6 +24,7 @@ This supports all transactions, not only smart contract-related transactions.
     - `success`
     - `error`
   - `error`: `<object>` -  (optional) If the transaction was rejected immediately, this will be an error object. See [`getTransactionStatus`](getTransactionStatus) for format.
+  - `eta`: `<iso8601-string>` - A rough estimate of the soonest time this transaction could be included in a ledger.
 
 ## Possible Errors
 
@@ -55,7 +56,8 @@ The following example request uses a transaction to invoke the `increment` metho
   "result": {
     "id": "d70916f8b8aa55c13d5974a38e32a3efe440ef6870c0f0a07075d1c128d23698",
     "status": "pending",
-    "error": null
+    "error": null,
+    "eta": "2023-01-27T16:54:52Z"
   }
 }
 ```

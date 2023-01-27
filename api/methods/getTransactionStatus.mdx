@@ -33,6 +33,7 @@ Clients will poll this to tell when the transaction has been completed.
     - `code`: `<string>` - Short unique string representing the type of error
     - `message`: `<string>` - Human friendly summary of the error
     - `data`: `<object>` - (optional) More data related to the error if available
+  - `eta`: `<iso8601-string>` - (optional) A rough estimate of the soonest time this transaction could be included in a ledger. Only present if the transaction is "pending".
 
 ## Examples
 
@@ -59,7 +60,8 @@ Clients will poll this to tell when the transaction has been completed.
   "id": 8675309,
   "result": {
     "id": "d70916f8b8aa55c13d5974a38e32a3efe440ef6870c0f0a07075d1c128d23698",
-    "status": "pending"
+    "status": "pending",
+    "eta": "2023-01-27T16:54:52Z"
   }
 }
 ```

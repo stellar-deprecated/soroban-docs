@@ -8,13 +8,14 @@ To fetch contract wasm byte-code, use the ContractCode ledger entry key.
 
 ## Parameters
 
-- `key`: `<xdr.LedgerKey>` - The key of the ledger entry you wish to retrieve (serialized in a base64 string)
+- `keys`: `[<xdr.LedgerKey>]` - Array of keys for ledger entries you wish to retrieve (each serialized in a base64 string)
 
 ## Return
 
 - `<object>`
-  - `xdr`: `<xdr.LedgerEntryData>` - The current value of the given ledger entry  (serialized in a base64 string)
-  - `lastModifiedLedgerSeq`: `<number>` - The ledger number of the last time this entry was updated (optional)
+  - `entries`: `<array>` - Array of ledger entry results. If a key was not found, it will be `null` in the array.
+    - `xdr`: `<xdr.LedgerEntryData>` - The current value of the given ledger entry  (each serialized in a base64 string)
+    - `lastModifiedLedgerSeq`: `<number>` - The ledger number of the last time this entry was updated (optional)
   - `latestLedger`: `<number>` - The current latest ledger observed by the node when this response was generated.
 
 ## Examples
@@ -25,9 +26,9 @@ To fetch contract wasm byte-code, use the ContractCode ledger entry key.
 {
   "jsonrpc": "2.0",
   "id": 8675309,
-  "method": "getLedgerEntry",
+  "method": "getLedgerEntries",
   "params": {
-    "key": "AAAABhv6ziOnWcVRdGMZjtFKSWnLSndMp9JPVLLXxQqAvKqJAAAABQAAAAdDT1VOVEVSAA=="
+    "keys": ["AAAABhv6ziOnWcVRdGMZjtFKSWnLSndMp9JPVLLXxQqAvKqJAAAABQAAAAdDT1VOVEVSAA=="]
   }
 }
 ```
@@ -39,8 +40,12 @@ To fetch contract wasm byte-code, use the ContractCode ledger entry key.
   "jsonrpc": "2.0",
   "id": 8675309,
   "result": {
-    "xdr": "AAAABhv6ziOnWcVRdGMZjtFKSWnLSndMp9JPVLLXxQqAvKqJAAAABQAAAAdDT1VOVEVSAAAAAAEAAAAD",
-    "lastModifiedLedgerSeq": "164986",
+    "entries": [
+      {
+        "xdr": "AAAABhv6ziOnWcVRdGMZjtFKSWnLSndMp9JPVLLXxQqAvKqJAAAABQAAAAdDT1VOVEVSAAAAAAEAAAAD",
+        "lastModifiedLedgerSeq": "164986"
+      }
+    ],
     "latestLedger": "179436"
   }
 }
@@ -134,15 +139,15 @@ print(get_ledger_key_contract_code(
 # OUTPUT: AAAABhv6ziOnWcVRdGMZjtFKSWnLSndMp9JPVLLXxQqAvKqJAAAAAwAAAAM=
 ```
 
-We then take our output from this function, and use it as the `key` parameter in our call to the `getLedgerEntry` method.
+We then take our output from this function, and use it as the `key` parameter in our call to the `getLedgerEntries` method.
 
 ```json
 {
   "jsonrpc": "2.0",
   "id": 8675309,
-  "method": "getLedgerEntry",
+  "method": "getLedgerEntries",
   "params": {
-    "key": "AAAABhv6ziOnWcVRdGMZjtFKSWnLSndMp9JPVLLXxQqAvKqJAAAAAwAAAAM="
+    "keys": ["AAAABhv6ziOnWcVRdGMZjtFKSWnLSndMp9JPVLLXxQqAvKqJAAAAAwAAAAM="]
   }
 }
 ```
@@ -154,8 +159,12 @@ And the response we get contains the `LedgerEntryData` that can be used to find 
   "jsonrpc": "2.0",
   "id": 8675309,
   "result": {
-    "xdr": "AAAABhv6ziOnWcVRdGMZjtFKSWnLSndMp9JPVLLXxQqAvKqJAAAAAwAAAAMAAAAEAAAAAQAAAAcAAAAA1CpZRz0BSN27PmqtsmBhv+AAJJwHgmrvJNPrHRAl9l8=",
-    "lastModifiedLedgerSeq": "164303",
+    "entries": [
+      {
+        "xdr": "AAAABhv6ziOnWcVRdGMZjtFKSWnLSndMp9JPVLLXxQqAvKqJAAAAAwAAAAMAAAAEAAAAAQAAAAcAAAAA1CpZRz0BSN27PmqtsmBhv+AAJJwHgmrvJNPrHRAl9l8=",
+        "lastModifiedLedgerSeq": "164303"
+      }
+    ],
     "latestLedger": "246819"
   }
 }
@@ -191,9 +200,9 @@ Now, finally we have a `LedgerKey` that correspond to the WASM byte-code that ha
 {
   "jsonrpc": "2.0",
   "id": 8675309,
-  "method": "getLedgerEntry",
+  "method": "getLedgerEntries",
   "params": {
-    "key": "AAAAB9QqWUc9AUjduz5qrbJgYb/gACScB4Jq7yTT6x0QJfZf"
+    "keys": ["AAAAB9QqWUc9AUjduz5qrbJgYb/gACScB4Jq7yTT6x0QJfZf"]
   }
 }
 ```
@@ -205,8 +214,12 @@ And the response we get contains (even more) `LedgerEntryData` that we can decod
   "jsonrpc": "2.0",
   "id": 8675309,
   "result": {
-    "xdr": "AAAABwAAAADUKllHPQFI3bs+aq2yYGG/4AAknAeCau8k0+sdECX2XwAAAakAYXNtAQAAAAEXBWABfgF+YAJ+fgF+YAABfmABfwBgAAACEwMBbAEwAAABbAExAAABbAFfAAEDBgUCAwQEBAUDAQAQBhkDfwFBgIDAAAt/AEGAgMAAC38AQYCAwAALBzUFBm1lbW9yeQIACWluY3JlbWVudAADAV8ABwpfX2RhdGFfZW5kAwELX19oZWFwX2Jhc2UDAgrAAQWhAQMBfwF+AX8jgICAgABBEGsiACSAgICAAAJAAkBC2YP9sqDNAxCAgICAAEIVUg0AAkBC2YP9sqDNAxCBgICAACIBQg+DQgFSDQAgAUIEiKchAgwCCyAAQQhqEISAgIAAAAtBACECCwJAIAJBAWoiAg0AEIWAgIAAAAtC2YP9sqDNAyACrUIEhkIBhCIBEIKAgIAAGiAAQRBqJICAgIAAIAELCQAQhoCAgAAACwkAEIaAgIAAAAsEAAAACwIACwAeEWNvbnRyYWN0ZW52bWV0YXYwAAAAAAAAAAAAAAAbAC8OY29udHJhY3RzcGVjdjAAAAAAAAAACWluY3JlbWVudAAAAAAAAAAAAAABAAAAAQAAAA==",
-    "lastModifiedLedgerSeq": "164302",
+    "entries": [
+      {
+        "xdr": "AAAABwAAAADUKllHPQFI3bs+aq2yYGG/4AAknAeCau8k0+sdECX2XwAAAakAYXNtAQAAAAEXBWABfgF+YAJ+fgF+YAABfmABfwBgAAACEwMBbAEwAAABbAExAAABbAFfAAEDBgUCAwQEBAUDAQAQBhkDfwFBgIDAAAt/AEGAgMAAC38AQYCAwAALBzUFBm1lbW9yeQIACWluY3JlbWVudAADAV8ABwpfX2RhdGFfZW5kAwELX19oZWFwX2Jhc2UDAgrAAQWhAQMBfwF+AX8jgICAgABBEGsiACSAgICAAAJAAkBC2YP9sqDNAxCAgICAAEIVUg0AAkBC2YP9sqDNAxCBgICAACIBQg+DQgFSDQAgAUIEiKchAgwCCyAAQQhqEISAgIAAAAtBACECCwJAIAJBAWoiAg0AEIWAgIAAAAtC2YP9sqDNAyACrUIEhkIBhCIBEIKAgIAAGiAAQRBqJICAgIAAIAELCQAQhoCAgAAACwkAEIaAgIAAAAsEAAAACwIACwAeEWNvbnRyYWN0ZW52bWV0YXYwAAAAAAAAAAAAAAAbAC8OY29udHJhY3RzcGVjdjAAAAAAAAAACWluY3JlbWVudAAAAAAAAAAAAAABAAAAAQAAAA==",
+        "lastModifiedLedgerSeq": "164302"
+      }
+    ],
     "latestLedger": "246883"
   }
 }

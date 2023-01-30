@@ -11,8 +11,8 @@ Clients can request a list of ledgers. Soroban-RPC will support querying within 
 
 ## Parameters
 
-- `startLedger`: `<string>` - Stringified ledger sequence number to fetch events after (inclusive).
-- `endLedger`: `<string>` - Stringified ledger sequence number to fetch events before (inclusive). endLedger must be less than or equal to startLedger + 720 (about 1 hour of ledgers).
+- `startLedger`: `<string>` - Stringified ledger sequence number to fetch ledgers after (inclusive). If `startLedger` is greater than the latest ledger seen by this node, this method will return an error.
+- `pagination`: `<PaginationOptions>` - See "[Pagination](../pagination)"
 
 ## Returns
 

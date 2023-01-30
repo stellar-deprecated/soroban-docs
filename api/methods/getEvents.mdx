@@ -12,8 +12,7 @@ By default soroban-rpc retains the most recent 24 hours of events.
 
 ## Parameters
 
-- `startLedger`: `<string>` - Stringified ledger sequence number to fetch events after (inclusive).
-- `endLedger`: `<string>` - Stringified ledger sequence number to fetch events before (inclusive). endLedger must be less than or equal to startLedger + 4320 (about 6 hours of ledgers).
+- `startLedger`: `<string>` - Stringified ledger sequence number to fetch events after (inclusive). If `startLedger` is greater than the latest ledger seen by this node, this method will return an error.
 - `filters`: `<object[]>` - List of filters for the returned events. Events matching any of the filters are included. To match a filter, an event must match both a contractId and a topic. Maximum 5 filters are allowed per request.
   - `type`: `<"system"|"contract">` - (optional) Filter to only system or only contract type events. If omitted, return all.
   - `contractIds`: `<string[]>` - (optional) List of contract ids to query for events. If omitted, return events for all contracts. Maximum 5 contract IDs are allowed per request.
@@ -68,7 +67,6 @@ The examples below only returns two transfer events that took place to/from the 
   "method": "getEvents",
   "params": {
     "startLedger": "227000",
-    "endLedger": "230200",
     "filters": [
       {
         "type": "contract",

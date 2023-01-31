@@ -3,18 +3,15 @@ sidebar_position: 1
 title: Hello World
 ---
 
-The [hello world example] demonstrates how to write a simple contract, with a
-single function that takes one input and returns it as an output.
+The [hello world example] demonstrates how to write a simple contract, with a single function that takes one input and returns it as an output.
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.4.2
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp] [oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.4.2
 
 [hello world example]: https://github.com/stellar/soroban-examples/tree/v0.4.2/hello_world
 
 ## Run the Example
 
-First go through the [Setup] process to get your development environment
-configured, then clone the `v0.4.2` tag of `soroban-examples` repository:
+First go through the [Setup] process to get your development environment configured, then clone the `v0.4.2` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
@@ -53,13 +50,12 @@ impl HelloContract {
     }
 }
 ```
+
 Ref: https://github.com/stellar/soroban-examples/tree/v0.4.2/hello_world
 
 ## How it Works
 
-Soroban contracts export all public functions that are within `impl` blocks that
-have been annotated with `#[contractimpl]`. In the example above the contract
-exports a single function, `hello`.
+Soroban contracts export all public functions that are within `impl` blocks that have been annotated with `#[contractimpl]`. In the example above the contract exports a single function, `hello`.
 
 Contract functions must be given names that are no more than 10 characters long.
 
@@ -67,8 +63,7 @@ Open the `hello_world/src/lib.rs` file to follow along.
 
 ### Contract Type
 
-Contract functions must be defined within an `impl` block, and therefore a type
-is required for the impl to be attached. A simple zero-sized struct can be used.
+Contract functions must be defined within an `impl` block, and therefore a type is required for the impl to be attached. A simple zero-sized struct can be used.
 
 ```rust
 pub struct HelloContract;
@@ -76,19 +71,11 @@ pub struct HelloContract;
 
 ### Contract Function
 
-Contract functions look much like regular Rust functions. They mave have any
-number of arguments, but arguments must support being transmitted to and from
-the Soroban environment that the contract runs in. The Soroban SDK provides some
-types like `Vec`, `Map`, `Symbol`, `Bytes`, `BytesN`, etc that can be used.
-Primitive values like `u128`, `i128`, `u64`, `i64`, `u32`, `i32`, and `bool` can
-also be used. Floats are not supported.
+Contract functions look much like regular Rust functions. They mave have any number of arguments, but arguments must support being transmitted to and from the Soroban environment that the contract runs in. The Soroban SDK provides some types like `Vec`, `Map`, `Symbol`, `Bytes`, `BytesN`, etc that can be used. Primitive values like `u128`, `i128`, `u64`, `i64`, `u32`, `i32`, and `bool` can also be used. Floats are not supported.
 
 Contract inputs must not be references.
 
-If the first argument of a contract function is of the `soroban_sdk::Env` type,
-an `Env` will be provided that provides access to additional functionality. Most
-functionality within the SDK requires an `Env`, so it is recommended to have it
-in the argument list for most functions.
+If the first argument of a contract function is of the `soroban_sdk::Env` type, an `Env` will be provided that provides access to additional functionality. Most functionality within the SDK requires an `Env`, so it is recommended to have it in the argument list for most functions.
 
 ```rust
 #[contractimpl]
@@ -115,8 +102,7 @@ fn test() {
 }
 ```
 
-In any test the first thing that is always required is an `Env`, which is the
-Soroban environment that the contract will run in.
+In any test the first thing that is always required is an `Env`, which is the Soroban environment that the contract will run in.
 
 ```rust
 let env = Env::default();
@@ -128,11 +114,7 @@ The contract is registered with the environment using the contract type.
 let contract_id = env.register_contract(None, HelloContract);
 ```
 
-All public functions within an `impl` block that is annotated with the
-`#[contractimpl]` attribute have a corresponding function generated in a
-generated client type. The client type will be named the same as the contract
-type with `Client` appended. For example, in our contract the contract type is
-`HelloContract`, and the client is named `HelloContractClient`.
+All public functions within an `impl` block that is annotated with the `#[contractimpl]` attribute have a corresponding function generated in a generated client type. The client type will be named the same as the contract type with `Client` appended. For example, in our contract the contract type is `HelloContract`, and the client is named `HelloContractClient`.
 
 ```rust
 let client = HelloContractClient::new(&env, &contract_id);
@@ -140,6 +122,7 @@ let words = client.hello(&symbol!("Dev"));
 ```
 
 The values returned by functions can be asserted on:
+
 ```rust
 assert_eq!(words, vec![&env, symbol!("Hello"), symbol!("Dev"),]);
 ```
@@ -160,8 +143,7 @@ A `.wasm` file should be outputted in the `../target` directory:
 
 ## Run the Contract
 
-If you have [`soroban-cli`] installed, you can invoke contract functions in the
-using it.
+If you have [`soroban-cli`] installed, you can invoke contract functions in the using it.
 
 ```sh
 soroban invoke \
@@ -174,7 +156,7 @@ soroban invoke \
 The following output should occur using the code above.
 
 ```json
-["Hello","friend"]
+["Hello", "friend"]
 ```
 
 [`soroban-cli`]: ../getting-started/setup#install-the-soroban-cli

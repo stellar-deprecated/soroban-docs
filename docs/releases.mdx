@@ -5,18 +5,9 @@ title: Releases
 
 The following Soroban releases are preview releases.
 
-We’re releasing early versions of Soroban because we believe it’s important to
-share the development process, and we want Stellar ecosystem developers and
-smart contract developers from other ecosystems to have a chance to experiment
-and provide feedback.
+We’re releasing early versions of Soroban because we believe it’s important to share the development process, and we want Stellar ecosystem developers and smart contract developers from other ecosystems to have a chance to experiment and provide feedback.
 
-:::caution
-Preview releases are software releases that are also released to the [Futurenet]
-test network. Software releases may occur between Futurenet releases. If you're
-interacting with Futurenet the recommended software versions to use in
-development are below. Releases to Futurenet may include network resets and
-network passphrase changes.
-:::
+:::caution Preview releases are software releases that are also released to the [Futurenet] test network. Software releases may occur between Futurenet releases. If you're interacting with Futurenet the recommended software versions to use in development are below. Releases to Futurenet may include network resets and network passphrase changes. :::
 
 [Futurenet]: networks/futurenet
 
@@ -25,7 +16,7 @@ network passphrase changes.
 ### Software
 
 | Software | Version |
-| -------- | ------- |
+| --- | --- |
 | XDR | [026c9cd074bdb28ddde8ee52f2a4502d9e518a09](https://github.com/stellar/stellar-xdr/tree/026c9cd074bdb28ddde8ee52f2a4502d9e518a09) |
 | Soroban Environment | `v0.0.12` |
 | Soroban Interface Version | `27` |
@@ -98,7 +89,7 @@ See https://github.com/stellar/soroban-tools/releases v0.4.0 for more details.
 ### Software
 
 | Software | Version |
-| -------- | ------- |
+| --- | --- |
 | XDR | [026c9cd074bdb28ddde8ee52f2a4502d9e518a09](https://github.com/stellar/stellar-xdr/tree/026c9cd074bdb28ddde8ee52f2a4502d9e518a09) |
 | Soroban Environment | `v0.0.11` |
 | Soroban Interface Version | `26` |
@@ -174,7 +165,7 @@ See https://github.com/stellar/soroban-tools/releases v0.3.0, v0.3.1, 0.3.3 for 
 ### Software
 
 | Software | Version |
-| -------- | ------- |
+| --- | --- |
 | XDR | https://github.com/stellar/stellar-xdr-next/tree/48d5e17ae63bba0aa9725cd9d18d7438f44c07b1 |
 | Soroban Environment | `v0.0.9` |
 | Soroban Interface Version | `23` |
@@ -190,44 +181,44 @@ See https://github.com/stellar/soroban-tools/releases v0.3.0, v0.3.1, 0.3.3 for 
 
 #### XDR
 
-* Trivial whitespace changes
+- Trivial whitespace changes
 
 #### Soroban Environment
 
-* Vm tuning
-* Add token events
-* Catch panics from native contracts in try_call
-* Improved built-in token error reporting
-* Add missing conversion from Status->ScStatus for the ContractError variant
-* Capture user panic-strings in native builds, avoid spurious NoContractRunning error
-* Few small fixes to error debug events
+- Vm tuning
+- Add token events
+- Catch panics from native contracts in try_call
+- Improved built-in token error reporting
+- Add missing conversion from Status->ScStatus for the ContractError variant
+- Capture user panic-strings in native builds, avoid spurious NoContractRunning error
+- Few small fixes to error debug events
 
 See https://github.com/stellar/rs-soroban-env/releases v0.0.7, v0.0.8, v0.0.9 for more details.
 
 #### Soroban Rust SDK
 
-* Add Logger::print in testutils
-* Add conversion from Address to Identifier
-* Remove deprecated functions
-* Remove panic-catching and fix tests that use newly-working native try_call
-* Reintroduce an optimized aborting unwrap
-* Add assert_with_error! macro
-* Rename panic_error! to panic_with_error!
+- Add Logger::print in testutils
+- Add conversion from Address to Identifier
+- Remove deprecated functions
+- Remove panic-catching and fix tests that use newly-working native try_call
+- Reintroduce an optimized aborting unwrap
+- Add assert_with_error! macro
+- Rename panic_error! to panic_with_error!
 
 See https://github.com/stellar/rs-soroban-sdk/releases v0.2.0, v0.2.1 for more details.
 
 #### Soroban RPC
 
-* Initial Release
+- Initial Release
 
 #### Soroban CLI
 
-* Strings and symbols are rendered as text in JSON output
-* Bytes are rendered as hex in JSON output
-* Accounts in invocations are created in sandbox
-* Add optimize sub-command that optimizes contracts
-* Fix the bin name in the completion command
-* Fix jsonrpc compliance issue
+- Strings and symbols are rendered as text in JSON output
+- Bytes are rendered as hex in JSON output
+- Accounts in invocations are created in sandbox
+- Add optimize sub-command that optimizes contracts
+- Fix the bin name in the completion command
+- Fix jsonrpc compliance issue
 
 See https://github.com/stellar/soroban-cli/releases v0.2.0, v0.2.1 for more details.
 
@@ -236,7 +227,7 @@ See https://github.com/stellar/soroban-cli/releases v0.2.0, v0.2.1 for more deta
 ### Software
 
 | Software | Version |
-| -------- | ------- |
+| --- | --- |
 | XDR | https://github.com/stellar/stellar-xdr-next/tree/161e2e5b64425a49f9ccfef7f732ae742ed5eec4 |
 | Soroban Environment | `v0.0.6` |
 | Soroban Interface Version | `23` |

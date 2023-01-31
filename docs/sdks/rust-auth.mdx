@@ -3,28 +3,23 @@ sidebar_position: 2
 title: Soroban Rust Auth SDK
 ---
 
-The `soroban-auth` Rust crate contains the Soroban Rust Auth SDK. It provides
-types and utilities for authenticating participants in a variety of ways
-including:
-- Authenticating by being the invoker, as an transaction source account or a
-contract.
-- Presigned invocations with account signers or ed25519 keys, similar to
-[EIP-2612] and [EIP-712] in the Ethereum ecosystem.
+The `soroban-auth` Rust crate contains the Soroban Rust Auth SDK. It provides types and utilities for authenticating participants in a variety of ways including:
 
-:::info
-If you're just starting to explore Soroban, checkout the [auth example] that
-uses a simpler form of invoker auth.
-:::
+- Authenticating by being the invoker, as an transaction source account or a contract.
+- Presigned invocations with account signers or ed25519 keys, similar to [EIP-2612] and [EIP-712] in the Ethereum ecosystem.
 
-The Auth SDK identifies participants with the `Identifier` type, and
-participants choose how they will be authenticated by providing a `Signature`.
+:::info If you're just starting to explore Soroban, checkout the [auth example] that uses a simpler form of invoker auth. :::
+
+The Auth SDK identifies participants with the `Identifier` type, and participants choose how they will be authenticated by providing a `Signature`.
 
 An `Identifier` can represent a:
+
 - Account ID
 - Contract ID
 - Ed25519 key
 
 A `Signature` can be an:
+
 - Invoker — An invoking transaction source account, or an invoking contract.
 - Account – An invocation presigned with account signers.
 - Ed25519 – An invocation presigned with an ed25519 key.
@@ -35,20 +30,15 @@ Intended for use alongside the [`soroban-sdk`].
 [EIP-2612]: https://eips.ethereum.org/EIPS/eip-2612
 [EIP-712]: https://eips.ethereum.org/EIPS/eip-712
 
-:::info
-Report issues and share feedback about the `soroban-auth`
-[here](https://github.com/stellar/rs-soroban-sdk/issues/new/choose).
-:::
+:::info Report issues and share feedback about the `soroban-auth` [here](https://github.com/stellar/rs-soroban-sdk/issues/new/choose). :::
 
 ## SDK Documentation
 
-Auth documentation is available at:
-https://docs.rs/soroban-auth
+Auth documentation is available at: https://docs.rs/soroban-auth
 
 ## Subscribe to Releases
 
-Subscribe to releases on the GitHub repository:
-https://github.com/stellar/rs-soroban-sdk
+Subscribe to releases on the GitHub repository: https://github.com/stellar/rs-soroban-sdk
 
 ## Add `soroban-auth` as a Dependency
 

@@ -5,33 +5,22 @@ title: Logging
 
 The [logging example] demonstrates how to log for the purpose of debugging.
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.4.2
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp] [oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.4.2
 
-Logs in contracts are only visible in tests, or when executing contracts using
-[`soroban-cli`]. Logs are only compiled into the contract if the
-`debug-assertions` Rust compiler option is enabled.
+Logs in contracts are only visible in tests, or when executing contracts using [`soroban-cli`]. Logs are only compiled into the contract if the `debug-assertions` Rust compiler option is enabled.
 
 [logging example]: https://github.com/stellar/soroban-examples/tree/v0.4.2/hello_world
 
-:::tip
-Logs are no a substitute for step-through debugging. Rust tests for Soroban can
-be step-through debugged in your Rust-enabled IDE. See [testing] for more
-details.
-:::
+:::tip Logs are no a substitute for step-through debugging. Rust tests for Soroban can be step-through debugged in your Rust-enabled IDE. See [testing] for more details. :::
 
-:::caution
-Logs are not accessible by dapps and other applications. See the [events
-example] for how to produce structured events.
-:::
+:::caution Logs are not accessible by dapps and other applications. See the [events example] for how to produce structured events. :::
 
 [testing]: ../tutorials/testing.mdx
 [events example]: events.mdx
 
 ## Run the Example
 
-First go through the [Setup] process to get your development environment
-configured, then clone the `v0.4.2` tag of `soroban-examples` repository:
+First go through the [Setup] process to get your development environment configured, then clone the `v0.4.2` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
@@ -41,8 +30,7 @@ git clone -b v0.4.2 https://github.com/stellar/soroban-examples
 
 Or, skip the development environment setup and open this example in [Gitpod][oigp].
 
-To run the tests for the example, navigate to the `logging` directory, and use
-`cargo test`.
+To run the tests for the example, navigate to the `logging` directory, and use `cargo test`.
 
 ```
 cd logging
@@ -78,35 +66,26 @@ impl Contract {
     }
 }
 ```
+
 Ref: https://github.com/stellar/soroban-examples/tree/v0.4.2/logging
 
 ## How it Works
 
-The [`log!`] macro logs a string. Any logs that occur during execution are
-outputted to stdout in [`soroban-cli`] and available for tests to assert on
-or print.
+The [`log!`] macro logs a string. Any logs that occur during execution are outputted to stdout in [`soroban-cli`] and available for tests to assert on or print.
 
-Logs are only outputted if the contract is built with the `debug-assertions`
-compiler option enabled. This makes them efficient to leave in code permanently
-since a regular `release` build will omit them.
+Logs are only outputted if the contract is built with the `debug-assertions` compiler option enabled. This makes them efficient to leave in code permanently since a regular `release` build will omit them.
 
-Logs are only recorded in Soroban environments that have logging enabled. The
-only Soroban environments where logging is enabled is in Rust tests, and in the
-[`soroban-cli`].
+Logs are only recorded in Soroban environments that have logging enabled. The only Soroban environments where logging is enabled is in Rust tests, and in the [`soroban-cli`].
 
 Open the files above to follow along.
 
 ### `Cargo.toml` Profile
 
-Logs are only outputted if the contract is built with the `debug-assertions`
-compiler option enabled.
+Logs are only outputted if the contract is built with the `debug-assertions` compiler option enabled.
 
-The `test` profile that is activated when running `cargo test` has
-`debug-assertions` enabled, so when running tests logs are enabled by default.
+The `test` profile that is activated when running `cargo test` has `debug-assertions` enabled, so when running tests logs are enabled by default.
 
-A new `release-with-logs` profile is added to `Cargo.toml` that inherits from
-the `release` profile, and enables `debug-assertions`. It can be used to build a
-`.wasm` file that has logs enabled.
+A new `release-with-logs` profile is added to `Cargo.toml` that inherits from the `release` profile, and enables `debug-assertions`. It can be used to build a `.wasm` file that has logs enabled.
 
 ```toml
 [profile.release-with-logs]
@@ -120,27 +99,19 @@ To build with logs use the `--profile release-with-logs` option.
 
 ### Using the `log!` Macro
 
-The [`log!`] macro builds a string from the format string, and a list of
-arguments. Arguments are substituted wherever the `{}` value appears in the
-format string.
+The [`log!`] macro builds a string from the format string, and a list of arguments. Arguments are substituted wherever the `{}` value appears in the format string.
 
 ```rust
 log!(&env, "Hello {}", value);
 ```
 
-The above log will render as follows if `value` is a `Symbol` containing
-`"Dev"`.
+The above log will render as follows if `value` is a `Symbol` containing `"Dev"`.
 
 ```
 Hello Symbol(Dev)
 ```
 
-:::caution
-The values outputted are currently relatively limited. While primitive values
-like `u32`, `u64`, `bool`, and `Symbol`s will render clearly in the log output,
-`Bytes`, `Vec`, `Map`, and custom types will render only their handle
-number. Logging capabilities are in early development.
-:::
+:::caution The values outputted are currently relatively limited. While primitive values like `u32`, `u64`, `bool`, and `Symbol`s will render clearly in the log output, `Bytes`, `Vec`, `Map`, and custom types will render only their handle number. Logging capabilities are in early development. :::
 
 ## Tests
 
@@ -163,17 +134,13 @@ fn test() {
 }
 ```
 
-The `std` crate, which contains the Rust standard library, is imported so that
-the test can use the `std::vec!` and `std::println!` macros. Since contracts are
-required to use `#![no_std]`, tests in contracts must manually import `std` to
-use std functionality like printing to stdout.
+The `std` crate, which contains the Rust standard library, is imported so that the test can use the `std::vec!` and `std::println!` macros. Since contracts are required to use `#![no_std]`, tests in contracts must manually import `std` to use std functionality like printing to stdout.
 
 ```rust
 extern crate std;
 ```
 
-In any test the first thing that is always required is an `Env`, which is the
-Soroban environment that the contract will run in.
+In any test the first thing that is always required is an `Env`, which is the Soroban environment that the contract will run in.
 
 ```rust
 let env = Env::default();
@@ -185,11 +152,7 @@ The contract is registered with the environment using the contract type.
 let contract_id = env.register_contract(None, HelloContract);
 ```
 
-All public functions within an `impl` block that is annotated with the
-`#[contractimpl]` attribute have a corresponding function generated in a
-generated client type. The client type will be named the same as the contract
-type with `Client` appended. For example, in our contract the contract type is
-`HelloContract`, and the client is named `HelloContractClient`.
+All public functions within an `impl` block that is annotated with the `#[contractimpl]` attribute have a corresponding function generated in a generated client type. The client type will be named the same as the contract type with `Client` appended. For example, in our contract the contract type is `HelloContract`, and the client is named `HelloContractClient`.
 
 ```rust
 let client = HelloContractClient::new(&env, &contract_id);
@@ -209,6 +172,7 @@ assert_eq!(logs, std::vec!["Hello Symbol(Dev)"]);
 ```
 
 They can be printed to stdout.
+
 ```rust
 std::println!("{}", logs.join("\n"));
 ```
@@ -225,8 +189,7 @@ To build the contract without logs, use the `--release` option.
 cargo build --target wasm32-unknown-unknown --release
 ```
 
-A `.wasm` file should be outputted in the `../target` directory, in the
-`release` subdirectory:
+A `.wasm` file should be outputted in the `../target` directory, in the `release` subdirectory:
 
 ```
 ../target/wasm32-unknown-unknown/release/soroban_logging_contract.wasm
@@ -240,8 +203,7 @@ To build the contract with logs, use the `--profile release-with-logs` option.
 cargo build --target wasm32-unknown-unknown --profile release-with-logs
 ```
 
-A `.wasm` file should be outputted in the `../target` directory, in the
-`release-with-logs` subdirectory:
+A `.wasm` file should be outputted in the `../target` directory, in the `release-with-logs` subdirectory:
 
 ```
 ../target/wasm32-unknown-unknown/release-with-logs/soroban_logging_contract.wasm
@@ -249,8 +211,7 @@ A `.wasm` file should be outputted in the `../target` directory, in the
 
 ## Run the Contract
 
-If you have [`soroban-cli`] installed, you can invoke contract functions in the
-using it.
+If you have [`soroban-cli`] installed, you can invoke contract functions in the using it.
 
 ```sh
 soroban invoke \

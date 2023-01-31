@@ -3,12 +3,9 @@ sidebar_position: 1
 title: Token Interface
 ---
 
-Token contracts, including the Stellar Asset Contract and example token implementations
-expose the following common interface.
+Token contracts, including the Stellar Asset Contract and example token implementations expose the following common interface.
 
-Tokens deployed on Soroban can implement any interface they choose, however,
-they should satisfy the following interface to be interoperable with contracts
-built to support Soroban's built-in tokens.
+Tokens deployed on Soroban can implement any interface they choose, however, they should satisfy the following interface to be interoperable with contracts built to support Soroban's built-in tokens.
 
 ```rust
 pub trait Contract {
@@ -157,8 +154,7 @@ pub trait Contract {
 }
 ```
 
-Most types that a token implementation utilizes are provided by the
-[soroban-sdk] and [soroban-auth] crates.
+Most types that a token implementation utilizes are provided by the [soroban-sdk] and [soroban-auth] crates.
 
 [soroban-sdk]: ../SDKs/rust
 [soroban-auth]: ../SDKs/rust-auth

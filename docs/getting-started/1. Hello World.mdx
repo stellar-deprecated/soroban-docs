@@ -3,11 +3,10 @@ sidebar_position: 3
 title: 1. Hello World
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
-Once you've [Setup] your development environment, you're ready to create your
-first Soroban contract.
+Once you've [Setup] your development environment, you're ready to create your first Soroban contract.
 
 [Setup]: setup.mdx
 
@@ -39,13 +38,9 @@ crate-type = ["cdylib"]
 
 ### Import `soroban-sdk` and Features
 
-Add the following sections to the `Cargo.toml` that will import the
-`soroban-sdk`, and configure a set of features explained below.
+Add the following sections to the `Cargo.toml` that will import the `soroban-sdk`, and configure a set of features explained below.
 
-:::caution
-The `soroban-sdk` is in early development. Report issues
-[here](https://github.com/stellar/rs-soroban-sdk/issues/new/choose).
-:::
+:::caution The `soroban-sdk` is in early development. Report issues [here](https://github.com/stellar/rs-soroban-sdk/issues/new/choose). :::
 
 ```toml
 [dependencies]
@@ -58,25 +53,15 @@ soroban-sdk = { version = "0.4.2", features = ["testutils"] }
 testutils = ["soroban-sdk/testutils"]
 ```
 
-The `features` list includes a `testutils` feature, which will cause additional
-test utilities to be generated for calling the contract in tests.
+The `features` list includes a `testutils` feature, which will cause additional test utilities to be generated for calling the contract in tests.
 
-:::info
-The `testutils` test utilities are automatically enabled inside [Rust unit
-tests] inside the same crate as your contract. If you write tests from another
-crate, you'll need to require the `testutils` feature for those tests and enable
-the `testutils` feature when running your tests with `cargo test
---features testutils` to be able to use those test utilities.
-:::
+:::info The `testutils` test utilities are automatically enabled inside [Rust unit tests] inside the same crate as your contract. If you write tests from another crate, you'll need to require the `testutils` feature for those tests and enable the `testutils` feature when running your tests with `cargo test --features testutils` to be able to use those test utilities. :::
 
 ### Configure the `release` Profile
 
-Configuring the `release` profile to optimize the contract build is critical.
-Soroban contracts have a maximum size of 256KB. Rust programs, even small ones,
-without these configurations almost always exceed this size.
+Configuring the `release` profile to optimize the contract build is critical. Soroban contracts have a maximum size of 256KB. Rust programs, even small ones, without these configurations almost always exceed this size.
 
-Add the following to your `Cargo.toml` and use the `release` profile when
-building.
+Add the following to your `Cargo.toml` and use the `release` profile when building.
 
 ```toml
 [profile.release]
@@ -92,13 +77,9 @@ lto = true
 
 ### Configure the `release-with-logs` Profile
 
-Configuring a `release-with-logs` profile can be useful for if you need to build
-a `.wasm` that has logs enabled for printing debug logs when using the
-[`soroban-cli`].  Note that this is not necessary to access debug logs in tests
-or to use a step-through-debugger.
+Configuring a `release-with-logs` profile can be useful for if you need to build a `.wasm` that has logs enabled for printing debug logs when using the [`soroban-cli`]. Note that this is not necessary to access debug logs in tests or to use a step-through-debugger.
 
-Add the following to your `Cargo.toml` and use the `release-with-logs` profile
-when you need logs.
+Add the following to your `Cargo.toml` and use the `release-with-logs` profile when you need logs.
 
 ```toml
 [profile.release-with-logs]
@@ -159,24 +140,15 @@ Once you've created a project, writing a contract involves writing Rust code in 
 #![no_std]
 ```
 
-All contracts should begin with `#![no_std]` to ensure that the Rust standard
-library is not included in the build. The Rust standard library is large and not
-well suited to being deployed into small programs like those deployed to
-blockchains.
+All contracts should begin with `#![no_std]` to ensure that the Rust standard library is not included in the build. The Rust standard library is large and not well suited to being deployed into small programs like those deployed to blockchains.
 
 ```rust
 use soroban_sdk::{contractimpl, symbol, vec, Env, Symbol, Vec};
 ```
 
-The contract will need to import the types and macros that it needs from the
-`soroban-sdk` crate. Take a look at [Create a Project] to see
-how to setup a project.
+The contract will need to import the types and macros that it needs from the `soroban-sdk` crate. Take a look at [Create a Project] to see how to setup a project.
 
-Many of the types available in typical Rust programs, such as `std::vec::Vec`,
-are not available, as there is no allocator and no heap memory in Soroban
-contracts. The `soroban-sdk` provides a variety of types like `Vec`, `Map`,
-`Bytes`, `BytesN`, `Symbol`, that all utilize the Soroban environment's memory
-and native capabilities.
+Many of the types available in typical Rust programs, such as `std::vec::Vec`, are not available, as there is no allocator and no heap memory in Soroban contracts. The `soroban-sdk` provides a variety of types like `Vec`, `Map`, `Bytes`, `BytesN`, `Symbol`, that all utilize the Soroban environment's memory and native capabilities.
 
 ```rust
 pub struct Contract;
@@ -189,11 +161,7 @@ impl Contract {
 }
 ```
 
-Contract functions live inside an `impl` for a struct. The `impl` block is
-annotated with `#[contractimpl]`. Functions that are intended to be called
-externally should be marked with `pub` visibility. The first argument can be
-an `Env` argument to get a copy of the Soroban environment, which is necessary
-for most things.
+Contract functions live inside an `impl` for a struct. The `impl` block is annotated with `#[contractimpl]`. Functions that are intended to be called externally should be marked with `pub` visibility. The first argument can be an `Env` argument to get a copy of the Soroban environment, which is necessary for most things.
 
 Putting those pieces together a simple contract will look like this.
 
@@ -213,11 +181,9 @@ impl Contract {
 
 ## Testing
 
-Writing tests for Soroban contracts involves writing Rust code using the test
-facilities and toolchain that you'd use for testing any Rust code.
+Writing tests for Soroban contracts involves writing Rust code using the test facilities and toolchain that you'd use for testing any Rust code.
 
-Given a simple contract like the contract demonstrated in the Write a Contract 
-section, a simple test will look like this.
+Given a simple contract like the contract demonstrated in the Write a Contract section, a simple test will look like this.
 
 <Tabs>
 <TabItem value="lib.rs" label="src/lib.rs">
@@ -265,26 +231,19 @@ fn test() {
 </TabItem>
 </Tabs>
 
-In any test the first thing that is always required is an `Env`, which is the
-Soroban environment that the contract will run inside of.
+In any test the first thing that is always required is an `Env`, which is the Soroban environment that the contract will run inside of.
 
 ```rust
 let env = Env::default();
 ```
 
-The contract is registered with the environment using the contract type.
-Contracts can specify a fixed contract ID as the first argument, or provide
-`None` and one will be generated.
+The contract is registered with the environment using the contract type. Contracts can specify a fixed contract ID as the first argument, or provide `None` and one will be generated.
 
 ```rust
 let contract_id = env.register_contract(None, Contract);
 ```
 
-All public functions within an `impl` block that is annotated with the
-`#[contractimpl]` attribute have a corresponding function generated in a
-generated client type. The client type will be named the same as the contract
-type with `Client` appended. For example, in our contract the contract type is
-`Contract`, and the client is named `ContractClient`.
+All public functions within an `impl` block that is annotated with the `#[contractimpl]` attribute have a corresponding function generated in a generated client type. The client type will be named the same as the contract type with `Client` appended. For example, in our contract the contract type is `Contract`, and the client is named `ContractClient`.
 
 ```rust
 let client = ContractClient::new(&env, &contract_id);
@@ -292,6 +251,7 @@ let words = client.hello(&symbol!("Dev"));
 ```
 
 The values returned by functions can be asserted on:
+
 ```rust
 assert_eq!(
     words,
@@ -316,56 +276,39 @@ Try changing the values in the test to see how it works.
 
 [Rust unit test]: https://doc.rust-lang.org/rust-by-example/testing/unit_testing.html
 [Rust integration test]: https://doc.rust-lang.org/rust-by-example/testing/integration_testing.html
-    
+
 ## Build
-    
+
 To build a Soroban contract to deploy or run, use the `cargo build` command.
 
 ```sh
 cargo build --target wasm32-unknown-unknown --release
 ```
 
-:::tip
-Use the `release` profile outlined in [Configure the Release Profile], otherwise
-the contract will exceed Soroban's size limits.
-:::
+:::tip Use the `release` profile outlined in [Configure the Release Profile], otherwise the contract will exceed Soroban's size limits. :::
 
-A `.wasm` file will be outputted in the `target` directory. The `.wasm` file is
-the built contract.
+A `.wasm` file will be outputted in the `target` directory. The `.wasm` file is the built contract.
 
 ```
 target/wasm32-unknown-unknown/release/[project-name].wasm
 ```
 
-The `.wasm` file contains the logic of the contract, as well as the contract's
-specification that can be imported into other contracts who wish to call it.
-This is the only artifact needed to deploy the contract, share the interface
-with others, or integration test against the contract.
+The `.wasm` file contains the logic of the contract, as well as the contract's specification that can be imported into other contracts who wish to call it. This is the only artifact needed to deploy the contract, share the interface with others, or integration test against the contract.
 
-:::tip
-To further optimize builds to be as small as possible, see [Optimizing Builds].
-:::
+:::tip To further optimize builds to be as small as possible, see [Optimizing Builds]. :::
 
 [Configure the Release Profile]: create-a-project#configure-the-release-profile
 [Optimizing Builds]: build-optimized
-    
+
 ## Run on Sandbox
-    
-If you have the [`soroban-cli`] installed, you can run contracts in a local
-sandbox environment.
 
-The Soroban sandbox environment is the same Soroban environment that runs on
-Stellar networks, but it runs without nodes, and without the other features you
-find on a Stellar network.
+If you have the [`soroban-cli`] installed, you can run contracts in a local sandbox environment.
 
-:::info
-It's also possible to run a contract on a fully featured local network.  See
-[Deploy to a Local Network] for more details.
-:::
+The Soroban sandbox environment is the same Soroban environment that runs on Stellar networks, but it runs without nodes, and without the other features you find on a Stellar network.
 
-Using the code we wrote in [Write a Contract] and the resulting `.wasm` file
-we built in [Build] run the following command to invoke the `hello`
-function with a single argument `friend`.
+:::info It's also possible to run a contract on a fully featured local network. See [Deploy to a Local Network] for more details. :::
+
+Using the code we wrote in [Write a Contract] and the resulting `.wasm` file we built in [Build] run the following command to invoke the `hello` function with a single argument `friend`.
 
 ```sh
 soroban invoke \
@@ -378,28 +321,22 @@ soroban invoke \
 The following output should appear.
 
 ```json
-["Hello","friend"]
+["Hello", "friend"]
 ```
 
 [Write a Contract]: write-a-contract
 [Deploy to a Local Network]: deploy-to-local-network
 [Build]: build
 [`soroban-cli`]: ../getting-started/setup#install-the-soroban-cli
-    
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
 
-## Optimizing Builds    
-    
-Building optimized contracts to be as small as possible requires some additional
-tools, and requires installing the `nightly` Rust toolchain and `wasm-opt`.
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
-:::tip
-Building optimized contracts is only necessary when deploying to a network with
-fees or when analyzing and profiling a contract to get it as small as possible.
-If you're just starting out writing a contract, these steps are not necessary.
-See [Build] for details on how to build for development.
-:::
+## Optimizing Builds
+
+Building optimized contracts to be as small as possible requires some additional tools, and requires installing the `nightly` Rust toolchain and `wasm-opt`.
+
+:::tip Building optimized contracts is only necessary when deploying to a network with fees or when analyzing and profiling a contract to get it as small as possible. If you're just starting out writing a contract, these steps are not necessary. See [Build] for details on how to build for development. :::
 
 [Build]: build.mdx
 
@@ -417,8 +354,7 @@ rustup component add --toolchain nightly rust-src
 
 ### Install `wasm-opt`
 
-To install `wasm-opt`, install [`binaryen`]. Depending on your operating system
-there may be different ways to install it.
+To install `wasm-opt`, install [`binaryen`]. Depending on your operating system there may be different ways to install it.
 
 [`binaryen`]: https://github.com/WebAssembly/binaryen
 
@@ -444,16 +380,14 @@ https://github.com/WebAssembly/binaryen/releases
 </TabItem>
 <TabItem value="windows" label="Windows">
 
-For install options see:
-https://github.com/WebAssembly/binaryen/releases
+For install options see: https://github.com/WebAssembly/binaryen/releases
 
 </TabItem>
 </Tabs>
 
 ### Build with `nightly` and `wasm-opt`
 
-Build your contract using nightly. The additional options instruct the compiler
-to remove unnecessary information from the contract.
+Build your contract using nightly. The additional options instruct the compiler to remove unnecessary information from the contract.
 
 ```sh
 cargo +nightly build \

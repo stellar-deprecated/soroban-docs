@@ -3,60 +3,39 @@ sidebar_position: 8
 title: Auth (Advanced)
 ---
 
-The [advanced auth example] demonstrates how to write a contract that supports
-multiple forms of authentication using the [soroban-auth] crate.
+The [advanced auth example] demonstrates how to write a contract that supports multiple forms of authentication using the [soroban-auth] crate.
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.4.2
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp] [oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.4.2
 
 The example supports authentication by:
+
 - Being the invoker, as a transaction source account or a contract.
-- Presigned invocations with account signers or ed25519 keys, similar to
-[EIP-2612] and [EIP-712] in the Ethereum ecosystem.
+- Presigned invocations with account signers or ed25519 keys, similar to [EIP-2612] and [EIP-712] in the Ethereum ecosystem.
 
 [EIP-2612]: https://eips.ethereum.org/EIPS/eip-2612
 [EIP-712]: https://eips.ethereum.org/EIPS/eip-712
 
-:::info
-If you're just starting to explore Soroban, checkout the [auth example] that
-uses a simpler form of invoker auth.
-:::
+:::info If you're just starting to explore Soroban, checkout the [auth example] that uses a simpler form of invoker auth. :::
 
 Participants are identified with `Identifier`s that can represent an:
+
 - Account ID
 - Contract ID
 - Ed25519 key
 
-:::tip
-The `Identifier` type is a superset of the `Address` type used by the simpler
-invoker-only auth. This means that contracts that store data using `Address` as
-a key can often be updated to use `soroban-auth` without any impact to already
-stored data. See the [auth example] more details.
-:::
+:::tip The `Identifier` type is a superset of the `Address` type used by the simpler invoker-only auth. This means that contracts that store data using `Address` as a key can often be updated to use `soroban-auth` without any impact to already stored data. See the [auth example] more details. :::
 
-Participants specify how they are authenticating, and provide authentication by
-including a `Siganture` as an argument in the invocation. A `Signature` can be
-an:
+Participants specify how they are authenticating, and provide authentication by including a `Siganture` as an argument in the invocation. A `Signature` can be an:
+
 - Invoker – An invoking address (account ID or contract ID).
 - Account – An invocation presigned with account signers.
 - Ed25519 – An invocation presigned with an ed25519 key.
 
-In this example, data is stored associated with an `Identifier` after
-authorization has been verified. The contract supports auth via all methods
-above.
+In this example, data is stored associated with an `Identifier` after authorization has been verified. The contract supports auth via all methods above.
 
-:::info
-This example describes a specific implementation of the general principles of
-[authorization](../learn/authorization.mdx).
-:::
+:::info This example describes a specific implementation of the general principles of [authorization](../learn/authorization.mdx). :::
 
-:::caution
-The [soroban-auth] crate does not provide any functionality to prevent the
-replay of valid signatures. This example implements a form of [replay
-prevention](#verifying-the-nonce). Contracts must implement replay prevention that
-is appropriate for themselves.
-:::
-
+:::caution The [soroban-auth] crate does not provide any functionality to prevent the replay of valid signatures. This example implements a form of [replay prevention](#verifying-the-nonce). Contracts must implement replay prevention that is appropriate for themselves. :::
 
 [soroban-auth]: ../SDKs/rust-auth
 [auth example]: auth.mdx
@@ -64,8 +43,7 @@ is appropriate for themselves.
 
 ## Run the Example
 
-First go through the [Setup] process to get your development environment
-configured, then clone the `v0.4.2` tag of `soroban-examples` repository:
+First go through the [Setup] process to get your development environment configured, then clone the `v0.4.2` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
@@ -100,8 +78,7 @@ test test::test_auth_with_ed25519_wrong_nonce - should panic ... ok
 
 ## Dependencies
 
-The example uses the Soroban auth SDK, and has the following dependencies in its
-`Cargo.toml` file.
+The example uses the Soroban auth SDK, and has the following dependencies in its `Cargo.toml` file.
 
 ```toml title="authorization/src/Cargo.toml
 [dependencies]
@@ -201,9 +178,7 @@ Ref: https://github.com/stellar/soroban-examples/tree/v0.4.2/auth_advanced
 
 ## How it Works
 
-This example contract tracks a counter for each `Identifier`. It uses the
-`soroban-auth` crate to verify proof of identity through a `Signature`. How a
-signature is formed is different for different types of identifier.
+This example contract tracks a counter for each `Identifier`. It uses the `soroban-auth` crate to verify proof of identity through a `Signature`. How a signature is formed is different for different types of identifier.
 
 ### `soroban-auth`
 
@@ -211,8 +186,7 @@ Follow along in the docs for [soroban-auth].
 
 #### Identifiers
 
-The `soroban-auth` crate provides the `Identifier` type. Participants to be
-authenticated are one of these.
+The `soroban-auth` crate provides the `Identifier` type. Participants to be authenticated are one of these.
 
 ```rust
 pub enum Identifier {
@@ -222,10 +196,7 @@ pub enum Identifier {
 }
 ```
 
-The `Identifier` type is a superset of the `Address` type used by the simpler
-invoker-only auth. This means that contracts that store data using `Address` as
-a key can often be updated to use `soroban-auth` without any impact to already
-stored data. See the [auth example] more details.
+The `Identifier` type is a superset of the `Address` type used by the simpler invoker-only auth. This means that contracts that store data using `Address` as a key can often be updated to use `soroban-auth` without any impact to already stored data. See the [auth example] more details.
 
 ```rust
 pub enum Address {
@@ -236,8 +207,7 @@ pub enum Address {
 
 #### Signature
 
-The `soroban-auth` crate provides the `Signature` type. Participants submit a
-signature for the identifier they are proving.
+The `soroban-auth` crate provides the `Signature` type. Participants submit a signature for the identifier they are proving.
 
 ```rust
 pub enum Signature {
@@ -250,21 +220,18 @@ pub enum Signature {
 `Signature` values map to `Identifier` values:
 
 - Invoker
-   - Account – Maps to `Identifier::Account`.
-   - Contract – Maps to `Identifier::Contract`.
+  - Account – Maps to `Identifier::Account`.
+  - Contract – Maps to `Identifier::Contract`.
 - Account – Maps to `Identifier::Account`.
 - Ed25519 – Maps to `Identifier::Ed25519`.
 
 ##### Contract
 
-A contract identifier provides authentication of itself simply by being the
-invoker of the contract.
+A contract identifier provides authentication of itself simply by being the invoker of the contract.
 
 ##### Ed25519
 
-An ed25519 identifier provides a ed25519 signature using the private key
-corresponding to the public key included in the signature. The signature payload
-is the XDR serialized value of the `SignaturePayload` type.
+An ed25519 identifier provides a ed25519 signature using the private key corresponding to the public key included in the signature. The signature payload is the XDR serialized value of the `SignaturePayload` type.
 
 ```rust
 pub struct Ed25519Signature {
@@ -275,11 +242,7 @@ pub struct Ed25519Signature {
 
 ##### Account
 
-An account identifier provides ed25519 signatures for each ed25519 signer of the
-account.  Verification works the same as verification of ed25519 signers on the
-Stellar network. The total signing weight of the signers must exceed the medium
-threshold of the account. The signature payload is the XDR serialized value of
-the `SignaturePayload` type.
+An account identifier provides ed25519 signatures for each ed25519 signer of the account. Verification works the same as verification of ed25519 signers on the Stellar network. The total signing weight of the signers must exceed the medium threshold of the account. The signature payload is the XDR serialized value of the `SignaturePayload` type.
 
 ```rust
 pub struct AccountSignatures {
@@ -290,17 +253,11 @@ pub struct AccountSignatures {
 
 #### Signature Payload
 
-The signature payload is the payload that ed25519 signers sign for both the
-account and ed25519 signature types.
+The signature payload is the payload that ed25519 signers sign for both the account and ed25519 signature types.
 
-The `network`, `contract`, and `name` fields of the payload act as a domain
-separator to prevent the signature for a set of arguments for the invocation of
-one function or contract being valid for another function or contract.
+The `network`, `contract`, and `name` fields of the payload act as a domain separator to prevent the signature for a set of arguments for the invocation of one function or contract being valid for another function or contract.
 
-The `name` field should be a value that sufficiently scopes where within a
-contract the signature should be valid. In some cases it may be the name of the
-function being invoked. It could be some other value depending on the needs of
-the contract.
+The `name` field should be a value that sufficiently scopes where within a contract the signature should be valid. In some cases it may be the name of the function being invoked. It could be some other value depending on the needs of the contract.
 
 ```rust
 pub enum SignaturePayload {
@@ -321,14 +278,11 @@ Open the `auth_advanced/src/lib.rs` file to follow along.
 
 #### Data
 
-The example stores two types of data, and uses an enum to distinguish keys
-for the two types of data scoped by an `Identifier`.
+The example stores two types of data, and uses an enum to distinguish keys for the two types of data scoped by an `Identifier`.
 
-Each identifier will store a counter value, which is the value being incremented
-by the invocation.
+Each identifier will store a counter value, which is the value being incremented by the invocation.
 
-Each identifier will store a nonce value, which is the next expected nonce and
-will be used for replay prevention.
+Each identifier will store a nonce value, which is the next expected nonce and will be used for replay prevention.
 
 ```rust
 #[contracttype]
@@ -340,8 +294,7 @@ pub enum DataKey {
 
 #### Verify
 
-The `increment` contract function increments a number for each `Identifier`
-stored with key `DataKey::Counter`.
+The `increment` contract function increments a number for each `Identifier` stored with key `DataKey::Counter`.
 
 The `soroban_auth::verify` method verifies the input `Signature`.
 
@@ -354,43 +307,29 @@ pub fn increment(env: Env, sig: Signature, nonce: i128) -> u32 {
 ```
 
 The function inputs are:
+
 - `nonce` – Included in the arguments of the function to prevent replay.
 - `sig` – The `Signature` that proves the `Identifier` it contains. The contract
 
 The verification inputs are:
+
 - `&sig` – The `Signature` to verify.
-- `symbol!("increment")` – The scope of where the signature should be valid
-within this contract. In this example the scope is the name of this function.
-- `&id` – The identifier the `Signature` signs approving the operation to
-increment that identifiers number.
-- `&nonce` – The nonce to ensure the replay prevention value is included in the
-`SignaturePayload`.
+- `symbol!("increment")` – The scope of where the signature should be valid within this contract. In this example the scope is the name of this function.
+- `&id` – The identifier the `Signature` signs approving the operation to increment that identifiers number.
+- `&nonce` – The nonce to ensure the replay prevention value is included in the `SignaturePayload`.
 
 #### Verifying the Nonce
 
-The `increment` function verifies the nonce passed in and signed in the
-`SignaturePayload` is the next expected nonce for the identifier.
+The `increment` function verifies the nonce passed in and signed in the `SignaturePayload` is the next expected nonce for the identifier.
 
-:::caution
-Whenever signatures are used to permit an operation, there is a risk of replay.
-Replay occurs when a signature is used to permit an operation multiple times.
-Such a situation can be catastrophic. For example, if you produce a signature
-that permits $1 to be sent to an acquantaince and there is no replay prevention,
-then a malicious acquantaince could use that signature to repeatedly transfer $1
-from you to them. In the end, your account would be empty.
+:::caution Whenever signatures are used to permit an operation, there is a risk of replay. Replay occurs when a signature is used to permit an operation multiple times. Such a situation can be catastrophic. For example, if you produce a signature that permits $1 to be sent to an acquantaince and there is no replay prevention, then a malicious acquantaince could use that signature to repeatedly transfer $1 from you to them. In the end, your account would be empty.
 
-Contracts can provide replay prevention by numerous methods. One approach is by
-including a sequential [nonce] as an argument in the `SignaturePayload` and
-writing the contract such that it will not allow that nonce to be used more than
-once. A sequential nonce is incremented on each use. The `SignaturePayload`
-includes the nonce as a number.  The contract stores the next expected nonce,
-for each identifier. After verifying the signature, the contract loads the nonce
-for the relevant identifier, checks that it matches the value in the signature,
-and increments the value stored. This prevents reuse of the signature.
+Contracts can provide replay prevention by numerous methods. One approach is by including a sequential [nonce] as an argument in the `SignaturePayload` and writing the contract such that it will not allow that nonce to be used more than once. A sequential nonce is incremented on each use. The `SignaturePayload` includes the nonce as a number. The contract stores the next expected nonce, for each identifier. After verifying the signature, the contract loads the nonce for the relevant identifier, checks that it matches the value in the signature, and increments the value stored. This prevents reuse of the signature.
 
 This example uses a sequential nonce for replay prevention.
 
 [nonce]: https://en.wikipedia.org/wiki/Cryptographic_nonce
+
 :::
 
 ```rust
@@ -403,15 +342,9 @@ pub fn increment(env: Env, sig: Signature, nonce: i128) -> u32 {
 
 When determining the next expected nonce the type of `Signature` is considered.
 
-Invokers need no replay prevention. Invocations directly from an account in a
-Stellar transaction get replay prevention from the Stellar transaction they are
-submitted in, because Stellar transactions contain a sequence number that
-operates like a nonce for the account. Contract invokers control when an
-invocation occurs so also do not provide a nonce.
+Invokers need no replay prevention. Invocations directly from an account in a Stellar transaction get replay prevention from the Stellar transaction they are submitted in, because Stellar transactions contain a sequence number that operates like a nonce for the account. Contract invokers control when an invocation occurs so also do not provide a nonce.
 
-Presigned ed25519 signatures and account signatures get the stored nonce, verify
-it matches the nonce included in this invocation, and error if not. The nonce is
-incremented so that the value is consumed and cannot be reused.
+Presigned ed25519 signatures and account signatures get the stored nonce, verify it matches the nonce included in this invocation, and error if not. The nonce is incremented so that the value is consumed and cannot be reused.
 
 ```rust
 fn verify_and_consume_nonce(env: &Env, sig: &Signature, nonce: i128) {
@@ -442,20 +375,11 @@ fn set_nonce(env: &Env, id: &Identifier, nonce: i128) {
 }
 ```
 
-:::info
-If a contract function errors by returning an error or panicking with an error
-or string, any operations the contract has performed such as emitting events or
-storing data are rolled back. This also applies to incrementing of the nonce.
-If a contract needs the nonce to be consumed on failed invocations, the contract
-needs to be written so that an error is not returned and the invocation does not
-fail.
-:::
+:::info If a contract function errors by returning an error or panicking with an error or string, any operations the contract has performed such as emitting events or storing data are rolled back. This also applies to incrementing of the nonce. If a contract needs the nonce to be consumed on failed invocations, the contract needs to be written so that an error is not returned and the invocation does not fail. :::
 
 #### Storing Data Scoped by Identifier
 
-The `increment` function stores the counter for each identifier using the
-`DataKey::Counter` enum variant. If the contract evolves to store other data new
-enum variants can be added for any new data items.
+The `increment` function stores the counter for each identifier using the `DataKey::Counter` enum variant. If the contract evolves to store other data new enum variants can be added for any new data items.
 
 ```rust
 // Construct a key for the data being stored. Use an enum to set the
@@ -477,9 +401,8 @@ env.storage().set(&key, count);
 ```
 
 #### Retrieving the Nonce
-Users of this contract will need to know which nonce to use. The contract could
-expect users to keep track of the next nonce to use, but that may not be
-trivial, so the contract exports a function that provides the information.
+
+Users of this contract will need to know which nonce to use. The contract could expect users to keep track of the next nonce to use, but that may not be trivial, so the contract exports a function that provides the information.
 
 ```rust
 pub fn nonce(env: Env, id: Identifier) -> i128 {
@@ -493,8 +416,7 @@ Open the `auth_advanced/src/test.rs` file to follow along.
 
 #### Testing Auth by Invoker
 
-The contract supports authentication with an invoker. The way this works is very
-similar to the simpler [auth example].
+The contract supports authentication with an invoker. The way this works is very similar to the simpler [auth example].
 
 ```rust title="auth/src/test.rs"
 #[test]
@@ -518,16 +440,13 @@ fn test_auth_with_invoker() {
 
 The test generates account IDs for two users.
 
-The `generate` function creates a new account ID that the test can use to
-represent an account interacting with the contract.
+The `generate` function creates a new account ID that the test can use to represent an account interacting with the contract.
+
 ```rust
 let _ = env.accounts().generate();
 ```
 
-The `increment` function is invoked with the users configured as the source
-account and therefore the invoker. The invocation still requires a `Signature`
-and `nonce` to be provided, but for an invoker in this example these values are
-very simple.
+The `increment` function is invoked with the users configured as the source account and therefore the invoker. The invocation still requires a `Signature` and `nonce` to be provided, but for an invoker in this example these values are very simple.
 
 ```rust
 client
@@ -535,17 +454,11 @@ client
     .increment(&Signature::Invoker, &0),
 ```
 
-:::tip
-Functions invoked in tests can use `with_source_account(account_id)` to simulate
-an invocation from an account, and the invoked function will see `env.invoker()`
-as `Address::Account(account_id)`.
-:::
+:::tip Functions invoked in tests can use `with_source_account(account_id)` to simulate an invocation from an account, and the invoked function will see `env.invoker()` as `Address::Account(account_id)`. :::
 
 #### Testing Auth by Ed25519
 
-The contract supports authentication with an ed25519 signature. This form of
-auth can be useful for situations where a participant has no existence on
-network.
+The contract supports authentication with an ed25519 signature. This form of auth can be useful for situations where a participant has no existence on network.
 
 ```rust title="auth/src/test.rs"
 #[test]
@@ -574,16 +487,14 @@ fn test_auth_with_ed25519() {
 
 The test generates ed25519 keys and identifiers for two users.
 
-The `generate` function creates a new random ed25519 key that the test can use
-to produce signatures and verify to an identifier. The generate function
-provides the identifier that the signer can sign for.
+The `generate` function creates a new random ed25519 key that the test can use to produce signatures and verify to an identifier. The generate function provides the identifier that the signer can sign for.
+
 ```rust
 let (user_1_id, user_1_sign) = soroban_auth::testutils::ed25519::generate(&env);
 ```
 
-The `sign` function produces a valid signature for the inputs. These inputs
-should match the inputs that the `verify` function within the contract will
-use.
+The `sign` function produces a valid signature for the inputs. These inputs should match the inputs that the `verify` function within the contract will use.
+
 ```rust
 let sig = soroban_auth::testutils::ed25519::sign(
     &env,
@@ -600,8 +511,7 @@ The `increment` function is invoked with the signature and the nonce.
 client.increment(&sig, &nonce)
 ```
 
-Open the `auth_advanced/src/test.rs` file to view other tests that demonstrate
-how to test signature and nonce failure.
+Open the `auth_advanced/src/test.rs` file to view other tests that demonstrate how to test signature and nonce failure.
 
 ## Build the Contract
 
@@ -621,13 +531,9 @@ target/wasm32-unknown-unknown/release/soroban_auth_advanced_contract.wasm
 
 If you have [`soroban-cli`] installed, you can invoke functions on the contract.
 
-:::caution
-The [`soroban-cli`] is in development and passing enum and struct values as
-inputs requires typing their raw JSON representation. Improvements are planned.
-:::
+:::caution The [`soroban-cli`] is in development and passing enum and struct values as inputs requires typing their raw JSON representation. Improvements are planned. :::
 
-To invoke the contract as an account invoker the `Signature` to be passed must
-be a single-element `Vec` containing the `Symbol` `"Invoker"`.
+To invoke the contract as an account invoker the `Signature` to be passed must be a single-element `Vec` containing the `Symbol` `"Invoker"`.
 
 ```sh
 soroban invoke \
@@ -656,6 +562,7 @@ View the data that has been stored against each user with `soroban read`.
 ```sh
 soroban read --id 1
 ```
+
 ```
 "[""Counter"",[""Account"",""GC24I42QMKKR4NE6IYNPCQHUO4PXWXDGNZ7QVMMSR5EWAYSGKBHPLGHH""]]",1
 "[""Counter"",[""Account"",""GDQHNBKFCO666SPX4RS62VTDY7H5W2QXHVVVQCDTADTOI3IYZGEOZL6V""]]",3

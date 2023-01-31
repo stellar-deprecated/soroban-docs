@@ -1,7 +1,15 @@
 ---
-sidebar_position: 1
-title: Token Interface
+sidebar_position: 15
+title: Token
 ---
+
+The [token example] demonstrates how to write a token contract that implements the common token interface below.
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp] [oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.4.2
+
+[token example]: https://github.com/stellar/soroban-examples/tree/v0.4.2/token
+
+## Token interface
 
 Token contracts, including the Stellar Asset Contract and example token implementations expose the following common interface.
 
@@ -156,5 +164,5 @@ pub trait Contract {
 
 Most types that a token implementation utilizes are provided by the [soroban-sdk] and [soroban-auth] crates.
 
-[soroban-sdk]: ../SDKs/rust
-[soroban-auth]: ../SDKs/rust-auth
+[soroban-sdk]: ../sdks/rust
+[soroban-auth]: ../sdks/rust-auth

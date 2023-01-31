@@ -1,5 +1,5 @@
 ---
-sidebar_position: 1
+sidebar_position: 18
 title: Stellar Asset Contract
 ---
 
@@ -15,11 +15,11 @@ The Stellar Asset Contract is an implementation of [CAP-46-6 Smart Contract Stan
 
 Stellar has numerous assets on its classic network, and being able to use them in Soroban would give users much more flexibility with how they can use their assets. For this reason, we introduced the Stellar Asset Contract, or SAC for short, which will allow users to use their Stellar account and trustline balances in Soroban.
 
-The SAC implements the [token interface](../common-interfaces/token.mdx), which is similar to the widely used ERC-20 token standard. This should make it easier for existing smart contract developers to get started on Stellar.
+The SAC implements the [token interface](./token-example-and-interface.mdx), which is similar to the widely used ERC-20 token standard. This should make it easier for existing smart contract developers to get started on Stellar.
 
 ## Deployment
 
-For every 'classic' asset exactly one respective Stellar Asset Contract can be deployed. It can be deployed using the `InvokeHostFunctionOp` with `HOST_FUNCTION_TYPE_CREATE_CONTRACT` and `CONTRACT_ID_FROM_ASSET` specified [here](../tutorials/invoking-contracts-with-transactions). The resulting token will have a deterministic identifier, which will be the sha256 hash of `HashIDPreimage::ENVELOPE_TYPE_CONTRACT_ID_FROM_ASSET` xdr specified [here](https://github.com/stellar/stellar-xdr/blob/026c9cd074bdb28ddde8ee52f2a4502d9e518a09/Stellar-transaction.x#L637).
+For every 'classic' asset exactly one respective Stellar Asset Contract can be deployed. It can be deployed using the `InvokeHostFunctionOp` with `HOST_FUNCTION_TYPE_CREATE_CONTRACT` and `CONTRACT_ID_FROM_ASSET` specified [here](./invoking-contracts-with-transactions). The resulting token will have a deterministic identifier, which will be the sha256 hash of `HashIDPreimage::ENVELOPE_TYPE_CONTRACT_ID_FROM_ASSET` xdr specified [here](https://github.com/stellar/stellar-xdr/blob/026c9cd074bdb28ddde8ee52f2a4502d9e518a09/Stellar-transaction.x#L637).
 
 ## Interacting with classic Stellar assets
 
@@ -42,7 +42,7 @@ After the contract has been deployed, users can use their classic account or tru
 
 ## Authorization semantics
 
-See the [advanced auth example](../examples/auth-advanced) for an overview of authorization.
+See the [advanced auth example](./auth-advanced.mdx) for an overview of authorization.
 
 ### SAC operations
 
@@ -66,7 +66,7 @@ The current nonce for an identity can be retrieved using the `nonce` contract fu
 
 ### Example: Invoker auth
 
-The easiest way to use the built-in token with classic accounts is to just use the [invoker](../examples/auth.mdx#invoker) auth. In this way there won't be a need to sign the contract payload, so the contract call would look like this:
+The easiest way to use the built-in token with classic accounts is to just use the [invoker](./auth.mdx#invoker) auth. In this way there won't be a need to sign the contract payload, so the contract call would look like this:
 
 ```rust
 // `with_source_account` is a testing utility, but the contract call arguments
@@ -86,7 +86,7 @@ See a more complete example that uses invoker auth in the tests [here](https://g
 
 ### Example: Signing payloads
 
-The payload signature semantics is the same as for regular contracts using [advanced auth](../examples/auth-advanced.mdx). The following snippet shows how should the signature payload look like:
+The payload signature semantics is the same as for regular contracts using [advanced auth](./auth-advanced.mdx). The following snippet shows how should the signature payload look like:
 
 ```rust
 let nonce = token.nonce(&token_admin_id);
@@ -116,7 +116,7 @@ token.mint(
 
 ## Contract Interface
 
-This interface can be found in the [SDK](https://github.com/stellar/rs-soroban-sdk/blob/main/soroban-token-spec/src/lib.rs). It extends the common [token interface](../common-interfaces/token.mdx).
+This interface can be found in the [SDK](https://github.com/stellar/rs-soroban-sdk/blob/main/soroban-token-spec/src/lib.rs). It extends the common [token interface](./token-example-and-interface.mdx).
 
 ## Interacting with the token contract in tests
 

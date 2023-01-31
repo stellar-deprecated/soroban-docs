@@ -7,37 +7,17 @@ title: Interacting with contracts
 
 ### Function call
 
-A function call is the simplest and least expensive kind of contract
-interaction. A function call does exactly what you would expect a contract call
-to do in any other software development context: the contract transfers control
-and data to another part of the _same_ contract. Because a function call always
-transfers control to the same contract, they do not change the values returned
-by `get_current_contract` and `get_invoking_contract`. A function call is the
-only way to access the private methods of a contract, although it can also
-be used to access the public methods of a contract.
+A function call is the simplest and least expensive kind of contract interaction. A function call does exactly what you would expect a contract call to do in any other software development context: the contract transfers control and data to another part of the _same_ contract. Because a function call always transfers control to the same contract, they do not change the values returned by `get_current_contract` and `get_invoking_contract`. A function call is the only way to access the private methods of a contract, although it can also be used to access the public methods of a contract.
 
 To perform a function call, simply make a Rust function call.
 
 ### Contract invocation
 
-A contract invocation is a more powerful and more expensive kind of contract
-interaction. A contract invocation is similar to starting a new process because
-the code that runs will be in a separate address space, meaning that they do
-not share any data other than what was passed in the invocation. While a
-contract invocation typically transfers control to a _different_ contract, it
-is possible to transfer control to the currently running contract. Regardless
-of whether the contract that receives control is a different contract or the
-currently running contract, the value returned by `get_invoking_contract` will
-be the previous value of `get_current_contract`. A contract invocation can only
-access the public methods of a contract.
+A contract invocation is a more powerful and more expensive kind of contract interaction. A contract invocation is similar to starting a new process because the code that runs will be in a separate address space, meaning that they do not share any data other than what was passed in the invocation. While a contract invocation typically transfers control to a _different_ contract, it is possible to transfer control to the currently running contract. Regardless of whether the contract that receives control is a different contract or the currently running contract, the value returned by `get_invoking_contract` will be the previous value of `get_current_contract`. A contract invocation can only access the public methods of a contract.
 
-If a contract contains a public function `f`, then invoking `f` can be done by
-making a Rust function call to `f::invoke`.
+If a contract contains a public function `f`, then invoking `f` can be done by making a Rust function call to `f::invoke`.
 
-Some contracts, such as the token contract, only export the contract invocation
-functions. In doing so, they are able to assign those functions friendly names.
-For example,
-[initialize](https://github.com/stellar/soroban-token-contract/blob/42380647bb817bf01c739c19286f18be881e0e41/src/contract.rs#L55-L57)
+Some contracts, such as the token contract, only export the contract invocation functions. In doing so, they are able to assign those functions friendly names. For example, [initialize](https://github.com/stellar/soroban-token-contract/blob/42380647bb817bf01c739c19286f18be881e0e41/src/contract.rs#L55-L57)
 
 ```rust
 #[contractimpl(export_if = "export")]
@@ -45,8 +25,7 @@ impl TokenTrait for Token {
     fn initialize(e: Env, admin: Identifier, decimal: u32, name: Binary, symbol: Binary) {
 ```
 
-is [exported](https://github.com/stellar/soroban-token-contract/blob/42380647bb817bf01c739c19286f18be881e0e41/src/lib.rs#L26)
-as
+is [exported](https://github.com/stellar/soroban-token-contract/blob/42380647bb817bf01c739c19286f18be881e0e41/src/lib.rs#L26) as
 
 ```rust
 pub use crate::contract::initialize::invoke as initialize;
@@ -56,31 +35,15 @@ This function is then easily [called by the liquidity pool contract](https://git
 
 ### Stellar Operation
 
-A Stellar operation is the ultimate entrypoint of every contract interaction. An
-operation transfers control and external data to a contract, allowing execution
-to begin.
+A Stellar operation is the ultimate entrypoint of every contract interaction. An operation transfers control and external data to a contract, allowing execution to begin.
 
-This kind of interaction is currently supported in experimental versions of
-stellar-core only.
+This kind of interaction is currently supported in experimental versions of stellar-core only.
 
 ## Interacting with contracts in tests
 
-[Debugging contracts](debugging) explains that
-it is much more convenient to debug using native code than WASM. Given that you
-are testing native code, it is tempting to interact with your contract directly
-using function calls. If you attempt this approach, you will find that it
-doesn't always work. Function call interactions do not set the environment into
-the correct state for contract execution, so functions involving contract data
-and determining the current or invoking contract will not work.
+[Debugging contracts](debugging) explains that it is much more convenient to debug using native code than WASM. Given that you are testing native code, it is tempting to interact with your contract directly using function calls. If you attempt this approach, you will find that it doesn't always work. Function call interactions do not set the environment into the correct state for contract execution, so functions involving contract data and determining the current or invoking contract will not work.
 
-When writing tests, it is important to always interact with contracts through
-contract invocation. In a production setting, contract invocation will execute
-WASM bytecode loaded from the ledger. So how does this work if you are testing
-native code? You must register your contract with the environment so it knows
-what functions are available and how to call them. While this sounds complex,
-the `contractimpl` procedural macro automatically generates almost all of the
-code to do this. All you have to do is write a small [stub](https://github.com/stellar/soroban-token-contract/blob/42380647bb817bf01c739c19286f18be881e0e41/src/testutils.rs#L12-L15)
-to actually call the generated code, such as
+When writing tests, it is important to always interact with contracts through contract invocation. In a production setting, contract invocation will execute WASM bytecode loaded from the ledger. So how does this work if you are testing native code? You must register your contract with the environment so it knows what functions are available and how to call them. While this sounds complex, the `contractimpl` procedural macro automatically generates almost all of the code to do this. All you have to do is write a small [stub](https://github.com/stellar/soroban-token-contract/blob/42380647bb817bf01c739c19286f18be881e0e41/src/testutils.rs#L12-L15) to actually call the generated code, such as
 
 ```rust
 pub fn register_test_contract(e: &Env, contract_id: &[u8; 32]) {
@@ -89,18 +52,13 @@ pub fn register_test_contract(e: &Env, contract_id: &[u8; 32]) {
 }
 ```
 
-Some contracts, such as the token contract, also provide a [friendlier interface](https://github.com/stellar/soroban-token-contract/blob/42380647bb817bf01c739c19286f18be881e0e41/src/testutils.rs#L26-L191)
-to facilitate testing. There are many ways these interfaces might make testing
-easier, but one common one is to allow automatic message signing by passing a
-[ed25519_dalek::Keypair](https://docs.rs/ed25519-dalek/latest/ed25519_dalek/struct.Keypair.html).
+Some contracts, such as the token contract, also provide a [friendlier interface](https://github.com/stellar/soroban-token-contract/blob/42380647bb817bf01c739c19286f18be881e0e41/src/testutils.rs#L26-L191) to facilitate testing. There are many ways these interfaces might make testing easier, but one common one is to allow automatic message signing by passing a [ed25519_dalek::Keypair](https://docs.rs/ed25519-dalek/latest/ed25519_dalek/struct.Keypair.html).
 
-Note that everything described in this section is only available if the
-`testutils` feature is enabled.
+Note that everything described in this section is only available if the `testutils` feature is enabled.
 
 ### Example
 
-This machinery can also be used to test multiple contracts together. For
-example, the single offer contract test case [creates a token](https://github.com/stellar/soroban-examples/blob/56fef787395b5aed7cd7b19772cca28e21b3feb5/single_offer/src/test.rs#L22).
+This machinery can also be used to test multiple contracts together. For example, the single offer contract test case [creates a token](https://github.com/stellar/soroban-examples/blob/56fef787395b5aed7cd7b19772cca28e21b3feb5/single_offer/src/test.rs#L22).
 
 <details>
 <summary>Advanced</summary>
@@ -109,21 +67,21 @@ example, the single offer contract test case [creates a token](https://github.co
 
 Contracts are invoked through a pair of host functions `call` and `try_call`:
 
-  - `try_call(contract, function, args)` calls `function` exported from `contract`, passing `args` and returning a `Status` on any error.
-  - `call(contract, function, args)` just calls `try_call` with its arguments and traps on `Status`, essentially propagating the error.
+- `try_call(contract, function, args)` calls `function` exported from `contract`, passing `args` and returning a `Status` on any error.
+- `call(contract, function, args)` just calls `try_call` with its arguments and traps on `Status`, essentially propagating the error.
 
 In both cases `contract` is a `Binary` host object containing the contract ID, `function` is a `Symbol` holding the name of an exported function to call, and `args` is a `Vector` of values to pass as arguments.
 
 These host functions can be invoked in two separapte ways:
 
-  - From outside the host, such as when a user submits a transaction that calls a contract.
-  - From within the host, when one contract calls another.
+- From outside the host, such as when a user submits a transaction that calls a contract.
+- From within the host, when one contract calls another.
 
 Both cases follow the same logic:
 
-  - The contract's WASM bytecode is retrieved from a `CONTRACT_DATA` ledger entry in the host's storage system.
-  - A WASM VM is instantiated for the duration of the invocation.
-  - The function is looked up and invoked, with arguments passed from caller to callee.
+- The contract's WASM bytecode is retrieved from a `CONTRACT_DATA` ledger entry in the host's storage system.
+- A WASM VM is instantiated for the duration of the invocation.
+- The function is looked up and invoked, with arguments passed from caller to callee.
 
 When a call occurs from outside the host, any arguments will typically be provided in serialized XDR form accompanying the transaction, and will be deserialized and converted to host objects automatically before invoking the contract.
 

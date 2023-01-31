@@ -3,14 +3,12 @@ sidebar_position: 5
 title: Testing
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
-Writing tests for Soroban contracts involves writing Rust code using the test
-facilities and toolchain that you'd use for testing any Rust code.
+Writing tests for Soroban contracts involves writing Rust code using the test facilities and toolchain that you'd use for testing any Rust code.
 
-Given a simple contract like the contract demonstrated in [Write a
-Contract](write-a-contract.mdx), a simple test will look like this.
+Given a simple contract like the contract demonstrated in [Write a Contract](write-a-contract.mdx), a simple test will look like this.
 
 <Tabs>
 <TabItem value="lib.rs" label="src/lib.rs">
@@ -55,30 +53,22 @@ fn test() {
 }
 ```
 
-
 </TabItem>
 </Tabs>
 
-In any test the first thing that is always required is an `Env`, which is the
-Soroban environment that the contract will run inside of.
+In any test the first thing that is always required is an `Env`, which is the Soroban environment that the contract will run inside of.
 
 ```rust
 let env = Env::default();
 ```
 
-The contract is registered with the environment using the contract type.
-Contracts can specify a fixed contract ID as the first argument, or provide
-`None` and one will be generated.
+The contract is registered with the environment using the contract type. Contracts can specify a fixed contract ID as the first argument, or provide `None` and one will be generated.
 
 ```rust
 let contract_id = env.register_contract(None, Contract);
 ```
 
-All public functions within an `impl` block that is annotated with the
-`#[contractimpl]` attribute have a corresponding function generated in a
-generated client type. The client type will be named the same as the contract
-type with `Client` appended. For example, in our contract the contract type is
-`Contract`, and the client is named `ContractClient`.
+All public functions within an `impl` block that is annotated with the `#[contractimpl]` attribute have a corresponding function generated in a generated client type. The client type will be named the same as the contract type with `Client` appended. For example, in our contract the contract type is `Contract`, and the client is named `ContractClient`.
 
 ```rust
 let client = ContractClient::new(&env, &contract_id);
@@ -86,6 +76,7 @@ let words = client.hello(&symbol!("Dev"));
 ```
 
 The values returned by functions can be asserted on:
+
 ```rust
 assert_eq!(
     words,

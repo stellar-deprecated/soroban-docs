@@ -3,36 +3,28 @@ sidebar_position: 7
 title: Auth
 ---
 
-The [auth example] demonstrates how to tell who has invoked a contract, and
-verify that a contract has been invoked by an account or contract. This example
-is an extension of the [storing data example].
+The [auth example] demonstrates how to tell who has invoked a contract, and verify that a contract has been invoked by an account or contract. This example is an extension of the [storing data example].
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.4.2
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp] [oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.4.2
 
 [events example]: https://github.com/stellar/soroban-examples/tree/v0.4.2/events
 [storing data example]: storing-data.mdx
 
 The participant who invoked a contract is an `Address` containing one-of a:
+
 - Account ID
 - Contract ID
 
-In this example, data is stored associated with an `Address` after
-authorization has been verified.
+In this example, data is stored associated with an `Address` after authorization has been verified.
 
-:::info
-For contracts that would benefit from supporting auth with presigned
-invocations, or ed25519 keys independent of accounts and contracts, see the
-[advanced auth example].
-:::
+:::info For contracts that would benefit from supporting auth with presigned invocations, or ed25519 keys independent of accounts and contracts, see the [advanced auth example]. :::
 
 [auth example]: https://github.com/stellar/soroban-examples/tree/v0.4.2/auth
 [advanced auth example]: auth-advanced.mdx
 
 ## Run the Example
 
-First go through the [Setup] process to get your development environment
-configured, then clone the `v0.4.2` tag of `soroban-examples` repository:
+First go through the [Setup] process to get your development environment configured, then clone the `v0.4.2` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
@@ -42,8 +34,7 @@ git clone -b v0.4.2 https://github.com/stellar/soroban-examples
 
 Or, skip the development environment setup and open this example in [Gitpod][oigp].
 
-To run the tests for the example, navigate to the `auth` directory, and use
-`cargo test`.
+To run the tests for the example, navigate to the `auth` directory, and use `cargo test`.
 
 ```
 cd auth
@@ -105,45 +96,35 @@ Open the `auth/src/lib.rs` file to follow along.
 
 ### Invoker
 
-The invoker is an `Address` of the account or contract that directly
-invoked the contract function.
+The invoker is an `Address` of the account or contract that directly invoked the contract function.
 
 ```rust
 let invoker = env.invoker();
 ```
 
-The `env.invoker()` always returns the invoker of the currently executing
-contract. It will return either:
-- `Account` with an `AccountId` if the contract was invoked directly by an
-account.
-- `Contract` with a `BytesN<32>` contract ID if the contract was invoked by
-another contract.
+The `env.invoker()` always returns the invoker of the currently executing contract. It will return either:
 
-Contracts should not need to unpack the `Address` for most use cases. Contracts
-should treat the value as opaque wherever possible so that they are
-interoperable with accounts and contracts.
+- `Account` with an `AccountId` if the contract was invoked directly by an account.
+- `Contract` with a `BytesN<32>` contract ID if the contract was invoked by another contract.
 
-The `Address` value can be used as a key in storage to store data for a user.
-The example contract only reads and writes data for the authenticated invoker,
-and so the only thing that can access or change the data for an invoker, is the
-invoker themselves.
+Contracts should not need to unpack the `Address` for most use cases. Contracts should treat the value as opaque wherever possible so that they are interoperable with accounts and contracts.
 
-:::tip
-Enum keys like `DataKey` can be a helpful way to store a variety of different
-types of data keyed against the same or similar things. In the example the
-counter for each address is stored against `DataKey::Counter(Address)`. If the
-contract needs to start storing other types of data for addresses, it can do so
-by adding additional variants to the enum.
+The `Address` value can be used as a key in storage to store data for a user. The example contract only reads and writes data for the authenticated invoker, and so the only thing that can access or change the data for an invoker, is the invoker themselves.
+
+:::tip Enum keys like `DataKey` can be a helpful way to store a variety of different types of data keyed against the same or similar things. In the example the counter for each address is stored against `DataKey::Counter(Address)`. If the contract needs to start storing other types of data for addresses, it can do so by adding additional variants to the enum.
+
 ```rust
 #[contracttype]
 pub enum DataKey {
     Counter(Address),
 }
 ```
+
 ```rust
 let invoker = env.invoker();
 let key = DataKey::Counter(invoker);
 ```
+
 :::
 
 ### Tests
@@ -168,8 +149,7 @@ fn test() {
 
 ```
 
-In any test the first thing that is always required is an `Env`, which is the
-Soroban environment that the contract will run in.
+In any test the first thing that is always required is an `Env`, which is the Soroban environment that the contract will run in.
 
 ```rust
 let env = Env::default();
@@ -181,11 +161,7 @@ The contract is registered with the environment using the contract type.
 let contract_id = env.register_contract(None, IncrementContract);
 ```
 
-All public functions within an `impl` block that is annotated with the
-`#[contractimpl]` attribute have a corresponding function generated in a
-generated client type. The client type will be named the same as the contract
-type with `Client` appended. For example, in our contract the contract type is
-`IncrementContract`, and the client is named `IncrementContractClient`.
+All public functions within an `impl` block that is annotated with the `#[contractimpl]` attribute have a corresponding function generated in a generated client type. The client type will be named the same as the contract type with `Client` appended. For example, in our contract the contract type is `IncrementContract`, and the client is named `IncrementContractClient`.
 
 ```rust
 let client = IncrementContractClient::new(&env, &contract_id);
@@ -193,35 +169,26 @@ let client = IncrementContractClient::new(&env, &contract_id);
 
 The contract generates account IDs for two users.
 
-The `generate` function creates a new account ID that the test can use to
-represent an account interacting with the contract.
+The `generate` function creates a new account ID that the test can use to represent an account interacting with the contract.
+
 ```rust
 let _ = env.accounts().generate();
 ```
 
-The `increment` function is invoked twice with `user_1` configured as the source
-account and therefore the invoker. The results are asserted to be `1` and `2`
-because it is the first and second increments for the user.
+The `increment` function is invoked twice with `user_1` configured as the source account and therefore the invoker. The results are asserted to be `1` and `2` because it is the first and second increments for the user.
 
 ```rust
 assert_eq!(client.with_source_account(&user_1).increment(), 1);
 assert_eq!(client.with_source_account(&user_1).increment(), 2);
 ```
 
-The `increment` function is invoked once with `user_2` configured as the source
-account. The results are asserted to be `1` because it is the first increment
-for the user. The first users data is separate to that of the second users. The
-users have no access to each others data.
+The `increment` function is invoked once with `user_2` configured as the source account. The results are asserted to be `1` because it is the first increment for the user. The first users data is separate to that of the second users. The users have no access to each others data.
 
 ```rust
 assert_eq!(client.with_source_account(&user_2).increment(), 1);
 ```
 
-:::tip
-Functions invoked in tests can use `with_source_account(account_id)` to simulate
-an invocation from an account, and the invoked function will see `env.invoker()`
-as `Address::Account(account_id)`.
-:::
+:::tip Functions invoked in tests can use `with_source_account(account_id)` to simulate an invocation from an account, and the invoked function will see `env.invoker()` as `Address::Account(account_id)`. :::
 
 ## Build the Contract
 
@@ -264,6 +231,7 @@ View the data that has been stored against each user with `soroban read`.
 ```sh
 soroban read --id 1
 ```
+
 ```
 "[""Counter"",[""Account"",""GC24I42QMKKR4NE6IYNPCQHUO4PXWXDGNZ7QVMMSR5EWAYSGKBHPLGHH""]]",1
 "[""Counter"",[""Account"",""GDQHNBKFCO666SPX4RS62VTDY7H5W2QXHVVVQCDTADTOI3IYZGEOZL6V""]]",3

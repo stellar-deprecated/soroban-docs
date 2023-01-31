@@ -3,26 +3,15 @@ sidebar_position: 5
 title: Custom Types
 ---
 
-Custom types are struct, union, and enum types defined by contracts. They are
-usable everywhere primitives types can be used: as contract inputs, outputs, or
-for storage.
+Custom types are struct, union, and enum types defined by contracts. They are usable everywhere primitives types can be used: as contract inputs, outputs, or for storage.
 
-:::info
-The [custom types example] demonstrates how to define your own types.
-[custom types example]: ../examples/custom-types.mdx
-:::
+:::info The [custom types example] demonstrates how to define your own types. [custom types example]: ../examples/custom-types.mdx :::
 
-:::info
-Error enum types are another type contracts can define that have some unique
-behaviors. See [Errors] for more information.
-[Errors]: ./errors
-:::
+:::info Error enum types are another type contracts can define that have some unique behaviors. See [Errors] for more information. [Errors]: ./errors :::
 
 ## Structs (with Named Fields)
 
-Structs with named fields are stored on ledger as a map of key-value pairs,
-where the key is a 10 character string representing the field name, and the
-value is the value encoded.
+Structs with named fields are stored on ledger as a map of key-value pairs, where the key is a 10 character string representing the field name, and the value is the value encoded.
 
 Field names must be no more than 10 characters.
 
@@ -35,18 +24,22 @@ pub struct State {
 }
 ```
 
-When converted to XDR, the value becomes an `ScVal`, containing an `ScObject`,
-containing an `ScMap`, containing an array of key-value pairs.
+When converted to XDR, the value becomes an `ScVal`, containing an `ScObject`, containing an `ScMap`, containing an array of key-value pairs.
 
 ```json
-{"object":{"map":[{"key":{"symbol":"count"},"val":{"u32":0}},{"key":{"symbol":"last_incr"},"val":{"u32":0}}]}}
+{
+  "object": {
+    "map": [
+      { "key": { "symbol": "count" }, "val": { "u32": 0 } },
+      { "key": { "symbol": "last_incr" }, "val": { "u32": 0 } }
+    ]
+  }
+}
 ```
 
 ## Structs (with Unnamed Fields)
 
-Structs with unnamed fields are stored on ledger as a vector of values, and are
-interchangable with tuples and vectors. The elements are placed in the vector in
-order that they appear in the field list.
+Structs with unnamed fields are stored on ledger as a vector of values, and are interchangable with tuples and vectors. The elements are placed in the vector in order that they appear in the field list.
 
 ```rust
 #[contracttype]
@@ -54,22 +47,17 @@ order that they appear in the field list.
 pub struct State(pub u32, pub u32);
 ```
 
-When converted to XDR, the value becomes an `ScVal`, containing an `ScObject`,
-containing an `ScVec`, containing an array of values.
+When converted to XDR, the value becomes an `ScVal`, containing an `ScObject`, containing an `ScVec`, containing an array of values.
 
 ```json
-{"object":{"vec":[{"u32":0},{"u32":0}]}}
+{ "object": { "vec": [{ "u32": 0 }, { "u32": 0 }] } }
 ```
 
 ## Enum (Unit and Tuple Variants)
 
-Enums containing unit and tuple variants are are stored on ledger as a two
-element vector, where the first element is the name of the enum variant as a
-string up to 10 characters in length, and the value is the value if the variant
-has one.
+Enums containing unit and tuple variants are are stored on ledger as a two element vector, where the first element is the name of the enum variant as a string up to 10 characters in length, and the value is the value if the variant has one.
 
-Only unit variants and single value variants, like `A` and `B` below, are
-supported.
+Only unit variants and single value variants, like `A` and `B` below, are supported.
 
 ```rust
 #[contracttype]
@@ -80,24 +68,19 @@ pub enum Enum {
 }
 ```
 
-When a unit variant, such as `Enum::A`, is converted to XDR, the value becomes
-an `ScVal`, containing an `ScObject`, containing an `ScVec`, containing an array
-with a single value, the symbol containing the variant name.
+When a unit variant, such as `Enum::A`, is converted to XDR, the value becomes an `ScVal`, containing an `ScObject`, containing an `ScVec`, containing an array with a single value, the symbol containing the variant name.
 
 ```json
-{"object":{"vec":[{"symbol":"A"}]}}
+{ "object": { "vec": [{ "symbol": "A" }] } }
 ```
 
-When a tuple variant, such as `Enum::B`, is converted to XDR, the value becomes
-an `ScVal`, containing an `ScObject`, containing an `ScVec`, containing an array
-with two values, the symbol containing the variant name and the tuple value.
+When a tuple variant, such as `Enum::B`, is converted to XDR, the value becomes an `ScVal`, containing an `ScObject`, containing an `ScVec`, containing an array with two values, the symbol containing the variant name and the tuple value.
 
 ```json
-{"object":{"vec":[{"symbol":"B"},{"u32":0}]}}
+{ "object": { "vec": [{ "symbol": "B" }, { "u32": 0 }] } }
 ```
 
-When tuple variants containing multiple values are implemented, the values will
-be included into the vector.
+When tuple variants containing multiple values are implemented, the values will be included into the vector.
 
 ## Enum (Integer Variants)
 
@@ -116,5 +99,5 @@ pub enum Enum {
 When converted to XDR, the value becomes an `ScVal`, containing a `U32`.
 
 ```json
-{"u32":1}
+{ "u32": 1 }
 ```

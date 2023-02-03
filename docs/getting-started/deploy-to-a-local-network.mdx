@@ -12,9 +12,9 @@ The Quickstart image is a single container that runs everything you need to test
 - Horizon server – HTTP API for access ledger state and historical transactions.
 - Friendbot server – HTTP API for creating and funding new accounts on test networks.
 
-:::info 
+:::info
 
-It's also possible to run a contract in the local sandbox environment without a network using just the [`soroban-cli`]. See [Run on Sandbox] for more details. 
+It's also possible to run a contract in the local sandbox environment without a network using just the [`soroban-cli`]. See [Run on Sandbox] for more details.
 
 :::
 
@@ -37,9 +37,9 @@ curl http://localhost:8000
 
 Generate a key for use on the local sandbox environment by going to the [Stellar Laboratory]. Make note of both the `G...` and `S...` keys. The `G...` key is the public key and will also be the account ID. The `S...` key is the secret key and is that you use to control the account.
 
-:::tip 
+:::tip
 
-It's a good practice to never use the same keys for testing and development that you use do for the public Stellar network. Generate new keys for testing and development and avoid ever using them for other purposes. 
+It's a good practice to never use the same keys for testing and development that you use do for the public Stellar network. Generate new keys for testing and development and avoid ever using them for other purposes.
 
 :::
 
@@ -59,9 +59,9 @@ soroban deploy \
     --network-passphrase 'Standalone Network ; February 2017'
 ```
 
-:::tip 
+:::tip
 
-It's good practice to avoid entering secret keys on the command line. You can also specify the secret key by setting the environment variable `SOROBAN_SECRET_KEY`. The [`soroban-cli`] is still in development and in the future there will be other secure ways to provide a secret key, such as via hardware keys. 
+It's good practice to avoid entering secret keys on the command line. You can also specify the secret key by setting the environment variable `SOROBAN_SECRET_KEY`. The [`soroban-cli`] is still in development and in the future there will be other secure ways to provide a secret key, such as via hardware keys.
 
 :::
 

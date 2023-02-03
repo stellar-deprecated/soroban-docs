@@ -11,15 +11,15 @@ Logs in contracts are only visible in tests, or when executing contracts using [
 
 [logging example]: https://github.com/stellar/soroban-examples/tree/v0.4.2/hello_world
 
-:::tip 
+:::tip
 
-Logs are no a substitute for step-through debugging. Rust tests for Soroban can be step-through debugged in your Rust-enabled IDE. See [testing] for more details. 
+Logs are no a substitute for step-through debugging. Rust tests for Soroban can be step-through debugged in your Rust-enabled IDE. See [testing] for more details.
 
 :::
 
-:::caution 
+:::caution
 
-Logs are not accessible by dapps and other applications. See the [events example] for how to produce structured events. 
+Logs are not accessible by dapps and other applications. See the [events example] for how to produce structured events.
 
 :::
 
@@ -119,9 +119,9 @@ The above log will render as follows if `value` is a `Symbol` containing `"Dev"`
 Hello Symbol(Dev)
 ```
 
-:::caution 
+:::caution
 
-The values outputted are currently relatively limited. While primitive values like `u32`, `u64`, `bool`, and `Symbol`s will render clearly in the log output, `Bytes`, `Vec`, `Map`, and custom types will render only their handle number. Logging capabilities are in early development. 
+The values outputted are currently relatively limited. While primitive values like `u32`, `u64`, `bool`, and `Symbol`s will render clearly in the log output, `Bytes`, `Vec`, `Map`, and custom types will render only their handle number. Logging capabilities are in early development.
 
 :::
 

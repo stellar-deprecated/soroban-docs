@@ -40,9 +40,9 @@ crate-type = ["cdylib"]
 
 Add the following sections to the `Cargo.toml` that will import the `soroban-sdk`, and configure a set of features explained below.
 
-:::caution 
+:::caution
 
-The `soroban-sdk` is in early development. Report issues [here](https://github.com/stellar/rs-soroban-sdk/issues/new/choose). 
+The `soroban-sdk` is in early development. Report issues [here](https://github.com/stellar/rs-soroban-sdk/issues/new/choose).
 
 :::
 
@@ -59,9 +59,9 @@ testutils = ["soroban-sdk/testutils"]
 
 The `features` list includes a `testutils` feature, which will cause additional test utilities to be generated for calling the contract in tests.
 
-:::info 
+:::info
 
-The `testutils` test utilities are automatically enabled inside [Rust unit tests] inside the same crate as your contract. If you write tests from another crate, you'll need to require the `testutils` feature for those tests and enable the `testutils` feature when running your tests with `cargo test --features testutils` to be able to use those test utilities. 
+The `testutils` test utilities are automatically enabled inside [Rust unit tests] inside the same crate as your contract. If you write tests from another crate, you'll need to require the `testutils` feature for those tests and enable the `testutils` feature when running your tests with `cargo test --features testutils` to be able to use those test utilities.
 
 :::
 
@@ -293,9 +293,9 @@ To build a Soroban contract to deploy or run, use the `cargo build` command.
 cargo build --target wasm32-unknown-unknown --release
 ```
 
-:::tip 
+:::tip
 
-Use the `release` profile outlined in [Configure the Release Profile], otherwise the contract will exceed Soroban's size limits. 
+Use the `release` profile outlined in [Configure the Release Profile], otherwise the contract will exceed Soroban's size limits.
 
 :::
 
@@ -307,9 +307,9 @@ target/wasm32-unknown-unknown/release/[project-name].wasm
 
 The `.wasm` file contains the logic of the contract, as well as the contract's specification that can be imported into other contracts who wish to call it. This is the only artifact needed to deploy the contract, share the interface with others, or integration test against the contract.
 
-:::tip 
+:::tip
 
-To further optimize builds to be as small as possible, see [Optimizing Builds]. 
+To further optimize builds to be as small as possible, see [Optimizing Builds].
 
 :::
 
@@ -322,9 +322,9 @@ If you have the [`soroban-cli`] installed, you can run contracts in a local sand
 
 The Soroban sandbox environment is the same Soroban environment that runs on Stellar networks, but it runs without nodes, and without the other features you find on a Stellar network.
 
-:::info 
+:::info
 
-It's also possible to run a contract on a fully featured local network. See [Deploy to a Local Network] for more details. 
+It's also possible to run a contract on a fully featured local network. See [Deploy to a Local Network] for more details.
 
 :::
 
@@ -356,9 +356,9 @@ import TabItem from "@theme/TabItem";
 
 Building optimized contracts to be as small as possible requires some additional tools, and requires installing the `nightly` Rust toolchain and `wasm-opt`.
 
-:::tip 
+:::tip
 
-Building optimized contracts is only necessary when deploying to a network with fees or when analyzing and profiling a contract to get it as small as possible. If you're just starting out writing a contract, these steps are not necessary. See [Build] for details on how to build for development. 
+Building optimized contracts is only necessary when deploying to a network with fees or when analyzing and profiling a contract to get it as small as possible. If you're just starting out writing a contract, these steps are not necessary. See [Build] for details on how to build for development.
 
 :::
 

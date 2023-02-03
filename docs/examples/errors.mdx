@@ -120,9 +120,9 @@ pub enum Error {
 
 Contract errors cannot be stored as contract data, and therefore cannot be used as types on fields of contract types.
 
-:::tip 
+:::tip
 
-If an error is returned from a function anything the function has done is rolled back. If ledger entries have been altered, or contract data stored, all those changes are reverted and will not be persisted. 
+If an error is returned from a function anything the function has done is rolled back. If ledger entries have been altered, or contract data stored, all those changes are reverted and will not be persisted.
 
 :::
 
@@ -164,9 +164,9 @@ pub fn increment(env: Env) -> u32 {
 }
 ```
 
-:::caution 
+:::caution
 
-Functions that do not return a `Result<_, E>` type do not include in their specification what the possible error values are. This makes it more difficult for other contracts and clients to integrate with the contract. However, this might be ideal if the errors are diagnostic and debugging, and not intended to be handled. 
+Functions that do not return a `Result<_, E>` type do not include in their specification what the possible error values are. This makes it more difficult for other contracts and clients to integrate with the contract. However, this might be ideal if the errors are diagnostic and debugging, and not intended to be handled.
 
 :::
 

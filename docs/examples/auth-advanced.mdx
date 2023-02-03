@@ -15,9 +15,9 @@ The example supports authentication by:
 [EIP-2612]: https://eips.ethereum.org/EIPS/eip-2612
 [EIP-712]: https://eips.ethereum.org/EIPS/eip-712
 
-:::info 
+:::info
 
-If you're just starting to explore Soroban, checkout the [auth example] that uses a simpler form of invoker auth. 
+If you're just starting to explore Soroban, checkout the [auth example] that uses a simpler form of invoker auth.
 
 :::
 
@@ -27,9 +27,9 @@ Participants are identified with `Identifier`s that can represent an:
 - Contract ID
 - Ed25519 key
 
-:::tip 
+:::tip
 
-The `Identifier` type is a superset of the `Address` type used by the simpler invoker-only auth. This means that contracts that store data using `Address` as a key can often be updated to use `soroban-auth` without any impact to already stored data. See the [auth example] more details. 
+The `Identifier` type is a superset of the `Address` type used by the simpler invoker-only auth. This means that contracts that store data using `Address` as a key can often be updated to use `soroban-auth` without any impact to already stored data. See the [auth example] more details.
 
 :::
 
@@ -41,15 +41,15 @@ Participants specify how they are authenticating, and provide authentication by 
 
 In this example, data is stored associated with an `Identifier` after authorization has been verified. The contract supports auth via all methods above.
 
-:::info 
+:::info
 
-This example describes a specific implementation of the general principles of [authorization](../learn/authorization.mdx). 
+This example describes a specific implementation of the general principles of [authorization](../learn/authorization.mdx).
 
 :::
 
-:::caution 
+:::caution
 
-The [soroban-auth] crate does not provide any functionality to prevent the replay of valid signatures. This example implements a form of [replay prevention](#verifying-the-nonce). Contracts must implement replay prevention that is appropriate for themselves. 
+The [soroban-auth] crate does not provide any functionality to prevent the replay of valid signatures. This example implements a form of [replay prevention](#verifying-the-nonce). Contracts must implement replay prevention that is appropriate for themselves.
 
 :::
 
@@ -338,7 +338,7 @@ The verification inputs are:
 
 The `increment` function verifies the nonce passed in and signed in the `SignaturePayload` is the next expected nonce for the identifier.
 
-:::caution 
+:::caution
 
 Whenever signatures are used to permit an operation, there is a risk of replay. Replay occurs when a signature is used to permit an operation multiple times. Such a situation can be catastrophic. For example, if you produce a signature that permits $1 to be sent to an acquantaince and there is no replay prevention, then a malicious acquantaince could use that signature to repeatedly transfer $1 from you to them. In the end, your account would be empty.
 
@@ -395,7 +395,7 @@ fn set_nonce(env: &Env, id: &Identifier, nonce: i128) {
 
 :::info
 
-If a contract function errors by returning an error or panicking with an error or string, any operations the contract has performed such as emitting events or storing data are rolled back. This also applies to incrementing of the nonce. If a contract needs the nonce to be consumed on failed invocations, the contract needs to be written so that an error is not returned and the invocation does not fail. 
+If a contract function errors by returning an error or panicking with an error or string, any operations the contract has performed such as emitting events or storing data are rolled back. This also applies to incrementing of the nonce. If a contract needs the nonce to be consumed on failed invocations, the contract needs to be written so that an error is not returned and the invocation does not fail.
 
 :::
 
@@ -476,9 +476,9 @@ client
     .increment(&Signature::Invoker, &0),
 ```
 
-:::tip 
+:::tip
 
-Functions invoked in tests can use `with_source_account(account_id)` to simulate an invocation from an account, and the invoked function will see `env.invoker()` as `Address::Account(account_id)`. 
+Functions invoked in tests can use `with_source_account(account_id)` to simulate an invocation from an account, and the invoked function will see `env.invoker()` as `Address::Account(account_id)`.
 
 :::
 
@@ -557,9 +557,9 @@ target/wasm32-unknown-unknown/release/soroban_auth_advanced_contract.wasm
 
 If you have [`soroban-cli`] installed, you can invoke functions on the contract.
 
-:::caution 
+:::caution
 
-The [`soroban-cli`] is in development and passing enum and struct values as inputs requires typing their raw JSON representation. Improvements are planned. 
+The [`soroban-cli`] is in development and passing enum and struct values as inputs requires typing their raw JSON representation. Improvements are planned.
 
 :::
 

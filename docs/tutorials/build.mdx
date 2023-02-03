@@ -9,9 +9,9 @@ To build a Soroban contract to deploy or run, use the `cargo build` command.
 cargo build --target wasm32-unknown-unknown --release
 ```
 
-:::tip 
+:::tip
 
-Use the `release` profile outlined in [Configure the Release Profile], otherwise the contract will exceed Soroban's size limits. 
+Use the `release` profile outlined in [Configure the Release Profile], otherwise the contract will exceed Soroban's size limits.
 
 :::
 
@@ -23,9 +23,9 @@ target/wasm32-unknown-unknown/release/[project-name].wasm
 
 The `.wasm` file contains the logic of the contract, as well as the contract's specification that can be imported into other contracts who wish to call it. This is the only artifact needed to deploy the contract, share the interface with others, or integration test against the contract.
 
-:::tip 
+:::tip
 
-To further optimize builds to be as small as possible, see [Optimizing Builds]. 
+To further optimize builds to be as small as possible, see [Optimizing Builds].
 
 :::
 

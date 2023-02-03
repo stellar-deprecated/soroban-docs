@@ -33,6 +33,7 @@ export default function Sorobanathon() {
             <h1 className="hp--h1">Sorobanathon: Equinox 🌖</h1>
           </div>
         </div>
+
         <div className='hp--maxWidth'>
           <div className='hp--content'>
             <h1>Welcome to Sorobanathon: Equinox<br/>February 3rd - April 1st, 2023.</h1>
@@ -90,6 +91,9 @@ export default function Sorobanathon() {
             <p>We will review your submission within a week and reply to your submission thread to let you know if it qualifies to earn a reward. If it does, we will ask you to complete a form to collect the info necessary to validate and deliver the reward.</p>
             <p>If your submission does not qualify, we may provide feedback on what's missing or how you can improve your submission so it qualifies. Once you have made the requested revisions, we will re-review your submission and let you know if it qualifies for a reward.</p>
             <p><strong>Note: </strong>SDF is under no obligation to make any rewards if there are no eligible submissions or Eligible Individuals (as defined below), or if Eligible Individuals do not successfully complete the compliance and tax obligations set forth below.</p>
+          </div>
+          <div className='hp--cta hp--maxWidth'>
+            <a href="/docs" className='hp--button'>testing to see where the button ends up</a>
           </div>
         </div>
       </main>

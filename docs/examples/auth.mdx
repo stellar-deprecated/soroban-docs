@@ -21,9 +21,11 @@ In this example, data is stored associated with an `Address` after
 authorization has been verified.
 
 :::info
+
 For contracts that would benefit from supporting auth with presigned
 invocations, or ed25519 keys independent of accounts and contracts, see the
 [advanced auth example].
+
 :::
 
 [auth example]: https://github.com/stellar/soroban-examples/tree/v0.4.2/auth
@@ -129,6 +131,7 @@ and so the only thing that can access or change the data for an invoker, is the
 invoker themselves.
 
 :::tip
+
 Enum keys like `DataKey` can be a helpful way to store a variety of different
 types of data keyed against the same or similar things. In the example the
 counter for each address is stored against `DataKey::Counter(Address)`. If the
@@ -144,6 +147,7 @@ pub enum DataKey {
 let invoker = env.invoker();
 let key = DataKey::Counter(invoker);
 ```
+
 :::
 
 ### Tests
@@ -218,9 +222,11 @@ assert_eq!(client.with_source_account(&user_2).increment(), 1);
 ```
 
 :::tip
+
 Functions invoked in tests can use `with_source_account(account_id)` to simulate
 an invocation from an account, and the invoked function will see `env.invoker()`
 as `Address::Account(account_id)`.
+
 :::
 
 ## Build the Contract

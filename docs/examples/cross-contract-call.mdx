@@ -10,11 +10,13 @@ another contract.
 [oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.4.2
 
 :::info
+
 In this example there are two contracts that are compiled separately, deployed
 separately, and then tested together. There are a variety of ways to develop and
 test contracts with dependencies on other contracts, and the Soroban SDK and
 tooling is still building out the tools to support these workflows. Feedback
 appreciated [here](https://github.com/stellar/rs-soroban-sdk/issues/new/choose).
+
 :::
 
 [cross contract call example]: https://github.com/stellar/soroban-examples/tree/v0.4.2/cross_contract_calls
@@ -88,10 +90,12 @@ Contracts to invoke can be imported into your contract with the use of
 - Any types in the contract that were annotated with `#[contracttype]`.
 
 :::tip
+
 The `contractimport!` macro will generate the types in the module it is used, so
 it's a good idea to use the macro inside a `mod { ... }` block, or inside its
 own file, so that the names of generated types don't collide with names of types
 in your own contract.
+
 :::
 
 Open the files above to follow along.
@@ -113,10 +117,12 @@ impl ContractA {
 ```
 
 :::tip
+
 The contract uses the `checked_add` method to ensure that there is no overflow,
 and if there is overflow, panics rather than returning an overflowed value.
 Rust's primitive integer types all have checked operations available as
 functions with the prefix `checked_`.
+
 :::
 
 ### Contract B: The Contract doing the Calling

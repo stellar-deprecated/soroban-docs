@@ -64,6 +64,7 @@ impl IncrementContract {
     }
 }
 ```
+
 Ref: https://github.com/stellar/soroban-examples/tree/v0.4.2/increment
 
 ## How it Works
@@ -160,6 +161,7 @@ let client = IncrementContractClient::new(&env, &contract_id);
 ```
 
 The values returned by functions can be asserted on:
+
 ```rust
 assert_eq!(client.increment(), 1);
 ```

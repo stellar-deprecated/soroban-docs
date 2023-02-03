@@ -10,9 +10,10 @@ multiple forms of authentication using the [soroban-auth] crate.
 [oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.4.2
 
 The example supports authentication by:
+
 - Being the invoker, as a transaction source account or a contract.
 - Presigned invocations with account signers or ed25519 keys, similar to
-[EIP-2612] and [EIP-712] in the Ethereum ecosystem.
+  [EIP-2612] and [EIP-712] in the Ethereum ecosystem.
 
 [EIP-2612]: https://eips.ethereum.org/EIPS/eip-2612
 [EIP-712]: https://eips.ethereum.org/EIPS/eip-712
@@ -25,6 +26,7 @@ uses a simpler form of invoker auth.
 :::
 
 Participants are identified with `Identifier`s that can represent an:
+
 - Account ID
 - Contract ID
 - Ed25519 key
@@ -41,6 +43,7 @@ stored data. See the [auth example] more details.
 Participants specify how they are authenticating, and provide authentication by
 including a `Siganture` as an argument in the invocation. A `Signature` can be
 an:
+
 - Invoker – An invoking address (account ID or contract ID).
 - Account – An invocation presigned with account signers.
 - Ed25519 – An invocation presigned with an ed25519 key.
@@ -257,8 +260,8 @@ pub enum Signature {
 `Signature` values map to `Identifier` values:
 
 - Invoker
-   - Account – Maps to `Identifier::Account`.
-   - Contract – Maps to `Identifier::Contract`.
+  - Account – Maps to `Identifier::Account`.
+  - Contract – Maps to `Identifier::Contract`.
 - Account – Maps to `Identifier::Account`.
 - Ed25519 – Maps to `Identifier::Ed25519`.
 
@@ -283,7 +286,7 @@ pub struct Ed25519Signature {
 ##### Account
 
 An account identifier provides ed25519 signatures for each ed25519 signer of the
-account.  Verification works the same as verification of ed25519 signers on the
+account. Verification works the same as verification of ed25519 signers on the
 Stellar network. The total signing weight of the signers must exceed the medium
 threshold of the account. The signature payload is the XDR serialized value of
 the `SignaturePayload` type.
@@ -361,17 +364,19 @@ pub fn increment(env: Env, sig: Signature, nonce: i128) -> u32 {
 ```
 
 The function inputs are:
+
 - `nonce` – Included in the arguments of the function to prevent replay.
 - `sig` – The `Signature` that proves the `Identifier` it contains. The contract
 
 The verification inputs are:
+
 - `&sig` – The `Signature` to verify.
 - `symbol!("increment")` – The scope of where the signature should be valid
-within this contract. In this example the scope is the name of this function.
+  within this contract. In this example the scope is the name of this function.
 - `&id` – The identifier the `Signature` signs approving the operation to
-increment that identifiers number.
+  increment that identifiers number.
 - `&nonce` – The nonce to ensure the replay prevention value is included in the
-`SignaturePayload`.
+  `SignaturePayload`.
 
 #### Verifying the Nonce
 
@@ -391,7 +396,7 @@ Contracts can provide replay prevention by numerous methods. One approach is by
 including a sequential [nonce] as an argument in the `SignaturePayload` and
 writing the contract such that it will not allow that nonce to be used more than
 once. A sequential nonce is incremented on each use. The `SignaturePayload`
-includes the nonce as a number.  The contract stores the next expected nonce,
+includes the nonce as a number. The contract stores the next expected nonce,
 for each identifier. After verifying the signature, the contract loads the nonce
 for the relevant identifier, checks that it matches the value in the signature,
 and increments the value stored. This prevents reuse of the signature.
@@ -488,6 +493,7 @@ env.storage().set(&key, count);
 ```
 
 #### Retrieving the Nonce
+
 Users of this contract will need to know which nonce to use. The contract could
 expect users to keep track of the next nonce to use, but that may not be
 trivial, so the contract exports a function that provides the information.
@@ -531,6 +537,7 @@ The test generates account IDs for two users.
 
 The `generate` function creates a new account ID that the test can use to
 represent an account interacting with the contract.
+
 ```rust
 let _ = env.accounts().generate();
 ```
@@ -590,6 +597,7 @@ The test generates ed25519 keys and identifiers for two users.
 The `generate` function creates a new random ed25519 key that the test can use
 to produce signatures and verify to an identifier. The generate function
 provides the identifier that the signer can sign for.
+
 ```rust
 let (user_1_id, user_1_sign) = soroban_auth::testutils::ed25519::generate(&env);
 ```
@@ -597,6 +605,7 @@ let (user_1_id, user_1_sign) = soroban_auth::testutils::ed25519::generate(&env);
 The `sign` function produces a valid signature for the inputs. These inputs
 should match the inputs that the `verify` function within the contract will
 use.
+
 ```rust
 let sig = soroban_auth::testutils::ed25519::sign(
     &env,
@@ -671,6 +680,7 @@ View the data that has been stored against each user with `soroban read`.
 ```sh
 soroban read --id 1
 ```
+
 ```
 "[""Counter"",[""Account"",""GC24I42QMKKR4NE6IYNPCQHUO4PXWXDGNZ7QVMMSR5EWAYSGKBHPLGHH""]]",1
 "[""Counter"",[""Account"",""GDQHNBKFCO666SPX4RS62VTDY7H5W2QXHVVVQCDTADTOI3IYZGEOZL6V""]]",3

@@ -41,8 +41,8 @@ will have a deterministic identifier, which will be the sha256 hash of
 
 ## Interacting with classic Stellar assets
 
-The Stellar Asset Contract is the only way to interact with 'classic' Stellar assets in 
-Soroban. 'Classic' assets include native Stellar token (lumens) and all the 
+The Stellar Asset Contract is the only way to interact with 'classic' Stellar assets in
+Soroban. 'Classic' assets include native Stellar token (lumens) and all the
 existing trustlines. The issuer of the asset will be the
 administrator of the deployed contract. Because the the Native Stellar token
 doesn't have an issuer, it will not have an administrator either. It also cannot
@@ -50,7 +50,7 @@ be burned.
 
 After the contract has been deployed, users can use their classic account or
 trustline balance. There are some differences depending on if you are using a
-classic account identifier vs a non-account identifier like a contract. 
+classic account identifier vs a non-account identifier like a contract.
 
 - Using `Identifier::Account`
   - The balance must exist in a trustline (or an account for the native balance).
@@ -91,9 +91,9 @@ The token contract contains three kinds of operations
 
 - getters, such as `balance`, which do not change the state of the contract
 - unprivileged mutators, such as `incr_allow` and `xfer`, which change the state of
-the contract but do not require special privileges
+  the contract but do not require special privileges
 - privileged mutators, such as `clawback` and `set_admin`, which change the state of
-the contract but require special privileges
+  the contract but require special privileges
 
 Getters require no authorization because they do not change the state of the
 contract and all contract data is public. For example, `balance` simply returns
@@ -142,12 +142,12 @@ token.with_source_account(&token_admin_id).mint(
 );
 ```
 
-See a more complete example that uses invoker auth in the tests 
+See a more complete example that uses invoker auth in the tests
 [here](https://github.com/stellar/soroban-examples/blob/51a95262caba3f8ac466fa8bbc07004ad297ae13/timelock/src/test.rs#L60).
 
 ### Example: Signing payloads
 
-The payload signature semantics is the same as for regular contracts using 
+The payload signature semantics is the same as for regular contracts using
 [advanced auth](../examples/auth-advanced.mdx). The following snippet shows how
 should the signature payload look like:
 

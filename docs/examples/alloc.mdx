@@ -7,7 +7,7 @@ The [allocator example] demonstrates how to utilize the allocator feature when w
 
 [allocator example]: https://github.com/stellar/soroban-examples/tree/v0.4.2/alloc
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp] 
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
 [oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.4.2
 
 The `soroban-sdk` crate provides a lightweight bump-pointer allocator which can be used to emulate heap memory allocation in a WASM smart contract.
@@ -97,7 +97,7 @@ Creates a contiguous growable array `v1` with contents allocated on the heap mem
 
 :::info
 
-The heap memory in the context of a smart contract actually refers to the WASM linear memory. The `alloc` will use the global allocator provided by the soroban sdk to interact with the linear memory. 
+The heap memory in the context of a smart contract actually refers to the WASM linear memory. The `alloc` will use the global allocator provided by the soroban sdk to interact with the linear memory.
 
 :::
 
@@ -105,7 +105,7 @@ The heap memory in the context of a smart contract actually refers to the WASM l
 
 Using heap allocated array is typically slow and computationally expensive. Try to avoid it and instead use a fixed-sized array or `soroban_sdk::vec!` whenever possible.
 
-This is especially the case for a large-size array. Whenever the array size grows beyond the current linear memory size, which is multiple of the page size (64KB), the [`wasm32::memory_grow`](https://doc.rust-lang.org/core/arch/wasm32/fn.memory_grow.html) is invoked to grow the linear memory by more pages as necessary, which is very computationally expensive. 
+This is especially the case for a large-size array. Whenever the array size grows beyond the current linear memory size, which is multiple of the page size (64KB), the [`wasm32::memory_grow`](https://doc.rust-lang.org/core/arch/wasm32/fn.memory_grow.html) is invoked to grow the linear memory by more pages as necessary, which is very computationally expensive.
 
 :::
 

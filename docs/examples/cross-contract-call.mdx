@@ -86,6 +86,7 @@ Cross contract calls are made by invoking another contract by its contract ID.
 
 Contracts to invoke can be imported into your contract with the use of
 `contractimport!(file = "...")`. The import will code generate:
+
 - A `ContractClient` type that can be used to invoke functions on the contract.
 - Any types in the contract that were annotated with `#[contracttype]`.
 
@@ -264,7 +265,7 @@ soroban deploy \
 ```
 
 Invoke Contract B's `add_with` function, passing in values for `x` and `y`
-(e.g.  as `5` and `7`), and then pass in the contract ID of Contract A.
+(e.g. as `5` and `7`), and then pass in the contract ID of Contract A.
 
 ```sh
 soroban invoke \

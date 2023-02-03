@@ -53,6 +53,7 @@ impl HelloContract {
     }
 }
 ```
+
 Ref: https://github.com/stellar/soroban-examples/tree/v0.4.2/hello_world
 
 ## How it Works
@@ -140,6 +141,7 @@ let words = client.hello(&symbol!("Dev"));
 ```
 
 The values returned by functions can be asserted on:
+
 ```rust
 assert_eq!(words, vec![&env, symbol!("Hello"), symbol!("Dev"),]);
 ```
@@ -174,7 +176,7 @@ soroban invoke \
 The following output should occur using the code above.
 
 ```json
-["Hello","friend"]
+["Hello", "friend"]
 ```
 
 [`soroban-cli`]: ../getting-started/setup#install-the-soroban-cli

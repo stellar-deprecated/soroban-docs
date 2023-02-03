@@ -96,6 +96,7 @@ impl IncrementContract {
     }
 }
 ```
+
 Ref: https://github.com/stellar/soroban-examples/tree/v0.4.2/errors
 
 ## How it Works
@@ -109,6 +110,7 @@ an integer. The `#[contracterror]` attribute is used to set the error up so it
 can be used in the return value of contract functions.
 
 The enum has some constraints:
+
 - It must have the `#[repr(u32)]` attribute.
 - It must have the `#[derive(Copy)]` attribute.
 - Every variant must have an explicit integer value assigned.
@@ -261,13 +263,13 @@ assert_eq!(client.try_increment(), Err(Ok(Error::LimitReached)));
 - If the function call is successful, `Ok(Ok(u32))` is returned.
 
 - If the function call is successful but returns a value that is not a `u32`,
-`Ok(Err(_))` is returned.
+  `Ok(Err(_))` is returned.
 
 - If the function call is unsuccessful, `Err(Ok(Error))` is returned.
 
 - If the function call is unsuccessful but returns an error code not in the
-`Error` enum, or returns a system error code, `Err(Err(Status))` is returned and
-the `Status` can be inspected.
+  `Error` enum, or returns a system error code, `Err(Err(Status))` is returned and
+  the `Status` can be inspected.
 
 ### `increment`
 
@@ -282,7 +284,7 @@ client.increment();
 - If the function call is successful, `u32` is returned.
 
 - If the function call is successful but returns a value that is not a `u32`, a
-panic occurs.
+  panic occurs.
 
 - If the function call is unsuccessful, a panic occurs.
 

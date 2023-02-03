@@ -14,6 +14,7 @@ is an extension of the [storing data example].
 [storing data example]: storing-data.mdx
 
 The participant who invoked a contract is an `Address` containing one-of a:
+
 - Account ID
 - Contract ID
 
@@ -116,10 +117,11 @@ let invoker = env.invoker();
 
 The `env.invoker()` always returns the invoker of the currently executing
 contract. It will return either:
+
 - `Account` with an `AccountId` if the contract was invoked directly by an
-account.
+  account.
 - `Contract` with a `BytesN<32>` contract ID if the contract was invoked by
-another contract.
+  another contract.
 
 Contracts should not need to unpack the `Address` for most use cases. Contracts
 should treat the value as opaque wherever possible so that they are
@@ -137,12 +139,14 @@ types of data keyed against the same or similar things. In the example the
 counter for each address is stored against `DataKey::Counter(Address)`. If the
 contract needs to start storing other types of data for addresses, it can do so
 by adding additional variants to the enum.
+
 ```rust
 #[contracttype]
 pub enum DataKey {
     Counter(Address),
 }
 ```
+
 ```rust
 let invoker = env.invoker();
 let key = DataKey::Counter(invoker);
@@ -199,6 +203,7 @@ The contract generates account IDs for two users.
 
 The `generate` function creates a new account ID that the test can use to
 represent an account interacting with the contract.
+
 ```rust
 let _ = env.accounts().generate();
 ```
@@ -270,6 +275,7 @@ View the data that has been stored against each user with `soroban read`.
 ```sh
 soroban read --id 1
 ```
+
 ```
 "[""Counter"",[""Account"",""GC24I42QMKKR4NE6IYNPCQHUO4PXWXDGNZ7QVMMSR5EWAYSGKBHPLGHH""]]",1
 "[""Counter"",[""Account"",""GDQHNBKFCO666SPX4RS62VTDY7H5W2QXHVVVQCDTADTOI3IYZGEOZL6V""]]",3

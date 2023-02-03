@@ -165,4 +165,41 @@
       padding: 20px;
     }
   }
+  .hp--maxWidth {
+    max-width: calc(1200px + 100px);
+    margin: 0 auto;
+    padding: 0 15px;
+
+    @include breakpoint(500px) {
+      padding: 0 30px;
+    }
+  }
+
+  .hp--button {
+    background-color: #3E1BDB;
+    color: white;
+    font-weight: 500;
+    height: 45px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 25px;
+    margin-right: 25px;
+  }
+
+  .hp--cta {
+    margin: 50px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    a {
+      color: white;
+      text-decoration: underline;
+    }
+
+    &:last-of-type {
+      margin-bottom: 50px;
+    }
+  }
 }

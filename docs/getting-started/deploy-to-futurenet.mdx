@@ -7,9 +7,9 @@ If you have Docker installed, you can run a local node with the [Stellar Quickst
 
 [Futurenet]: ../networks/futurenet
 
-:::info 
+:::info
 
-It's also possible to run a contract in the local sandbox environment without a network using just the [`soroban-cli`]. See [Run on Sandbox] for more details. 
+It's also possible to run a contract in the local sandbox environment without a network using just the [`soroban-cli`]. See [Run on Sandbox] for more details.
 
 :::
 
@@ -34,9 +34,9 @@ It takes sometime to join a remote network. Monitor the output of that endpoint 
 
 Generate a key by going to the [Stellar Laboratory]. Make note of both the `G...` and `S...` keys. The `G...` key is the public key and will also be the account ID. The `S...` key is the secret key and is that you use to control the account.
 
-:::tip 
+:::tip
 
-It's a good practice to never use the same keys for testing and development that you use for the public Stellar network. Generate new keys for testing and development and avoid ever using them for other purposes. 
+It's a good practice to never use the same keys for testing and development that you use for the public Stellar network. Generate new keys for testing and development and avoid ever using them for other purposes.
 
 :::
 
@@ -56,9 +56,9 @@ soroban deploy \
     --network-passphrase 'Test SDF Future Network ; October 2022'
 ```
 
-:::tip 
+:::tip
 
-It's good practice to avoid entering secret keys on the command line. You can also specify the secret key by setting the environment variable `SOROBAN_SECRET_KEY`. The [`soroban-cli`] is still in development and in the future there will be other secure ways to provide a secret key, such as via hardware keys. 
+It's good practice to avoid entering secret keys on the command line. You can also specify the secret key by setting the environment variable `SOROBAN_SECRET_KEY`. The [`soroban-cli`] is still in development and in the future there will be other secure ways to provide a secret key, such as via hardware keys.
 
 :::
 

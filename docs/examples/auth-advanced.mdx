@@ -15,7 +15,11 @@ The example supports authentication by:
 [EIP-2612]: https://eips.ethereum.org/EIPS/eip-2612
 [EIP-712]: https://eips.ethereum.org/EIPS/eip-712
 
-:::info If you're just starting to explore Soroban, checkout the [auth example] that uses a simpler form of invoker auth. :::
+:::info 
+
+If you're just starting to explore Soroban, checkout the [auth example] that uses a simpler form of invoker auth. 
+
+:::
 
 Participants are identified with `Identifier`s that can represent an:
 
@@ -23,7 +27,11 @@ Participants are identified with `Identifier`s that can represent an:
 - Contract ID
 - Ed25519 key
 
-:::tip The `Identifier` type is a superset of the `Address` type used by the simpler invoker-only auth. This means that contracts that store data using `Address` as a key can often be updated to use `soroban-auth` without any impact to already stored data. See the [auth example] more details. :::
+:::tip 
+
+The `Identifier` type is a superset of the `Address` type used by the simpler invoker-only auth. This means that contracts that store data using `Address` as a key can often be updated to use `soroban-auth` without any impact to already stored data. See the [auth example] more details. 
+
+:::
 
 Participants specify how they are authenticating, and provide authentication by including a `Siganture` as an argument in the invocation. A `Signature` can be an:
 
@@ -33,9 +41,17 @@ Participants specify how they are authenticating, and provide authentication by 
 
 In this example, data is stored associated with an `Identifier` after authorization has been verified. The contract supports auth via all methods above.
 
-:::info This example describes a specific implementation of the general principles of [authorization](../learn/authorization.mdx). :::
+:::info 
 
-:::caution The [soroban-auth] crate does not provide any functionality to prevent the replay of valid signatures. This example implements a form of [replay prevention](#verifying-the-nonce). Contracts must implement replay prevention that is appropriate for themselves. :::
+This example describes a specific implementation of the general principles of [authorization](../learn/authorization.mdx). 
+
+:::
+
+:::caution 
+
+The [soroban-auth] crate does not provide any functionality to prevent the replay of valid signatures. This example implements a form of [replay prevention](#verifying-the-nonce). Contracts must implement replay prevention that is appropriate for themselves. 
+
+:::
 
 [soroban-auth]: ../SDKs/rust-auth
 [auth example]: auth.mdx
@@ -322,7 +338,9 @@ The verification inputs are:
 
 The `increment` function verifies the nonce passed in and signed in the `SignaturePayload` is the next expected nonce for the identifier.
 
-:::caution Whenever signatures are used to permit an operation, there is a risk of replay. Replay occurs when a signature is used to permit an operation multiple times. Such a situation can be catastrophic. For example, if you produce a signature that permits $1 to be sent to an acquantaince and there is no replay prevention, then a malicious acquantaince could use that signature to repeatedly transfer $1 from you to them. In the end, your account would be empty.
+:::caution 
+
+Whenever signatures are used to permit an operation, there is a risk of replay. Replay occurs when a signature is used to permit an operation multiple times. Such a situation can be catastrophic. For example, if you produce a signature that permits $1 to be sent to an acquantaince and there is no replay prevention, then a malicious acquantaince could use that signature to repeatedly transfer $1 from you to them. In the end, your account would be empty.
 
 Contracts can provide replay prevention by numerous methods. One approach is by including a sequential [nonce] as an argument in the `SignaturePayload` and writing the contract such that it will not allow that nonce to be used more than once. A sequential nonce is incremented on each use. The `SignaturePayload` includes the nonce as a number. The contract stores the next expected nonce, for each identifier. After verifying the signature, the contract loads the nonce for the relevant identifier, checks that it matches the value in the signature, and increments the value stored. This prevents reuse of the signature.
 
@@ -375,7 +393,11 @@ fn set_nonce(env: &Env, id: &Identifier, nonce: i128) {
 }
 ```
 
-:::info If a contract function errors by returning an error or panicking with an error or string, any operations the contract has performed such as emitting events or storing data are rolled back. This also applies to incrementing of the nonce. If a contract needs the nonce to be consumed on failed invocations, the contract needs to be written so that an error is not returned and the invocation does not fail. :::
+:::info
+
+If a contract function errors by returning an error or panicking with an error or string, any operations the contract has performed such as emitting events or storing data are rolled back. This also applies to incrementing of the nonce. If a contract needs the nonce to be consumed on failed invocations, the contract needs to be written so that an error is not returned and the invocation does not fail. 
+
+:::
 
 #### Storing Data Scoped by Identifier
 
@@ -454,7 +476,11 @@ client
     .increment(&Signature::Invoker, &0),
 ```
 
-:::tip Functions invoked in tests can use `with_source_account(account_id)` to simulate an invocation from an account, and the invoked function will see `env.invoker()` as `Address::Account(account_id)`. :::
+:::tip 
+
+Functions invoked in tests can use `with_source_account(account_id)` to simulate an invocation from an account, and the invoked function will see `env.invoker()` as `Address::Account(account_id)`. 
+
+:::
 
 #### Testing Auth by Ed25519
 
@@ -531,7 +557,11 @@ target/wasm32-unknown-unknown/release/soroban_auth_advanced_contract.wasm
 
 If you have [`soroban-cli`] installed, you can invoke functions on the contract.
 
-:::caution The [`soroban-cli`] is in development and passing enum and struct values as inputs requires typing their raw JSON representation. Improvements are planned. :::
+:::caution 
+
+The [`soroban-cli`] is in development and passing enum and struct values as inputs requires typing their raw JSON representation. Improvements are planned. 
+
+:::
 
 To invoke the contract as an account invoker the `Signature` to be passed must be a single-element `Vec` containing the `Symbol` `"Invoker"`.
 

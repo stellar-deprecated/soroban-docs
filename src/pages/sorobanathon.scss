@@ -1,0 +1,205 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap');
+
+@mixin breakpoint($value, $width : max-width) {
+  @media only screen and ($width : $value) {
+    @content;
+  }
+}
+
+.sorobanathon {
+  background-color: black;
+  color: white;
+  display: flex;
+  flex-direction: column;
+
+  .hp--maxWidth {
+    max-width: calc(1200px + 100px);
+    margin: 0 auto;
+    padding: 0 50px;
+
+    @include breakpoint(500px) {
+      padding: 0 30px;
+    }
+  }
+  img {
+    display: block;
+  }
+
+  .hp--hero {
+    background-position: top left;
+    background-size: cover;
+    padding: 150px 0;
+    position: relative;
+    z-index: 0;
+
+    &::after {
+      content: '';
+      position: absolute;
+      background: linear-gradient(rgba(#000000, 0), #000000);
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 150px;
+    }
+
+    .hp--arrows,
+    .hp--topRight,
+    .hp--bottomLeft {
+      position: absolute;
+      z-index: 0;
+    }
+    .hp--arrows {
+      top: 90px;
+      transform: translate(-20%, -50%);
+    }
+    .hp--topRight {
+      top: 0;
+      right: 0;
+    }
+    .hp--bottomLeft {
+      bottom: 0;
+      left: 0;
+    }
+    
+    .hp--heroInfo {
+      position: relative;
+    }
+    .hp--h1 {
+      font-size: 100px;
+      font-weight: 400;
+      line-height: 1;
+      z-index: 1;
+      position: relative;
+      text-align: center;
+    }
+    
+    @include breakpoint(1300px) {
+      padding: 100px 0;
+
+      .hp--h1 {
+        font-size: 72px;
+      }
+    }
+    @include breakpoint(960px) {
+
+      .hp--h1 {
+        font-size: 48px;
+      }
+    }
+    @include breakpoint(660px) {
+      padding: 50px 0;
+
+      .hp--h1 {
+        font-size: 32px;
+      }
+    }
+  }
+
+  .hp--content {
+    background-color: white;
+    font-family: 'IBM Plex Mono', monospace;
+    color: black;
+    border-radius: 20px;
+    margin-bottom: 50px;
+    padding: 35px 55px;
+
+    h1, 
+    h2 {
+      font-family: 'IBM Plex Mono', monospace;
+    }
+    h1 {
+      
+    }
+    h2,
+    p,
+    li {
+      font-size: 20px;
+    }
+    h2 {
+
+    }
+    p {
+
+      &:last-of-type {
+        margin-bottom: 0;
+      }
+    }
+    strong {
+
+    }
+    a {
+      color: black;
+      text-decoration: underline;
+    }
+    ul {
+      
+    }
+    li {
+
+    }
+
+    @include breakpoint(850px) {
+      border-radius: 10px;
+      margin-bottom: 30px;
+      padding: 30px;
+      
+      h1 {
+        font-size: 24px;
+      }
+      h2,
+      p,
+      li {
+        font-size: 16px;
+      }
+    }
+  }
+  .hp--scrollBox {
+    background-color: #DD9A00;
+    border-radius: 20px;
+    padding: 30px 20px;
+    margin: 0 0 var(--ifm-paragraph-margin-bottom);
+    max-height: 400px;
+    overflow-x: scroll;
+
+    @include breakpoint(850px) {
+      padding: 20px;
+    }
+  }
+  .hp--maxWidth {
+    max-width: calc(1200px + 100px);
+    margin: 0 auto;
+    padding: 0 15px;
+
+    @include breakpoint(500px) {
+      padding: 0 30px;
+    }
+  }
+
+  .hp--button {
+    background-color: #3E1BDB;
+    color: white;
+    font-weight: 500;
+    height: 45px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 25px;
+    margin-right: 25px;
+  }
+
+  .hp--cta {
+    margin: 50px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    a {
+      color: white;
+      text-decoration: underline;
+    }
+
+    &:last-of-type {
+      margin-bottom: 50px;
+    }
+  }
+}

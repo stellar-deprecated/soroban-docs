@@ -41,7 +41,7 @@ stored data. See the [auth example] more details.
 :::
 
 Participants specify how they are authenticating, and provide authentication by
-including a `Siganture` as an argument in the invocation. A `Signature` can be
+including a `Signature` as an argument in the invocation. A `Signature` can be
 an:
 
 - Invoker – An invoking address (account ID or contract ID).
@@ -388,8 +388,8 @@ The `increment` function verifies the nonce passed in and signed in the
 Whenever signatures are used to permit an operation, there is a risk of replay.
 Replay occurs when a signature is used to permit an operation multiple times.
 Such a situation can be catastrophic. For example, if you produce a signature
-that permits $1 to be sent to an acquantaince and there is no replay prevention,
-then a malicious acquantaince could use that signature to repeatedly transfer $1
+that permits $1 to be sent to an acquaintance and there is no replay prevention,
+then a malicious acquaintance could use that signature to repeatedly transfer $1
 from you to them. In the end, your account would be empty.
 
 Contracts can provide replay prevention by numerous methods. One approach is by

@@ -183,7 +183,7 @@
     display: inline-flex;
     align-items: center;
     padding: 0 25px;
-    margin-right: 25px;
+    text-decoration: none;
   }
 
   .hp--cta {
@@ -193,7 +193,8 @@
     align-items: center;
     position: relative;
     z-index: 1;
-    a {
+
+    a:not(.hp--button) {
       color: white;
       text-decoration: underline;
     }

@@ -166,7 +166,7 @@ const config = {
               },
               {
                 label: 'Sorobanathon',
-                href: '/sorobanathon',
+                href: 'https://soroban.stellar.org/sorobanathon',
               },
             ],
           },

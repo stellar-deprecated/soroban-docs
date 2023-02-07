@@ -92,8 +92,9 @@ export default function Home() {
           </a>
           <h1>Soroban Adoption Fund</h1>
           <p>
-            The $100 million Soroban Adoption Fund is a series of SDF-organized programs aiming to accelerate Soroban’s adoption. <a href='https://soroban.stellar.org/sorobanathon'><i>Sorobanathon: Equinox/i></a>, ended December 15, but fear not!  We'll be launching new Soroban-related programs soon.  In the meantime, if you or your organization is interested in building new tools or applications on Soroban and would like to receive additional information on Soroban Adoption Fund programs as they are rolled out, please complete the Soroban Adoption Fund interest form.
+          The $100 million Soroban Adoption Fund is a series of SDF-organized programs aiming to accelerate Soroban’s adoption. (<a href="https://soroban.stellar.org/sorobanathon">Sorobanathon: Equinox</a>) is now live and will be accepting submissions until April 1st, 2023. Earn rewards by experimenting with Soroban and creating content to share your experience. 
           </p>
+          <p>To receive additional information on the Soroban Adoption Fund programs as they roll out, please complete the Soroban Adoption Fund interest form.</p>
           <a href="https://share.hsforms.com/1U3FFLQBPQzCLKtv1vS8T-Q4u978" className='hp--button'>Fill out the Form</a>
         </div>
 

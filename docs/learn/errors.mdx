@@ -1,5 +1,5 @@
 ---
-sidebar_position: 4
+sidebar_position: 9
 title: Errors
 ---
 
@@ -10,8 +10,10 @@ to unsigned 32-bit integer values. They are usable as error values in the return
 types of contract functions.
 
 :::info
+
 The [errors example] demonstrates how to define your own error types.
-[errors example]: ../examples/errors.mdx
+[errors example]: ../how-to guides/errors.mdx
+
 :::
 
 ## Error Enums
@@ -32,5 +34,5 @@ When converted to XDR, the value becomes an `ScVal`, containing a `ScStatus`,
 containing the integer value of the error as contract error.
 
 ```json
-{"status":{"contractError":1}}
+{ "status": { "contractError": 1 } }
 ```

@@ -1,8 +1,3 @@
-/**
- * CSS files with the .module.css suffix will be treated as CSS modules
- * and scoped locally.
- */
-
 @mixin breakpoint($value, $width : max-width) {
   @media only screen and ($width : $value) {
     @content;
@@ -35,7 +30,7 @@
     display: inline-flex;
     align-items: center;
     padding: 0 25px;
-    margin-right: 25px;
+    text-decoration: none;
   }
   .button--gray {
     background-color: white;
@@ -104,6 +99,9 @@
       margin-bottom: 30px;
       z-index: 1;
       position: relative;
+    }
+    .hp--button {
+      margin-right: 25px;
     }
   }
 
@@ -251,7 +249,7 @@
       text-align: center;
       max-width: 800px;
     }
-    a {
+    a:not(.hp--button) {
       color: white;
       text-decoration: underline;
     }

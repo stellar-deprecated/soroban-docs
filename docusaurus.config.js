@@ -86,13 +86,13 @@ const config = {
             position: 'left',
             docsPluginId: 'api'
           },
-          {
-            href: 'https://quest.stellar.org/live',
-            label: 'Stellar Quest',
-            position: 'left',
-          },
           // {
-          //   href: 'https://github.com/stellar/sorobanathon',
+          //   href: 'https://quest.stellar.org/live',
+          //   label: 'Stellar Quest',
+          //   position: 'left',
+          // },
+          // {
+          //   href: '/sorobanathon',
           //   label: 'Sorobanathon',
           //   position: 'left'
           // },
@@ -164,10 +164,10 @@ const config = {
                 label: 'Stellar Quest',
                 href: 'https://quest.stellar.org/live',
               },
-              // {
-              //   label: 'Sorobanathon',
-              //   href: 'https://github.com/stellar/sorobanathon',
-              // },
+              {
+                label: 'Sorobanathon',
+                href: '/sorobanathon',
+              },
             ],
           },
         ],

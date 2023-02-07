@@ -94,7 +94,7 @@ export default function Sorobanathon() {
           
           </div>
             <div className='hp--cta hp--maxWidth'>
-              <a href="https://discord.gg/st7Mxd58BV" className='hp--button'>Post your submission to Stellar Dev Discord</a>
+              <a href="https://discord.gg/st7Mxd58BV" className='hp--button'>Post Your Submission</a>
             </div>
         </div>
       </main>

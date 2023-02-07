@@ -19,7 +19,7 @@ The Stellar Asset Contract is in early development, has not been audited, and is
 
 Stellar has numerous assets on its classic network, and being able to use them in Soroban would give users much more flexibility with how they can use their assets. For this reason, we introduced the Stellar Asset Contract, or SAC for short, which will allow users to use their Stellar account and trustline balances in Soroban.
 
-The SAC implements the [token interface](./token-example-and-interface.mdx), which is similar to the widely used ERC-20 token standard. This should make it easier for existing smart contract developers to get started on Stellar.
+The SAC implements the [token interface](./tokens.mdx), which is similar to the widely used ERC-20 token standard. This should make it easier for existing smart contract developers to get started on Stellar.
 
 ## Deployment
 
@@ -120,7 +120,7 @@ token.mint(
 
 ## Contract Interface
 
-This interface can be found in the [SDK](https://github.com/stellar/rs-soroban-sdk/blob/main/soroban-token-spec/src/lib.rs). It extends the common [token interface](./token-example-and-interface.mdx).
+This interface can be found in the [SDK](https://github.com/stellar/rs-soroban-sdk/blob/main/soroban-token-spec/src/lib.rs). It extends the common [token interface](./tokens.mdx).
 
 ## Interacting with the token contract in tests
 

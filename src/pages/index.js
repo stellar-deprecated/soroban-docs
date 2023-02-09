@@ -86,15 +86,19 @@ export default function Home() {
         </div>
 
         <div id="build-and-earn-rewards" className='hp--cta hp--maxWidth'>
-          <h2>Build & Earn Rewards</h2>
+          <h2>Build & Earn</h2>
           <a href="https://share.hsforms.com/1U3FFLQBPQzCLKtv1vS8T-Q4u978" className='hp--imgLink'>
             <img src='./img/homepage/sorobanathon.svg' />
           </a>
-          <h1>Soroban Adoption Fund</h1>
+          <h1>Stellar Community Fund</h1>
           <p>
-          The $100 million Soroban Adoption Fund is a series of SDF-organized programs aiming to accelerate Soroban’s adoption. (<a href="https://soroban.stellar.org/sorobanathon">Sorobanathon: Equinox</a>) is now live and will be accepting submissions until April 1st, 2023. Earn rewards by experimenting with Soroban and creating content to share your experience. 
+          Submit your Soroban project to the <a href="https://communityfund.stellar.org/">Stellar Community Fund</a> and receive up to $150K worth of XLM in awards. This is your chance to play a fundamental role in bootstrapping the Soroban  ecosystem by creating the  tools, protocols, dApps, and resources necessary for it to thrive. 
           </p>
-          <p>To receive additional information on the Soroban Adoption Fund programs as they roll out, please complete the Soroban Adoption Fund interest form.</p>
+          <p>New to Soroban? Need more time to noodle on an idea for submission? Play around with Soroban and get inspired:</p>
+          <ul>
+            <li>Launch your Soroban education on <a href="https://quest.stellar.org/">Stellar Quest</a>, and earn rewards for completing exciting challenges  basic building blocks of Soroban</li>
+            <li>Experiment, build, and tinker in <a href="/sorobanathon">Sorobanathon: Equinox</a> and earn XLM for submitting tutorials, code examples, and more based on your experience building with Soroban.</li>
+          </ul>
           <a href="https://share.hsforms.com/1U3FFLQBPQzCLKtv1vS8T-Q4u978" className='hp--button'>Fill out the Form</a>
         </div>
 

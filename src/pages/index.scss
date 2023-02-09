@@ -249,6 +249,18 @@
       text-align: center;
       max-width: 800px;
     }
+    ul {
+      margin: 0 0 50px;
+      font-size: 22px;
+      max-width: 800px;
+    }
+    li {
+      margin-bottom: var(--ifm-paragraph-margin-bottom);
+
+      &:last-of-type {
+        margin-bottom: 0;
+      }
+    }
     a:not(.hp--button) {
       color: white;
       text-decoration: underline;

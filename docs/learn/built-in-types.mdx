@@ -92,6 +92,16 @@ Address may be an account ID (`AccountId`) or a contract ID (`BytesN<32>`).
 The Address type is implemented like an [enum custom type] and is stored as a
 two element Vec.
 
+When converted to XDR
+```json
+{"object": { "vec": [{ "symbol": "Account" }, {"object": {"account_id": {"public_key_type_ed25519": "2f3ca127a7fff8ca48ef96cc28ad353af4cdd82d1d6b55c89a4e5210994e2c58"}}}] } }
+```
+
+The public_key_type_ed25519 value is the hex value of your Stellar raw public key, it can be obtained through the StellarSdk using the following code
+```javascript
+console.log(StellarSdk.Keypair.fromPublicKey("GAMTOUBMGGDL5JIS3T2NQFJS5C7KTIS4O77VLTFKSB57PFEOF55CTDRG").rawPublicKey().toString('hex'))
+```
+
 [enum custom type]: custom-types#enum-unit-and-tuple-variants
 
 ## Account ID (`AccountId`)

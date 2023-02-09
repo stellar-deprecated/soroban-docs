@@ -328,14 +328,15 @@ It's also possible to run a contract on a fully featured local network. See [Dep
 
 :::
 
-Using the code we wrote in [Write a Contract] and the resulting `.wasm` file we built in [Build] run the following command to invoke the `hello` function with a single argument `friend`.
+Using the code we wrote in [Write a Contract] and the resulting `.wasm` file we built in [Build], run the following command to invoke the `hello` function. Here we're setting the `to` argument to `friend`:
 
 ```sh
-soroban invoke \
+soroban contract invoke \
     --wasm target/wasm32-unknown-unknown/release/[project-name].wasm \
     --id 1 \
     --fn hello \
-    --arg friend
+    -- \
+    --to friend
 ```
 
 The following output should appear.
@@ -343,6 +344,14 @@ The following output should appear.
 ```json
 ["Hello", "friend"]
 ```
+
+:::info The `--` double-dash is required!
+
+This is a general [CLI pattern](https://unix.stackexchange.com/questions/11376/what-does-double-dash-mean) used by other commands like [cargo run](https://doc.rust-lang.org/cargo/commands/cargo-run.html). Everything after the `--`, sometimes called [slop](https://github.com/clap-rs/clap/issues/971), is passed to a child process. In this case, `soroban contract invoke` builds an _implicit CLI_ on-the-fly for the `hello` method in your contract. It can do this because Soroban SDK embeds your contract's schema / interface types right in the `.wasm` file that gets deployed on-chain. Try this, too:
+
+    soroban contract invoke ... --fn hello -- --help
+
+:::
 
 [Write a Contract]: #write-a-contract
 [Deploy to a Local Network]: deploy-to-a-local-network

@@ -224,11 +224,12 @@ A `.wasm` file should be outputted in the `../target` directory:
 If you have [`soroban-cli`] installed, you can invoke contract functions in the WASM using it.
 
 ```sh
-soroban invoke \
+soroban contract invoke \
     --wasm ../target/wasm32-unknown-unknown/release/soroban_custom_types_contract.wasm \
     --id 1 \
-    --fn increment
-    --arg 5
+    --fn increment \
+    -- \
+    --incr 5
 ```
 
 The following output should occur using the code above.
@@ -242,7 +243,7 @@ Run it a few more times with different increment amounts to watch the count chan
 Use the `soroban` to inspect what the counter is after a few runs.
 
 ```sh
-soroban read --id 1 --key STATE
+soroban contract read --id 1 --key STATE
 ```
 
 ```

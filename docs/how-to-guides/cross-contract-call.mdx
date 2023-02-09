@@ -253,13 +253,13 @@ If you have [`soroban-cli`] installed, you can invoke contract functions. Both
 contracts must be deployed.
 
 ```sh
-soroban deploy \
+soroban contract deploy \
     --wasm target/wasm32-unknown-unknown/release/soroban_cross_contract_a_contract.wasm \
     --id a
 ```
 
 ```sh
-soroban deploy \
+soroban contract deploy \
     --wasm target/wasm32-unknown-unknown/release/soroban_cross_contract_b_contract.wasm \
     --id b
 ```
@@ -268,12 +268,13 @@ Invoke Contract B's `add_with` function, passing in values for `x` and `y`
 (e.g. as `5` and `7`), and then pass in the contract ID of Contract A.
 
 ```sh
-soroban invoke \
+soroban contract invoke \
     --id b \
     --fn add_with \
-    --arg a \
-    --arg 5 \
-    --arg 7
+    -- \
+    --contract_id a \
+    --x 5 \
+    --y 7
 ```
 
 The following output should occur using the code above.

@@ -1,5 +1,5 @@
 ---
-sidebar_position: 16
+sidebar_position: 17
 title: Stellar Asset Contract
 ---
 
@@ -19,7 +19,7 @@ The Stellar Asset Contract is in early development, has not been audited, and is
 
 Stellar has numerous assets on its classic network, and being able to use them in Soroban would give users much more flexibility with how they can use their assets. For this reason, we introduced the Stellar Asset Contract, or SAC for short, which will allow users to use their Stellar account and trustline balances in Soroban.
 
-The SAC implements the [token interface](./tokens.mdx), which is similar to the widely used ERC-20 token standard. This should make it easier for existing smart contract developers to get started on Stellar.
+The SAC implements the [token interface](tokens.mdx), which is similar to the widely used ERC-20 token standard. This should make it easier for existing smart contract developers to get started on Stellar.
 
 ## Deployment
 
@@ -46,7 +46,7 @@ After the contract has been deployed, users can use their classic account or tru
 
 ## Authorization semantics
 
-See the [advanced auth example](./auth-advanced.mdx) for an overview of authorization.
+See the [auth example](./auth.mdx) for an overview of authorization.
 
 ### SAC operations
 
@@ -88,39 +88,9 @@ token.with_source_account(&token_admin_id).mint(
 
 See a more complete example that uses invoker auth in the tests [here](https://github.com/stellar/soroban-examples/blob/51a95262caba3f8ac466fa8bbc07004ad297ae13/timelock/src/test.rs#L60).
 
-### Example: Signing payloads
-
-The payload signature semantics is the same as for regular contracts using [advanced auth](./auth-advanced.mdx). The following snippet shows how should the signature payload look like:
-
-```rust
-let nonce = token.nonce(&token_admin_id);
-// This is the test call, but the contract call arguments and signature payload
-// would be the same for the real contract call too.
-let sig = soroban_auth::testutils::ed25519::sign(
-    &env,
-    // Signer has the private key of the admin.
-    &token_admin_signer,
-    // Identifier of the token contract.
-    &token_contract_id,
-    // Name of the contract function we call.
-    symbol!("mint"),
-    // Arguments of the contract function call.
-    // Notice that instead of the signature (first `mint` argument), public key
-    // is used as the first argument here.
-    (&token_admin_id, &nonce, &user_id, &1000),
-);
-// Call the contract with signature we computed above.
-token.mint(
-    &sig,
-    &nonce,
-    &user_id,
-    &1000,
-);
-```
-
 ## Contract Interface
 
-This interface can be found in the [SDK](https://github.com/stellar/rs-soroban-sdk/blob/main/soroban-token-spec/src/lib.rs). It extends the common [token interface](./tokens.mdx).
+This interface can be found in the [SDK](https://github.com/stellar/rs-soroban-sdk/blob/main/soroban-token-spec/src/lib.rs). It extends the common [token interface](tokens.mdx).
 
 ## Interacting with the token contract in tests
 

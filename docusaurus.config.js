@@ -28,6 +28,15 @@ const config = {
         anonymizeIP: true,
       },
     ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'api',
+        path: 'api',
+        routeBasePath: 'api',
+        sidebarPath: require.resolve('./sidebarsApi.js'),
+      },
+    ],
     require('./src/dev-server-plugin'),
     require('./src/analytics-module')
   ],
@@ -53,10 +62,10 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       image: 'img/meta.png',
-      docs: { 
-        sidebar: { 
-          autoCollapseCategories: false 
-        } 
+      docs: {
+        sidebar: {
+          autoCollapseCategories: false
+        }
       },
       navbar: {
         logo: {
@@ -67,18 +76,24 @@ const config = {
         },
         items: [
           {
-            to: '/docs', 
-            label: 'Docs', 
+            to: '/docs',
+            label: 'Docs',
             position: 'left'
           },
           {
-            href: 'https://quest.stellar.org/live',
-            label: 'Stellar Quest',
+            to: '/api',
+            label: 'API',
             position: 'left',
+            docsPluginId: 'api'
           },
           // {
-          //   href: 'https://github.com/stellar/sorobanathon', 
-          //   label: 'Sorobanathon', 
+          //   href: 'https://quest.stellar.org/live',
+          //   label: 'Stellar Quest',
+          //   position: 'left',
+          // },
+          // {
+          //   href: '/sorobanathon',
+          //   label: 'Sorobanathon',
           //   position: 'left'
           // },
           {
@@ -101,11 +116,36 @@ const config = {
       footer: {
         links: [
           {
+            title: 'About',
+            items: [
+              {
+                label: 'About SDF',
+                href: 'https://stellar.org/foundation',
+              },
+              {
+                label: 'Careers',
+                href: 'https://stellar.org/foundation/careers',
+              },
+              {
+                label: 'Events',
+                href: 'https://stellar.org/events',
+              },
+              {
+                label: 'Grants and Funding',
+                href: 'https://stellar.org/foundation/grants-and-funding',
+              },
+            ],
+          },
+          {
             title: 'Community',
             items: [
               {
-                label: 'Discord',
-                href: 'https://discord.gg/6ZCcYqbC96',
+                label: 'Developer Discord',
+                href: 'https://discord.gg/stellardev',
+              },
+              {
+                label: 'Developer Google Group',
+                href: 'https://groups.google.com/g/stellar-dev?pli=1',
               },
             ],
           },
@@ -117,13 +157,17 @@ const config = {
                 href: 'https://github.com/stellar',
               },
               {
+                label: 'Developer Blog',
+                href: 'https://www.stellar.org/developers-blog',
+              },
+              {
                 label: 'Stellar Quest',
                 href: 'https://quest.stellar.org/live',
               },
-              // {
-              //   label: 'Sorobanathon',
-              //   href: 'https://github.com/stellar/sorobanathon', 
-              // },
+              {
+                label: 'Sorobanathon',
+                href: 'https://soroban.stellar.org/sorobanathon',
+              },
             ],
           },
         ],

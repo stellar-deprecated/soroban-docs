@@ -1,5 +1,5 @@
 ---
-sidebar_position: 4
+sidebar_position: 5
 title: Custom Types
 ---
 
@@ -8,14 +8,18 @@ usable everywhere primitives types can be used: as contract inputs, outputs, or
 for storage.
 
 :::info
+
 The [custom types example] demonstrates how to define your own types.
-[custom types example]: ../examples/custom-types.mdx
+[custom types example]: ../how-to-guides/custom-types.mdx
+
 :::
 
 :::info
+
 Error enum types are another type contracts can define that have some unique
 behaviors. See [Errors] for more information.
 [Errors]: ./errors
+
 :::
 
 ## Structs (with Named Fields)
@@ -39,7 +43,14 @@ When converted to XDR, the value becomes an `ScVal`, containing an `ScObject`,
 containing an `ScMap`, containing an array of key-value pairs.
 
 ```json
-{"object":{"map":[{"key":{"symbol":"count"},"val":{"u32":0}},{"key":{"symbol":"last_incr"},"val":{"u32":0}}]}}
+{
+  "object": {
+    "map": [
+      { "key": { "symbol": "count" }, "val": { "u32": 0 } },
+      { "key": { "symbol": "last_incr" }, "val": { "u32": 0 } }
+    ]
+  }
+}
 ```
 
 ## Structs (with Unnamed Fields)
@@ -58,7 +69,7 @@ When converted to XDR, the value becomes an `ScVal`, containing an `ScObject`,
 containing an `ScVec`, containing an array of values.
 
 ```json
-{"object":{"vec":[{"u32":0},{"u32":0}]}}
+{ "object": { "vec": [{ "u32": 0 }, { "u32": 0 }] } }
 ```
 
 ## Enum (Unit and Tuple Variants)
@@ -85,7 +96,7 @@ an `ScVal`, containing an `ScObject`, containing an `ScVec`, containing an array
 with a single value, the symbol containing the variant name.
 
 ```json
-{"object":{"vec":[{"symbol":"A"}]}}
+{ "object": { "vec": [{ "symbol": "A" }] } }
 ```
 
 When a tuple variant, such as `Enum::B`, is converted to XDR, the value becomes
@@ -93,7 +104,7 @@ an `ScVal`, containing an `ScObject`, containing an `ScVec`, containing an array
 with two values, the symbol containing the variant name and the tuple value.
 
 ```json
-{"object":{"vec":[{"symbol":"B"},{"u32":0}]}}
+{ "object": { "vec": [{ "symbol": "B" }, { "u32": 0 }] } }
 ```
 
 When tuple variants containing multiple values are implemented, the values will
@@ -116,5 +127,5 @@ pub enum Enum {
 When converted to XDR, the value becomes an `ScVal`, containing a `U32`.
 
 ```json
-{"u32":1}
+{ "u32": 1 }
 ```

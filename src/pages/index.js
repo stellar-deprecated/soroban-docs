@@ -86,14 +86,19 @@ export default function Home() {
         </div>
 
         <div id="build-and-earn-rewards" className='hp--cta hp--maxWidth'>
-          <h2>Build & Earn Rewards</h2>
+          <h2>Build & Earn</h2>
           <a href="https://share.hsforms.com/1U3FFLQBPQzCLKtv1vS8T-Q4u978" className='hp--imgLink'>
             <img src='./img/homepage/sorobanathon.svg' />
           </a>
-          <h1>Soroban Adoption Fund</h1>
+          <h1>Stellar Community Fund</h1>
           <p>
-            SDF recently launched a $100 million Soroban Adoption Fund with the goal of accelerating Soroban’s adoption. Our first rewards program, <a href='https://github.com/stellar/sorobanathon'><i>Sorobanathon: First Light</i></a>, ended December 15, but fear not!  We'll be launching new Soroban-related programs soon.  In the meantime, if you or your organization is interested in building new tools or applications on Soroban and would like to receive additional information on Soroban Adoption Fund programs as they are rolled out, please complete the Soroban Adoption Fund interest form.
+          Submit your Soroban project to the <a href="https://communityfund.stellar.org/">Stellar Community Fund</a> and receive up to $150K worth of XLM in awards. This is your chance to play a fundamental role in bootstrapping the Soroban  ecosystem by creating the  tools, protocols, dApps, and resources necessary for it to thrive. 
           </p>
+          <p>New to Soroban? Need more time to noodle on an idea for submission? Play around with Soroban and get inspired:</p>
+          <ul>
+            <li>Launch your Soroban education on <a href="https://quest.stellar.org/">Stellar Quest</a>, and earn rewards for completing exciting challenges  basic building blocks of Soroban</li>
+            <li>Experiment, build, and tinker in <a href="/sorobanathon">Sorobanathon: Equinox</a> and earn XLM for submitting tutorials, code examples, and more based on your experience building with Soroban.</li>
+          </ul>
           <a href="https://share.hsforms.com/1U3FFLQBPQzCLKtv1vS8T-Q4u978" className='hp--button'>Fill out the Form</a>
         </div>
 

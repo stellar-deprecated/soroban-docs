@@ -99,7 +99,7 @@ export default function Home() {
             <li>Launch your Soroban education on <a href="https://quest.stellar.org/">Stellar Quest</a>, and earn rewards for completing exciting challenges  basic building blocks of Soroban</li>
             <li>Experiment, build, and tinker in <a href="/sorobanathon">Sorobanathon: Equinox</a> and earn XLM for submitting tutorials, code examples, and more based on your experience building with Soroban.</li>
           </ul>
-          <a href="https://share.hsforms.com/1U3FFLQBPQzCLKtv1vS8T-Q4u978" className='hp--button'>Fill out the Form</a>
+          <a href="https://communityfund.stellar.org/" className='hp--button'>Submit Your Project</a>
         </div>
 
         <div className='hp--cta hp--maxWidth'>

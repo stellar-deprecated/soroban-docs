@@ -83,7 +83,7 @@ contract).
       the issuer account will mint.
     - Trustline balances are stored in a 64-bit signed integer even though the
       interface accepts 128-bit signed integers. Any operation that attempts to
-      send or recieve an amount more than the maximum amount that can be
+      send or receive an amount more than the maximum amount that can be
       represented by a 64-bit signed integer will fail.
 - Using `Address::Contract`
   - The balance and authorization state will be stored in contract storage, as
@@ -91,6 +91,13 @@ contract).
   - `AUTH_REVOCABLE` is not required to be set on the issuer to deauthorize a
     balance.
   - Balances are stored in a 128-bit signed integer.
+
+### Authorization Required
+In the `Address::Contract` case, if the issuer has `AUTH_REQUIRED` set, then the
+specified `Address::Contract` will need to be explicitly authorized before it
+can receive a balance. This logic lines up with how trustlines interact with the
+`AUTH_REQUIRED` issuer flag, allowing asset issuers to have the same control in
+Soroban as they do in Stellar classic.
 
 ## Authorization semantics
 

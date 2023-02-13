@@ -59,9 +59,12 @@ issuer, it will not have an administrator either. It also cannot be burned.
 
 After the contract has been deployed, users can use their classic account (for
 lumens) or trustline (for other assets) balance. There are some differences
-depending on if you are using a classic account `Address` vs a contract 
+depending on if you are using a classic account `Address` vs a contract
 `Address` (corresponding either to a regular contract or to a custom account
-contract).
+contract). The following section references some issuer and trustline flags from
+Stellar classic, which you can learn more about [here].
+
+[here]:https://developers.stellar.org/docs/issuing-assets/control-asset-access#controlling-access-to-an-asset-with-flags
 
 - Using `Address::Account`
   - The balance must exist in a trustline (or an account for the native
@@ -74,7 +77,7 @@ contract).
     - A trustline balance can only be clawed back using the `clawback` contract
       function if the trustline has `TRUSTLINE_CLAWBACK_ENABLED_FLAG` set.
     - The admin can only deauthorize a trustline if the issuer of the asset has
-      `AUTH_REVOCABLE` set. The deauthorization will fail if the issuer is
+      `AUTH_REVOCABLE_FLAG` set. The deauthorization will fail if the issuer is
       missing. Note that when a trustline is deauthorized from Soroban,
       `AUTHORIZED_FLAG` is cleared and
       `AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG` is set to avoid having to pull
@@ -88,16 +91,19 @@ contract).
 - Using `Address::Contract`
   - The balance and authorization state will be stored in contract storage, as
     opposed to a trustline.
-  - `AUTH_REVOCABLE` is not required to be set on the issuer to deauthorize a
+  - `AUTH_REVOCABLE_FLAG` is not required to be set on the issuer to deauthorize a
     balance.
   - Balances are stored in a 128-bit signed integer.
 
-### Authorization Required
-In the `Address::Contract` case, if the issuer has `AUTH_REQUIRED` set, then the
-specified `Address::Contract` will need to be explicitly authorized before it
-can receive a balance. This logic lines up with how trustlines interact with the
-`AUTH_REQUIRED` issuer flag, allowing asset issuers to have the same control in
-Soroban as they do in Stellar classic.
+### Balance Authorization Required
+In the `Address::Contract` case, if the issuer has `AUTH_REQUIRED_FLAG` set, then the
+specified `Address::Contract` will need to be explicitly authorized with
+`set_auth` before it can receive a balance. This logic lines up with how
+trustlines interact with the `AUTH_REQUIRED_FLAG` issuer flag, allowing asset issuers
+to have the same control in Soroban as they do in Stellar classic. Read more
+about `AUTH_REQUIRED_FLAG` [here].
+
+[here]:https://developers.stellar.org/docs/issuing-assets/control-asset-access#authorization-required-0x1
 
 ## Authorization semantics
 

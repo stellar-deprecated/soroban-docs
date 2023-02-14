@@ -351,7 +351,7 @@ The following output should appear.
 
 ## Optimizing Builds
 
-Building optimized contracts to be as small as possible requires some additional tools, and requires installing the `nightly` Rust toolchain and `wasm-opt`.
+Building optimized contracts to be as small as possible requires some additional tools and Rust toolchain.
 
 :::tip
 
@@ -360,18 +360,6 @@ Building optimized contracts is only necessary when deploying to a network with 
 :::
 
 [Build]: #build
-
-### Install Rust `nightly`
-
-To install the nightly Rust toolchain use [`rustup`].
-
-[`rustup`]: ../getting-started/setup#install-rust
-
-```sh
-rustup install nightly
-rustup target add --toolchain nightly wasm32-unknown-unknown
-rustup component add --toolchain nightly rust-src
-```
 
 ### Install `wasm-opt`
 
@@ -406,9 +394,9 @@ For install options see: https://github.com/WebAssembly/binaryen/releases
 </TabItem>
 </Tabs>
 
-### Build with `nightly` and `soroban contract optimize`
+### Build with optimization flags and `soroban contract optimize`
 
-Build your contract using nightly. The additional options instruct the compiler to remove unnecessary information from the contract.
+The additional options instruct the compiler to remove unnecessary information from the contract.
 
 ```sh
 cargo +nightly build \

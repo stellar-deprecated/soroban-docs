@@ -361,39 +361,6 @@ Building optimized contracts is only necessary when deploying to a network with 
 
 [Build]: #build
 
-### Install `wasm-opt`
-
-To install `wasm-opt`, install [`binaryen`]. Depending on your operating system there may be different ways to install it.
-
-[`binaryen`]: https://github.com/WebAssembly/binaryen
-
-<Tabs>
-<TabItem value="macos" label="macOS" default>
-
-```sh
-brew install binaryen
-```
-
-</TabItem>
-<TabItem value="linux" label="Linux">
-
-For distributions that use `apt`:
-
-```sh
-sudo apt install binaryen
-```
-
-For other distributions see:
-https://github.com/WebAssembly/binaryen/releases
-
-</TabItem>
-<TabItem value="windows" label="Windows">
-
-For install options see: https://github.com/WebAssembly/binaryen/releases
-
-</TabItem>
-</Tabs>
-
 ### Build with optimization flags and `soroban contract optimize`
 
 The additional options instruct the compiler to remove unnecessary information from the contract.

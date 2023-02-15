@@ -308,7 +308,7 @@ If you have [`soroban-cli`] installed, you can invoke contract functions in the
 WASM using it.
 
 ```sh
-soroban invoke \
+soroban contract invoke \
     --wasm ../target/wasm32-unknown-unknown/release/soroban_errors_contract.wasm \
     --id 1 \
     --fn increment
@@ -317,7 +317,7 @@ soroban invoke \
 Run the command a few times and on the 6th invocation the following output should occur.
 
 ```
-❯ soroban invoke \
+❯ soroban contract invoke \
     --wasm target/wasm32-unknown-unknown/release/soroban_errors_contract.wasm \
     --id 1 \
     --fn increment
@@ -329,7 +329,7 @@ Value: Status(ContractError(1))
 Use the `soroban` to inspect what the counter is.
 
 ```sh
-soroban read --id 1 --key COUNTER
+soroban contract read --id 1 --key COUNTER
 ```
 
 [`soroban-cli`]: ../getting-started/setup#install-the-soroban-cli

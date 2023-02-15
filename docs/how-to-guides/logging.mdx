@@ -261,11 +261,12 @@ If you have [`soroban-cli`] installed, you can invoke contract functions in the
 using it.
 
 ```sh
-soroban invoke \
+soroban contract invoke \
     --wasm ../target/wasm32-unknown-unknown/release-with-logs/soroban_logging_contract.wasm \
     --id 1 \
     --fn hello \
-    --arg friend
+    -- \
+    --to friend
 ```
 
 The following output should occur using the code above.

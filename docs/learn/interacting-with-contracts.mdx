@@ -60,9 +60,6 @@ Note that everything described in this section is only available if the `testuti
 
 This machinery can also be used to test multiple contracts together. For example, the single offer contract test case [creates a token](https://github.com/stellar/soroban-examples/blob/56fef787395b5aed7cd7b19772cca28e21b3feb5/single_offer/src/test.rs#L22).
 
-<details>
-<summary>Advanced</summary>
-
 ## Calling contracts
 
 Contracts are invoked through a pair of host functions `call` and `try_call`:
@@ -89,9 +86,11 @@ When a call occurs from inside the host, the caller and callee contracts _share 
 
 Since host objects are immutable, there is limited risk to passing a shared reference from one contract to another: the callee cannot modify the object in a way that would surprise the caller, only create new objects.
 
-## Storage footprint and preflight
+## Preflight
 
-As mentioned in the [persisting data](../learn/persisting-data) section, a contract can only load or store `CONTRACT_DATA` entries that are declared in a _footprint_ associated with its invocation.
+### Footprint
+
+As mentioned in the [persisting data](../learn/persisting-data.mdx) section, a contract can only load or store `CONTRACT_DATA` entries that are declared in a _footprint_ associated with its invocation.
 
 A footprint is a set of ledger keys, each marked as either read-only or read-write. Read-only keys are available to the transaction for reading, read-write available for reading, writing or both.
 
@@ -103,4 +102,40 @@ Such a preflight-provided footprint can then be used to accompany a "real" submi
 
 In any event -- whether successful or failing -- the real transaction will execute atomically, deterministically and with serializable consistency semantics. An inaccurate footprint simply causes deterministic transaction failure, not a stale-read anomaly. All effects of such a failed transaction are discarded, as they would be in the presence of any other error.
 
-</details>
+### Authorization
+
+See [authorization overview](authorization.mdx) and authorization in
+transactions [section][auth-data] for general information on Soroban
+authorization.
+
+[auth-data]: ../how-to-guides/invoking-contracts-with-transactions.mdx#authorization-data
+
+Preflight mechansim can also be used to compute the `AuthorizedInvcation` trees
+that have ot be authorized by the `Address`es in order for all the
+`require_auth` checks to pass.
+
+Soroban host provides a special 'recording' mode for auth. Whenever 
+`require_auth` is called it would record its context (address, contract id,
+function, arguments), attribute it to an `AuthorizedInvocation` tree and mark it
+ as successful. Then after the invocation has finished, preflight can return all
+the recorded trees, as well as the required nonce values.
+
+Given this information from preflight, the client only needs to provide these
+trees and nonces to the respective `Addresses` for signing and then build the
+final transaction using the preflight output and the corresponding signatures.
+
+The recording auth mode is optional for preflight. For example, when dealing
+with the custom account contracts, it may be necessary to preflight the custom
+account's `check_auth` code (that is simply omitted in the recording auth mode),
+for example, to get its ledger footprint. The non-recording mode is referred to
+as 'enforcing'. Enforcing mode is basically equivalent to running the 
+transaction on-chain (with a slightly stale ledger state) and hence it requires
+all the signatures to be valid.
+
+Note, that the recording auth mode never emulates authorization failures. The
+reason for that is that failing authorization is always an exceptional 
+situation (the `Addresses` for which you don't anticipate successful 
+authorization shouldn't be used in the first place). It is similar to how, for
+example, the preflight doesn't emulate failures caused by the incorrect
+footprint. Preflight with enforcing auth mode may still be used to verify the
+signatures before executing the transaction on-chain.

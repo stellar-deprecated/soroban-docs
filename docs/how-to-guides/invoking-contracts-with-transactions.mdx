@@ -162,9 +162,12 @@ struct AuthorizedInvocation
 
 `AuthorizedInvocation` needs to include a contract, contract function, arguments
 of `require_auth`/`require_auth_for_args` call and all the authorized
-sub-contract invocations originating from the current node.
+sub-contract invocations originating from the current node. Building 
+`AuthorizedInvocation` trees may be simplified by using the recording auth mode
+in Soroban preflight (see the [docs][preflight-doc] for more details).
 
 [envelope-xdr]: https://github.com/stellar/stellar-xdr/blob/df18148747e807618acf4639db41c4fd6f0be9fc/Stellar-transaction.x#L681
+[preflight-doc]: ../learn/interacting-with-contracts.mdx#authorization
 
 #### Stellar Account Signatures
 

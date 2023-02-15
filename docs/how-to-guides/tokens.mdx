@@ -1,154 +1,186 @@
 ---
-sidebar_position: 15
+sidebar_position: 16
 title: Tokens
 ---
 
 ## Token Example
 
-The [token example] demonstrates how to write a token contract that implements the token interface.
+The [token example] demonstrates how to write a token contract that implements
+the token interface.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.4.2
 
-[token example]: https://github.com/stellar/soroban-examples/tree/v0.4.2/token
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.6.0
+
+[token example]: https://github.com/stellar/soroban-examples/tree/v0.6.0/token
 
 ## Token Interface
 
-Token contracts, including the Stellar Asset Contract and example token implementations expose the following common interface.
+Token contracts, including the Stellar Asset Contract and example token
+implementations expose the following common interface.
 
-Tokens deployed on Soroban can implement any interface they choose, however, they should satisfy the following interface to be interoperable with contracts built to support Soroban's built-in tokens.
+Tokens deployed on Soroban can implement any interface they choose, however,
+they should satisfy the following interface to be interoperable with contracts
+built to support Soroban's built-in tokens.
+
+Note, that in the specific cases the interface doesn't have to be fully
+implemented. For example, the custom token may not implement the administrative
+interface compatible with the Stellar Asset Contract - it won't stop it from
+being usable in the contracts that only perform the regular user operations
+(transfers, allowances, balances etc.).
+
+### Compatibility Requirements
+
+For any given contract function, there are 3 requirements that should be
+consistent with the interface described here:
+
+- Function interface (name and arguments) - if not consistent, then the users
+simply won't be able to use the function at all. This is the hard requirement.
+- Authorization - the users have to authorize the token function calls with all
+the arguments of the invocation (see the interface comments). If this is
+inconsistent, then the custom token may have issues with getting the correct
+signatures from the users and may also confuse the wallet software.
+- Events - the token has to emit the events in the specified format. If
+inconsistent, then the token may not be handled correctly by the downstream
+systems such as block explorers.
+
+### Code
+
+The interface below uses the Rust [soroban-sdk](../reference/sdks/rust.mdx).
 
 ```rust
 pub trait Contract {
     // --------------------------------------------------------------------------------
     // Admin interface – privileged functions.
     // --------------------------------------------------------------------------------
+    //
+    // All the admin functions have to be authorized by the admin with all input
+    // arguments, i.e. they have to call `admin.require_auth()`.
 
     /// If "admin" is the administrator, clawback "amount" from "from". "amount" is burned.
-    /// Emit event with topics = ["clawback", from: Identifier, to: Identifier], data = [amount: i128]
+    /// Emit event with topics = ["clawback", admin: Address, to: Address], data = [amount: i128]
     fn clawback(
         env: soroban_sdk::Env,
-        admin: soroban_auth::Signature,
-        nonce: i128,
-        from: soroban_auth::Identifier,
+        admin: Address,
+        from: Address,
         amount: i128,
     );
 
     /// If "admin" is the administrator, mint "amount" to "to".
-    /// Emit event with topics = ["mint", admin: Identifier, to: Identifier], data = [amount: i128]
+    /// Emit event with topics = ["mint", admin: Address, to: Address], data = [amount: i128]
     fn mint(
         env: soroban_sdk::Env,
-        admin: soroban_auth::Signature,
-        nonce: i128,
-        to: soroban_auth::Identifier,
+        admin: Address,
+        to: Address,
         amount: i128,
     );
 
     /// If "admin" is the administrator, set the administrator to "id".
-    /// Emit event with topics = ["set_admin", admin: Identifier], data = [new_admin: Identifier]
+    /// Emit event with topics = ["set_admin", admin: Address], data = [new_admin: Address]
     fn set_admin(
         env: soroban_sdk::Env,
-        admin: soroban_auth::Signature,
-        nonce: i128,
-        new_admin: soroban_auth::Identifier,
+        admin: Address,
+        new_admin: Address,
     );
 
     /// If "admin" is the administrator, set the authorize state of "id" to "authorize".
     /// If "authorize" is true, "id" should be able to use its balance.
-    /// Emit event with topics = ["set_auth", admin: Identifier, id: Identifier], data = [authorize: bool]
+    /// Emit event with topics = ["set_auth", admin: Address, id: Address], data = [authorize: bool]
     fn set_auth(
         env: soroban_sdk::Env,
-        admin: soroban_auth::Signature,
-        nonce: i128,
-        id: soroban_auth::Identifier,
+        admin: Address,
+        id: Address,
         authorize: bool,
     );
 
     // --------------------------------------------------------------------------------
     // Token interface
     // --------------------------------------------------------------------------------
-
-    /// Get the allowance for "spender" to transfer from "from".
-    fn allowance(
-        env: soroban_sdk::Env,
-        from: soroban_auth::Identifier,
-        spender: soroban_auth::Identifier,
-    ) -> i128;
+    // 
+    // All the functions here have to be authorized by the token spender 
+    // (usually named `from` here) using all the input arguments, i.e. they have
+    // to call  `from.require_auth()`.
 
     /// Increase the allowance by "amount" for "spender" to transfer/burn from "from".
-    /// Emit event with topics = ["incr_allow", from: Identifier, spender: Identifier], data = [amount: i128]
+    /// Emit event with topics = ["incr_allow", from: Address, spender: Address], data = [amount: i128]
     fn incr_allow(
         env: soroban_sdk::Env,
-        from: soroban_auth::Signature,
-        nonce: i128,
-        spender: soroban_auth::Identifier,
+        from: Address,
+        spender: Address,
         amount: i128,
     );
 
     /// Decrease the allowance by "amount" for "spender" to transfer/burn from "from".
     /// If "amount" is greater than the current allowance, set the allowance to 0.
-    /// Emit event with topics = ["decr_allow", from: Identifier, spender: Identifier], data = [amount: i128]
+    /// Emit event with topics = ["decr_allow", from: Address, spender: Address], data = [amount: i128]
     fn decr_allow(
         env: soroban_sdk::Env,
-        from: soroban_auth::Signature,
-        nonce: i128,
-        spender: soroban_auth::Identifier,
+        from: Address,
+        spender: Address,
         amount: i128,
     );
 
-    /// Get the balance of "id".
-    fn balance(env: soroban_sdk::Env, id: soroban_auth::Identifier) -> i128;
-
-    /// Get the spendable balance of "id". This will return the same value as balance()
-    /// unless this is called on the Stellar Asset Contract, in which case this can
-    /// be less due to reserves/liabilities.
-    fn spendable(env: soroban_sdk::Env, id: soroban_auth::Identifier) -> i128;
-
     /// Transfer "amount" from "from" to "to.
-    /// Emit event with topics = ["transfer", from: Identifier, to: Identifier], data = [amount: i128]
+    /// Emit event with topics = ["transfer", from: Address, to: Address], data = [amount: i128]
     fn xfer(
         env: soroban_sdk::Env,
-        from: soroban_auth::Signature,
-        nonce: i128,
-        to: soroban_auth::Identifier,
+        from: Address,
+        to: Address,
         amount: i128,
     );
 
     /// Transfer "amount" from "from" to "to", consuming the allowance of "spender".
-    /// Emit event with topics = ["transfer", from: Identifier, to: Identifier], data = [amount: i128]
+    /// Authorized by spender (`spender.require_auth()`).
+    /// Emit event with topics = ["transfer", from: Address, to: Address], data = [amount: i128]
     fn xfer_from(
         env: soroban_sdk::Env,
-        spender: soroban_auth::Signature,
-        nonce: i128,
-        from: soroban_auth::Identifier,
-        to: soroban_auth::Identifier,
+        spender: Address,
+        from: Address,
+        to: Address,
         amount: i128,
     );
 
     /// Burn "amount" from "from".
-    /// Emit event with topics = ["burn", from: Identifier], data = [amount: i128]
+    /// Emit event with topics = ["burn", from: Address], data = [amount: i128]
     fn burn(
         env: soroban_sdk::Env,
-        from: soroban_auth::Signature,
-        nonce: i128,
+        from: Address,
         amount: i128,
     );
 
     /// Burn "amount" from "from", consuming the allowance of "spender".
-    /// Emit event with topics = ["burn", from: Identifier], data = [amount: i128]
+    /// Emit event with topics = ["burn", from: Address], data = [amount: i128]
     fn burn_from(
         env: soroban_sdk::Env,
-        spender: soroban_auth::Signature,
-        nonce: i128,
-        from: soroban_auth::Identifier,
+        spender: Address,
+        from: Address,
         amount: i128,
     );
 
-    // Returns true if "id" is authorized to use its balance.
-    fn authorized(env: soroban_sdk::Env, id: soroban_auth::Identifier) -> bool;
+    // --------------------------------------------------------------------------------
+    // Read-only Token interface
+    // --------------------------------------------------------------------------------
+    // 
+    // The functions here don't need any authorization and don't emit any
+    // events.
 
-    // Returns the current nonce for "id".
-    fn nonce(env: soroban_sdk::Env, id: soroban_auth::Identifier) -> i128;
+    /// Get the balance of "id".
+    fn balance(env: soroban_sdk::Env, id: Address) -> i128;
+
+    /// Get the spendable balance of "id". This will return the same value as balance()
+    /// unless this is called on the Stellar Asset Contract, in which case this can
+    /// be less due to reserves/liabilities.
+    fn spendable(env: soroban_sdk::Env, id: Address) -> i128;
+
+    // Returns true if "id" is authorized to use its balance.
+    fn authorized(env: soroban_sdk::Env, id: Address) -> bool;
+
+    /// Get the allowance for "spender" to transfer from "from".
+    fn allowance(
+        env: soroban_sdk::Env,
+        from: Address,
+        spender: Address,
+    ) -> i128;
 
     // --------------------------------------------------------------------------------
     // Descriptive Interface
@@ -164,8 +196,3 @@ pub trait Contract {
     fn symbol(env: soroban_sdk::Env) -> soroban_sdk::Bytes;
 }
 ```
-
-Most types that a token implementation utilizes are provided by the [soroban-sdk] and [soroban-auth] crates.
-
-[soroban-sdk]: ../reference/sdks/rust
-[soroban-auth]: ../reference/sdks/rust-auth

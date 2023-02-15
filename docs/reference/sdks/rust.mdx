@@ -1,0 +1,38 @@
+---
+sidebar_position: 1
+title: Soroban Rust SDK
+---
+
+The `soroban-sdk` Rust crate contains the Soroban Rust SDK.
+
+:::info
+
+Report issues and share feedback about the `soroban-sdk`
+[here](https://github.com/stellar/rs-soroban-sdk/issues/new/choose).
+
+:::
+
+## SDK Documentation
+
+SDK documentation is available at:
+https://docs.rs/soroban-sdk
+
+## Subscribe to Releases
+
+Subscribe to releases on the GitHub repository:
+https://github.com/stellar/rs-soroban-sdk
+
+## Add `soroban-sdk` as a Dependency
+
+Add the following sections to the `Cargo.toml` to import the `soroban-sdk`.
+
+```toml
+[features]
+testutils = ["soroban-sdk/testutils"]
+
+[dependencies]
+soroban-sdk = "0.4.2"
+
+[dev_dependencies]
+soroban-sdk = { version = "0.4.2", features = ["testutils"] }
+```

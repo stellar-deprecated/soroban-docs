@@ -121,7 +121,7 @@ it as successful. Then after the invocation has finished, preflight can return
 all the recorded trees, as well as the required nonce values.
 
 Given this information from preflight, the client only needs to provide these
-trees and nonces to the respective `Addresses` for signing and then build the
+trees and nonces to the respective `Address`es for signing and then build the
 final transaction using the preflight output and the corresponding signatures.
 
 The recording auth mode is optional for preflight. For example, when dealing
@@ -134,7 +134,7 @@ all the signatures to be valid.
 
 Note, that the recording auth mode never emulates authorization failures. The
 reason for that is that failing authorization is always an exceptional 
-situation (the `Addresses` for which you don't anticipate successful 
+situation (the `Address`es for which you don't anticipate successful 
 authorization shouldn't be used in the first place). It is similar to how, for
 example, the preflight doesn't emulate failures caused by the incorrect
 footprint. Preflight with enforcing auth mode may still be used to verify the

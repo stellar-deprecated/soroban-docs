@@ -163,7 +163,7 @@ const config = {
               },
               {
                 label: 'Stellar Quest',
-                href: 'https://quest.stellar.org/live',
+                href: 'https://quest.stellar.org/soroban',
               },
               {
                 label: 'Sorobanathon',

@@ -15,6 +15,81 @@ Preview releases are software releases that are also released to the [Futurenet]
 
 [Futurenet]: futurenet
 
+## Preview 7 (February 16th, 2023)
+
+### Software
+
+| Software                     | Version                                                                                                                           |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------  |
+| XDR                          | [df18148747e807618acf4639db41c4fd6f0be9fc](https://github.com/stellar/stellar-xdr/commit/df18148747e807618acf4639db41c4fd6f0be9fc)|
+| Soroban Environment          | `v0.0.14`                                                                                                                         |
+| Soroban Interface Version    | `29`                                                                                                                              |
+| Stellar Core                 | `19.7.1-1204.871accefc.focal~soroban`                                                                                             |
+| Soroban Rust SDK             | `v0.6.0`                                                                                                                          |
+| Soroban CLI                  | `v0.6.0`                                                                                                                          |
+| Soroban RPC                  | `Not yet released`                                                                                                                |
+| Stellar Horizon              | `Not yet released`                                                                                                                |
+| Stellar Friendbot            | `soroban-v0.0.2-alpha`                                                                                                            |
+| Stellar Quickstart (amd64)   | `Not yet released`                                                                                                                |
+| Stellar Quickstart (arm64)   | `Not yet released`                                                                                                                |
+| Stellar JS Stellar Base      | `8.2.2-soroban.11`                                                                                                                |
+| Stellar JS Soroban Client    | `v0.4.0`                                                                                                                          |
+| Futurenet Network Passphrase | `Test SDF Future Network ; October 2022`                                                                                          |
+
+### Changelog
+
+#### XDR
+
+- Update Rust XDR for Auth Next.
+
+See https://github.com/stellar/rs-stellar-xdr/releases v0.0.13 and v0.0.14 for more details.
+
+#### Soroban Environment
+
+- Allow for a custom budget outside tests
+- Restructure Event to be cheap to clone and allow it to be rolled back
+- Add auth_required support for non-account balances
+- Reform TryFromVal to reduce number of impls
+- Fix override of panic hook during cross-contract testing
+- Add EnvBase::Error, remove CheckedEnv, make Env methods return Error
+- Initial Auth Next implementation in Soroban Host
+- Add 13-tuple conversions
+- Do not include Status as the first arg of a DebugEvent
+- Add a simpler version of require_auth
+- Use auth specific errors
+- Emulate classic account authentication in recording auth mode.
+- Change the interface for the auth testing utility.
+
+See https://github.com/stellar/rs-soroban-env/releases v0.0.13 and v0.0.14 for more details.
+
+#### Soroban Rust SDK
+
+- Support variants with multiple fields in UDTs
+- Error on UDT enums with 0-element tuple variants
+- Allow xlm balance updates
+- Fix vec insert
+- Adapt SDK to changes to {Try,}{From,Into}Val in env crates
+- Fix vec pop_front
+- Use better storage error in tests
+- Adapt to introduction of Env::Error
+- Improve compiler errors for UDTs
+- Allow same named types and functions
+- Make soroban_token_spec::spec_xdr easier to keep updated
+- Remove build-optimized makefile target
+- Auth Next changes in SDK
+- Add docs to contract spec entries
+- SDK support for simplified require_auth
+
+See https://github.com/stellar/rs-soroban-sdk/releases v0.5.0 and v0.6.0 for more details.
+
+#### Soroban RPC
+
+TODO
+
+#### Soroban CLI
+
+TODO
+
 ## Preview 6 (January 9th, 2023)
 
 ### Software

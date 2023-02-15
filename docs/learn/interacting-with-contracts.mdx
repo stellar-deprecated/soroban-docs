@@ -35,7 +35,7 @@ This function is then easily [called by the liquidity pool contract](https://git
 
 ### Stellar Operation
 
-A Stellar operation is the ultimate entrypoint of every contract interaction. An operation transfers control and external data to a contract, allowing execution to begin.
+A Stellar operation is the ultimate entry point of every contract interaction. An operation transfers control and external data to a contract, allowing execution to begin.
 
 This kind of interaction is currently supported in experimental versions of stellar-core only.
 
@@ -43,7 +43,7 @@ This kind of interaction is currently supported in experimental versions of stel
 
 [Debugging contracts](debugging) explains that it is much more convenient to debug using native code than WASM. Given that you are testing native code, it is tempting to interact with your contract directly using function calls. If you attempt this approach, you will find that it doesn't always work. Function call interactions do not set the environment into the correct state for contract execution, so functions involving contract data and determining the current or invoking contract will not work.
 
-When writing tests, it is important to always interact with contracts through contract invocation. In a production setting, contract invocation will execute WASM bytecode loaded from the ledger. So how does this work if you are testing native code? You must register your contract with the environment so it knows what functions are available and how to call them. While this sounds complex, the `contractimpl` procedural macro automatically generates almost all of the code to do this. All you have to do is write a small [stub](https://github.com/stellar/soroban-token-contract/blob/42380647bb817bf01c739c19286f18be881e0e41/src/testutils.rs#L12-L15) to actually call the generated code, such as
+When writing tests, it is important to always interact with contracts through contract invocation. In a production setting, contract invocation will execute WASM bytecode loaded from the ledger. So how does this work if you are testing native code? You must register your contract with the environment, so it knows what functions are available and how to call them. While this sounds complex, the `contractimpl` procedural macro automatically generates almost all the code to do this. All you have to do is write a small [stub](https://github.com/stellar/soroban-token-contract/blob/42380647bb817bf01c739c19286f18be881e0e41/src/testutils.rs#L12-L15) to actually call the generated code, such as
 
 ```rust
 pub fn register_test_contract(e: &Env, contract_id: &[u8; 32]) {
@@ -69,7 +69,7 @@ Contracts are invoked through a pair of host functions `call` and `try_call`:
 
 In both cases `contract` is a `Binary` host object containing the contract ID, `function` is a `Symbol` holding the name of an exported function to call, and `args` is a `Vector` of values to pass as arguments.
 
-These host functions can be invoked in two separapte ways:
+These host functions can be invoked in two separate ways:
 
 - From outside the host, such as when a user submits a transaction that calls a contract.
 - From within the host, when one contract calls another.
@@ -110,15 +110,15 @@ authorization.
 
 [auth-data]: ../how-to-guides/invoking-contracts-with-transactions.mdx#authorization-data
 
-Preflight mechansim can also be used to compute the `AuthorizedInvcation` trees
-that have ot be authorized by the `Address`es in order for all the
+Preflight mechanism can also be used to compute the `AuthorizedInvocation` trees
+that have to be authorized by the `Address`es in order for all the
 `require_auth` checks to pass.
 
 Soroban host provides a special 'recording' mode for auth. Whenever 
-`require_auth` is called it would record its context (address, contract id,
-function, arguments), attribute it to an `AuthorizedInvocation` tree and mark it
- as successful. Then after the invocation has finished, preflight can return all
-the recorded trees, as well as the required nonce values.
+`require_auth` is called host records its context (address, contract id,
+function, arguments), attributes it to an `AuthorizedInvocation` tree, and marks
+it as successful. Then after the invocation has finished, preflight can return
+all the recorded trees, as well as the required nonce values.
 
 Given this information from preflight, the client only needs to provide these
 trees and nonces to the respective `Addresses` for signing and then build the

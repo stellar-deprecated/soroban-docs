@@ -1,0 +1,81 @@
+---
+sidebar_position: 4
+title: soroban-cli
+---
+
+`soroban-cli` allows you to interact with deployed contracts, set different identities to sign with, set different networks, and generate new keys.
+
+# Generate a new idendity
+
+The easiest way to get started is to generate a new identity:
+
+```bash
+soroban config identity generate alice
+```
+
+This will generate a new seed phrase for the identity `alice`.
+
+```bash
+soroban config identity ls
+```
+
+Should output
+
+```bash
+alice
+```
+
+Now this identity can be referenced when using other commands.  For example,
+
+```bash
+soroban contract invoke --id 10 --identity alice --fn hello -- ..
+```
+
+# The `contract` subcommand
+
+All commands that relate to interactions with a contract are organized under the `contract` subcommand.
+
+```bash
+soroban contract --help
+```
+returns
+
+```bash
+soroban-contract 
+Tools for smart contract developers
+
+USAGE:
+    soroban contract <SUBCOMMAND>
+
+OPTIONS:
+    -h, --help    Print help information
+
+SUBCOMMANDS:
+    bindings    Generate code client bindings for a contract
+    deploy      Deploy a contract
+    inspect     Inspect a WASM file listing contract functions, meta, etc
+    install     Install a WASM file to the ledger without creating a contract instance
+    invoke      Invoke a contract function
+    optimize    Optimize a WASM file
+```
+
+# Invoking function with arguments
+
+Since each contract has its xdr definition embedded in the binary, it's possible to dynamically generate a custom CLI for each contract function.
+
+Anything after the `--` is parsed as arguments to the function. And it even includes a help page
+
+```bash
+soroban contract invoke --id 10 --identity alice --fn hello -- --help
+```
+
+## Arguments as flags
+
+Each argument to the contract function is parsed as flags. For example,
+
+```bash
+soroban contract invoke --id 10 --identity alice --fn hello -- --to world
+```
+
+Would pass `world` to the `hello` function.
+

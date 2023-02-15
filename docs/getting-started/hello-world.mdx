@@ -353,14 +353,16 @@ This is a general [CLI pattern](https://unix.stackexchange.com/questions/11376/w
 
 :::
 
-[Write a Contract]: #write-a-contract
-[Deploy to a Local Network]: deploy-to-a-local-network
-[Build]: #build
-[`soroban-cli`]: ../getting-started/setup#install-the-soroban-cli
-
 ## Optimizing Builds
 
-Building optimized contracts to be as small as possible requires some additional tools, and requires installing the `nightly` Rust toolchain and `wasm-opt`.
+Use `soroban contract optimize` to further minimize the size of the `.wasm`.
+
+```sh
+soroban contract optimize \
+    --wasm target/wasm32-unknown-unknown/release/first_project.wasm
+```
+
+This will optimize and output a new `first_project.optimized.wasm` file in the same location as the input `.wasm`.
 
 :::tip
 
@@ -368,69 +370,7 @@ Building optimized contracts is only necessary when deploying to a network with 
 
 :::
 
+[Write a Contract]: #write-a-contract
+[Deploy to a Local Network]: deploy-to-a-local-network
 [Build]: #build
-
-### Install Rust `nightly`
-
-To install the nightly Rust toolchain use [`rustup`].
-
-[`rustup`]: ../getting-started/setup#install-rust
-
-```sh
-rustup install nightly
-rustup target add --toolchain nightly wasm32-unknown-unknown
-rustup component add --toolchain nightly rust-src
-```
-
-### Install `wasm-opt`
-
-To install `wasm-opt`, install [`binaryen`]. Depending on your operating system there may be different ways to install it.
-
-[`binaryen`]: https://github.com/WebAssembly/binaryen
-
-<Tabs>
-<TabItem value="macos" label="macOS" default>
-
-```sh
-brew install binaryen
-```
-
-</TabItem>
-<TabItem value="linux" label="Linux">
-
-For distributions that use `apt`:
-
-```sh
-sudo apt install binaryen
-```
-
-For other distributions see:
-https://github.com/WebAssembly/binaryen/releases
-
-</TabItem>
-<TabItem value="windows" label="Windows">
-
-For install options see: https://github.com/WebAssembly/binaryen/releases
-
-</TabItem>
-</Tabs>
-
-### Build with `nightly` and `wasm-opt`
-
-Build your contract using nightly. The additional options instruct the compiler to remove unnecessary information from the contract.
-
-```sh
-cargo +nightly build \
-    --target wasm32-unknown-unknown \
-    --release \
-    -Z build-std=std,panic_abort \
-    -Z build-std-features=panic_immediate_abort
-```
-
-Use `wasm-opt` to further minimize the size of the `.wasm`.
-
-```sh
-wasm-opt -Oz \
-    target/wasm32-unknown-unknown/release/first_project.wasm \
-    -o target/wasm32-unknown-unknown/release/first_project_optimized.wasm
-```
+[`soroban-cli`]: ../getting-started/setup#install-the-soroban-cli

@@ -35,7 +35,7 @@ This function is then easily [called by the liquidity pool contract](https://git
 
 ### Stellar Operation
 
-A Stellar operation is the ultimate entrypoint of every contract interaction. An operation transfers control and external data to a contract, allowing execution to begin.
+A Stellar operation is the ultimate entry point of every contract interaction. An operation transfers control and external data to a contract, allowing execution to begin.
 
 This kind of interaction is currently supported in experimental versions of stellar-core only.
 
@@ -43,7 +43,7 @@ This kind of interaction is currently supported in experimental versions of stel
 
 [Debugging contracts](debugging) explains that it is much more convenient to debug using native code than WASM. Given that you are testing native code, it is tempting to interact with your contract directly using function calls. If you attempt this approach, you will find that it doesn't always work. Function call interactions do not set the environment into the correct state for contract execution, so functions involving contract data and determining the current or invoking contract will not work.
 
-When writing tests, it is important to always interact with contracts through contract invocation. In a production setting, contract invocation will execute WASM bytecode loaded from the ledger. So how does this work if you are testing native code? You must register your contract with the environment so it knows what functions are available and how to call them. While this sounds complex, the `contractimpl` procedural macro automatically generates almost all of the code to do this. All you have to do is write a small [stub](https://github.com/stellar/soroban-token-contract/blob/42380647bb817bf01c739c19286f18be881e0e41/src/testutils.rs#L12-L15) to actually call the generated code, such as
+When writing tests, it is important to always interact with contracts through contract invocation. In a production setting, contract invocation will execute WASM bytecode loaded from the ledger. So how does this work if you are testing native code? You must register your contract with the environment, so it knows what functions are available and how to call them. While this sounds complex, the `contractimpl` procedural macro automatically generates almost all the code to do this. All you have to do is write a small [stub](https://github.com/stellar/soroban-token-contract/blob/42380647bb817bf01c739c19286f18be881e0e41/src/testutils.rs#L12-L15) to actually call the generated code, such as
 
 ```rust
 pub fn register_test_contract(e: &Env, contract_id: &[u8; 32]) {
@@ -60,9 +60,6 @@ Note that everything described in this section is only available if the `testuti
 
 This machinery can also be used to test multiple contracts together. For example, the single offer contract test case [creates a token](https://github.com/stellar/soroban-examples/blob/56fef787395b5aed7cd7b19772cca28e21b3feb5/single_offer/src/test.rs#L22).
 
-<details>
-<summary>Advanced</summary>
-
 ## Calling contracts
 
 Contracts are invoked through a pair of host functions `call` and `try_call`:
@@ -72,7 +69,7 @@ Contracts are invoked through a pair of host functions `call` and `try_call`:
 
 In both cases `contract` is a `Binary` host object containing the contract ID, `function` is a `Symbol` holding the name of an exported function to call, and `args` is a `Vector` of values to pass as arguments.
 
-These host functions can be invoked in two separapte ways:
+These host functions can be invoked in two separate ways:
 
 - From outside the host, such as when a user submits a transaction that calls a contract.
 - From within the host, when one contract calls another.
@@ -89,9 +86,11 @@ When a call occurs from inside the host, the caller and callee contracts _share 
 
 Since host objects are immutable, there is limited risk to passing a shared reference from one contract to another: the callee cannot modify the object in a way that would surprise the caller, only create new objects.
 
-## Storage footprint and preflight
+## Preflight
 
-As mentioned in the [persisting data](../learn/persisting-data) section, a contract can only load or store `CONTRACT_DATA` entries that are declared in a _footprint_ associated with its invocation.
+### Footprint
+
+As mentioned in the [persisting data](../learn/persisting-data.mdx) section, a contract can only load or store `CONTRACT_DATA` entries that are declared in a _footprint_ associated with its invocation.
 
 A footprint is a set of ledger keys, each marked as either read-only or read-write. Read-only keys are available to the transaction for reading, read-write available for reading, writing or both.
 
@@ -103,4 +102,40 @@ Such a preflight-provided footprint can then be used to accompany a "real" submi
 
 In any event -- whether successful or failing -- the real transaction will execute atomically, deterministically and with serializable consistency semantics. An inaccurate footprint simply causes deterministic transaction failure, not a stale-read anomaly. All effects of such a failed transaction are discarded, as they would be in the presence of any other error.
 
-</details>
+### Authorization
+
+See [authorization overview](authorization.mdx) and authorization in
+transactions [section][auth-data] for general information on Soroban
+authorization.
+
+[auth-data]: ../how-to-guides/invoking-contracts-with-transactions.mdx#authorization-data
+
+Preflight mechanism can also be used to compute the `AuthorizedInvocation` trees
+that have to be authorized by the `Address`es in order for all the
+`require_auth` checks to pass.
+
+Soroban host provides a special 'recording' mode for auth. Whenever 
+`require_auth` is called host records its context (address, contract id,
+function, arguments), attributes it to an `AuthorizedInvocation` tree, and marks
+it as successful. Then after the invocation has finished, preflight can return
+all the recorded trees, as well as the required nonce values.
+
+Given this information from preflight, the client only needs to provide these
+trees and nonces to the respective `Address`es for signing and then build the
+final transaction using the preflight output and the corresponding signatures.
+
+The recording auth mode is optional for preflight. For example, when dealing
+with the custom account contracts, it may be necessary to preflight the custom
+account's `check_auth` code (that is simply omitted in the recording auth mode),
+for example, to get its ledger footprint. The non-recording mode is referred to
+as 'enforcing'. Enforcing mode is basically equivalent to running the 
+transaction on-chain (with possibly a slightly stale ledger state) and hence it
+requires all the signatures to be valid.
+
+Note, that the recording auth mode never emulates authorization failures. The
+reason for that is that failing authorization is always an exceptional 
+situation (the `Address`es for which you don't anticipate successful 
+authorization shouldn't be used in the first place). It is similar to how, for
+example, the preflight doesn't emulate failures caused by the incorrect
+footprint. Preflight with enforcing auth mode may still be used to verify the
+signatures before executing the transaction on-chain.

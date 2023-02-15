@@ -6,18 +6,18 @@ title: Hello World
 The [hello world example] demonstrates how to write a simple contract, with a single function that takes one input and returns it as an output.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.4.2
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.6.0
 
-[hello world example]: https://github.com/stellar/soroban-examples/tree/v0.4.2/hello_world
+[hello world example]: https://github.com/stellar/soroban-examples/tree/v0.6.0/hello_world
 
 ## Run the Example
 
-First go through the [Setup] process to get your development environment configured, then clone the `v0.4.2` tag of `soroban-examples` repository:
+First go through the [Setup] process to get your development environment configured, then clone the `v0.6.0` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.4.2 https://github.com/stellar/soroban-examples
+git clone -b v0.6.0 https://github.com/stellar/soroban-examples
 ```
 
 Or, skip the development environment setup and open this example in [Gitpod][oigp].
@@ -52,7 +52,7 @@ impl HelloContract {
 }
 ```
 
-Ref: https://github.com/stellar/soroban-examples/tree/v0.4.2/hello_world
+Ref: https://github.com/stellar/soroban-examples/tree/v0.6.0/hello_world
 
 ## How it Works
 
@@ -147,11 +147,12 @@ A `.wasm` file should be outputted in the `../target` directory:
 If you have [`soroban-cli`] installed, you can invoke contract functions in the using it.
 
 ```sh
-soroban invoke \
+soroban contract invoke \
     --wasm ../target/wasm32-unknown-unknown/release/soroban_hello_world_contract.wasm \
     --id 1 \
     --fn hello \
-    --arg friend
+    -- \
+    --to friend
 ```
 
 The following output should occur using the code above.

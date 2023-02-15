@@ -15,6 +15,105 @@ Preview releases are software releases that are also released to the [Futurenet]
 
 [Futurenet]: futurenet
 
+## Preview 7 (February 16th, 2023)
+
+### Software
+
+| Software                     | Version                                                                                                                           |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------  |
+| XDR                          | [df18148747e807618acf4639db41c4fd6f0be9fc](https://github.com/stellar/stellar-xdr/commit/df18148747e807618acf4639db41c4fd6f0be9fc)|
+| Soroban Environment          | `v0.0.14`                                                                                                                         |
+| Soroban Interface Version    | `29`                                                                                                                              |
+| Stellar Core                 | `19.7.1-1204.871accefc.focal~soroban`                                                                                             |
+| Soroban Rust SDK             | `v0.6.0`                                                                                                                          |
+| Soroban CLI                  | `v0.6.0`                                                                                                                          |
+| Soroban RPC                  | `Not yet released`                                                                                                                |
+| Stellar Horizon              | `Not yet released`                                                                                                                |
+| Stellar Friendbot            | `soroban-v0.0.2-alpha`                                                                                                            |
+| Stellar Quickstart (amd64)   | `Not yet released`                                                                                                                |
+| Stellar Quickstart (arm64)   | `Not yet released`                                                                                                                |
+| Stellar JS Stellar Base      | `8.2.2-soroban.11`                                                                                                                |
+| Stellar JS Soroban Client    | `v0.4.0`                                                                                                                          |
+| Futurenet Network Passphrase | `Test SDF Future Network ; October 2022`                                                                                          |
+
+### Breaking changes note
+
+This release comes with a revamp of authorization approach that is breaking
+for most of the contracts that did any sort of auth logic or used tokens. See
+the [migration guide](../how-to-guides/auth-migration.mdx), 
+[example](../how-to-guides/auth.mdx) and [authorization overview](../learn/authorization.mdx)
+for more details.
+
+### Changelog
+
+#### XDR
+
+- Update Rust XDR for Auth Next.
+
+See https://github.com/stellar/rs-stellar-xdr/releases v0.0.13 and v0.0.14 for more details.
+
+#### Soroban Environment
+
+- Allow for a custom budget outside tests
+- Restructure Event to be cheap to clone and allow it to be rolled back
+- Add auth_required support for non-account balances
+- Reform TryFromVal to reduce number of impls
+- Fix override of panic hook during cross-contract testing
+- Add EnvBase::Error, remove CheckedEnv, make Env methods return Error
+- Initial Auth Next implementation in Soroban Host
+- Add 13-tuple conversions
+- Do not include Status as the first arg of a DebugEvent
+- Add a simpler version of require_auth
+- Use auth specific errors
+- Emulate classic account authentication in recording auth mode.
+- Change the interface for the auth testing utility.
+
+See https://github.com/stellar/rs-soroban-env/releases v0.0.13 and v0.0.14 for more details.
+
+#### Soroban Rust SDK
+
+- Support variants with multiple fields in UDTs
+- Error on UDT enums with 0-element tuple variants
+- Allow xlm balance updates
+- Fix vec insert
+- Adapt SDK to changes to {Try,}{From,Into}Val in env crates
+- Fix vec pop_front
+- Use better storage error in tests
+- Adapt to introduction of Env::Error
+- Improve compiler errors for UDTs
+- Allow same named types and functions
+- Make soroban_token_spec::spec_xdr easier to keep updated
+- Remove build-optimized makefile target
+- Auth Next changes in SDK
+- Add docs to contract spec entries
+- SDK support for simplified require_auth
+
+See https://github.com/stellar/rs-soroban-sdk/releases v0.5.0 and v0.6.0 for more details.
+
+#### Soroban RPC
+
+- Configure default limit, update cursor / startLedger validation, and include latest ledger for getEvents
+- Add support for AuthNext
+- Fix rollback error in logs
+- Add getNetwork command
+- Implement event storage
+- Implement ledger entry storage
+- Refactor db and ingestion packages, add ingestion of LedgerCloseMeta
+- Implement simulateTransaction using rust instead of preflight
+- Simplify topic matching for events search
+
+See https://github.com/stellar/soroban-tools/releases v0.5.0 v0.6.0 for more details.
+
+#### Soroban CLI
+
+- Add option for running contract with unlimited budget
+- Add support for AuthNext
+- Add config command
+- Add getNetwork support
+- Reorganize CLI commands
+
+See https://github.com/stellar/soroban-tools/releases v0.5.0 v0.6.0 for more details.
+
 ## Preview 6 (January 9th, 2023)
 
 ### Software
@@ -26,7 +125,7 @@ Preview releases are software releases that are also released to the [Futurenet]
 | Soroban Interface Version    | `27`                                                                                                                             |
 | Stellar Core                 | `19.6.1-1158.c0ad35aa1.focal~soroban`                                                                                            |
 | Soroban Rust SDK             | `v0.4.2`                                                                                                                         |
-| Soroban CLI                  | `v0.4.0`                                                                                                                         |
+| Soroban CLI                  | `v0.5.0`                                                                                                                         |
 | Soroban RPC                  | `0.4.0-10`                                                                                                                       |
 | Stellar Horizon              | `stellar-horizon:2.22.0~soroban-323`                                                                                             |
 | Stellar Friendbot            | `soroban-v0.0.2-alpha`                                                                                                           |
@@ -115,7 +214,7 @@ See https://github.com/stellar/soroban-tools/releases v0.4.0 for more details.
 - Remove BigInt from ScVal
 - Add u128 and i128 to ScVal
 - Change the structure of events in meta
-- Change transaction operation structure for Soroban deployments and invocations
+- Change transaction operation structure for Soroban contract deployments and invocations
 
 See https://github.com/stellar/stellar-xdr/compare/48d5e17ae63bba0aa9725cd9d18d7438f44c07b1...026c9cd074bdb28ddde8ee52f2a4502d9e518a09 for more details.
 
@@ -157,7 +256,7 @@ See https://github.com/stellar/soroban-tools/releases v0.3.0, v0.3.1 for more de
 - Fix apt-get install in publish workflow
 - Added type description to errors when using --arg (contribution by [@waldmatias])
 - Additional CLI support for the contract deployment changes
-- Adds support for soroban deploy --wasm-hash, as well as soroban install --wasm
+- Adds support for `soroban contract deploy --wasm-hash`, as well as `soroban contract install --wasm`
 - Add xdr and env version to version subcommand output
 - Fix that the footpoint was not set correctly when deploying the wrapped token contract (contribution by [@overcat])
 - Contributions from [@waldmatias], [@willemneal], [@overcat], [@brson]

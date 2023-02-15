@@ -86,11 +86,12 @@ const config = {
             position: 'left',
             docsPluginId: 'api'
           },
-          // {
-          //   href: 'https://quest.stellar.org/live',
-          //   label: 'Stellar Quest',
-          //   position: 'left',
-          // },
+          {
+            href: 'https://fastcheapandoutofcontrol.com/',
+            label: 'Play Game',
+            className: 'nav-highlight',
+            position: 'left',
+          },
           // {
           //   href: '/sorobanathon',
           //   label: 'Sorobanathon',
@@ -162,7 +163,7 @@ const config = {
               },
               {
                 label: 'Stellar Quest',
-                href: 'https://quest.stellar.org/live',
+                href: 'https://quest.stellar.org/soroban',
               },
               {
                 label: 'Sorobanathon',

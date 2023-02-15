@@ -84,11 +84,27 @@ See https://github.com/stellar/rs-soroban-sdk/releases v0.5.0 and v0.6.0 for mor
 
 #### Soroban RPC
 
-TODO
+- Configure default limit, update cursor / startLedger validation, and include latest ledger for getEvents
+- Add support for AuthNext
+- Fix rollback error in logs
+- Add getNetwork command
+- Implement event storage
+- Implement ledger entry storage
+- Refactor db and ingestion packages, add ingestion of LedgerCloseMeta
+- Implement simulateTransaction using rust instead of preflight
+- Simplify topic matching for events search
+
+See https://github.com/stellar/soroban-tools/releases v0.5.0 v0.6.0 for more details.
 
 #### Soroban CLI
 
-TODO
+- Add option for running contract with unlimited budget
+- Add support for AuthNext
+- Add config command
+- Add getNetwork support
+- Reorganize CLI commands
+
+See https://github.com/stellar/soroban-tools/releases v0.5.0 v0.6.0 for more details.
 
 ## Preview 6 (January 9th, 2023)
 

@@ -137,7 +137,7 @@ b.require_auth_for_args(
 Authorization of `swap` function leverages `require_auth_for_args` Soroban host
 function. Both `a` and `b` need to authorize symmetric arguments: token they
 sell, token they buy, amount of token they sell, minimum amount of token they
-want to recieve. This means that `a` and `b` can be freely exchanged in the
+want to receive. This means that `a` and `b` can be freely exchanged in the
 invocation arguments (as long as the respective arguments are changed too).
 
 ### Moving the tokens
@@ -168,10 +168,10 @@ fn move_token(
 
 The swap itself is implemented via two token moves: from `a` to `b` and from `b`
 to `a`. The token move is implemented via allowance: the users don't need to
-know each other in order to perform the swap and instead they authorize the swap
+know each other in order to perform the swap, and instead they authorize the swap
 contract to spend the necessary amount of token on their behalf via
 `incr_allow`. Soroban auth framework makes sure that the `incr_allow` signatures
-would have the proper context and they won't be usable outside of the `swap`
+would have the proper context, and they won't be usable outside the `swap`
 contract invocation.
 
 ### Tests
@@ -228,6 +228,6 @@ assert_eq!(
 ```
 
 `env.recorded_top_authorizations()` returns all the top-level authorizations.
-Hence in the case of `swap` two authorizations are expected. Note, that the
+Hence, in the case of `swap` two authorizations are expected. Note, that the
 element order here matches the order of `require_auth_for_args` calls in the
 contract.

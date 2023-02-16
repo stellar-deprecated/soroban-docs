@@ -26,10 +26,10 @@ module.exports = () => ({
           `,
         },
         {
-          tagName: 'script',
+          tagName: 'noscript',
           innerHTML: `
-            <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-55LZM97"
-            height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+            <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-55LZM97"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe>
           `
         }
       ],

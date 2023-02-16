@@ -30,9 +30,10 @@ module.exports = {
       },
       items: [
         'methods/getAccount',
+        'methods/getEvents',
         'methods/getHealth',
         'methods/getLedgerEntry',
-        'methods/getEvents',
+        'methods/getNetwork',
         'methods/getTransactionStatus',
         'methods/sendTransaction',
         'methods/simulateTransaction',
@@ -50,8 +51,6 @@ module.exports = {
       },
       items: [
         'methods/getLatestLedger',
-        'methods/getNetwork',
-        'methods/requestAirdrop',
       ],
     },
   ],

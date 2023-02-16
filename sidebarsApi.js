@@ -30,10 +30,10 @@ module.exports = {
       },
       items: [
         'methods/getAccount',
+        'methods/getEvents',
         'methods/getHealth',
         'methods/getLedgerEntry',
         'methods/getNetwork',
-        'methods/getEvents',
         'methods/getTransactionStatus',
         'methods/sendTransaction',
         'methods/simulateTransaction',

@@ -27,7 +27,7 @@ assets. For this reason, we introduced the Stellar Asset Contract, or SAC for
 short, which allows users to use their Stellar account and trustline balances in
 Soroban.
 
-The SAC implements the [token interface](tokens.mdx), which is similar to the
+The SAC implements the [token interface](../reference/interfaces/token-interface), which is similar to the
 widely used ERC-20 token standard. This should make it easier for existing
 smart contract developers to get started on Stellar.
 
@@ -112,7 +112,7 @@ See the [authorization overview](../learn/authorization.mdx) and
 Soroban.
 
 The token contract contains three kinds of operations that follow the token
-[interface](tokens.mdx#code):
+[interface](../reference/interfaces/token-interface#code):
 
 - getters, such as `balance`, which do not change the state of the contract
 - unprivileged mutators, such as `incr_allow` and `xfer`, which change the state

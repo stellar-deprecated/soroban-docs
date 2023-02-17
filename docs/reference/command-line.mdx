@@ -5,7 +5,7 @@ title: soroban-cli
 
 `soroban-cli` allows you to interact with deployed contracts, set different identities to sign with, set different networks, and generate new keys.
 
-# Generate a new idendity
+# Generate a new identity
 
 The easiest way to get started is to generate a new identity:
 
@@ -59,11 +59,11 @@ SUBCOMMANDS:
     optimize    Optimize a WASM file
 ```
 
-# Invoking function with arguments
+# Invoking a function with arguments
 
-Since each contract has its xdr definition embedded in the binary, it's possible to dynamically generate a custom CLI for each contract function.
+Since each contract has its xdr definition embedded in the binary, it is possible to dynamically generate a custom CLI for each contract function.
 
-Anything after the `--` is parsed as arguments to the function. And it even includes a help page
+Anything after the `--` is parsed as arguments to the function... and it even includes a help page!
 
 ```bash
 soroban contract invoke --id 10 --identity alice --fn hello -- --help
@@ -71,7 +71,7 @@ soroban contract invoke --id 10 --identity alice --fn hello -- --help
 
 ## Arguments as flags
 
-Each argument to the contract function is parsed as flags. For example,
+Each argument to the contract function is parsed as flags. For example:
 
 ```bash
 soroban contract invoke --id 10 --identity alice --fn hello -- --to world

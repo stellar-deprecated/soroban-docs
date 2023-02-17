@@ -24,15 +24,16 @@ https://github.com/stellar/rs-soroban-sdk
 
 ## Add `soroban-sdk` as a Dependency
 
-Add the following sections to the `Cargo.toml` to import the `soroban-sdk`.
+Use [crates.io](https://crates.io/crates/soroban-sdk) to find the version of the
+most recent SDK release.
+
+Add the following sections to the `Cargo.toml` to import the `soroban-sdk` and
+replace \<VERSION> with the release version.
 
 ```toml
-[features]
-testutils = ["soroban-sdk/testutils"]
-
 [dependencies]
-soroban-sdk = "0.4.2"
+soroban-sdk = <VERSION>
 
 [dev_dependencies]
-soroban-sdk = { version = "0.4.2", features = ["testutils"] }
+soroban-sdk = { version = <VERSION>, features = ["testutils"] }
 ```

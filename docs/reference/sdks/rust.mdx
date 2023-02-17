@@ -28,12 +28,12 @@ Use [crates.io](https://crates.io/crates/soroban-sdk) to find the version of the
 most recent SDK release.
 
 Add the following sections to the `Cargo.toml` to import the `soroban-sdk` and
-replace \<VERSION> with the release version.
+replace `$VERSION` with the released version.
 
 ```toml
 [dependencies]
-soroban-sdk = <VERSION>
+soroban-sdk = $VERSION
 
 [dev_dependencies]
-soroban-sdk = { version = <VERSION>, features = ["testutils"] }
+soroban-sdk = { version = $VERSION, features = ["testutils"] }
 ```

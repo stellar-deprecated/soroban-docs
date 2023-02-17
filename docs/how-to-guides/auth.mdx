@@ -307,23 +307,72 @@ target/wasm32-unknown-unknown/release/soroban_auth_contract.wasm
 
 If you have [`soroban-cli`] installed, you can invoke functions on the contract.
 
+But since we are dealing with authorization and signatures, we need to set up 
+some identities to use for testing and get their public keys:
+
 ```sh
-soroban invoke \
+soroban config identity generate acc1 && \
+soroban config identity generate acc2 && \
+soroban config identity address acc1 && \
+soroban config identity address acc2
+```
+
+Example output with two public keys of identities:
+
+```
+GA6S566FD3EQDUNQ4IGSLXKW3TGVSTQW3TPHPGS7NWMCEIPBOKTNCSRU
+GAJGHZ44IJXYFNOVRZGBCVKC2V62DB2KHZB7BEMYOWOLFQH4XP2TAM6B
+```
+
+Now the contract itself can be invoked. Notice the --account has to match 
+`--user` argument in order to allow `soroban` tool to automatically sign the
+necessary payload for the invocation.
+
+```sh
+soroban contract invoke \
+    --account GA6S566FD3EQDUNQ4IGSLXKW3TGVSTQW3TPHPGS7NWMCEIPBOKTNCSRU \
     --wasm ../target/wasm32-unknown-unknown/release/soroban_auth_contract.wasm \
     --id 1 \
-    --account GDQHNBKFCO666SPX4RS62VTDY7H5W2QXHVVVQCDTADTOI3IYZGEOZL6V \
-    --fn increment
+    --fn increment \
+    -- \
+    --user GA6S566FD3EQDUNQ4IGSLXKW3TGVSTQW3TPHPGS7NWMCEIPBOKTNCSRU \
+    --value 2
+```
+
+Run a few more increments for both accounts.
+
+```sh
+soroban contract invoke \
+    --account GAJGHZ44IJXYFNOVRZGBCVKC2V62DB2KHZB7BEMYOWOLFQH4XP2TAM6B \
+    --wasm ../target/wasm32-unknown-unknown/release/soroban_auth_contract.wasm \
+    --id 1 \
+    --fn increment \
+    -- \
+    --user GAJGHZ44IJXYFNOVRZGBCVKC2V62DB2KHZB7BEMYOWOLFQH4XP2TAM6B \
+    --value 5
 ```
 
 ```sh
-soroban invoke \
+soroban contract invoke \
+    --account GA6S566FD3EQDUNQ4IGSLXKW3TGVSTQW3TPHPGS7NWMCEIPBOKTNCSRU \
     --wasm ../target/wasm32-unknown-unknown/release/soroban_auth_contract.wasm \
     --id 1 \
-    --account GC24I42QMKKR4NE6IYNPCQHUO4PXWXDGNZ7QVMMSR5EWAYSGKBHPLGHH \
-    --fn increment
+    --fn increment \
+    -- \
+    --user GA6S566FD3EQDUNQ4IGSLXKW3TGVSTQW3TPHPGS7NWMCEIPBOKTNCSRU \
+    --value 3
 ```
 
-Run these commands several times to increment the counters for each address.
+```sh
+soroban contract invoke \
+    --account GAJGHZ44IJXYFNOVRZGBCVKC2V62DB2KHZB7BEMYOWOLFQH4XP2TAM6B \
+    --wasm ../target/wasm32-unknown-unknown/release/soroban_auth_contract.wasm \
+    --id 1 \
+    --fn increment \
+    -- \
+    --user GAJGHZ44IJXYFNOVRZGBCVKC2V62DB2KHZB7BEMYOWOLFQH4XP2TAM6B \
+    --value 10
+```
 
 View the data that has been stored against each user with `soroban read`.
 
@@ -331,8 +380,26 @@ View the data that has been stored against each user with `soroban read`.
 soroban read --id 1
 ```
 ```
-"[""Counter"",[""Account"",""GC24I42QMKKR4NE6IYNPCQHUO4PXWXDGNZ7QVMMSR5EWAYSGKBHPLGHH""]]",1
-"[""Counter"",[""Account"",""GDQHNBKFCO666SPX4RS62VTDY7H5W2QXHVVVQCDTADTOI3IYZGEOZL6V""]]",3
+"[""Counter"",""GA6S566FD3EQDUNQ4IGSLXKW3TGVSTQW3TPHPGS7NWMCEIPBOKTNCSRU""]",5
+"[""Counter"",""GAJGHZ44IJXYFNOVRZGBCVKC2V62DB2KHZB7BEMYOWOLFQH4XP2TAM6B""]",15
+```
+
+It is also possible to preview the authorization payload that is being signed by
+providing `--auth` flag to the invocation:
+
+```sh
+soroban contract invoke \
+    --account GAJGHZ44IJXYFNOVRZGBCVKC2V62DB2KHZB7BEMYOWOLFQH4XP2TAM6B \
+    --auth \
+    --wasm ../target/wasm32-unknown-unknown/release/soroban_auth_contract.wasm \
+    --id 1 \
+    --fn increment \
+    -- \
+    --user GAJGHZ44IJXYFNOVRZGBCVKC2V62DB2KHZB7BEMYOWOLFQH4XP2TAM6B \
+    --value 123
+```
+```json
+Contract auth: [{"address_with_nonce":null,"root_invocation":{"contract_id":"0000000000000000000000000000000000000000000000000000000000000001","function_name":"increment","args":[{"object":{"address":{"account":{"public_key_type_ed25519":"c7bab0288753d58d3e21cc3fa68cd2546b5f78ae6635a6f1b3fe07e03ee846e9"}}}},{"u32":123}],"sub_invocations":[]},"signature_args":[]}]
 ```
 
 [`soroban-cli`]: ../getting-started/setup#install-the-soroban-cli

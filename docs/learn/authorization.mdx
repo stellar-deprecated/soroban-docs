@@ -83,8 +83,8 @@ more details).
 `Address` type has two similar methods in Soroban SDK: `require_auth` and
 `require_auth_for_args` (these methods call the respective Soroban host
 function). The only difference between the functions is the ability to
-customize the invocation arguments. See [auth example]
-(../how-to-guides/auth.mdx) that demonstrates how to use these functions.
+customize the invocation arguments. See [auth example] that demonstrates 
+how to use these functions.
 
 Both functions ensure that the `Address` has authorized the call of the current
 function within the current context (where context is defined by `require_auth`
@@ -93,6 +93,8 @@ calls in the current call stack; see more formal definition in the
 for this authorization are defined by the `Address` and are enforced by the
 Soroban host. Replay protection is also implemented in the host, i.e. there is
 normally no need for a contract to manage its own nonces.
+
+[auth example]: ../how-to-guides/auth.mdx
 
 #### Authorizing Sub-contract Calls
 
@@ -279,7 +281,7 @@ Notice, that authentication happens just once per tree, as the whole tree needs
 to be signed.
 
 [contract-auth]: https://github.com/stellar/stellar-xdr/blob/df18148747e807618acf4639db41c4fd6f0be9fc/Stellar-transaction.x#L547
-[signature payload]: https://github.com/stellar/stellar-xdr/blob/df18148747e807618acf4639db41c4fd6f0be9fc/Stellar-transaction.x#L681
+[signature payload preimage]: https://github.com/stellar/stellar-xdr/blob/df18148747e807618acf4639db41c4fd6f0be9fc/Stellar-transaction.x#L681
 
 #### Matching Authorized Invocation Trees
 

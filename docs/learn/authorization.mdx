@@ -89,7 +89,7 @@ how to use these functions.
 Both functions ensure that the `Address` has authorized the call of the current
 function within the current context (where context is defined by `require_auth`
 calls in the current call stack; see more formal definition in the
-[section below](#requireauth-implementation-details)). The authentication rules
+[section below](#require_auth-implementation-details)). The authentication rules
 for this authorization are defined by the `Address` and are enforced by the
 Soroban host. Replay protection is also implemented in the host, i.e. there is
 normally no need for a contract to manage its own nonces.

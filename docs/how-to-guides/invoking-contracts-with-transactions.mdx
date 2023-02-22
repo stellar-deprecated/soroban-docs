@@ -139,7 +139,8 @@ In order to build a `ContractAuth` the following is required:
   - `nonce` has to correspond to the `contractID` of the `rootInvocation`. It
   is stored in the ledger entry with `CONTRACT_DATA` key with `contractID` from
   `rootInvocation` and `SCVal` `key` with the following value:
-  `ScVal::Object(Some(ScObject::NonceKey(address)))`.
+  `ScVal::Object(Some(ScObject::NonceKey(address)))` (when not present, nonce is
+  equal to `0`).
 - `rootInvocation` structure corresponding to the authorized invocation tree
 - `signatureArgs` - signature (or multiple signatures) that sign the 32-byte
 payload that is a SHA-256 hash of `ENVELOPE_TYPE_CONTRACT_AUTH` preimage

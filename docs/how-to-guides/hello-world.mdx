@@ -4,7 +4,7 @@ title: Hello World
 ---
 
 The [hello world example] demonstrates how to write a simple contract, with a single function that takes one input and returns it as an output. To learn more
-about how a Soroban smart contract works, check out this link for a [High-Level Overview](../learn/high-level-overview)
+about how a Soroban smart contract works, check out this [High-Level Overview](../learn/high-level-overview).
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
 [oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.6.0
@@ -77,7 +77,7 @@ Contract functions look much like regular Rust functions. They may have any numb
 
 Contract inputs must not be references.
 
-If the first argument of a contract function is of the `soroban_sdk::Env` type, an `Env` will be provided that provides access to additional functionality. Most functionality within the SDK requires an `Env`, so it is recommended to have it in the argument list for most functions. You can learn more about how the Env functions here [Soroban Env](../learn/environment-concepts)
+If the first argument of a contract function is of the `soroban_sdk::Env` type, an `Env` will be provided that provides access to additional functionality. Most functionality within the SDK requires an `Env`, so it is recommended to have it in the argument list for most functions. You can learn more about how the Env functions here: [Soroban Env](../learn/environment-concepts).
 
 ```rust
 #[contractimpl]

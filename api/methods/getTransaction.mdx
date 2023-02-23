@@ -13,9 +13,9 @@ Clients will poll this to tell when the transaction has been completed.
 
 - `<object>`
   - `status`: `<status>` - the current status of the transaction by hash, one of:
-    - SUCCESS
-    - NOT_FOUND
-    - FAILED
+    - `SUCCESS`
+    - `NOT_FOUND`
+    - `FAILED`
   - `latestLedger`: `<string>` - The latest ledger known to Soroban-RPC at the time it handled the `getTransaction()` request.
   - `latestLedgerCloseTime`: `<string>` - The unix timestamp of the close time of the latest ledger known to Soroban-RPC at the time it handled the `getTransaction()` request.
   - `oldestLedger`: `<string>` - The oldest ledger ingested by Soroban-RPC at the time it handled the `getTransaction()` request.
@@ -75,7 +75,7 @@ Clients will poll this to tell when the transaction has been completed.
     "createdAt": "1677009000",
     "applicationOrder": 1,
     "feeBump": false,
-    "resultXdr" "AAAAAAAAAGQAAAAAAAAAAQAAAAAAAAAMAAAAAAAAAAAAAAABAAAAAK36IZP1oM+KV7lU1u8H7BgGjwK6d6hPmU+zpA6rySi3AAAAAEbEAZ4AAAAAAAAAAVJCUk4AAAAArSYZWZeBIAHn1+M0WPwhehxZNiBgvJOx7IVykVOo39UAAAAAFZRBZACYloAAAAANAAAAAAAAAAAAAAAA"
+    "resultXdr": "AAAAAAAAAGQAAAAAAAAAAQAAAAAAAAAMAAAAAAAAAAAAAAABAAAAAK36IZP1oM+KV7lU1u8H7BgGjwK6d6hPmU+zpA6rySi3AAAAAEbEAZ4AAAAAAAAAAVJCUk4AAAAArSYZWZeBIAHn1+M0WPwhehxZNiBgvJOx7IVykVOo39UAAAAAFZRBZACYloAAAAANAAAAAAAAAAAAAAAA"
   }
 }
 ```
@@ -96,7 +96,7 @@ Clients will poll this to tell when the transaction has been completed.
     "createdAt": "1677009000",
     "applicationOrder": 1,
     "feeBump": false,
-    "resultXdr" "AAAAAAAAAGT////7AAAAAA=="
+    "resultXdr": "AAAAAAAAAGT////7AAAAAA=="
   }
 }
 ```

@@ -15,7 +15,7 @@ This supports all transactions, not only smart contract-related transactions.
 ## Returns
 
 - `<object>`
-  - `transactionHash`: `<hash>` The transaction hash (in an hex-encoded string).
+  - `hash`: `<hash>` The transaction hash (in an hex-encoded string).
   - `status`: `<status>` - The current status of the transaction by hash, one of:
     - `PENDING` - The transaction has been accepted by stellar-core.
     - `DUPLICATE` - The transaction has already been submitted to stellar-core.
@@ -49,7 +49,7 @@ The following example request uses a transaction to invoke the `increment` metho
   "jsonrpc": "2.0",
   "id": 8675309,
   "result": {
-    "transactionHash": "d70916f8b8aa55c13d5974a38e32a3efe440ef6870c0f0a07075d1c128d23698",
+    "hash": "d70916f8b8aa55c13d5974a38e32a3efe440ef6870c0f0a07075d1c128d23698",
     "status": "PENDING",
     "latestLedger": "45075181",
     "latestLedgerCloseTime": "1677115742"

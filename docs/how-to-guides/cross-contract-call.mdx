@@ -19,7 +19,7 @@ appreciated [here](https://github.com/stellar/rs-soroban-sdk/issues/new/choose).
 
 :::
 
-[cross contract call example]: https://github.com/stellar/soroban-examples/tree/v0.6.0/cross_contract_calls
+[cross contract call example]: https://github.com/stellar/soroban-examples/tree/v0.6.0/cross_contract
 
 ## Run the Example
 
@@ -72,7 +72,7 @@ pub struct ContractB;
 #[contractimpl]
 impl ContractB {
     pub fn add_with(env: Env, contract_id: BytesN<32>, x: u32, y: u32) -> u32 {
-        let client = contract_a::ContractClient::new(&env, contract_id);
+        let client = contract_a::Client::new(&env, &contract_id);
         client.add(&x, &y)
     }
 }
@@ -87,7 +87,7 @@ Cross contract calls are made by invoking another contract by its contract ID.
 Contracts to invoke can be imported into your contract with the use of
 `contractimport!(file = "...")`. The import will code generate:
 
-- A `ContractClient` type that can be used to invoke functions on the contract.
+- A `Client` type that can be used to invoke functions on the contract.
 - Any types in the contract that were annotated with `#[contracttype]`.
 
 :::tip
@@ -135,13 +135,13 @@ but in this simple example it is being passed in as a parameter each time.
 
 The contract imports Contract A into the `contract_a` module.
 
-The `contract_a::ContractClient` is constructed pointing at the contract ID
+The `contract_a::Client` is constructed pointing at the contract ID
 passed in.
 
 The client is used to execute the `add` function with the `x` and `y` parameters
 on Contract A.
 
-```rust title="cross_contract_calls/src/a.rs"
+```rust title="cross_contract/contract_b/src/lib.rs"
 mod contract_a {
     soroban_sdk::contractimport!(
         file = "../../target/wasm32-unknown-unknown/release/soroban_cross_contract_a_contract.wasm"
@@ -153,7 +153,7 @@ pub struct ContractB;
 #[contractimpl]
 impl ContractB {
     pub fn add_with(env: Env, contract_id: BytesN<32>, x: u32, y: u32) -> u32 {
-        let client = contract_a::ContractClient::new(&env, contract_id);
+        let client = contract_a::Client::new(&env, &contract_id);
         client.add(&x, &y)
     }
 }

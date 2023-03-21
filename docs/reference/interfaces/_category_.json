@@ -1,4 +1,7 @@
 {
     "position": 2,
-    "label": "Interfaces"
-  }
+    "label": "Interfaces",
+    "link": {
+        "type": "generated-index"
+    }
+}

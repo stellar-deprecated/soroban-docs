@@ -73,7 +73,7 @@ pub enum Error {
     LimitReached = 1,
 }
 
-const COUNTER: Symbol = symbol!("COUNTER");
+const COUNTER: Symbol = Symbol::short("COUNTER");
 const MAX: u32 = 5;
 
 pub struct IncrementContract;

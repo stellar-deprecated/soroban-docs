@@ -331,7 +331,7 @@ assert_eq!(
     std::vec![(
         account_address.clone(),
         account_contract.contract_id.clone(),
-        symbol!("add_limit"),
+        Symbol::short("add_limit"),
         (token.clone(), 1000_i128).into_val(&env),
     )]
 );

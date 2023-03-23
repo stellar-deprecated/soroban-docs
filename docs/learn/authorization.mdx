@@ -220,11 +220,11 @@ contract deeper down the stack).
 Corresponds to `Address::Contract`.
 
 This is the extension point of account abstraction. Custom account is a
-special contract that implements `check_auth` method. If any contract calls
+special contract that implements `__check_auth` method. If any contract calls
 `require_auth` for the `Address` of this contract, Soroban host will call
-`check_auth` with the corresponding arguments.
+`__check_auth` with the corresponding arguments.
 
-`check_auth` gets a signature payload, a list of signatures (in any user-defined
+`__check_auth` gets a signature payload, a list of signatures (in any user-defined
 format) and a list of the contract invocations that are being authorized by
 these signatures. Its responsibility is to perform the authentication via
 verifying the signatures and also (optionally) to apply a custom authorization
@@ -268,7 +268,7 @@ non-contract-invoker account, the following steps happen:
     contract ID and `Address`.
   - Build the expected [signature payload preimage] and compute its SHA-256 hash
     to get the final signature payload
-  - Call `check_auth` of the account contract corresponding to the `Address`
+  - Call `__check_auth` of the account contract corresponding to the `Address`
     using the signature payload and the invocations from the authorization
     tree
 - Mark the invocation as 'exhausted' in its authorized invocation tree.

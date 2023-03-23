@@ -3,79 +3,21 @@ sidebar_position: 4
 title: soroban-cli
 ---
 
-`soroban-cli` allows you to interact with deployed contracts, set different identities to sign with, set different networks, and generate new keys.
+`soroban-cli` is the command line interface to Soroban, allowing you to build, deploy, and interact with smart contracts, manage and sign with identities, generate new key pairs, manage networks, and more.
 
-# Generate a new idendity
+Install `soroban-cli` as explained in [Setup](../getting-started/setup).
 
-The easiest way to get started is to generate a new identity:
+:::info
 
-```bash
-soroban config identity generate alice
-```
+Report issues and share feedback about `soroban-cli` here:  
+https://github.com/stellar/soroban-tools/issues/new/choose
 
-This will generate a new seed phrase for the identity `alice`.
+:::
 
-```bash
-soroban config identity ls
-```
+## Reference Documentation
 
-Should output
+Auto-generated comprehensive reference documentation is available at:
+https://github.com/stellar/soroban-tools/blob/v0.7.1/docs/soroban-cli-full-docs.md
 
-```bash
-alice
-```
-
-Now this identity can be referenced when using other commands.  For example,
-
-```bash
-soroban contract invoke --id 10 --identity alice -- hello ..
-```
-
-# The `contract` subcommand
-
-All commands that relate to interactions with a contract are organized under the `contract` subcommand.
-
-```bash
-soroban contract --help
-```
-returns
-
-```bash
-soroban-contract 
-Tools for smart contract developers
-
-USAGE:
-    soroban contract <SUBCOMMAND>
-
-OPTIONS:
-    -h, --help    Print help information
-
-SUBCOMMANDS:
-    bindings    Generate code client bindings for a contract
-    deploy      Deploy a contract
-    inspect     Inspect a WASM file listing contract functions, meta, etc
-    install     Install a WASM file to the ledger without creating a contract instance
-    invoke      Invoke a contract function
-    optimize    Optimize a WASM file
-```
-
-# Invoking function with arguments
-
-Since each contract has its xdr definition embedded in the binary, it's possible to dynamically generate a custom CLI for each contract function.
-
-Anything after the `--` is parsed as arguments to the function. And it even includes a help page
-
-```bash
-soroban contract invoke --id 10 --identity alice -- --help
-```
-
-## Arguments as flags
-
-Each argument to the contract function is parsed as flags. For example,
-
-```bash
-soroban contract invoke --id 10 --identity alice -- hello --to world
-```
-
-Would pass `world` to the `hello` function.
-
+Subscribe to releases on the GitHub repository:
+https://github.com/stellar/soroban-tools

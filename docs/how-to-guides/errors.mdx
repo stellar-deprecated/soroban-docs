@@ -311,7 +311,7 @@ WASM using it.
 soroban contract invoke \
     --wasm ../target/wasm32-unknown-unknown/release/soroban_errors_contract.wasm \
     --id 1 \
-    --fn increment
+    -- increment
 ```
 
 Run the command a few times and on the 6th invocation the following output should occur.
@@ -320,7 +320,7 @@ Run the command a few times and on the 6th invocation the following output shoul
 ❯ soroban contract invoke \
     --wasm target/wasm32-unknown-unknown/release/soroban_errors_contract.wasm \
     --id 1 \
-    --fn increment
+    -- increment
 error: HostError
 Value: Status(ContractError(1))
 ...

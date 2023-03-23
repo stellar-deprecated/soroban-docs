@@ -1,4 +1,7 @@
 {
     "position": 1,
-    "label": "SDKs"
-  }
+    "label": "SDKs",
+    "link": {
+        "type": "generated-index"
+    }
+}

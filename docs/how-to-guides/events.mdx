@@ -8,20 +8,20 @@ The [events example] demonstrates how to publish events from a contract. This
 example is an extension of the [storing data example].
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.6.0
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.7.0
 
-[events example]: https://github.com/stellar/soroban-examples/tree/v0.6.0/events
+[events example]: https://github.com/stellar/soroban-examples/tree/v0.7.0/events
 [storing data example]: getting-started/storing-data.mdx
 
 ## Run the Example
 
 First go through the [Setup] process to get your development environment
-configured, then clone the `v0.6.0` tag of `soroban-examples` repository:
+configured, then clone the `v0.7.0` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.6.0 https://github.com/stellar/soroban-examples
+git clone -b v0.7.0 https://github.com/stellar/soroban-examples
 ```
 
 Or, skip the development environment setup and open this example in [Gitpod][oigp].
@@ -43,7 +43,7 @@ test test::test ... ok
 ## Code
 
 ```rust title="events/src/lib.rs"
-const COUNTER: Symbol = symbol!("COUNTER");
+const COUNTER: Symbol = Symbol::short("COUNTER");
 
 pub struct IncrementContract;
 
@@ -57,13 +57,13 @@ impl IncrementContract {
             .unwrap(); // Panic if the value of COUNTER is not u32.
         count += 1;
         env.storage().set(COUNTER, count);
-        env.events().publish((COUNTER, symbol!("increment")), count);
+        env.events().publish((COUNTER, Symbol::short("increment")), count);
         count
     }
 }
 ```
 
-Ref: https://github.com/stellar/soroban-examples/tree/v0.6.0/events
+Ref: https://github.com/stellar/soroban-examples/tree/v0.7.0/events
 
 ## How it Works
 
@@ -87,7 +87,7 @@ Topics are conveniently defined using a tuple. In the sample code two topics of
 `Symbol` type are used.
 
 ```rust
-env.events().publish((COUNTER, symbol!("increment")), ...);
+env.events().publish((COUNTER, Symbol::short("increment")), ...);
 ```
 
 :::tip
@@ -116,7 +116,7 @@ limit) and running over the resource budget (TBD). Once successfully published,
 the new event will be available to applications consuming the events.
 
 ```rust
-env.events().publish((COUNTER, symbol!("increment")), count);
+env.events().publish((COUNTER, Symbol::short("increment")), count);
 ```
 
 :::caution
@@ -147,17 +147,17 @@ fn test() {
             &env,
             (
                 contract_id.clone(),
-                (symbol!("COUNTER"), symbol!("increment")).into_val(&env),
+                (Symbol::short("COUNTER"), Symbol::short("increment")).into_val(&env),
                 1u32.into_val(&env)
             ),
             (
                 contract_id.clone(),
-                (symbol!("COUNTER"), symbol!("increment")).into_val(&env),
+                (Symbol::short("COUNTER"), Symbol::short("increment")).into_val(&env),
                 2u32.into_val(&env)
             ),
             (
                 contract_id.clone(),
-                (symbol!("COUNTER"), symbol!("increment")).into_val(&env),
+                (Symbol::short("COUNTER"), Symbol::short("increment")).into_val(&env),
                 3u32.into_val(&env)
             ),
         ]
@@ -203,7 +203,7 @@ assert_eq!(
         &env,
         (
             contract_id.clone(),
-            (symbol!("COUNTER"), symbol!("increment")).into_val(&env),
+            (Symbol::short("COUNTER"), Symbol::short("increment")).into_val(&env),
             1u32.into_val(&env)
         ),
         // ...

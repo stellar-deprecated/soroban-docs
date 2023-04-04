@@ -185,7 +185,7 @@ pub struct Contract;
 #[contractimpl]
 impl Contract {
     pub fn hello(env: Env, to: Symbol) -> Vec<Symbol> {
-        vec![&env, symbol!("Hello"), to]
+        vec![&env, Symbol::short("Hello"), to]
     }
 }
 ```
@@ -208,7 +208,7 @@ pub struct Contract;
 #[contractimpl]
 impl Contract {
     pub fn hello(env: Env, to: Symbol) -> Vec<Symbol> {
-        vec![&env, symbol!("Hello"), to]
+        vec![&env, Symbol::short("Hello"), to]
     }
 }
 
@@ -231,10 +231,10 @@ fn test() {
     let contract_id = env.register_contract(None, Contract);
     let client = ContractClient::new(&env, &contract_id);
 
-    let words = client.hello(&symbol!("Dev"));
+    let words = client.hello(&Symbol::short("Dev"));
     assert_eq!(
         words,
-        vec![&env, symbol!("Hello"), symbol!("Dev"),]
+        vec![&env, Symbol::short("Hello"), Symbol::short("Dev"),]
     );
 }
 ```
@@ -258,7 +258,7 @@ All public functions within an `impl` block that is annotated with the `#[contra
 
 ```rust
 let client = ContractClient::new(&env, &contract_id);
-let words = client.hello(&symbol!("Dev"));
+let words = client.hello(&Symbol::short("Dev"));
 ```
 
 The values returned by functions can be asserted on:
@@ -266,7 +266,7 @@ The values returned by functions can be asserted on:
 ```rust
 assert_eq!(
     words,
-    vec![&env, symbol!("Hello"), symbol!("Dev"),]
+    vec![&env, Symbol::short("Hello"), Symbol::short("Dev"),]
 );
 ```
 
@@ -361,9 +361,9 @@ This is a general [CLI pattern](https://unix.stackexchange.com/questions/11376/w
 The [hello world example] demonstrates how to write a simple contract, with a single function that takes one input and returns it as an output.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.6.0
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.7.0
 
-[hello world example]: https://github.com/stellar/soroban-examples/tree/v0.6.0/hello_world
+[hello world example]: https://github.com/stellar/soroban-examples/tree/v0.7.0/hello_world
 
 ## Optimizing Builds
 

@@ -7,13 +7,13 @@ description: How to log for the purpose of debugging.
 The [logging example] demonstrates how to log for the purpose of debugging.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.6.0
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.7.0
 
 Logs in contracts are only visible in tests, or when executing contracts using
 [`soroban-cli`]. Logs are only compiled into the contract if the
 `debug-assertions` Rust compiler option is enabled.
 
-[logging example]: https://github.com/stellar/soroban-examples/tree/v0.6.0/hello_world
+[logging example]: https://github.com/stellar/soroban-examples/tree/v0.7.0/hello_world
 
 :::tip
 
@@ -36,12 +36,12 @@ example] for how to produce structured events.
 ## Run the Example
 
 First go through the [Setup] process to get your development environment
-configured, then clone the `v0.6.0` tag of `soroban-examples` repository:
+configured, then clone the `v0.7.0` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.6.0 https://github.com/stellar/soroban-examples
+git clone -b v0.7.0 https://github.com/stellar/soroban-examples
 ```
 
 Or, skip the development environment setup and open this example in [Gitpod][oigp].
@@ -84,7 +84,7 @@ impl Contract {
 }
 ```
 
-Ref: https://github.com/stellar/soroban-examples/tree/v0.6.0/logging
+Ref: https://github.com/stellar/soroban-examples/tree/v0.7.0/logging
 
 ## How it Works
 
@@ -163,7 +163,7 @@ fn test() {
     let contract_id = env.register_contract(None, Contract);
     let client = ContractClient::new(&env, &contract_id);
 
-    client.hello(&symbol!("Dev"));
+    client.hello(&Symbol::short("Dev"));
 
     let logs = env.logger().all();
     assert_eq!(logs, std::vec!["Hello Symbol(Dev)"]);
@@ -201,7 +201,7 @@ type with `Client` appended. For example, in our contract the contract type is
 
 ```rust
 let client = HelloContractClient::new(&env, &contract_id);
-let words = client.hello(&symbol!("Dev"));
+let words = client.hello(&Symbol::short("Dev"));
 ```
 
 Logs are available in tests via the environment.

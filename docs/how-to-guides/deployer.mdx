@@ -7,7 +7,7 @@ description: Deploying a contract from another contract.
 The [deployer example] demonstrates how to deploy contracts using a contract.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.6.0
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.7.0
 
 :::info
 
@@ -16,17 +16,17 @@ tests deploy one with the other.
 
 :::
 
-[deployer example]: https://github.com/stellar/soroban-examples/tree/v0.6.0/deployer
+[deployer example]: https://github.com/stellar/soroban-examples/tree/v0.7.0/deployer
 
 ## Run the Example
 
 First go through the [Setup] process to get your development environment
-configured, then clone the `v0.6.0` tag of `soroban-examples` repository:
+configured, then clone the `v0.7.0` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.6.0 https://github.com/stellar/soroban-examples
+git clone -b v0.7.0 https://github.com/stellar/soroban-examples
 ```
 
 Or, skip the development environment setup and open this example in [Gitpod][oigp].
@@ -74,7 +74,7 @@ impl Deployer {
 }
 ```
 
-Ref: https://github.com/stellar/soroban-examples/tree/v0.6.0/deployer
+Ref: https://github.com/stellar/soroban-examples/tree/v0.7.0/deployer
 
 ## How it Works
 
@@ -153,7 +153,7 @@ fn test() {
 
     // Deploy contract using deployer, and include an init function to call.
     let salt = Bytes::from_array(&env, &[0; 32]);
-    let init_fn = symbol!("init");
+    let init_fn = Symbol::short("init");
     let init_fn_args = (5u32,).into_val(&env);
     let (contract_id, init_result) = client.deploy(&salt, &wasm_hash, &init_fn, &init_fn_args);
     assert!(init_result.is_void());
@@ -183,7 +183,7 @@ to be retrieved from another function.
 ```rust title="deployer/contract/src/lib.rs"
 pub struct Contract;
 
-const KEY: Symbol = symbol!("value");
+const KEY: Symbol = Symbol::short("value");
 
 #[contractimpl]
 impl Contract {
@@ -239,7 +239,7 @@ pass in a single `5u32` argument.
 ```rust
 // Deploy contract using deployer, and include an init function to call.
 let salt = Bytes::from_array(&env, &[0; 32]);
-let init_fn = symbol!("init");
+let init_fn = Symbol::short("init");
 let init_fn_args = (5u32,).into_val(&env);
 let (contract_id, init_result) = client.deploy(&salt, &wasm_hash, &init_fn, &init_fn_args);
 assert!(init_result.is_void());

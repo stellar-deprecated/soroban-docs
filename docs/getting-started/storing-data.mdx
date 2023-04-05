@@ -165,7 +165,7 @@ If you have [`soroban-cli`] installed, you can invoke contract functions in the 
 soroban contract invoke \
     --wasm ../target/wasm32-unknown-unknown/release/soroban_increment_contract.wasm \
     --id 1 \
-    --fn increment
+    -- increment
 ```
 
 The following output should occur using the code above.
@@ -180,7 +180,7 @@ Rerun the invoke with the `--footprint` option to view the [footprint] of the in
 soroban contract invoke \
     --wasm ../target/wasm32-unknown-unknown/release/soroban_increment_contract.wasm \
     --id 1 \
-    --fn increment \
+    -- increment \
     --footprint
 ```
 

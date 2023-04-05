@@ -349,7 +349,7 @@ The following output should appear.
 
 This is a general [CLI pattern](https://unix.stackexchange.com/questions/11376/what-does-double-dash-mean) used by other commands like [cargo run](https://doc.rust-lang.org/cargo/commands/cargo-run.html). Everything after the `--`, sometimes called [slop](https://github.com/clap-rs/clap/issues/971), is passed to a child process. In this case, `soroban contract invoke` builds an _implicit CLI_ on-the-fly for the `hello` method in your contract. It can do this because Soroban SDK embeds your contract's schema / interface types right in the `.wasm` file that gets deployed on-chain. Try this, too:
 
-    soroban contract invoke ... -- --help
+    soroban contract invoke ... -- hello --help
 
 :::
 

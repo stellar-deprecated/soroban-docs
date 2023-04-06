@@ -29,7 +29,6 @@ module.exports = {
         slug: 'methods',
       },
       items: [
-        'methods/getAccount',
         'methods/getEvents',
         'methods/getHealth',
         'methods/getLedgerEntry',

@@ -31,6 +31,7 @@ module.exports = {
       items: [
         'methods/getEvents',
         'methods/getHealth',
+        'methods/getLatestLedger',
         'methods/getLedgerEntry',
         'methods/getNetwork',
         'methods/getTransaction',
@@ -48,9 +49,7 @@ module.exports = {
         title: 'Incomplete Methods',
         slug: 'incomplete-methods',
       },
-      items: [
-        'methods/getLatestLedger',
-      ],
+      items: [],
     },
   ],
 };

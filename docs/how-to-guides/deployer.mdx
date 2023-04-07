@@ -296,8 +296,8 @@ Then the deployer contract may be invoked with the WASM hash value above.
 soroban contract invoke \
     --wasm target/wasm32-unknown-unknown/release/soroban_deployer_contract.wasm \
     --id 0 \
-    --fn deploy \
     -- \
+    deploy \
     --salt 0000000000000000000000000000000000000000000000000000000000000000 \
     --wasm_hash edce149b183ea03dfd896a263d2e17c1f08229da52afa6f822d9cbc67c103806 \
     --init_fn init \
@@ -310,7 +310,8 @@ the previous command.
 ```sh
 soroban contract invoke \
     --id ead19f55aec09bfcb555e09f230149ba7f72744a5fd639804ce1e934e8fe9c5d \
-    --fn value
+    -- \
+    value
 ```
 
 The following output should occur using the code above.

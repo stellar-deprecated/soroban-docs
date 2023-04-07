@@ -29,7 +29,7 @@ alice
 Now this identity can be referenced when using other commands.  For example,
 
 ```bash
-soroban contract invoke --id 10 --identity alice --fn hello -- ..
+soroban contract invoke --id 10 --identity alice -- hello ..
 ```
 
 # The `contract` subcommand
@@ -67,7 +67,7 @@ Since each contract has its xdr definition embedded in the binary, it is possibl
 Anything after the `--` is parsed as arguments to the function... and it even includes a help page!
 
 ```bash
-soroban contract invoke --id 10 --identity alice --fn hello -- --help
+soroban contract invoke --id 10 --identity alice -- hello --help
 ```
 
 ## Arguments as flags
@@ -75,7 +75,7 @@ soroban contract invoke --id 10 --identity alice --fn hello -- --help
 Each argument to the contract function is parsed as flags. For example:
 
 ```bash
-soroban contract invoke --id 10 --identity alice --fn hello -- --to world
+soroban contract invoke --id 10 --identity alice -- hello --to world
 ```
 
 Would pass `world` to the `hello` function.

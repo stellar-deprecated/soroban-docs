@@ -325,13 +325,13 @@ GA6S566FD3EQDUNQ4IGSLXKW3TGVSTQW3TPHPGS7NWMCEIPBOKTNCSRU
 GAJGHZ44IJXYFNOVRZGBCVKC2V62DB2KHZB7BEMYOWOLFQH4XP2TAM6B
 ```
 
-Now the contract itself can be invoked. Notice the --account has to match 
-`--user` argument in order to allow `soroban` tool to automatically sign the
-necessary payload for the invocation.
+Now the contract itself can be invoked. Notice the `--source` must be the
+identity name matching the address passed to the `--user` argument. This allows
+`soroban` tool to automatically sign the necessary payload for the invocation.
 
 ```sh
 soroban contract invoke \
-    --account GA6S566FD3EQDUNQ4IGSLXKW3TGVSTQW3TPHPGS7NWMCEIPBOKTNCSRU \
+    --source acc1 \
     --wasm ../target/wasm32-unknown-unknown/release/soroban_auth_contract.wasm \
     --id 1 \
     -- \
@@ -344,7 +344,7 @@ Run a few more increments for both accounts.
 
 ```sh
 soroban contract invoke \
-    --account GAJGHZ44IJXYFNOVRZGBCVKC2V62DB2KHZB7BEMYOWOLFQH4XP2TAM6B \
+    --source acc2 \
     --wasm ../target/wasm32-unknown-unknown/release/soroban_auth_contract.wasm \
     --id 1 \
     -- \
@@ -355,7 +355,7 @@ soroban contract invoke \
 
 ```sh
 soroban contract invoke \
-    --account GA6S566FD3EQDUNQ4IGSLXKW3TGVSTQW3TPHPGS7NWMCEIPBOKTNCSRU \
+    --source acc1 \
     --wasm ../target/wasm32-unknown-unknown/release/soroban_auth_contract.wasm \
     --id 1 \
     -- \
@@ -366,7 +366,7 @@ soroban contract invoke \
 
 ```sh
 soroban contract invoke \
-    --account GAJGHZ44IJXYFNOVRZGBCVKC2V62DB2KHZB7BEMYOWOLFQH4XP2TAM6B \
+    --source acc2 \
     --wasm ../target/wasm32-unknown-unknown/release/soroban_auth_contract.wasm \
     --id 1 \
     -- \
@@ -390,7 +390,7 @@ providing `--auth` flag to the invocation:
 
 ```sh
 soroban contract invoke \
-    --account GAJGHZ44IJXYFNOVRZGBCVKC2V62DB2KHZB7BEMYOWOLFQH4XP2TAM6B \
+    --source acc2 \
     --auth \
     --wasm ../target/wasm32-unknown-unknown/release/soroban_auth_contract.wasm \
     --id 1 \

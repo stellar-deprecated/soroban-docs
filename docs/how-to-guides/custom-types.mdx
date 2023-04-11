@@ -81,9 +81,9 @@ Open the `custom_types/src/lib.rs` file to follow along.
 
 ### Custom Type: Struct
 
-Structs are stored on ledger as a map of key-value pairs, where the key is a 10 character string representing the field name, and the value is the value encoded.
+Structs are stored on ledger as a map of key-value pairs, where the key is a 32 character string representing the field name, and the value is the value encoded.
 
-Field names must be no more than 10 characters.
+Field names must be no more than 32 characters.
 
 ```rust
 #[contracttype]
@@ -98,7 +98,7 @@ pub struct State {
 
 The example does not contain enums, but enums may also be contract types.
 
-Enums containing unit and tuple variants are stored on ledger as a two element vector, where the first element is the name of the enum variant as a string up to 10 characters in length, and the value is the value if the variant has one.
+Enums containing unit and tuple variants are stored on ledger as a two element vector, where the first element is the name of the enum variant as a string up to 32 characters in length, and the value is the value if the variant has one.
 
 Only unit variants and single value variants, like `A` and `B` below, are supported.
 

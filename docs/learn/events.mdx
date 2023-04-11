@@ -11,7 +11,9 @@ Events are the mechanism that applications off-chain can use to monitor changes 
 the [TransactionMetaV3] XDR below that there is a list of `OperationEvents`
 called `events`. Each `OperationEvent` corresponds to an operation in a
 transaction, and itself contains a list of `ContractEvents`. Note that `events`
-will only be populated if the transaction succeeds.
+will only be populated if the transaction succeeds. Take a look at [this
+example](../how-to-guides/events.mdx) to learn more about how to emit an event
+in your contract.
 
 [TransactionMetaV3]: #transactionmetav3
 

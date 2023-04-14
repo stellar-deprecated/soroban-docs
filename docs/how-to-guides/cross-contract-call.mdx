@@ -231,7 +231,7 @@ assert_eq!(sum, 12);
 ## Build the Contracts
 
 To build the contract into a `.wasm` file, use the `cargo build` command. Both
-`contract_call/contract_a` and `contract_call/contract_b` must be built.
+`contract_call/contract_a` and `contract_call/contract_b` must be built, with `contract_a` being built first.
 
 ```sh
 cargo build --target wasm32-unknown-unknown --release

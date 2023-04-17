@@ -1,14 +1,14 @@
 ---
 sidebar_position: 3
-title: "On-Chain Schemas: Soroban's secret sauce"
-sidebar_label: On-Chain Schemas
+title: "Fully-Typed Contracts"
+sidebar_label: Fully-Typed Contracts
 ---
 
-When you compile a contract created with [soroban-sdk](../reference/sdks/rust.mdx), the Wasm file ends up with a [custom section](https://webassembly.github.io/spec/core/appendix/custom.html) containing a machine-readable description of your contract's interface. That is, its schema. This is similar to [ABIs](https://www.quicknode.com/guides/ethereum-development/smart-contracts/what-is-an-abi/) in Ethereum, except that Soroban will store every single one of them on-chain from day one, and they include the comments from the contract's author.
+When you compile a contract created with [soroban-sdk](../reference/sdks/rust.mdx), the Wasm file ends up with a [custom section](https://webassembly.github.io/spec/core/appendix/custom.html) containing a machine-readable description of your contract's interface types, sometimes called its [spec](https://github.com/stellar/rs-soroban-sdk/tree/main/soroban-spec) or its [API](https://github.com/stellar/soroban-docs/pull/381#issuecomment-1507283476). This is similar to [ABIs](https://www.quicknode.com/guides/ethereum-development/smart-contracts/what-is-an-abi/) in Ethereum, except that Soroban will store every single one of them on-chain from day one, and they include the comments from the contract's author.
 
-Today, this schema is formatted using [XDR](https://developers.stellar.org/docs/encyclopedia/xdr), but this [may change](https://github.com/stellar/rs-soroban-sdk/issues/683) down the road.
+Today, these interface types are formatted using [XDR](https://developers.stellar.org/docs/encyclopedia/xdr), but this [may change](https://github.com/stellar/rs-soroban-sdk/issues/683) down the road.
 
-The important part is that tooling can fetch this schema to make your life easier. [Soroban CLI](../reference/soroban-cli.mdx) is the first tool to do so. Specifically, one subcommand:
+The important part is that tooling can fetch these interface types to make your life easier. [Soroban CLI](../reference/soroban-cli.mdx) is the first tool to do so. Specifically, one subcommand:
 
 ## `soroban contract invoke`
 
@@ -16,7 +16,7 @@ Really, every smart contract is its own program, and deserves its own CLI.
 
 So that's what Soroban CLI gives you.
 
-A unique CLI for each smart contract. Constructed on-the-fly, right from the on-chain schema. Including the author's comments. An _implicit CLI_.
+A unique CLI for each smart contract. Constructed on-the-fly, right from the on-chain interface types. Including the author's comments. An _implicit CLI_.
 
 With aliases in your shell, you can also easily make explicit CLIs out of your most-used contracts. For example, if you use the [Smart Deploy](https://communityfund.stellar.org/projects/smart-deploy-scf-13) contract:
 
@@ -42,7 +42,7 @@ Options:
   -h, --help  Print help
 ```
 
-Like any other CLI, you can also get help for any of these subcommands using something like `smartdeploy deploy --help`. Soroban CLI again fetches the on-chain schema, this time using it to generate a full list of all arguments to the function, and even generates examples. And just to be totally clear, you don't need to alias these commands. This would work, too:
+Like any other CLI, you can also get help for any of these subcommands using something like `smartdeploy deploy --help`. Soroban CLI again fetches the on-chain interface types, this time using it to generate a full list of all arguments to the function, and even generates examples. And just to be totally clear, you don't need to alias these commands. This would work, too:
 
     soroban contract invoke --id 6808e8e2cce73cfca472a8197080938b320d72e7b696e34eb52ebf17070f4ee -- deploy --help
 
@@ -67,7 +67,7 @@ Of course, the exact way that that Soroban CLI parses arguments is an ongoing de
 
 ## Already the best; just getting started
 
-We love that Soroban will have all contract schemas available on-chain right from day one. No secondary API calls to external services, no secondary API token management, no signing in or creating an account anywhere else, and near-perfect reliability. It's a game-changer within the blockchain space.
+We love that Soroban will have all contract interface types available on-chain right from day one. No secondary API calls to external services, no secondary API token management, no signing in or creating an account anywhere else, and near-perfect reliability. It's a game-changer within the blockchain space.
 
 Soroban CLI already shows how this can be built into foundational tooling to give developers delightful experiences. And this is only the beginning. At every level of the stack, you can expect—and [build](https://stellar.org/foundation/grants-and-funding)—tooling that makes interacting with any contract predictable and seamless. 
 

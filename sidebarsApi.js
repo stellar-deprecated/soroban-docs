@@ -33,6 +33,7 @@ module.exports = {
         'methods/getHealth',
         'methods/getLatestLedger',
         'methods/getLedgerEntry',
+        'methods/getLedgerEntries',
         'methods/getNetwork',
         'methods/getTransaction',
         'methods/sendTransaction',

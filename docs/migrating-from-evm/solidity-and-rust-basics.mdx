@@ -1,0 +1,248 @@
+---
+sidebar_position: 2
+title: Solidity and Rust Syntax, Data Types, and Basic Constructs
+description: Explore the fundamentals of Solidity and Rust Syntax, Data Types, and Basic Constructs
+---
+
+# Getting Started with Rust and Solidity
+
+In this tutorial, we'll explore Rust and Solidity, two powerful programming languages. Rust, a systems programming language, is renowned for its safety, concurrency, and performance features, which can be advantageous when building smart contracts. On the other hand, Solidity is a high-level language specifically designed for creating smart contracts on the Ethereum Virtual Machine.
+
+## Table of Contents
+
+1. [Solidity Syntax, Data Types, and Basic Constructs](#solidity-syntax-data-types-and-basic-constructs)
+2. [Understanding Rust Syntax, Data Types, and Ownership Model](#understanding-rust-syntax-data-types-and-ownership-model)
+3. [Writing and Interacting With Simple Smart Contracts](#writing-and-interacting-with-simple-smart-contracts)
+
+## Solidity Syntax, Data Types, and Basic Constructs
+
+Solidity is a high-level programming language for implementing smart contracts on the Ethereum blockchain. It has a syntax similar to JavaScript and supports a variety of data types and constructs.
+
+```javascript
+pragma solidity ^0.8.0;
+
+contract HelloWorld {
+  function sayHello() public pure returns (string memory) {
+    return "Hello, World!";
+  }
+}
+```
+
+### Data Types
+
+Solidity supports various data types, such as:
+
+- Boolean: `bool`
+- Integer: `int` (signed) and `uint` (unsigned)
+- Address: `address`
+- String: `string`
+- Bytes: `bytes` (fixed-size) and `bytes32` (dynamic-size)
+- Arrays: `uint[]` (dynamic-size) and `uint[5]` (fixed-size)
+- Structs: `struct`
+- Enums: `enum`
+- Mapping: `mapping`
+
+### Basic Constructs
+
+Some of the basic constructs in Solidity include:
+
+1. Variables: Declared with a data type and an identifier.
+2. Functions: Defined with the `function` keyword.
+3. Modifiers: Used to modify functions' behavior.
+4. Events: Used to log changes in the contract state.
+5. Inheritance: Solidity supports single and multiple inheritance.
+
+## Understanding Rust Syntax, Data Types, and Ownership Model
+
+Rust is a systems programming language designed for safety, concurrency, and performance. It enforces strict ownership and borrowing rules to prevent data races and other common bugs.
+
+```rust
+fn main() {
+    println!("Hello, world!");
+```
+
+### Data Types
+
+Rust has several built-in data types, such as:
+
+- Numeric: `i8`, `i16`, `i32`, `i64`, `i128`, `u8`, `u16`, `u32`, `u64`, `u128`, `f32`, `f64`
+- Boolean: `bool`
+- Characters: `char`
+- Tuples: `(T1, T2, T3, ...)`
+- Arrays: `[T; N]`
+- Slices: `&[T]`
+- Strings: `String` and `&str`
+- Option: `Option<T>`
+- Result: `Result<T, E>`
+
+### Ownership Model
+
+Rust enforces **strict ownership rules** to manage memory and resources:
+
+- Each value has a single owner.
+- When the owner goes out of scope, the value is automatically deallocated.
+- Borrowing: Values can be borrowed as immutable or mutable references.
+- Lifetimes: Used to ensure that references remain valid.
+
+To learn more about Rust's Contract Dialect, check out the [Contract Rust Dialect Page](../learn/rust-dialect).
+
+## Writing and Interacting with Simple Smart Contracts
+
+In this section, we'll learn how to write and test simple smart contracts in Solidity and Rust.
+
+### Writing a Simple Smart Contract in Solidity
+
+Here's an example of a simple Solidity smart contract for a counter:
+
+```javascript
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.0;
+
+    contract Counter {
+    uint256 private _count;
+
+    function getCount() public view returns (uint256) {
+        return _count;
+    }
+
+    function increment() public {
+        _count += 1;
+    }
+}
+```
+
+### Interacting with the Smart Contract
+
+We can interact with the smart contract using the Remix IDE. To do so, follow these steps:
+
+1. Click the following link to [open the Gist in Remix](https://remix.ethereum.org/#version=soljson-v0.8.18+commit.87f61d96.js&optimize=false&runs=200&gist=416ab15a6beed9d91cf2f615625ffe48&lang=en&evmVersion=null)
+
+2. Navigate to the `Counter.sol` file in the file explorer.
+
+![Counter](../../static/img/counter.png)
+
+3. Press `cmd + s` to compile the contract.
+4. Navigate to the Deploy & Run Transactions tab and click the Deploy button.
+
+![Deploy](../../static/img/deploy-counter.png)
+
+The contract should appear under the `Deployed Contracts` tab:
+
+![Deployed](../../static/img/deployed-contracts.png)
+
+5. Click the `increment` button to increment the counter.
+6. Click the `getCount` button to get the current count.
+
+![Increment](../../static/img/increment.png)
+
+### Writing and Interacting with a Simple Counter in Rust
+
+In this section, we'll create a Rust program that simulates the functionality of the Solidity smart contract. Here's an example of a simple counter in Rust:
+
+```rust
+#![no_std]
+use soroban_sdk::{contractimpl, log, Env, Symbol};
+
+const COUNTER: Symbol = Symbol::short("COUNTER");
+
+pub struct IncrementContract;
+
+#[contractimpl]
+impl IncrementContract {
+    /// Increment increments an internal counter, and returns the value.
+    pub fn increment(env: Env) -> u32 {
+        // Get the current count.
+        let mut count: u32 = env
+            .storage()
+            .get(&COUNTER)
+            .unwrap_or(Ok(0)) // If no value set, assume 0.
+            .unwrap(); // Panic if the value of COUNTER is not u32.
+        log!(&env, "count: {}", count);
+
+        // Increment the count.
+        count += 1;
+
+        // Save the count.
+        env.storage().set(&COUNTER, &count);
+
+        // Return the count to the caller.
+        count
+    }
+}
+```
+
+### Interacting with the Smart Contract
+
+To interact the Rust counter, create a new Rust library using the cargo new command.
+
+```bash
+cargo new --lib increment
+```
+
+Once the project is created, add the following dependencies to the `Cargo.toml` file:
+
+```toml
+[package]
+name = "increment"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[features]
+testutils = ["soroban-sdk/testutils"]
+
+[dependencies]
+soroban-sdk = "0.7.0"
+
+[dev_dependencies]
+soroban-sdk = { version = "0.7.0", features = ["testutils"] }
+
+[profile.release]
+opt-level = "z"
+overflow-checks = true
+debug = 0
+strip = "symbols"
+debug-assertions = false
+panic = "abort"
+codegen-units = 1
+lto = true
+
+[profile.release-with-logs]
+inherits = "release"
+debug-assertions = true
+```
+
+:::info For a detailed explanation of the dependencies, check out the [Hello World Example](../getting-started/hello-world).
+
+:::
+
+Build the project using the cargo build command.
+
+```bash
+cd increment
+cargo build --target wasm32-unknown-unknown --release
+```
+
+The compiled contract will be located in the `target/wasm32-unknown-unknown/release` directory.
+
+To interect with the contract we will use the `soroban contract invoke` command from the `soroban-cli` tool.
+
+```bash
+soroban contract invoke \
+    --wasm ./target/wasm32-unknown-unknown/release/increment.wasm \
+    --id 1 \
+    -- \
+    increment
+```
+
+The output should look like this:
+
+```bash
+1
+```
+
+You can also use the `soroban contract invoke` command to increment the counter multiple times.
+
+And that's it! You've learned how to write and test simple smart contracts in Solidity and Rust. In the next section, we'll learn how to write and test more complex smart contracts.

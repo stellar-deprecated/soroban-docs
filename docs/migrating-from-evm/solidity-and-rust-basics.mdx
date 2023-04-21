@@ -63,17 +63,27 @@ fn main() {
 
 ### Data Types
 
-Rust has several built-in data types, such as:
+The Soroban Rust SDK supports several [built-in data types](../learn/built-in-types), such as:
 
-- Numeric: `i8`, `i16`, `i32`, `i64`, `i128`, `u8`, `u16`, `u32`, `u64`, `u128`, `f32`, `f64`
-- Boolean: `bool`
-- Characters: `char`
-- Tuples: `(T1, T2, T3, ...)`
-- Arrays: `[T; N]`
-- Slices: `&[T]`
-- Strings: `String` and `&str`
-- Option: `Option<T>`
-- Result: `Result<T, E>`
+- Unsigned 32-bit Integer (`u32`)
+- Signed 32-bit Integer (`i32`)
+- Unsigned 64-bit Integer (`u64`)
+- Signed 64-bit Integer (`i64`)
+- Unsigned 128-bit Integer (`u128`)
+- Signed 128-bit Integer (`i128`)
+- Bool (`bool`)
+- Symbol (`Symbol`): small efficient strings up to 32 characters in length and limited to a-z A-Z 0-9 \_ that are encoded into 64-bit integers
+- Bytes, Strings (`Bytes`, `BytesN`): byte arrays and strings that can be passed to contracts and stores
+- Vec (`Vec`): sequential and indexable growable collection type
+- Map (`Map`): ordered key-value dictionary
+- Address (`Address`): universal opaque identifier used in contracts
+
+The Soroban Rust SDK also supports several [custom data types](../learn/custom-types), such as:
+
+- Structs (with Named Fields): A custom type consisting of named fields stored on the ledger as a map of key-value pairs.
+- Structs (with Unnamed Fields): A custom type consisting of unnamed fields stored on the ledger as a vector of values.
+- Enum (Unit and Tuple Variants): A custom type consisting of unit and tuple variants stored on the ledger as a two-element vector, with the first element being the name of the variant and the second being the value.
+- Enum (Integer Variants): A custom type consisting of integer variants stored on the ledger as the u32 value.
 
 ### Ownership Model
 
@@ -88,7 +98,7 @@ To learn more about Rust's Contract Dialect, check out the [Contract Rust Dialec
 
 ## Writing and Interacting with Simple Smart Contracts
 
-In this section, we'll learn how to write and test simple smart contracts in Solidity and Rust.
+In this section, we'll learn how to write and interact with simple smart contracts in Solidity and Rust.
 
 ### Writing a Simple Smart Contract in Solidity
 
@@ -111,11 +121,53 @@ pragma solidity ^0.8.0;
 }
 ```
 
+This is a simple smart contract that implements a counter in Solidity, a programming language used for creating smart contracts on the Ethereum Virtual Machine. Let's break down the code line by line:
+
+```javascript
+// SPDX-License-Identifier: UNLICENSED
+```
+
+This is a comment that identifies the license for the code. It's not required for the code to run, but it's good practice to include licensing information.
+
+```javascript
+pragma solidity ^0.8.0;
+```
+
+This specifies the version of Solidity that this code was written for. In this case, it's version 0.8.0 or higher.
+
+```javascript
+contract Counter {}
+```
+
+This defines a new Solidity contract called `Counter`.
+
+```javascript
+uint256 private _count;
+```
+
+This is a private variable called `_count` of type `uint256` (unsigned integer). This variable will be used to store the current value of the counter.
+
+```javascript
+function getCount() public view returns (uint256) {
+    return _count;
+}
+```
+
+This is a function called `getCount()` that returns the current value of the counter. The function is marked as `public`, which means it can be called from outside the contract. The view keyword indicates that this function doesn't modify the state of the contract. The returns keyword specifies the return type of the function.
+
+```javascript
+function increment() public {
+    _count += 1;
+}
+```
+
+This is a function called `increment()` that increments the counter by 1. It doesn't return anything, but it modifies the state of the contract. Like `getCount()`, it's marked as `public`, which means it can be called from outside the contract.
+
 ### Interacting with the Smart Contract
 
 We can interact with the smart contract using the Remix IDE. To do so, follow these steps:
 
-1. Click the following link to [open the Gist in Remix](https://remix.ethereum.org/#version=soljson-v0.8.18+commit.87f61d96.js&optimize=false&runs=200&gist=416ab15a6beed9d91cf2f615625ffe48&lang=en&evmVersion=null)
+1. Click the following link to [open the Gist in Remix](https://remix.ethereum.org/#version=soljson-v0.8.18+commit.87f61d96.js&optimize=false&runs=200&gist=416ab15a6beed9d91cf2f615625ffe48&lang=en&evmVersion=null).
 
 2. Navigate to the `Counter.sol` file in the file explorer.
 
@@ -137,7 +189,7 @@ The contract should appear under the `Deployed Contracts` tab:
 
 ### Writing and Interacting with a Simple Counter in Rust
 
-In this section, we'll create a Rust program that simulates the functionality of the Solidity smart contract. Here's an example of a simple counter in Rust:
+In this section, we'll create a Rust program that simulates the functionality of the Counter smart contract. Here's an example of a simple counter in Rust:
 
 ```rust
 #![no_std]
@@ -171,6 +223,76 @@ impl IncrementContract {
 }
 ```
 
+This code is an implementation of a smart contract written in Rust using the Soroban SDK, a Rust-based smart contract development toolkit.
+
+Here's a line-by-line explanation of what the code is doing:
+
+```rust
+#![no_std]
+```
+
+This is a Rust attribute that tells the Rust compiler not to link the Rust standard library. Since Soroban is a WebAssembly runtime, it doesn't have access to the Rust standard library, so this attribute is needed.
+
+```rust
+use soroban_sdk::{contractimpl, log, Env, Symbol};
+```
+
+This code imports necessary items from the Soroban SDK for writing a smart contract. The `contractimpl` macro is used to implement the smart contract, while the `log` macro is used for logging messages. The `Env` struct represents the environment the contract is executing in, and the `Symbol` type is a small, efficient string type.
+
+```rust
+const COUNTER: Symbol = Symbol::short("COUNTER");
+```
+
+This creates a new `Symbol` value with the string "COUNTER". The constant `COUNTER` is then used as a key to identify the count value stored in the contract storage.
+
+```rust
+pub struct IncrementContract;
+```
+
+This defines a public struct `IncrementContract`, which will contain the implementation of the smart contract.
+
+```rust
+#[contractimpl] impl IncrementContract {}
+```
+
+This is a macro that implements the `IncrementContract` struct as a smart contract.
+
+```rust
+pub fn increment(env: Env) -> u32 {}
+```
+
+This is a public function called `increment` that takes an `Env` struct as an argument and returns a `u32`. `Env` is the environment the contract is executing in, and `u32` is the type of the value returned by the function.
+
+```rust
+let mut count: u32 = env .storage() .get(&COUNTER) .unwrap_or(Ok(0)) // If no value set, assume 0. .unwrap();
+```
+
+This retrieves the current count from the contract storage. The `storage` method on the `Env` struct returns a storage object that can be used to store and retrieve data. `get` retrieves the value associated with the `COUNTER` symbol from the storage. If there is no value associated with the symbol, it assumes the value 0. The `unwrap` method is used to panic if the value of `COUNTER` is not a `u32`.
+
+```rust
+log!(&env, "count: {}", count);
+```
+
+This logs the current count using the `log` macro provided by the Soroban SDK.
+
+```rust
+count += 1;
+```
+
+This increments the count by 1.
+
+```rust
+env.storage().set(&COUNTER, &count);
+```
+
+This saves the updated count back to the contract storage using the `set` method on the storage object.
+
+```rust
+count
+```
+
+This returns the updated count to the caller of the function.
+
 ### Interacting with the Smart Contract
 
 To interact the Rust counter, create a new Rust library using the cargo new command.
@@ -179,7 +301,9 @@ To interact the Rust counter, create a new Rust library using the cargo new comm
 cargo new --lib increment
 ```
 
-Once the project is created, add the following dependencies to the `Cargo.toml` file:
+Once the project is created, replace the `src/lib.rs` file with the [code example above](#writing-and-interacting-with-a-simple-counter-in-rust).
+
+Then, add the following dependencies to the `Cargo.toml` file:
 
 ```toml
 [package]
@@ -243,6 +367,6 @@ The output should look like this:
 1
 ```
 
-You can also use the `soroban contract invoke` command to increment the counter multiple times.
+You can continue to use the `soroban contract invoke` command to increment the counter multiple times.
 
 And that's it! You've learned how to write and test simple smart contracts in Solidity and Rust. In the next section, we'll learn how to write and test more complex smart contracts.

@@ -201,7 +201,7 @@ pub struct IncrementContract;
 
 #[contractimpl]
 impl IncrementContract {
-    /// Increment increments an internal counter, and returns the value.
+    /// increment increments an internal counter, and returns the value.
     pub fn increment(env: Env) -> u32 {
         // Get the current count.
         let mut count: u32 = env
@@ -219,6 +219,11 @@ impl IncrementContract {
 
         // Return the count to the caller.
         count
+    }
+
+    /// get_count returns the current value of the counter.
+    pub fn get_count(env: Env) -> u32 {
+        env.storage().get(&COUNTER).unwrap_or(Ok(0)).unwrap()
     }
 }
 ```
@@ -293,6 +298,18 @@ count
 
 This returns the updated count to the caller of the function.
 
+```rust
+pub fn get_count(env: Env) -> u32 {}
+```
+
+This is a public function called `get_count` that takes an `Env` struct as an argument and returns a `u32`. `Env` is the environment the contract is executing in, and `u32` is the type of the value returned by the function.
+
+```rust
+env.storage().get(&COUNTER).unwrap_or(Ok(0)).unwrap()
+```
+
+This retrieves the current count from the contract storage. The `storage` method on the `Env` struct returns a storage object that can be used to store and retrieve data. `get` retrieves the value associated with the `COUNTER` symbol from the storage. If there is no value associated with the symbol, it assumes the value 0. The `unwrap` method is used to panic if the value of `COUNTER` is not a `u32`.
+
 ### Interacting with the Smart Contract
 
 To interact the Rust counter, create a new Rust library using the cargo new command.
@@ -351,22 +368,30 @@ cargo build --target wasm32-unknown-unknown --release
 
 The compiled contract will be located in the `target/wasm32-unknown-unknown/release` directory.
 
-To interect with the contract we will use the `soroban contract invoke` command from the `soroban-cli` tool.
+To interact with the contract, we can use the `soroban contract invoke` command from the `soroban-cli` tool. Here's an example of invoking the `increment` function on a contract with ID 1:
 
 ```bash
 soroban contract invoke \
-    --wasm ./target/wasm32-unknown-unknown/release/increment.wasm \
-    --id 1 \
-    -- \
-    increment
+ --wasm ./target/wasm32-unknown-unknown/release/increment.wasm \
+ --id 1 \
+ -- \
+increment
 ```
 
-The output should look like this:
+The output should be the current value of the counter, which in this case is `1`.
+
+You can use the same `soroban contract invoke` command to increment the counter multiple times.
+
+To get the current value of the counter, you can use the following command:
 
 ```bash
-1
+soroban contract invoke \
+ --wasm ./target/wasm32-unknown-unknown/release/increment.wasm \
+ --id 1 \
+ -- \
+ get_count
 ```
 
-You can continue to use the `soroban contract invoke` command to increment the counter multiple times.
+The output should be the current value of the counter, assuming the counter has been incremented 3 times, the output will be `3`.
 
 And that's it! You've learned how to write and test simple smart contracts in Solidity and Rust. In the next section, we'll learn how to write and test more complex smart contracts.

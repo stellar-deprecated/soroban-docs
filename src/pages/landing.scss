@@ -58,6 +58,14 @@ a.hp-btn {
   }
 }
 
+.hp-center--md {
+  max-width: 38.25rem;
+
+  @media screen and (min-width: 1024px) {
+    max-width: 78.125rem;
+  }
+}
+
 .hp-link,
 a.hp-link {
   color: inherit;
@@ -318,6 +326,8 @@ a.hp-link {
   &__wrapper {
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 4rem;
   }
 
   &__title {
@@ -339,6 +349,41 @@ a.hp-link {
         margin-bottom: 3rem;
       }
     }
+  }
+}
+
+.SCF {
+  padding: 10rem 0;
+
+  &__wrapper {
+    display: flex;
+    flex-wrap: wrap-reverse;
+    align-items: center;
+    gap: 4rem;
+  }
+
+  &__left {
+    flex: 1 1 0%;
+  }
+
+  &__right {
+    max-width: 38.25rem;
+  }
+
+  &__title {
+    font-weight: 500;
+    font-size: 4rem;
+    line-height: 110%;
+    text-transform: capitalize;
+
+    span {
+      display: block;
+    }
+  }
+
+  &__subtitle {
+    line-height: 175%;
+    opacity: 0.7;
   }
 }
 

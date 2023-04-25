@@ -28,6 +28,7 @@ export default function Landing() {
         <Learn />
         <GettingStarted />
         <Earn />
+        <SCF />
         <Footer />
       </main>
     </Layout>
@@ -201,7 +202,7 @@ const GettingStartedCard = ({ index, title, subtitle }) => (
 
 const Earn = () => (
   <div className="Earn">
-    <div className="Earn__wrapper hp-center">
+    <div className="Earn__wrapper hp-center hp-center--md">
       <h2 className="Earn__title">Earn</h2>
 
       <div className="Earn__right">
@@ -222,6 +223,29 @@ const Earn = () => (
         <a href="/" className="hp-link">
           Read More
         </a>
+      </div>
+    </div>
+  </div>
+);
+
+const SCF = () => (
+  <div className="SCF">
+    <div className="SCF__wrapper hp-center hp-center--md">
+      <div className="SCF__left">image</div>
+
+      <div className="SCF__right">
+        <h2 className="SCF__title">
+          <span>Stellar</span>
+          <span>Community</span>
+          <span>Fund</span>
+        </h2>
+
+        <p className="SCF__subtitle">
+          Submit your Soroban project to the Stellar Community Fund and receive
+          up to $150K worth of XLM in awards. This is your chance to play a
+          fundamental role in bootstrapping the Soroban ecosystem by creating
+          the tools, protocols, dApps, and resources necessary for it to thrive.
+        </p>
       </div>
     </div>
   </div>

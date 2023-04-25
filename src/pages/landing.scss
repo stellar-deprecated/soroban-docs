@@ -121,8 +121,9 @@ a.hp-link {
   align-items: center;
   position: relative;
   background-color: #222222;
-  padding: 4rem 2rem;
+  padding: 4rem 2rem 8rem 2rem;
   min-height: 53.125rem;
+  overflow: hidden;
 
   &__wrapper {
     color: white;
@@ -143,28 +144,29 @@ a.hp-link {
   }
 
   &__img1 {
-    top: 0;
-    left: -10%;
+    top: -15%;
+    right: 94%;
   }
 
   &__img2 {
-    top: -30%;
-    right: 20%;
+    top: -448px;
+    right: -480px;
   }
 
   &__img3 {
     bottom: 10%;
-    left: 5%;
+    right: 90%;
   }
 
   &__img4 {
-    bottom: 10%;
-    right: 50%;
+    bottom: 40%;
+    right: -192px;
   }
 
   &__img5 {
-    bottom: -20%;
-    right: -10%;
+    right: -64px;
+    bottom: -208px;
+    transform: rotate(-62.29deg);
   }
 
   &__logo {
@@ -203,6 +205,22 @@ a.hp-link {
   }
 
   @media screen and (min-width: 1024px) {
+    padding: 4rem 2rem;
+
+    &__img1 {
+      top: 0;
+    }
+
+    &__img2 {
+      top: -30%;
+      right: 20%;
+    }
+
+    &__img4 {
+      bottom: 10%;
+      right: 50%;
+    }
+
     &__wrapper {
       flex-direction: row;
       align-items: start;
@@ -286,7 +304,7 @@ a.hp-link {
   background: url("/img/landing/learn.svg") #222222;
   background-repeat: no-repeat;
   background-size: auto;
-  background-position: 85% 10%;
+  background-position: 85% 55%;
 
   &__wrapper {
     display: flex;
@@ -338,13 +356,16 @@ a.hp-link {
   }
 
   @media screen and (min-width: 1024px) {
+    background-position: 85% 10%;
+
     &__wrapper {
       flex-direction: row;
     }
   }
 }
 
-.GettingStarted {
+.GettingStarted,
+a.GettingStarted {
   padding: 8.75rem 2rem;
 
   &__title {
@@ -364,7 +385,8 @@ a.hp-link {
   }
 }
 
-.GettingStartedCard {
+.GettingStartedCard,
+a.GettingStartedCard {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -407,17 +429,11 @@ a.hp-link {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    &__img {
-      color: white;
-      background-color: #000;
-    }
+    transition: all 250ms;
   }
 
   &:hover {
     background-color: #fddc31;
-    cursor: pointer;
-    text-decoration: none;
   }
 
   &:hover &__icon {
@@ -441,10 +457,7 @@ a.hp-link {
 .Earn {
   color: #fff;
   padding: 8.75rem 2rem;
-  background: url("/img/landing/earn.svg") #222222;
-  background-repeat: no-repeat;
-  background-size: auto;
-  background-position: -2rem 17rem;
+  background: #222222;
 
   &__wrapper {
     display: flex;
@@ -472,6 +485,13 @@ a.hp-link {
         margin-bottom: 3rem;
       }
     }
+  }
+
+  @media screen and (min-width: 1024px) {
+    background: url("/img/landing/earn.svg") #222222;
+    background-repeat: no-repeat;
+    background-size: auto;
+    background-position: left -100px bottom -300px;
   }
 }
 
@@ -606,54 +626,43 @@ a.hp-link {
 
 .Footer {
   background-color: #f9db4a;
-  .hp-center {
-    padding: 2.625rem 2rem;
+  padding: 2.625rem 2rem;
+
+  &__title {
+    font-size: 3rem;
+    font-weight: 500;
+    line-height: 110%;
+    text-transform: capitalize;
   }
-  &__wrapper {
-    margin: 1rem auto 0 auto;
-    max-width: 30rem;
+
+  &__cards {
     display: flex;
+    gap: 2rem 6.125rem;
     flex-direction: column;
   }
 
-  &__title {
-    font-size: 4rem;
-    font-weight: 500;
-  }
-
-  a {
-    text-decoration: none;
-  }
-
-  .social-icon {
-    min-width: 4.375rem;
-  }
-
   @media screen and (min-width: 1024px) {
-    &__wrapper {
-      max-width: none;
+    &__title {
+      font-size: 4rem;
+    }
+
+    &__cards {
       flex-direction: row;
     }
   }
 }
 
-.SocialCard {
-  &__wrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
+.SocialCard,
+a.SocialCard {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  text-decoration: none;
+
   &__title {
+    font-weight: 600;
     font-size: 1.5rem;
-    font-weight: 500;
+    line-height: 150%;
     color: #0d0d0d;
-    margin: 0 2rem;
-  }
-  @media screen and (min-width: 1024px) {
-    &__wrapper {
-      max-width: none;
-      flex-direction: row;
-    }
   }
 }

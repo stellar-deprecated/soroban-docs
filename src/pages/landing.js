@@ -309,22 +309,6 @@ const Soroban = () => (
   </div>
 );
 
-const MediaSectionCard = ({ tag, link, title, imgSrc }) => (
-  <a href={link} target="_blank" rel="noreferrer">
-    <div className="MediaSectionCard">
-      <div
-        className="MediaSectionCard__wrapper"
-        style={{ backgroundImage: `url(${imgSrc})` }}
-      >
-        <div className={`MediaSectionCard__tag MediaSectionCard__${tag}`}>
-          <p>{tag}</p>
-        </div>
-      </div>
-      <p className="MediaSectionCard__title">{title}</p>
-    </div>
-  </a>
-);
-
 const MediaSection = () => (
   <div className="MediaSection">
     <div className="hp-center">
@@ -377,29 +361,18 @@ const MediaSection = () => (
   </div>
 );
 
-const SocialLinks = [
-  {
-    title: "Discord",
-    imgSrc: "./img/landing/discord-1.svg",
-    link: "https://discord.gg/6ZCcYqbC96",
-  },
-  {
-    title: "Youtube",
-    imgSrc: "./img/landing/youtube-1.svg",
-    link: "https://www.youtube.com/@StellarDevelopmentFoundation",
-  },
-  {
-    title: "Twitter",
-    imgSrc: "./img/landing/twitter-1.svg",
-    link: "https://twitter.com/sorobanofficial",
-  },
-];
-
-const SocialCard = ({ title, imgSrc, link }) => (
-  <a key={link} href={link} target="_blank" rel="noreferrer">
-    <div className="SocialCard__wrapper">
-      <img className="social-icon" alt="" src={imgSrc} />
-      <p className="SocialCard__title">{title}</p>
+const MediaSectionCard = ({ tag, link, title, imgSrc }) => (
+  <a href={link} target="_blank" rel="noreferrer">
+    <div className="MediaSectionCard">
+      <div
+        className="MediaSectionCard__wrapper"
+        style={{ backgroundImage: `url(${imgSrc})` }}
+      >
+        <div className={`MediaSectionCard__tag MediaSectionCard__${tag}`}>
+          <p>{tag}</p>
+        </div>
+      </div>
+      <p className="MediaSectionCard__title">{title}</p>
     </div>
   </a>
 );
@@ -411,11 +384,32 @@ const Footer = ({ title = "Get Connected" }) => (
         <p>{title}</p>
       </div>
 
-      <div className="Footer__wrapper">
-        {SocialLinks.map(({ link, title: social, imgSrc }) => (
-          <SocialCard title={social} imgSrc={imgSrc} link={link} />
-        ))}
+      <div className="Footer__cards">
+        <SocialCard
+          title="Discord"
+          src="./img/landing/discord-1.svg"
+          href="https://discord.gg/6ZCcYqbC96"
+        />
+
+        <SocialCard
+          title="Youtube"
+          src="./img/landing/youtube-1.svg"
+          href="https://www.youtube.com/@StellarDevelopmentFoundation"
+        />
+
+        <SocialCard
+          title="Twitter"
+          src="./img/landing/twitter-1.svg"
+          href="https://twitter.com/sorobanofficial"
+        />
       </div>
     </div>
   </div>
+);
+
+const SocialCard = ({ title, src, href }) => (
+  <a href={href} target="_blank" rel="noreferrer" className="SocialCard">
+    <img className="SocialCard__icon" alt="" src={src} />
+    <span className="SocialCard__title">{title}</span>
+  </a>
 );

@@ -66,11 +66,16 @@ const Hero = () => (
         </p>
 
         <div className="Hero__btn-group">
-          <a href="/" className="hp-btn hp-btn-secondary">
+          <a
+            href="https://stellar.org/blog/a-developers-guide-to-soroban-adoption-fund-programs"
+            className="hp-btn hp-btn-secondary"
+            target="_blank"
+            rel="noreferrer"
+          >
             Earn
           </a>
 
-          <a href="/" className="hp-btn hp-btn-primary">
+          <a href="/docs" className="hp-btn hp-btn-primary">
             Docs
           </a>
         </div>
@@ -148,10 +153,15 @@ const Learn = () => (
         <div className="Learn__code">{"<helloworld>..."}</div>
 
         <div className="Learn__btn-group">
-          <a href="/" className="hp-btn hp-btn-secondary">
+          <a href="/docs" className="hp-btn hp-btn-secondary">
             Go to Docs
           </a>
-          <a href="/" className="hp-btn hp-btn-primary">
+          <a
+            href="https://stellar.org/blog/a-developers-guide-to-soroban-adoption-fund-programs"
+            className="hp-btn hp-btn-primary"
+            target="_blank"
+            rel="noreferrer"
+          >
             Earn
           </a>
         </div>
@@ -247,7 +257,12 @@ const Earn = () => (
           projects that will make the platform successful.
         </p>
 
-        <a href="/" className="hp-link">
+        <a
+          href="https://stellar.org/blog/a-developers-guide-to-soroban-adoption-fund-programs"
+          target="_blank"
+          className="hp-link"
+          rel="noreferrer"
+        >
           Read More
         </a>
       </div>

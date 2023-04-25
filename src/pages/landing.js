@@ -30,6 +30,7 @@ export default function Landing() {
         <Earn />
         <SCF />
         <Soroban />
+        <MediaSection />
         <Footer />
       </main>
     </Layout>
@@ -266,18 +267,90 @@ const Soroban = () => (
   </div>
 );
 
+const MediaSectionCard = ({ tag, link, title, imgSrc }) => (
+  <a href={link} target="_blank" rel="noreferrer">
+    <div className="MediaSectionCard">
+      <div
+        className="MediaSectionCard__wrapper"
+        style={{ backgroundImage: `url(${imgSrc})` }}
+      >
+        <div className={`MediaSectionCard__tag MediaSectionCard__${tag}`}>
+          <p>{tag}</p>
+        </div>
+      </div>
+      <p className="MediaSectionCard__title">{title}</p>
+    </div>
+  </a>
+);
+
+const MediaSection = () => (
+  <div className="MediaSection">
+    <div className="hp-center">
+      <h2 className="MediaSection__title">Guides and Videos</h2>
+
+      <div className="MediaSection__cards">
+        <MediaSectionCard
+          title="Soroban: A New Smart Contracts Platform"
+          tag="Youtube"
+          link="https://www.youtube.com/watch?v=Qwy0P1klpis"
+          imgSrc="https://img.youtube.com/vi/Qwy0P1klpis/maxresdefault.jpg"
+        />
+
+        <MediaSectionCard
+          title="Soroban: A New Smart Contract Standard"
+          tag="Guide"
+          link="https://stellar.org/blog/soroban-a-new-smart-contract-standard"
+          imgSrc="https://assets-global.website-files.com/5dee83171c0040227763490c/63465e69254eb2fc10dec495_sorobanpressrelease.png"
+        />
+
+        <MediaSectionCard
+          title="Soroban Talks: Instant Soroban Dev Environment Setup"
+          tag="Youtube"
+          link="https://www.youtube.com/watch?v=3in3EvVumiw"
+          imgSrc="https://img.youtube.com/vi/3in3EvVumiw/maxresdefault.jpg"
+        />
+
+        <MediaSectionCard
+          title="Building Soroban’s Minimum Viable Ecosystem"
+          tag="Guide"
+          link="https://stellar.org/developers-blog/building-sorobans-minimum-viable-ecosystem"
+          imgSrc="https://assets-global.website-files.com/5dee83171c0040227763490c/63f66c99c2b589d7e4177fec_soroban%20minimum%20viable%20ecosystem.png"
+        />
+
+        <MediaSectionCard
+          title="Soroban: First Impressions"
+          tag="Youtube"
+          link="https://www.youtube.com/watch?v=dN4TKnYr5nQ"
+          imgSrc="https://img.youtube.com/vi/dN4TKnYr5nQ/maxresdefault.jpg"
+        />
+
+        <MediaSectionCard
+          title="Building on Soroban: Three Teams' Journeys with Smart Contracts"
+          tag="Guide"
+          link="https://stellar.org/developers-blog/building-on-soroban-three-teams-journeys-smart-contracts"
+          imgSrc="https://assets-global.website-files.com/5dee83171c0040227763490c/641c9c3c8f93d7c7d1604909_Building%20on%20Soroban.png"
+        />
+      </div>
+    </div>
+  </div>
+);
+
 const SocialLinks = [
   {
     title: "Discord",
     imgSrc: "./img/landing/discord-1.svg",
-    link: "",
+    link: "https://discord.gg/6ZCcYqbC96",
   },
   {
     title: "Youtube",
     imgSrc: "./img/landing/youtube-1.svg",
-    link: "",
+    link: "https://www.youtube.com/@StellarDevelopmentFoundation",
   },
-  { title: "Twitter", imgSrc: "./img/landing/twitter-1.svg", link: "" },
+  {
+    title: "Twitter",
+    imgSrc: "./img/landing/twitter-1.svg",
+    link: "https://twitter.com/StellarOrg",
+  },
 ];
 
 const SocialCard = ({ title, imgSrc, link }) => (

@@ -369,7 +369,7 @@ const SocialLinks = [
   {
     title: "Twitter",
     imgSrc: "./img/landing/twitter-1.svg",
-    link: "https://twitter.com/StellarOrg",
+    link: "https://twitter.com/sorobanofficial",
   },
 ];
 

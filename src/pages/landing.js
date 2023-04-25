@@ -22,13 +22,14 @@ export default function Landing() {
         />
       </Head>
 
-      <main>
+      <main className="Landing">
         <Hero />
         <Designed />
         <Learn />
         <GettingStarted />
         <Earn />
         <SCF />
+        <Soroban />
         <Footer />
       </main>
     </Layout>
@@ -247,6 +248,20 @@ const SCF = () => (
           the tools, protocols, dApps, and resources necessary for it to thrive.
         </p>
       </div>
+    </div>
+  </div>
+);
+
+const Soroban = () => (
+  <div className="Soroban">
+    <div className="Soroban__wrapper hp-center">
+      <h2>Soroban Quest</h2>
+      <p>
+        A series of six available quests designed for the beginner Soroban
+        developer. Earn unique NFTs by completing challenges that teach you
+        about custom types, auth storage, reverse engineering, and more, all in
+        a Gitpod environment.
+      </p>
     </div>
   </div>
 );

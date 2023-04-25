@@ -115,7 +115,9 @@ const DesignedCard = ({ title, children }) => (
     </div>
 
     <div className="DesignedCard__wrapper">
-      <div>Icon</div>
+      <div>
+        <img src="/img/landing/designed-for-icon.svg" alt="Designed for" />
+      </div>
       <p>{children}</p>
     </div>
   </div>
@@ -233,7 +235,9 @@ const Earn = () => (
 const SCF = () => (
   <div className="SCF">
     <div className="SCF__wrapper hp-center hp-center--md">
-      <div className="SCF__left">image</div>
+      <div className="SCF__left">
+        <img src="/img/landing/scf.svg" alt="Community Fund" />
+      </div>
 
       <div className="SCF__right">
         <h2 className="SCF__title">

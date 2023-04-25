@@ -246,6 +246,10 @@ a.hp-link {
   background-color: #222222;
   padding: 9.25rem 2rem;
   overflow: hidden;
+  background: url("/img/landing/learn.svg") #222222;
+  background-repeat: no-repeat;
+  background-size: auto;
+  background-position: 85% 10%;
 
   &__wrapper {
     display: flex;
@@ -360,8 +364,11 @@ a.hp-link {
 
 .Earn {
   color: #fff;
-  background-color: #222222;
   padding: 8.75rem 2rem;
+  background: url("/img/landing/earn.svg") #222222;
+  background-repeat: no-repeat;
+  background-size: auto;
+  background-position: -2rem 17rem;
 
   &__wrapper {
     display: flex;
@@ -428,7 +435,10 @@ a.hp-link {
 }
 
 .Soroban {
-  background-color: #100b35;
+  background: url("/img/landing/ships.svg") #100b35;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: -11rem 2rem;
   padding: 8.25rem 1rem;
 
   &__wrapper {
@@ -465,7 +475,7 @@ a.hp-link {
 
   &__cards {
     display: grid;
-    gap: 2.5rem 1.5rem;
+    gap: 3.5rem 1.5rem;
     grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
     grid-auto-rows: 17.5rem;
     a {

@@ -4,11 +4,41 @@ import Layout from "@theme/Layout";
 
 import "./landing.scss";
 
+export default function Landing() {
+  return (
+    <Layout>
+      <Head>
+        <meta
+          name="description"
+          content="Soroban is a smart contracts platform that is designed with purpose and built to perform. The Futurenet has launched! Start experimenting now!"
+        />
+        <meta
+          property="og:description"
+          content="Soroban is a smart contracts platform that is designed with purpose and built to perform. The Futurenet has launched! Start experimenting now!"
+        />
+        <meta
+          name="twitter:description"
+          content="Soroban is a smart contracts platform that is designed with purpose and built to perform. The Futurenet has launched! Start experimenting now!"
+        />
+      </Head>
+
+      <main>
+        <Hero />
+        <Designed />
+        <Learn />
+        <GettingStarted />
+        <Earn />
+        <Footer />
+      </main>
+    </Layout>
+  );
+}
+
 const Hero = () => (
   <div className="Hero">
     <div className="Hero__wrapper hp-center">
       <div>
-        <div>Soroban</div>
+        <div className="Hero__logo">Soroban</div>
 
         <div className="Hero__title">
           <div>Introducing</div>
@@ -45,8 +75,8 @@ const Hero = () => (
 );
 
 const Designed = () => (
-  <div className="Designed hp-center">
-    <div className="Designed__wrapper">
+  <div className="Designed">
+    <div className="Designed__wrapper hp-center hp-center--sm">
       <h2 className="Designed__title">Designed For</h2>
 
       <div className="Designed__cards">
@@ -119,8 +149,8 @@ const Learn = () => (
 );
 
 const GettingStarted = () => (
-  <div className="GettingStarted hp-center">
-    <div className="GettingStarted__wrapper">
+  <div className="GettingStarted">
+    <div className="hp-center">
       <h2 className="GettingStarted__title">Getting Started</h2>
 
       <div className="GettingStarted__cards">
@@ -169,34 +199,33 @@ const GettingStartedCard = ({ index, title, subtitle }) => (
   </div>
 );
 
-export default function Landing() {
-  return (
-    <Layout>
-      <Head>
-        <meta
-          name="description"
-          content="Soroban is a smart contracts platform that is designed with purpose and built to perform. The Futurenet has launched! Start experimenting now!"
-        />
-        <meta
-          property="og:description"
-          content="Soroban is a smart contracts platform that is designed with purpose and built to perform. The Futurenet has launched! Start experimenting now!"
-        />
-        <meta
-          name="twitter:description"
-          content="Soroban is a smart contracts platform that is designed with purpose and built to perform. The Futurenet has launched! Start experimenting now!"
-        />
-      </Head>
+const Earn = () => (
+  <div className="Earn">
+    <div className="Earn__wrapper hp-center">
+      <h2 className="Earn__title">Earn</h2>
 
-      <main>
-        <Hero />
-        <Designed />
-        <Learn />
-        <GettingStarted />
-        <Footer />
-      </main>
-    </Layout>
-  );
-}
+      <div className="Earn__right">
+        <p>
+          The Stellar Development Foundation (SDF)’s $100M Soroban Adoption Fund
+          encourages and supports developers as they learn, experiment, build,
+          and scale projects on Soroban. The fund is an umbrella for many
+          programs that support all levels of Soroban adoption, some of which
+          have launched and some of which have yet to launch.
+        </p>
+
+        <p>
+          These programs open doors for developers to become pioneers of the
+          Soroban ecosystem by encouraging them to build the vital tools and
+          projects that will make the platform successful.
+        </p>
+
+        <a href="/" className="hp-link">
+          Read More
+        </a>
+      </div>
+    </div>
+  </div>
+);
 
 const SocialLinks = [
   {

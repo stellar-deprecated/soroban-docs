@@ -15,10 +15,11 @@ $max-screen: 1248px;
 body {
   margin: 0;
   line-height: normal;
-  font-family: var(--ifm-font-family-base);
+  font-family: "Inter";
 }
 
-.hp-btn {
+.hp-btn,
+a.hp-btn {
   display: flex;
   align-items: center;
   text-align: center;
@@ -28,6 +29,8 @@ body {
   border: none;
   border-radius: 2px;
   cursor: pointer;
+  text-decoration: none;
+  font-family: "IBM Plex Sans";
 
   &-primary {
     color: #3e1bdb;
@@ -42,9 +45,27 @@ body {
 
 .hp-center {
   width: 100%;
-  max-width: 76rem;
+  max-width: 78.125rem;
   margin: 0 auto;
   padding: 0 2rem;
+}
+
+.hp-center--sm {
+  max-width: 30rem;
+
+  @media screen and (min-width: 1024px) {
+    max-width: 78.125rem;
+  }
+}
+
+.hp-link,
+a.hp-link {
+  color: inherit;
+  font-weight: 500;
+  line-height: 175%;
+  border-bottom: 1px solid #fff;
+  text-decoration: none;
+  padding-bottom: 0.25rem;
 }
 
 .Hero {
@@ -64,19 +85,27 @@ body {
     gap: 4rem;
   }
 
+  &__logo {
+    margin-bottom: 2rem;
+  }
+
   &__title {
-    font-weight: 500;
+    font-weight: 600;
     font-size: 4rem;
-    line-height: 1.1;
+    line-height: 110%;
+    letter-spacing: -2px;
+    text-transform: capitalize;
+    font-feature-settings: "tnum" on, "lnum" on, "ss04" on;
     max-width: 45rem;
   }
 
   &__right {
     max-width: 25.125rem;
-    margin-top: 1.5rem;
+    margin-top: 3rem;
 
     p {
-      line-height: 1.75rem;
+      line-height: 175%;
+      margin-bottom: 2rem;
     }
   }
 
@@ -100,14 +129,13 @@ body {
 }
 
 .Designed {
-  &__wrapper {
-    margin: 8rem auto;
-    max-width: 30rem;
-  }
+  padding: 8rem 0;
 
   &__title {
-    font-size: 4rem;
     font-weight: 500;
+    font-size: 4rem;
+    line-height: 110%;
+    text-transform: capitalize;
     margin-bottom: 3rem;
   }
 
@@ -118,10 +146,6 @@ body {
   }
 
   @media screen and (min-width: 1024px) {
-    &__wrapper {
-      max-width: none;
-    }
-
     &__cards {
       flex-direction: row;
     }
@@ -133,12 +157,13 @@ body {
   flex-direction: column;
 
   &__title {
-    display: flex;
-    align-items: last baseline;
     font-weight: 600;
     font-size: 1.5rem;
-    line-height: 1.1;
+    line-height: 117%;
+
     height: 4rem;
+    display: flex;
+    align-items: last baseline;
     margin-bottom: 1rem;
 
     p {
@@ -163,7 +188,7 @@ body {
 
     p {
       font-size: 1.25rem;
-      line-height: 1.6;
+      line-height: 160%;
     }
   }
 }
@@ -171,7 +196,7 @@ body {
 .Learn {
   color: white;
   background-color: #222222;
-  padding: 4rem 0;
+  padding: 9.25rem 0;
   overflow: hidden;
 
   &__wrapper {
@@ -180,29 +205,34 @@ body {
     gap: 4rem;
   }
 
-  &__title {
-    font-family: Inter;
-    font-size: 4rem;
-    font-weight: 500;
-  }
-
   &__left {
     max-width: 22.75rem;
     flex-shrink: 0;
     margin: 0 auto;
 
     p {
+      line-height: 175%;
       color: #fafafa;
-      line-height: 1.75rem;
     }
   }
 
+  &__title {
+    font-weight: 500;
+    font-size: 4rem;
+    line-height: 100%;
+    margin-bottom: 2rem;
+  }
+
   &__right {
-    transform: translateX(10%);
+    transform: translateX(5%);
   }
 
   &__code {
+    font-family: "IBM Plex Sans";
     font-size: 1.25rem;
+    line-height: 150%;
+    /* or 150% */
+
     width: 100vw;
     flex-shrink: 0;
     background-color: #000;
@@ -215,7 +245,7 @@ body {
   &__btn-group {
     display: flex;
     gap: 1rem;
-    margin: 1rem 2rem;
+    margin: 1rem 0;
   }
 
   @media screen and (min-width: 1024px) {
@@ -226,9 +256,7 @@ body {
 }
 
 .GettingStarted {
-  &__wrapper {
-    margin: 8.75rem 0;
-  }
+  padding: 8.75rem 0;
 
   &__title {
     font-weight: 500;
@@ -271,12 +299,46 @@ body {
   }
 
   &__subtitle {
+    font-size: 14px;
     line-height: 140%;
     opacity: 0.6;
+    max-width: 16.625rem;
   }
 
   &__icon {
     margin-top: auto;
+  }
+}
+
+.Earn {
+  color: #fff;
+  background-color: #222222;
+  padding: 8.75rem 0;
+
+  &__wrapper {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__title {
+    font-weight: 500;
+    font-size: 4rem;
+    line-height: 100%;
+    text-transform: capitalize;
+  }
+
+  &__right {
+    max-width: 38.25rem;
+
+    p {
+      margin-bottom: 2rem;
+      line-height: 175%;
+      opacity: 0.7;
+
+      &:last-of-type {
+        margin-bottom: 3rem;
+      }
+    }
   }
 }
 

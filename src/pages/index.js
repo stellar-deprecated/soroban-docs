@@ -148,7 +148,19 @@ const Learn = () => (
       </div>
 
       <div className="Learn__right">
-        <div className="Learn__code">{"<helloworld>..."}</div>
+        <pre className="Learn__code">
+            {`#![no_std]
+use soroban_sdk::{contractimpl, vec, Env, Symbol, Vec};
+
+pub struct HelloContract;
+
+#[contractimpl]
+impl HelloContract {
+    pub fn hello(env: Env, to: Symbol) -> Vec<Symbol> {
+        vec![&env, Symbol::short("Hello"), to]
+    }
+}`}
+        </pre>
 
         <div className="Learn__btn-group">
           <a href="/docs" className="hp-btn hp-btn-secondary">

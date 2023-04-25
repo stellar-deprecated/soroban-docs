@@ -131,6 +131,40 @@ a.hp-link {
     justify-content: space-between;
     align-items: center;
     gap: 4rem;
+    z-index: 1;
+  }
+
+  &__img1,
+  &__img2,
+  &__img3,
+  &__img4,
+  &__img5 {
+    position: absolute;
+  }
+
+  &__img1 {
+    top: 0;
+    left: -10%;
+  }
+
+  &__img2 {
+    top: -30%;
+    right: 20%;
+  }
+
+  &__img3 {
+    bottom: 10%;
+    left: 5%;
+  }
+
+  &__img4 {
+    bottom: 10%;
+    right: 50%;
+  }
+
+  &__img5 {
+    bottom: -20%;
+    right: -10%;
   }
 
   &__logo {
@@ -178,6 +212,9 @@ a.hp-link {
 
 .Designed {
   padding: 8rem 2rem;
+  background: white;
+  z-index: 1;
+  position: relative;
 
   &__title {
     font-weight: 500;

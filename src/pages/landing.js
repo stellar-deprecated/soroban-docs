@@ -41,7 +41,9 @@ const Hero = () => (
   <div className="Hero">
     <div className="Hero__wrapper hp-center">
       <div>
-        <div className="Hero__logo">Soroban</div>
+        <div className="Hero__logo">
+          <img src="/img/landing/soroban-white.svg" alt="Logo" />
+        </div>
 
         <div className="Hero__title">
           <div>Introducing</div>
@@ -74,6 +76,11 @@ const Hero = () => (
         </div>
       </div>
     </div>
+    <img className="Hero__img1" src="/img/landing/image-1.svg" alt="1" />
+    <img className="Hero__img2" src="/img/landing/image-2.svg" alt="2" />
+    <img className="Hero__img3" src="/img/landing/image-3.svg" alt="3" />
+    <img className="Hero__img4" src="/img/landing/image-4.svg" alt="4" />
+    <img className="Hero__img5" src="/img/landing/image-5.svg" alt="5" />
   </div>
 );
 

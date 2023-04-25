@@ -20,6 +20,7 @@ $max-screen: 1248px;
   --color-gold-100: #f9db4a;
   --primary-yellow: #fddc31;
   --primary-black: #000;
+  --secondary-black: #222222;
   --primary-white: #fff;
   --blue-5: #100b35;
   --useful-off-white: #f2f2f2;
@@ -74,13 +75,13 @@ a.hp-btn {
   font-family: "IBM Plex Sans";
 
   &-primary {
-    color: #3e1bdb;
-    background-color: white;
+    color: var(--color-theme-purple-01);
+    background-color: var(--primary-white);
   }
 
   &-secondary {
     color: black;
-    background-color: #f9db4a;
+    background-color: var(--color-gold-100);
   }
 }
 
@@ -109,7 +110,7 @@ a.hp-btn {
 .hp-link,
 a.hp-link {
   span {
-    border-bottom: 1px solid #fff;
+    border-bottom: 1px solid var(--primary-white);
   }
   color: inherit;
   font-weight: 500;
@@ -125,13 +126,13 @@ a.hp-link {
   display: flex;
   align-items: center;
   position: relative;
-  background-color: #222222;
+  background-color: var(--secondary-black);
   padding: 4rem 2rem 8rem 2rem;
   min-height: 53.125rem;
   overflow: hidden;
 
   &__wrapper {
-    color: white;
+    color: var(--primary-white);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -235,7 +236,7 @@ a.hp-link {
 
 .Designed {
   padding: 8rem 2rem;
-  background: white;
+  background: var(--primary-white);
   z-index: 1;
   position: relative;
 
@@ -284,14 +285,14 @@ a.hp-link {
       content: "";
       flex-grow: 1;
       height: 100%;
-      border-bottom: 0.5px solid black;
+      border-bottom: 0.5px solid var(--primary-black);
       opacity: 0.2;
     }
   }
 
   &__wrapper {
     padding: 1.75rem;
-    background: #f2f2f2;
+    background: var(--useful-off-white);
     flex-grow: 1;
 
     p {
@@ -303,10 +304,10 @@ a.hp-link {
 
 .Learn {
   color: white;
-  background-color: #222222;
+  background-color: var(--secondary-black);
   padding: 9.25rem 2rem;
   overflow: hidden;
-  background: url("/img/landing/learn.svg") #222222;
+  background: url("/img/landing/learn.svg") var(--secondary-black);
   background-repeat: no-repeat;
   background-size: auto;
   background-position: 85% 55%;
@@ -324,7 +325,7 @@ a.hp-link {
 
     p {
       line-height: 175%;
-      color: #fafafa;
+      color: var(--gray-6);
     }
   }
 
@@ -347,8 +348,8 @@ a.hp-link {
 
     width: 100vw;
     flex-shrink: 0;
-    background-color: #000;
-    border: 1px solid #e0e0e0;
+    background-color: var(--primary-black);
+    border: 1px solid var(--gray-5);
     padding: 2.625rem;
     border-radius: 6px;
     height: 17rem;
@@ -395,7 +396,7 @@ a.GettingStartedCard {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  background-color: #e0e0e0;
+  background-color: var(--gray-5);
   padding: 1.5rem;
   transition: all 250ms;
   text-decoration: none;
@@ -405,7 +406,7 @@ a.GettingStartedCard {
     font-weight: 500;
     font-size: 1.5rem;
     line-height: 140%;
-    color: #828282;
+    color: var(--gray-3);
   }
 
   &__title {
@@ -414,7 +415,7 @@ a.GettingStartedCard {
     font-size: 2.25rem;
     line-height: 110%;
     text-transform: capitalize;
-    color: #000;
+    color: var(--primary-black);
   }
 
   &__subtitle {
@@ -422,7 +423,7 @@ a.GettingStartedCard {
     line-height: 140%;
     opacity: 0.6;
     max-width: 16.625rem;
-    color: #000;
+    color: var(--primary-black);
   }
 
   &__icon {
@@ -430,7 +431,7 @@ a.GettingStartedCard {
     width: 2rem;
     height: 2rem;
     border-radius: 2rem;
-    background-color: #fddc31;
+    background-color: var(--primary-yellow);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -438,11 +439,11 @@ a.GettingStartedCard {
   }
 
   &:hover {
-    background-color: #fddc31;
+    background-color: var(--primary-yellow);
   }
 
   &:hover &__icon {
-    background-color: #000;
+    background-color: var(--primary-black);
     transform: rotate(90deg);
   }
 
@@ -462,7 +463,7 @@ a.GettingStartedCard {
 .Earn {
   color: #fff;
   padding: 8.75rem 2rem;
-  background: #222222;
+  background: var(--secondary-black);
 
   &__wrapper {
     display: flex;
@@ -493,7 +494,7 @@ a.GettingStartedCard {
   }
 
   @media screen and (min-width: 1024px) {
-    background: url("/img/landing/earn.svg") #222222;
+    background: url("/img/landing/earn.svg") var(--secondary-black);
     background-repeat: no-repeat;
     background-size: auto;
     background-position: left -100px bottom -300px;
@@ -536,7 +537,7 @@ a.GettingStartedCard {
 }
 
 .Soroban {
-  background: url("/img/landing/ships.svg") #100b35;
+  background: url("/img/landing/ships.svg") var(--blue-5);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: -11rem 2rem;
@@ -610,13 +611,13 @@ a.GettingStartedCard {
   }
 
   &__Youtube {
-    background-color: #fddc31;
-    color: #000;
+    background-color: var(--primary-yellow);
+    color: var(--primary-black);
   }
 
   &__Guide {
-    background-color: #000;
-    color: #fff;
+    background-color: var(--primary-black);
+    color: var(--primary-white);
   }
 
   &__title {
@@ -625,12 +626,12 @@ a.GettingStartedCard {
     font-size: 1.25rem;
     line-height: 110%;
     text-transform: capitalize;
-    color: #000;
+    color: var(--primary-black);
   }
 }
 
 .Footer {
-  background-color: #f9db4a;
+  background-color: var(--color-gold-100);
   padding: 2.625rem 2rem;
 
   &__title {
@@ -668,6 +669,6 @@ a.SocialCard {
     font-weight: 600;
     font-size: 1.5rem;
     line-height: 150%;
-    color: #0d0d0d;
+    color: var(--primary-black);
   }
 }

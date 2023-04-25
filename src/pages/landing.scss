@@ -333,6 +333,8 @@ a.hp-link {
   gap: 0.5rem;
   background-color: #e0e0e0;
   padding: 1.5rem;
+  transition: all 250ms;
+  text-decoration: none;
 
   &__index {
     margin: 0;
@@ -348,6 +350,7 @@ a.hp-link {
     font-size: 2.25rem;
     line-height: 110%;
     text-transform: capitalize;
+    color: #000;
   }
 
   &__subtitle {
@@ -355,10 +358,46 @@ a.hp-link {
     line-height: 140%;
     opacity: 0.6;
     max-width: 16.625rem;
+    color: #000;
   }
 
   &__icon {
     margin-top: auto;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 2rem;
+    background-color: #fddc31;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    &__img {
+      color: white;
+      background-color: #000;
+    }
+  }
+
+  &:hover {
+    background-color: #fddc31;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  &:hover &__icon {
+    background-color: #000;
+    transform: rotate(90deg);
+  }
+
+  &__active {
+    display: none;
+  }
+
+  &:hover &__active {
+    display: block;
+  }
+
+  &:hover &__unactive {
+    display: none;
   }
 }
 

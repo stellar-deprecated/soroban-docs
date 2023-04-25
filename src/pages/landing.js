@@ -162,46 +162,62 @@ const GettingStarted = () => (
         <GettingStartedCard
           title="Setup"
           subtitle="Install and configure Rust and the Soroban CLI."
+          href="/docs/getting-started/setup"
         />
 
         <GettingStartedCard
           index="1."
           title="Hello World"
           subtitle="Create your first Soroban contract."
+          href="/docs/getting-started/hello-world"
         />
 
         <GettingStartedCard
           index="2."
           title="Storing Data"
           subtitle="Write simple Soroban contract that stores and retrieves data."
+          href="/docs/getting-started/storing-data"
         />
 
         <GettingStartedCard
           index="3."
           title="Deploy to a local network"
           subtitle="Use docker and the Stellar Quickstart image to run a local network."
+          href="/docs/getting-started/deploy-to-a-local-network"
         />
 
         <GettingStartedCard
           index="4."
           title="Connect Freighter wallet"
           subtitle="Freighter is a browser extension that can sign Soroban transactions."
+          href="/docs/getting-started/connect-freighter-wallet"
         />
       </div>
     </div>
   </div>
 );
 
-const GettingStartedCard = ({ index, title, subtitle }) => (
-  <div className="GettingStartedCard">
+const GettingStartedCard = ({ index, title, subtitle, href }) => (
+  <a className="GettingStartedCard" href={href}>
     {index && <p className="GettingStartedCard__index">{index}</p>}
 
     <p className="GettingStartedCard__title">{title}</p>
 
     <p className="GettingStartedCard__subtitle">{subtitle}</p>
 
-    <div className="GettingStartedCard__icon">icon</div>
-  </div>
+    <div className="GettingStartedCard__icon">
+      <img
+        className="GettingStartedCard__unactive"
+        src="/img/landing/arrow-black.svg"
+        alt="arrow"
+      />
+      <img
+        className="GettingStartedCard__active"
+        src="/img/landing/arrow-white.svg"
+        alt="arrow"
+      />
+    </div>
+  </a>
 );
 
 const Earn = () => (

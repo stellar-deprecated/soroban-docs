@@ -11,8 +11,9 @@
 // @use './components/doc-page';
 // @use './components/footer';
 
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
 
 /* You can override the default Infima variables here. */
 :root {
@@ -23,8 +24,8 @@
   // --ifm-spacing-horizontal: 1.5rem;
   // --ifm-toc-border-color: var(--ifm-color-emphasis-200);
 
-  --ifm-font-family-base: 'IBM Plex Sans', sans-serif;
-  --ifm-font-family-mono: 'IBM Plex Mono', monospace;
+  --ifm-font-family-base: "IBM Plex Sans", sans-serif;
+  --ifm-font-family-mono: "IBM Plex Mono", monospace;
   // --ifm-code-font-size: 80%;
   // --ifm-heading-font-weight: 400;
   // --ifm-table-head-font-weight: 500;
@@ -44,7 +45,7 @@
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
-[data-theme='dark'] {
+[data-theme="dark"] {
   --ifm-color-primary: #876fed;
   // --ifm-background-color: #292d3e;
   // --ifm-background-surface-color: #303448;

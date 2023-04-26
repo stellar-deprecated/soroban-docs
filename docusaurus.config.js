@@ -86,12 +86,12 @@ const config = {
             position: 'left',
             docsPluginId: 'api'
           },
-          {
-            href: 'https://fastcheapandoutofcontrol.com/',
-            label: 'Play Game',
-            className: 'nav-highlight',
-            position: 'left',
-          },
+          // {
+          //   href: 'https://fastcheapandoutofcontrol.com/',
+          //   label: 'Play Game',
+          //   className: 'nav-highlight',
+          //   position: 'left',
+          // },
           // {
           //   href: '/sorobanathon',
           //   label: 'Sorobanathon',

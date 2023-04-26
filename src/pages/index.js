@@ -107,7 +107,7 @@ const Designed = () => (
         </DesignedCard>
 
         <DesignedCard title="Real-World Utility">
-          Connect to Stellar’s unparalleled interoperability by accessing its
+          Connect to Stellar’s exceptional interoperability by accessing its
           wide variety of on-chain assets and worldwide on and off-ramps. Also,
           benefit from five-second contract finality on a proven and mature
           network boasting 150 TPS.
@@ -301,7 +301,7 @@ const SCF = () => (
         </h2>
 
         <p className="SCF__subtitle">
-          Submit your Soroban project to the Stellar Community Fund and receive 
+          Submit your Soroban project to the Stellar Community Fund and request 
           up to $150K worth of XLM in awards to cover 2-3 months of development costs.
           This is your chance to play a fundamental role in bootstrapping the Soroban 
           ecosystem by creating the tools, protocols, dApps, and resources necessary 

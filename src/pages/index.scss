@@ -349,10 +349,8 @@ a.hp-link {
   }
 
   &__code {
-    font-family: "IBM Plex Sans";
-    font-size: 1.25rem;
+    font-family: var(--ifm-font-family-mono);
     line-height: 150%;
-    /* or 150% */
 
     width: 100vw;
     flex-shrink: 0;
@@ -360,7 +358,6 @@ a.hp-link {
     border: 1px solid var(--gray-5);
     padding: 2.625rem;
     border-radius: 6px;
-    height: 17rem;
   }
 
   &__btn-group {

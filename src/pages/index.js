@@ -1,6 +1,7 @@
 import React from "react";
 import Head from "@docusaurus/Head";
 import Layout from "@theme/Layout";
+import { useColorMode } from '@docusaurus/theme-common';
 
 import "./index.scss";
 
@@ -280,40 +281,44 @@ const Earn = () => (
   </div>
 );
 
-const SCF = () => (
-  <div className="SCF">
-    <div className="SCF__wrapper hp-center hp-center--md">
-      <div className="SCF__left">
-        <img src="/img/landing/scf.svg" alt="Community Fund" />
-      </div>
+const SCF = () => {
+  const { colorMode } = useColorMode();
+  
+  return (
+    <div className="SCF">
+      <div className="SCF__wrapper hp-center hp-center--md">
+        <div className="SCF__left">
+          <img src="/img/landing/scf.svg" alt="Community Fund" />
+        </div>
+  
+        <div className="SCF__right">
+          <h2 className="SCF__title">
+            <span>Stellar</span>
+            <span>Community</span>
+            <span>Fund</span>
+          </h2>
+  
+          <p className="SCF__subtitle">
+            Submit your Soroban project to the Stellar Community Fund and receive
+            up to $150K worth of XLM in awards. This is your chance to play a
+            fundamental role in bootstrapping the Soroban ecosystem by creating
+            the tools, protocols, dApps, and resources necessary for it to thrive.
+          </p>
 
-      <div className="SCF__right">
-        <h2 className="SCF__title">
-          <span>Stellar</span>
-          <span>Community</span>
-          <span>Fund</span>
-        </h2>
-
-        <p className="SCF__subtitle">
-          Submit your Soroban project to the Stellar Community Fund and receive
-          up to $150K worth of XLM in awards. This is your chance to play a
-          fundamental role in bootstrapping the Soroban ecosystem by creating
-          the tools, protocols, dApps, and resources necessary for it to thrive.
-        </p>
-
-        <a
-          href="https://communityfund.stellar.org/"
-          target="_blank"
-          className="hp-link hp-link__dark"
-          rel="noreferrer"
-        >
-          <span>Learn More</span>
-          <img src="/img/landing/arrow-black.svg" alt="arrow" />
-        </a>
+          <a
+            href="https://communityfund.stellar.org/"
+            target="_blank"
+            className={colorMode === "dark" ? "hp-link" : "hp-link hp-link__dark"}
+            rel="noreferrer"
+          >
+            <span>Learn More</span>
+            <img src={`/img/landing/arrow-${colorMode === 'dark' ? 'white' : 'black'}.svg`} alt="arrow" />
+          </a>
+        </div>
       </div>
     </div>
-  </div>
-);
+  )
+};
 
 const Soroban = () => (
   <div className="Soroban">

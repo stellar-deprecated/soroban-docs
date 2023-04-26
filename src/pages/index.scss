@@ -236,7 +236,7 @@ a.hp-link {
 
 .Designed {
   padding: 8rem 2rem;
-  background: var(--primary-white);
+  background: var(--ifm-navbar-background-color);
   z-index: 1;
   position: relative;
 
@@ -259,6 +259,10 @@ a.hp-link {
       flex-direction: row;
     }
   }
+}
+
+[data-theme="dark"] .DesignedCard__wrapper p {
+  color: var(--ifm-navbar-background-color);
 }
 
 .DesignedCard {
@@ -626,7 +630,7 @@ a.GettingStartedCard {
     font-size: 1.25rem;
     line-height: 110%;
     text-transform: capitalize;
-    color: var(--primary-black);
+    color: var(--ifm-navbar-link-color);
   }
 }
 
@@ -639,6 +643,7 @@ a.GettingStartedCard {
     font-weight: 500;
     line-height: 110%;
     text-transform: capitalize;
+    color: var(--primary-black);
   }
 
   &__cards {

@@ -300,6 +300,16 @@ const SCF = () => (
           fundamental role in bootstrapping the Soroban ecosystem by creating
           the tools, protocols, dApps, and resources necessary for it to thrive.
         </p>
+
+        <a
+          href="https://communityfund.stellar.org/"
+          target="_blank"
+          className="hp-link hp-link__dark"
+          rel="noreferrer"
+        >
+          <span>Learn More</span>
+          <img src="/img/landing/arrow-black.svg" alt="arrow" />
+        </a>
       </div>
     </div>
   </div>
@@ -315,6 +325,11 @@ const Soroban = () => (
         about custom types, auth storage, reverse engineering, and more, all in
         a Gitpod environment.
       </p>
+      <div className="Soroban__btn-group">
+          <a href="https://quest.stellar.org/soroban" className="hp-btn hp-btn-secondary">
+            Play Game
+          </a>
+        </div>
     </div>
   </div>
 );

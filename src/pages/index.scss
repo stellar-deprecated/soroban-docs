@@ -112,6 +112,9 @@ a.hp-link {
   span {
     border-bottom: 1px solid var(--primary-white);
   }
+  &__dark span {
+    border-bottom: 1px solid var(--primary-black);
+  }
   color: inherit;
   font-weight: 500;
   line-height: 175%;
@@ -237,6 +240,7 @@ a.hp-link {
 .Designed {
   padding: 8rem 2rem;
   background: var(--primary-white);
+  color: var(--primary-black);
   z-index: 1;
   position: relative;
 
@@ -548,6 +552,11 @@ a.GettingStartedCard {
     text-align: center;
     color: #fff;
   }
+  &__btn-group {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+  }
 
   h2 {
     font-weight: 500;
@@ -626,7 +635,7 @@ a.GettingStartedCard {
     font-size: 1.25rem;
     line-height: 110%;
     text-transform: capitalize;
-    color: var(--primary-black);
+    color: var(--ifm-navbar-link-color);
   }
 }
 
@@ -639,6 +648,7 @@ a.GettingStartedCard {
     font-weight: 500;
     line-height: 110%;
     text-transform: capitalize;
+    color: var(--primary-black);
   }
 
   &__cards {

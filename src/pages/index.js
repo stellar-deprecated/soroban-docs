@@ -53,8 +53,8 @@ const Hero = () => (
 
       <div className="Hero__right">
         <p>
-          A developer-friendly, Rust-based smart contracts platform sensibly
-          designed with scalability in mind. Currently live on the test network
+          A developer-friendly, Rust-based smart contracts platform designed for
+          scale and sensibility. Currently live on the test network
           dubbed Futurenet, Soroban seamlessly integrates with and works
           alongside the existing Stellar blockchain.
         </p>
@@ -96,15 +96,14 @@ const Designed = () => (
         <DesignedCard title="Batteries-Included Developer Experience">
           With tools such as plug-and-play SDKs, Soroban CLI, RPC server, and
           local sandbox, Soroban provides a user-friendly experience that gets
-          developers up and running on the platform quickly. Start building with
+          developers up and running quickly. Start building with
           flexible, reusable functions and ready-to-use contracts.
         </DesignedCard>
 
         <DesignedCard title="Scale">
-          Soroban is designed with scalability in mind. Boost performance with
-          multi-core scaling, eliminated serialization loops, and an optimized
-          fee model. We’re also tackling the elephant in the room head-on by
-          addressing the solution to state bloat.
+          Soroban is designed with scalability in mind. Boost performance with multi-core scaling, 
+          an optimized fee model, and without pesky serialization loops. Soroban also tackles the 
+          elephant in the room head-on by addressing the solution to state bloat.
         </DesignedCard>
 
         <DesignedCard title="Real-World Utility">
@@ -142,7 +141,7 @@ const Learn = () => (
         <p>
           Getting started with Soroban is easy! Just install the Rust toolchain
           and Soroban CLI to begin writing your first Soroban smart contract.
-          Learn more and continue building by catching up on Soroban
+          Learn more and continue building by checking out Soroban
           documentation.
         </p>
       </div>
@@ -327,7 +326,7 @@ const Soroban = () => (
     <div className="Soroban__wrapper hp-center">
       <h2>Soroban Quest</h2>
       <p>
-        A series of six available quests designed for the beginner Soroban
+        A series of quests designed for the beginner Soroban
         developer. Earn unique NFTs by completing challenges that teach you
         about custom types, auth storage, reverse engineering, and more, all in
         a Gitpod environment.

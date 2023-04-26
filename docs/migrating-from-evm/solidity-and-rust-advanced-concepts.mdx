@@ -1,0 +1,428 @@
+---
+title: "Advanced Smart Contracts with Solidity, Rust, and Soroban"
+description: "Learn advanced Solidity and Rust concepts, write safe and efficient Rust code, use Rust and Soroban for custom smart contract logic, and deploy and test in a local development environment."
+---
+
+# Advanced Smart Contracts with Solidity, Rust, and Soroban
+
+In this tutorial, we will cover advanced Solidity and Rust concepts such as inheritance, interfaces, libraries, and modifiers. Additionally, we will learn how to write safe and efficient Rust code for smart contracts, use Rust and Soroban to develop custom smart contract logic, and deploy and test smart contracts in a local development environment.
+
+## Table of Contents
+
+1. [Advanced Solidity Concepts](#advanced-solidity-concepts)
+2. [Advanced Rust Concepts](#advanced-rust-concepts)
+3. [Writing Safe and Efficient Rust Code for Smart Contracts](#writing-safe-and-efficient-rust-code-for-smart-contracts)
+4. [Using Rust and Soroban for Smart Contract Development](#rust-and-soroban)
+5. [Deploying and Testing Smart Contracts Locally](#deploying-and-testing)
+
+## Advanced Solidity Concepts
+
+### Inheritance
+
+In Solidity, smart contracts can inherit properties and functions from other contracts. This is achieved using the `is` keyword.
+
+```solidity
+contract Parent {
+    function messageFromParent() public pure returns (string memory) {
+        return "Hello from Parent";
+    }
+}
+contract Child is Parent {
+    function messageFromChild(string memory newMessage) public pure returns (string memory) {
+        string memory messageFromParent = messageFromParent();
+        return string(abi.encodePacked(messageFromParent,', ', newMessage));
+    }
+}
+```
+
+### Interfaces
+
+Interfaces are similar to abstract contracts, but they cannot have any function implementations. They only contain function signatures. Contracts can implement interfaces using the `is` keyword, similar to inheritance.
+
+```solidity
+interface SomeInterface {
+    function doSomething() external returns (uint256);
+}
+
+contract SomeContract is SomeInterface {
+    uint256 private counter;
+
+    function doSomething() external override returns (uint256) {
+        counter += 1;
+        return counter;
+    }
+}
+```
+
+### Libraries
+
+Libraries are similar to contracts, but they cannot have any state variables. They are used to store reusable code that can be used by other contracts. Libraries are deployed once and can be used by multiple contracts. They are defined using the `library` keyword.
+
+```solidity
+library SafeMath {
+    function add(uint256 a, uint256 b) internal pure returns (uint256) {
+        uint256 c = a + b;
+        require(c >= a, "Addition overflow");
+
+        return c;
+    }
+}
+
+contract MyContract {
+    using SafeMath for uint256;
+
+    uint256 public value;
+
+    function increment(uint256 amount) public {
+        value = value.add(amount);
+    }
+}
+```
+
+### Modifiers
+
+Modifiers are used to change the behavior of functions in a declarative way. They are defined using the `modifier` keyword. Modifiers can be used to perform common checks such as validating inputs, checking permissions, and more.
+
+```solidity
+contract Ownable {
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Caller is not the owner");
+        _;
+    }
+}
+
+contract MyContract is Ownable {
+    function doSomething() public onlyOwner {
+        // This function can only be called by the owner of the contract
+    }
+}
+```
+
+## Advanced Rust Concepts
+
+### Inheritance
+
+Rust does not support classical inheritance like Solidity or other object-oriented languages. However, you can achieve similar functionality using `traits` and their implementations.
+
+Here is an example of a `Greeter` trait that defines a `hello` function:
+
+```rust
+#![no_std]
+use soroban_sdk::{contractimpl, vec, Env, Symbol, Vec};
+
+// Define the Greeter trait
+pub trait Greeter {
+    fn hello(&self, env: Env, to: Symbol) -> Vec<Symbol>;
+}
+
+// Implement the Greeter trait for the HelloContract struct
+pub struct HelloContract;
+
+impl Greeter for HelloContract {
+    fn hello(&self, env: Env, to: Symbol) -> Vec<Symbol> {
+        vec![&env, Symbol::short("Hello"), to]
+    }
+}
+
+// Add a contract implementation for the HelloContract struct
+#[contractimpl]
+impl HelloContract {
+    // Define a public method that delegates the call to the hello method from the Greeter trait
+    pub fn greet(env: Env, to: Symbol, from: Symbol) -> Vec<Symbol> {
+        let mut greeting = Self.hello(env.clone(), to);
+        greeting.push_back(Symbol::short("From"));
+        greeting.push_back(from);
+        greeting
+    }
+}
+
+#[cfg(test)]
+
+mod test;
+```
+
+Lets break down the code above:
+
+```rust
+#![no_std]
+use soroban_sdk::{contractimpl, vec, Env, Symbol, Vec};
+```
+
+The `#![no_std]` attribute tells the Rust compiler to not link the standard library. This is required for smart contracts because they are compiled to WebAssembly, which does not have a standard library. The `use` statement then imports several types from the `Soroban SDK`, including the `contractimpl` macro, `vec` module, `Env` struct, `Symbol` struct, and `Vec` type.
+
+```rust
+pub trait Greeter {
+    fn hello(&self, env: Env, to: Symbol) -> Vec<Symbol>;
+}
+
+pub struct HelloContract;
+
+impl Greeter for HelloContract {
+    fn hello(&self, env: Env, to: Symbol) -> Vec<Symbol> {
+        vec![&env, Symbol::short("Hello"), to]
+    }
+}
+```
+
+The `Greeter` trait defines a single function called `hello`. The `HelloContract` struct implements the `Greeter` trait by defining the `hello` function. The `hello` function returns a `Vec` of `Symbol`s that contains the `Env`, `Hello`, and `to` parameters.
+
+```rust
+#[contractimpl]
+
+impl HelloContract {
+    pub fn greet(env: Env, to: Symbol, from: Symbol) -> Vec<Symbol> {
+        let mut greeting = Self.hello(env.clone(), to);
+        greeting.push_back(Symbol::short("From"));
+        greeting.push_back(from);
+        greeting
+    }
+}
+```
+
+The `#[contractimpl]` attribute tells the `contractimpl` macro to generate a contract implementation for the `HelloContract` struct. The `HelloContract` struct must implement the `Greeter` trait in order for the macro to generate a contract implementation. The `greet` function is a public method that delegates the call to the `hello` method from the `Greeter` trait. It then adds the `from` parameter to the end of the `greeting` vector and returns it.
+
+Example output:
+
+```zsh
+["Hello","Alice","From","Bob"]
+```
+
+### Interfaces
+
+Interfaces are an essential part of building smart contracts with the `Soroban SDK`.
+
+There are many types of smart contract interfaces, and each has a specific purpose. One example of a smart contract interface built with `Soroban SDK` is the Token Interface. This interface ensures that tokens deployed on Soroban are interoperable with contracts built to support Soroban's built-in tokens. The Token Interface consists of three compatibility requirements:
+
+- function interface
+- authorization
+- events
+
+For more information on smart contract interfaces built with Soroban SDK, including the Token Interface, visit the [interfaces section](../category/interfaces) of the documentation.
+
+### Libraries
+
+In Rust, libraries are essentially a collection of related functions and types, usually organized in modules. They can be shared across multiple projects by publishing them as crates.
+
+Here is an example of a library that defines a `SafeMath` module with an `add` function:
+
+```rust
+#![no_std]
+
+// Imports
+use soroban_sdk::{contractimpl, Env};
+
+// safe_math.rs
+pub fn add(a: u32, b: u32) -> u32 {
+    a.checked_add(b).expect("Addition overflow")
+}
+
+// math_contract.rs
+pub trait MathContract {
+    fn add(&self, env: Env, a: u32, b: u32) -> u32;
+}
+
+pub struct Adder;
+
+impl MathContract for Adder {
+    fn add(&self, _env: Env, a: u32, b: u32) -> u32 {
+        add(a, b)
+    }
+}
+
+#[contractimpl]
+impl Adder {}
+
+// test module
+#[cfg(test)]
+mod test;
+```
+
+Notice that we use the `checked_add` function from the standard library to ensure that the addition does not overflow. This is important because if the addition overflows, it could lead to unexpected behavior in the contract.
+
+Even when Rust code is compiled with the #![no_std] flag, it is still possible to use some of the standard library's features, such as the `checked_add` function. This is because Rust provides the option to selectively import modules and functions from the standard library, allowing developers to use only the specific features they need.
+
+### Modifiers
+
+Rust does not have a built-in modifier system like Solidity. However, you can achieve similar functionality using `traits` and their implementations.
+
+```rust
+#![no_std]
+
+// Imports
+use soroban_sdk::{contracttype, Address};
+
+// Define the `Ownable` trait
+trait Ownable {
+    fn is_owner(&self, owner: &Address) -> bool;
+}
+
+// Implement the `Ownable` trait for the `OwnableContract` struct
+impl Ownable for OwnableContract {
+    fn is_owner(&self, owner: &Address) -> bool {
+        self.owner == *owner
+    }
+}
+
+// Define a modifier that requires the caller to be the owner of the contract
+fn only_owner(contract: &OwnableContract, owner: &Address) -> bool {
+    contract.is_owner(owner)
+}
+
+// Implement the contract for the `OwnableContract` struct
+#[contracttype]
+
+// Define the `OwnableContract` struct
+pub struct OwnableContract {
+    owner: Address,
+    number: u32,
+}
+
+impl OwnableContract {
+    // Define a public method that requires the caller to be the owner of the contract
+    pub fn change_number(&mut self, new_number: u32) {
+        if only_owner(self, &self.owner) {
+            self.number = new_number;
+        }
+    }
+}
+
+#[cfg(test)]
+mod test;
+```
+
+It's worth mentioning that the Soroban SDK comes with several built-in requirements that developers can use, such as the require_auth method provided by the Address struct [more details can be found in the official documentation](https://docs.rs/soroban-sdk/latest/soroban_sdk/struct.Address.html#method.require_auth).
+
+## Writing Safe and Efficient Rust Code for Smart Contracts
+
+When writing Rust code for smart contracts, it's important to focus on safety and efficiency. Some tips include:
+
+- Use the [`Result`](https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html) type to to handle errors in a safe and predictable way. In smart contracts, it's important to avoid panicking, as this can lead to unpredictable behavior. Instead, Result can be used to handle errors and ensure that the contract behaves as expected.
+
+```rust
+pub fn add(a: u32, b: u32) -> Result<u32, &'static str> {
+    a.checked_add(b).ok_or("Addition overflow")
+}
+```
+
+- Use the `checked_` family of functions, such as `checked_add`, `checked_sub`, etc., to perform arithmetic operations in a safe and efficient manner. These functions check for overflows and underflows and return an error if one occurs.
+
+```rust
+pub fn add(a: u32, b: u32) -> u32 {
+    a.checked_add(b).expect("Addition overflow")
+}
+```
+
+- Use `cargo` and `clippy` to enforcing code quality, style, and efficiency in Rust. `cargo` is Rust's package manager and provides a number of tools for building and testing Rust code. `clippy` is a linter that can help identify potential issues in the code, such as unused variables or functions that could be optimized.
+
+To use clippy with cargo, you'll first need to install it. You can do this by running the following command in your terminal:
+
+```zsh
+cargo install clippy
+```
+
+Once clippy is installed, you can run it by running the following command in your terminal:
+
+```zsh
+cargo clippy
+```
+
+This will run clippy on your entire project, checking for potential issues and providing suggestions for improvement. Clippy will output any issues it finds, along with suggestions for how to fix them.
+
+- Use `cargo` and `rustfmt` to enforce code style. `rustfmt` is a tool that can automatically format Rust code according to the Rust style guide. This can help ensure that the code is consistent and easy to read.
+
+To use rustfmt with cargo, you'll first need to install it. You can do this by running the following command in your terminal:
+
+```zsh
+cargo install rustfmt
+```
+
+Once rustfmt is installed, you can run it by running the following command in your terminal:
+
+```zsh
+cargo fmt
+```
+
+Before:
+
+```rust
+fn main()
+{
+let x=5;
+if x==5 {
+println!("Hello, world!");
+}
+}
+```
+
+After:
+
+```rust
+fn main() {
+    let x = 5;
+    if x == 5 {
+        println!("Hello, world!");
+    }
+}
+```
+
+## Rust and Soroban
+
+### Introduction
+
+We've learned that Smart contracts are self-executing contracts that can be programmed to automatically enforce the rules and regulations of a particular agreement. They are a core component of decentralized applications (dApps) and blockchain technology. In this section, we will learn how to use Rust and Soroban to develop and deploy custom smart contract logic.
+
+### Setup
+
+If you haven't already setup up the dev environment for Soroban, you can get started by following the steps on the [Setup Page](http://localhost:3000/docs/getting-started/setup).
+
+### Writing a Smart Contract
+
+Let's start by writing a simple smart contract that will allow us to store and retrieve a number. We'll use this contract as a starting point for learning how to write cross contract calls and how to use the Soroban SDK.
+
+Lets create a new Rust project by running the following command in your terminal:
+
+```zsh
+cargo new vault
+```
+
+This will create a new Rust project called `vault`. Next, we'll need to add the Soroban SDK as a dependency. To do this, open the `Cargo.toml` file in your project and ensure that it looks like the following:
+
+```toml
+[package]
+name = "vault"
+version = "0.1.0"
+edition = "2021"
+
+
+[lib]
+crate-type = ["cdylib"]
+
+[features]
+testutils = ["soroban-sdk/testutils"]
+
+[dependencies]
+soroban-sdk = "0.7.0"
+
+[dev_dependencies]
+soroban-sdk = { version = "0.7.0", features = ["testutils"] }
+
+[profile.release]
+opt-level = "z"
+overflow-checks = true
+debug = 0
+strip = "symbols"
+debug-assertions = false
+panic = "abort"
+codegen-units = 1
+lto = true
+
+[profile.release-with-logs]
+inherits = "release"
+debug-assertions = true
+```

@@ -265,6 +265,10 @@ a.hp-link {
   }
 }
 
+[data-theme="dark"] .DesignedCard__wrapper p {
+  color: var(--ifm-navbar-background-color);
+}
+
 .DesignedCard {
   display: flex;
   flex-direction: column;

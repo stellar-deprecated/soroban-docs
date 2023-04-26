@@ -380,6 +380,8 @@ a.hp-link {
 
 .GettingStarted,
 a.GettingStarted {
+  color: var(--primary-black);
+  background-color: var(--primary-white);
   padding: 8.75rem 2rem;
 
   &__title {
@@ -510,6 +512,8 @@ a.GettingStartedCard {
 }
 
 .SCF {
+  color: var(--primary-black);
+  background-color: var(--primary-white);
   padding: 10rem 2rem;
 
   &__wrapper {
@@ -577,6 +581,8 @@ a.GettingStartedCard {
 }
 
 .MediaSection {
+  color: var(--primary-black);
+  background-color: var(--primary-white);
   padding: 8.75rem 2rem;
 
   &__title {
@@ -639,7 +645,7 @@ a.GettingStartedCard {
     font-size: 1.25rem;
     line-height: 110%;
     text-transform: capitalize;
-    color: var(--ifm-navbar-link-color);
+    color: var(--primary-black);
   }
 }
 

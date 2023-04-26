@@ -1,7 +1,6 @@
 import React from "react";
 import Head from "@docusaurus/Head";
 import Layout from "@theme/Layout";
-import { useColorMode } from '@docusaurus/theme-common';
 
 import "./index.scss";
 
@@ -150,7 +149,7 @@ const Learn = () => (
 
       <div className="Learn__right">
         <pre className="Learn__code">
-            {`#![no_std]
+          {`#![no_std]
 use soroban_sdk::{contractimpl, vec, Env, Symbol, Vec};
 
 pub struct HelloContract;
@@ -289,8 +288,6 @@ const Earn = () => (
 );
 
 const SCF = () => {
-  const { colorMode } = useColorMode();
-  
   return (
     <div className="SCF">
       <div className="SCF__wrapper hp-center hp-center--md">
@@ -315,11 +312,11 @@ const SCF = () => {
           <a
             href="https://communityfund.stellar.org/"
             target="_blank"
-            className={colorMode === "dark" ? "hp-link" : "hp-link hp-link__dark"}
+            className="hp-link hp-link__dark"
             rel="noreferrer"
           >
             <span>Learn More</span>
-            <img src={`/img/landing/arrow-${colorMode === 'dark' ? 'white' : 'black'}.svg`} alt="arrow" />
+            <img src="/img/landing/arrow-black.svg" alt="arrow" />
           </a>
         </div>
       </div>

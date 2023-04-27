@@ -70,7 +70,7 @@ pub trait Contract {
 
     /// Sets whether the account is authorized to use its balance.
     /// If "authorized" is true, "id" should be able to use its balance.
-    /// Emit event with topics = ["set_auth", id: Address], data = [authorize: bool]
+    /// Emit event with topics = ["set_authorized", id: Address], data = [authorize: bool]
     fn set_authorized(
         env: soroban_sdk::Env,
         id: Address,

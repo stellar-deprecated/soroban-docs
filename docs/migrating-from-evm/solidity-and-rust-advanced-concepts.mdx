@@ -3,6 +3,9 @@ title: "Advanced Smart Contracts with Solidity, Rust, and Soroban"
 description: "Learn advanced Solidity and Rust concepts, write safe and efficient Rust code, use Rust and Soroban for custom smart contract logic, and deploy and test in a local development environment."
 ---
 
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
 # Advanced Smart Contracts with Solidity, Rust, and Soroban
 
 In this tutorial, we will cover advanced Solidity and Rust concepts such as inheritance, interfaces, libraries, and modifiers. Additionally, we will learn how to write safe and efficient Rust code for smart contracts, use Rust and Soroban to develop custom smart contract logic, and deploy and test smart contracts in a local development environment.
@@ -381,36 +384,56 @@ We've learned that Smart contracts are self-executing contracts that can be prog
 
 If you haven't already setup up the dev environment for Soroban, you can get started by following the steps on the [Setup Page](http://localhost:3000/docs/getting-started/setup).
 
+This project requires using the `soroban_token_contract.wasm` file which you will need to import manually.
+
+First, you will need to clone the v0.7.0 tag of soroban-examples repository:
+
+```zsh
+git clone -b v0.7.0 https://github.com/stellar/soroban-examples
+```
+
+then navigate to the `soroban-examples/contracts` directory and run the following command:
+
+```zsh
+cargo build --target wasm32-unknown-unknown --release
+```
+
+This will build the `soroban_token_contract.wasm` file which you will need to import into your project. The `soroban_token_contract.wasm` file is located in the `soroban-examples/contracts/target/wasm32-unknown-unknown/release` directory.
+
+Once we have the Token, lets create a new smart contract that uses it.
+
 ### Writing a Smart Contract
 
-Let's start by writing a simple smart contract that will allow us to store and retrieve a number. We'll use this contract as a starting point for learning how to write cross contract calls and how to use the Soroban SDK.
-
-Lets create a new Rust project by running the following command in your terminal:
+Let's start by writing a simple smart contract that will allow us to deposit funds into a vault and recieve shares. We'll use this contract as a starting point for using the Soroban SDK to develop Defi applications, and demonstrate how to utilize the soroban-cli tool for interacting with the contract.
 
 ```zsh
 cargo new vault
 ```
 
-This will create a new Rust project called `vault`. Next, we'll need to add the Soroban SDK as a dependency. To do this, open the `Cargo.toml` file in your project and ensure that it looks like the following:
+This will create a new Rust project called `vault`.
+
+Now lets add the `soroban_token_contract.wasm` file to the `vault` project. To do this, we can drag and drop the file into the `vault` project directory.
+
+![vault-project](../../static/img/vault-project.png)
+
+Next, we'll need to add the Soroban SDK as a dependency. To do this, open the `Cargo.toml` file in your project and ensure that it looks like the following:
 
 ```toml
 [package]
 name = "vault"
-version = "0.1.0"
+version = "0.0.0"
 edition = "2021"
-
+publish = false
 
 [lib]
 crate-type = ["cdylib"]
 
-[features]
-testutils = ["soroban-sdk/testutils"]
-
 [dependencies]
-soroban-sdk = "0.7.0"
+soroban-sdk = { version = "0.7.0", git = "https://github.com/stellar/rs-soroban-sdk", rev = "8abd3353c728f09ee1c8a2544f67a853e915afc2"}
+num-integer = { version = "0.1.45", default-features = false, features = ["i128"] }
 
 [dev_dependencies]
-soroban-sdk = { version = "0.7.0", features = ["testutils"] }
+soroban-sdk = { version = "0.7.0", git = "https://github.com/stellar/rs-soroban-sdk", rev = "8abd3353c728f09ee1c8a2544f67a853e915afc2", features = ["testutils"] }
 
 [profile.release]
 opt-level = "z"
@@ -426,3 +449,272 @@ lto = true
 inherits = "release"
 debug-assertions = true
 ```
+
+In this project we will create 3 files:
+
+- `src/lib.rs` - This is where we will write our vault smart contract logic.
+- `src/test.rs` - This is where we will write our tests.
+- `src/token.rs` - This is where we will write our token logic.
+
+<Tabs>
+<TabItem value="lib.rs" label="src/lib.rs">
+
+```rust
+#![no_std]
+
+mod test;
+mod token;
+
+use soroban_sdk::{contractimpl, Address, Bytes, BytesN, ConversionError, Env, RawVal, TryFromVal};
+use token::create_contract;
+
+#[derive(Clone, Copy)]
+#[repr(u32)]
+pub enum DataKey {
+    Token = 0,
+    TokenShare = 1,
+    TotalShares = 2,
+    Reserve = 3,
+}
+
+impl TryFromVal<Env, DataKey> for RawVal {
+    type Error = ConversionError;
+
+    fn try_from_val(_env: &Env, v: &DataKey) -> Result<Self, Self::Error> {
+        Ok((*v as u32).into())
+    }
+}
+
+fn get_token(e: &Env) -> BytesN<32> {
+    e.storage().get_unchecked(&DataKey::Token).unwrap()
+}
+
+fn get_token_share(e: &Env) -> BytesN<32> {
+    e.storage().get_unchecked(&DataKey::TokenShare).unwrap()
+}
+
+fn get_total_shares(e: &Env) -> i128 {
+    e.storage().get_unchecked(&DataKey::TotalShares).unwrap()
+}
+
+fn get_reserve(e: &Env) -> i128 {
+    e.storage().get_unchecked(&DataKey::Reserve).unwrap()
+}
+
+fn get_balance(e: &Env, contract_id: BytesN<32>) -> i128 {
+    token::Client::new(e, &contract_id).balance(&e.current_contract_address())
+}
+
+fn get_token_balance(e: &Env) -> i128 {
+    get_balance(e, get_token(e))
+}
+
+fn get_balance_shares(e: &Env) -> i128 {
+    get_balance(e, get_token_share(e))
+}
+
+fn put_token(e: &Env, contract_id: BytesN<32>) {
+    e.storage().set(&DataKey::Token, &contract_id);
+}
+
+fn put_token_share(e: &Env, contract_id: BytesN<32>) {
+    e.storage().set(&DataKey::TokenShare, &contract_id);
+}
+
+fn put_total_shares(e: &Env, amount: i128) {
+    e.storage().set(&DataKey::TotalShares, &amount)
+}
+
+fn put_reserve(e: &Env, amount: i128) {
+    e.storage().set(&DataKey::Reserve, &amount)
+}
+
+fn burn_shares(e: &Env, amount: i128) {
+    let total = get_total_shares(e);
+    let share_contract_id = get_token_share(e);
+
+    token::Client::new(e, &share_contract_id).burn(&e.current_contract_address(), &amount);
+    put_total_shares(e, total - amount);
+}
+
+fn mint_shares(e: &Env, to: Address, amount: i128) {
+    let total = get_total_shares(e);
+    let share_contract_id = get_token_share(e);
+
+    token::Client::new(e, &share_contract_id).mint(&e.current_contract_address(), &to, &amount);
+
+    put_total_shares(e, total + amount);
+}
+
+fn transfer(e: &Env, contract_id: BytesN<32>, to: Address, amount: i128) {
+    token::Client::new(e, &contract_id).xfer(&e.current_contract_address(), &to, &amount);
+}
+
+fn transfer_token(e: &Env, to: Address, amount: i128) {
+    transfer(e, get_token(e), to, amount);
+}
+
+pub trait VaultTrait {
+    // Sets the token contract addresses for this vault
+    fn initialize(e: Env, token_wasm_hash: BytesN<32>, token: BytesN<32>);
+
+    // Returns the token contract address for the vault share token
+    fn share_id(e: Env) -> BytesN<32>;
+
+    // Deposits token. Also mints vault shares for the "to" Identifier. The amount minted
+    // is determined based on the difference between the reserves stored by this contract, and
+    // the actual balance of token for this contract.
+    fn deposit(e: Env, to: Address, amount: i128);
+
+    // xfers share_amount of vault share tokens to this contract, burns all vaults share tokens in this contracts, and sends the
+    // corresponding amount of token to "to".
+    // Returns amount of token withdrawn
+    fn withdraw(e: Env, to: Address, share_amount: i128, amount: i128) -> i128;
+
+    fn get_rsrvs(e: Env) -> i128;
+}
+
+struct Vault;
+
+#[contractimpl]
+impl VaultTrait for Vault {
+    fn initialize(e: Env, token_wasm_hash: BytesN<32>, token: BytesN<32>) {
+        let share_contract_id = create_contract(&e, &token_wasm_hash, &token);
+        token::Client::new(&e, &share_contract_id).initialize(
+            &e.current_contract_address(),
+            &7u32,
+            &Bytes::from_slice(&e, b"Vault Share Token"),
+            &Bytes::from_slice(&e, b"VLT"),
+        );
+
+        put_token(&e, token);
+        put_token_share(&e, share_contract_id.try_into().unwrap());
+        put_total_shares(&e, 0);
+        put_reserve(&e, 0);
+    }
+
+    fn share_id(e: Env) -> BytesN<32> {
+        get_token_share(&e)
+    }
+
+    fn deposit(e: Env, to: Address, amount: i128) {
+        // Depositor needs to authorize the deposit
+        to.require_auth();
+
+        let token_client = token::Client::new(&e, &get_token(&e));
+
+        token_client.xfer(&to, &e.current_contract_address(), &amount);
+
+        let balance_a = get_token_balance(&e);
+        let total_shares = get_total_shares(&e);
+
+        mint_shares(&e, to, amount);
+        put_reserve(&e, balance_a);
+        put_total_shares(&e, total_shares + amount)
+    }
+
+    fn withdraw(e: Env, to: Address, share_amount: i128, amount: i128) -> i128 {
+        to.require_auth();
+
+        // First transfer the vault shares that need to be redeemed
+        let share_token_client = token::Client::new(&e, &get_token_share(&e));
+        share_token_client.xfer(&to, &e.current_contract_address(), &share_amount);
+
+        let balance = get_token_balance(&e);
+        let balance_shares = get_balance_shares(&e);
+
+        let total_shares = get_total_shares(&e);
+
+        if total_shares < amount {
+            panic!("not enought shares to withdraw");
+        }
+
+        burn_shares(&e, balance_shares);
+        transfer_token(&e, to.clone(), amount);
+        put_reserve(&e, balance - amount);
+
+        amount
+    }
+
+    fn get_rsrvs(e: Env) -> i128 {
+        get_reserve(&e)
+    }
+}
+```
+
+</TabItem>
+<TabItem value="test.rs" label="src/test.rs" default>
+
+```rust
+#![cfg(test)]
+
+use crate::{token, VaultClient};
+
+use soroban_sdk::{testutils::Address as _, Address, BytesN, Env,};
+
+fn create_token_contract(e: &Env, admin: &Address) -> token::Client {
+    token::Client::new(&e, &e.register_stellar_asset_contract(admin.clone()))
+}
+
+fn create_vault_contract(e: &Env, token_wasm_hash: &BytesN<32>, token: &BytesN<32>) -> VaultClient {
+    let vault = VaultClient::new(e, &e.register_contract(None, crate::Vault {}));
+    vault.initialize(token_wasm_hash, token);
+    vault
+}
+
+fn install_token_wasm(e: &Env) -> BytesN<32> {
+    soroban_sdk::contractimport!(file = "./soroban_token_contract.wasm");
+    e.install_contract_wasm(WASM)
+}
+
+#[test]
+fn test() {
+    let e: Env = Default::default();
+
+    let admin1 = Address::random(&e);
+
+    let token = create_token_contract(&e, &admin1);
+    let user = Address::random(&e);
+    let vault = create_vault_contract(&e, &install_token_wasm(&e), &token.contract_id);
+
+    let contract_share: [u8; 32] = vault.share_id().into();
+    let token_share = token::Client::new(&e, &contract_share);
+
+    token.mint(&admin1, &user, &1000);
+    assert_eq!(token.balance(&user), 1000);
+
+    assert_eq!(token_share.balance(&user), 0);
+    vault.deposit(&user, &100);
+    assert_eq!(token_share.balance(&user), 100);
+    assert_eq!(token_share.balance(&vault.address()), 0);
+    assert_eq!(token.balance(&user), 900);
+    assert_eq!(token.balance(&vault.address()), 100);
+
+    vault.withdraw(&user, &100, &100);
+    assert_eq!(token.balance(&user), 1000);
+    assert_eq!(token_share.balance(&user), 0);
+    assert_eq!(token.balance(&vault.address()), 0);
+    assert_eq!(token_share.balance(&vault.address()), 0);
+}
+```
+
+</TabItem>
+<TabItem value="token.rs" label="src/token.rs" default>
+
+```rust
+#![allow(unused)] use soroban_sdk::{Bytes, BytesN, Env};
+
+soroban_sdk::contractimport!(file = "./soroban_token_contract.wasm");
+
+pub fn create_contract(e: &Env, token_wasm_hash: &BytesN<32>, token_a: &BytesN<32>) -> BytesN<32> { let mut salt = Bytes::new(e); salt.append(&token_a.clone().into());
+
+    let salt = e.crypto().sha256(&salt);
+    e.deployer()
+        .with_current_contract(&salt)
+        .deploy(token_wasm_hash)
+
+}
+```
+
+</TabItem>
+</Tabs>

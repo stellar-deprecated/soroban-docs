@@ -404,7 +404,15 @@ Once we have the Token, lets create a new smart contract that uses it.
 
 ### Writing a Smart Contract
 
-Let's start by writing a simple smart contract that will allow us to deposit funds into a vault and recieve shares. We'll use this contract as a starting point for using the Soroban SDK to develop Defi applications, and demonstrate how to utilize the soroban-cli tool for interacting with the contract.
+Let's start by writing a simple example of a vault contract that allows users to deposit funds and withdraw their funds with generated yield. The vault contract allows users to deposit funds, mint shares in proportion to their deposit, and withdraw their funds along with the generated yield.
+
+How a breakdown of the contract mechanics
+
+- Shares are minted when a user deposits.
+- The DeFi protocol uses the users' deposits to generate yield.
+- User burns shares to withdraw their tokens + yield.
+
+Lets create a new Rust project by running the following command in your terminal:
 
 ```zsh
 cargo new vault
@@ -448,6 +456,94 @@ lto = true
 [profile.release-with-logs]
 inherits = "release"
 debug-assertions = true
+```
+
+```rust
+#![no_std]
+
+mod test; mod token;
+
+use num_integer::Roots; use soroban_sdk::{contractimpl, Address, BytesN, ConversionError, Env, RawVal, TryFromVal}; use token::create_contract;
+
+pub struct Vault;
+
+#[contractimpl] impl Vault { fn mint(e: &Env, to: Address, shares: i128) { let total_shares = e.storage().get_unchecked(&0u32).unwrap(); e.storage().set(&0u32, &(total_shares + shares)); let balance = e.storage().get_unchecked(&to).unwrap_or(0); e.storage().set(&to, &(balance + shares)); }
+
+    fn burn(e: &Env, from: Address, shares: i128) {
+        let balance = e.storage().get_unchecked(&from).unwrap_or(0);
+        assert!(balance >= shares, "Vault: insufficient balance");
+        e.storage().set(&from, &(balance - shares));
+        let total_shares = e.storage().get_unchecked(&0u32).unwrap();
+        e.storage().set(&0u32, &(total_shares - shares));
+    }
+
+    pub fn deposit(e: Env, amount: i128) {
+        let token_balance = token::Client::new(&e, &1u32).balance(&e.current_contract_address());
+        let total_shares = e.storage().get_unchecked(&0u32).unwrap();
+        let shares = if total_shares == 0 {
+            amount
+        } else {
+            amount * total_shares / token_balance
+        };
+        Self::mint(&e, e.sender(), shares);
+        token::Client::new(&e, &1u32)
+            .transfer_from(&e.sender(), &e.current_contract_address(), amount);
+    }
+
+    pub fn withdraw(e: Env, shares: i128) {
+        let token_balance = token::Client::new(&e, &1u32).balance(&e.current_contract_address());
+        let total_shares = e.storage().get_unchecked(&0u32).unwrap();
+        let amount = shares * token_balance / total_shares;
+        Self::burn(&e, e.sender(), shares);
+        token::Client::new(&e, &1u32).transfer(&e.sender(), amount);
+    }
+
+}
+
+```
+
+```rust
+#![no_std]
+
+mod test; mod token;
+
+use num_integer::Roots; use soroban_sdk::{contractimpl, Address, BytesN, ConversionError, Env, RawVal, TryFromVal}; use token::create_contract;
+
+pub struct Vault;
+
+#[contractimpl] impl Vault { fn mint(e: &Env, to: Address, shares: i128) { let total_shares = e.storage().get_unchecked(&0u32).unwrap(); e.storage().set(&0u32, &(total_shares + shares)); let balance = e.storage().get_unchecked(&to).unwrap_or(0); e.storage().set(&to, &(balance + shares)); }
+
+    fn burn(e: &Env, from: Address, shares: i128) {
+        let balance = e.storage().get_unchecked(&from).unwrap_or(0);
+        assert!(balance >= shares, "Vault: insufficient balance");
+        e.storage().set(&from, &(balance - shares));
+        let total_shares = e.storage().get_unchecked(&0u32).unwrap();
+        e.storage().set(&0u32, &(total_shares - shares));
+    }
+
+    pub fn deposit(e: Env, amount: i128) {
+        let token_balance = token::Client::new(&e, &1u32).balance(&e.current_contract_address());
+        let total_shares = e.storage().get_unchecked(&0u32).unwrap();
+        let shares = if total_shares == 0 {
+            amount
+        } else {
+            amount * total_shares / token_balance
+        };
+        Self::mint(&e, e.sender(), shares);
+        token::Client::new(&e, &1u32)
+            .transfer_from(&e.sender(), &e.current_contract_address(), amount);
+    }
+
+    pub fn withdraw(e: Env, shares: i128) {
+        let token_balance = token::Client::new(&e, &1u32).balance(&e.current_contract_address());
+        let total_shares = e.storage().get_unchecked(&0u32).unwrap();
+        let amount = shares * token_balance / total_shares;
+        Self::burn(&e, e.sender(), shares);
+        token::Client::new(&e, &1u32).transfer(&e.sender(), amount);
+    }
+
+}
+
 ```
 
 In this project we will create 3 files:

@@ -45,7 +45,7 @@ pub trait Contract {
     // All the admin functions have to be authorized by the admin with all input
     // arguments, i.e. they have to call `admin.require_auth()`.
 
-    /// If "from" is the administrator, clawback "amount" from the specified account. "amount" is burned.
+    /// Clawback "amount" from the specified account. "amount" is burned.
     /// Emit event with topics = ["clawback", admin: Address, to: Address], data = [amount: i128]
     fn clawback(
         env: soroban_sdk::Env,

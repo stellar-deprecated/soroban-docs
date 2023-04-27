@@ -189,6 +189,9 @@ pub trait Contract {
 In the token interface, there are several instances where function calls can fail due to various reasons such as lack of proper authorization, insufficient allowance or balance, etc. To handle these failure conditions, it is important to specify the expected behavior when such situations arise.
 
 Its important to note the that the token interface not only incorporates the authorization concept for matching asset authorization in Stellar Classic, but it also utilizes the Soroban authorization mechanism. So, if you try to make a token call and it fails, it could be because of either token authorization processes. 
+
+To provide more context, when you use the token interface, there is a function called `authorized` that returns "true" if the address you're using has token authorization. 
+
 More details on Authorization can be found [here](../../learn/authorization).
 
 For the functions in the token interface, [trapping](https://doc.rust-lang.org/book/ch09-00-error-handling.html) should be used as the standard way to handle failure conditions since the interface is not designed to return error codes. This means that when a function encounters an error, it will halt execution and revert any state changes that occurred during the function call.

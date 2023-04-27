@@ -61,7 +61,7 @@ pub trait Contract {
         amount: i128,
     );
 
-    /// Sets the administrator to the specified address.
+    /// Sets the administrator to the specified address "new_admin".
     /// Emit event with topics = ["set_admin", admin: Address], data = [new_admin: Address]
     fn set_admin(
         env: soroban_sdk::Env,
@@ -70,7 +70,7 @@ pub trait Contract {
 
     /// Sets whether the account is authorized to use its balance.
     /// If "authorized" is true, "id" should be able to use its balance.
-    /// Emit event with topics = ["set_auth", admin: Address, id: Address], data = [authorize: bool]
+    /// Emit event with topics = ["set_authorized", id: Address], data = [authorize: bool]
     fn set_authorized(
         env: soroban_sdk::Env,
         id: Address,
@@ -86,7 +86,7 @@ pub trait Contract {
     // to call `from.require_auth()`.
 
     /// Increase the allowance by "amount" for "spender" to transfer/burn from "from".
-    /// Emit event with topics = ["incr_allow", from: Address, spender: Address], data = [amount: i128]
+    /// Emit event with topics = ["increase_allowance", from: Address, spender: Address], data = [amount: i128]
     fn increase_allowance(
         env: soroban_sdk::Env,
         from: Address,
@@ -104,7 +104,7 @@ pub trait Contract {
         amount: i128,
     );
 
-    /// Transfer "amount" from "from" to "to.
+    /// Transfer "amount" from "from" to "to".
     /// Emit event with topics = ["transfer", from: Address, to: Address], data = [amount: i128]
     fn transfer(
         env: soroban_sdk::Env,

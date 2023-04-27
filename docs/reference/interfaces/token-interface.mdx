@@ -70,7 +70,7 @@ pub trait Contract {
 
     /// Sets whether the account is authorized to use its balance.
     /// If "authorized" is true, "id" should be able to use its balance.
-    /// Emit event with topics = ["set_authorized", id: Address], data = [authorize: bool]
+    /// Emit event with topics = ["set_auth", id: Address], data = [authorize: bool]
     fn set_authorized(
         env: soroban_sdk::Env,
         id: Address,
@@ -96,7 +96,7 @@ pub trait Contract {
 
     /// Decrease the allowance by "amount" for "spender" to transfer/burn from "from".
     /// If "amount" is greater than the current allowance, set the allowance to 0.
-    /// Emit event with topics = ["decr_allow", from: Address, spender: Address], data = [amount: i128]
+    /// Emit event with topics = ["decrease_allowance", from: Address, spender: Address], data = [amount: i128]
     fn decrease_allowance(
         env: soroban_sdk::Env,
         from: Address,

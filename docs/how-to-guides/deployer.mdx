@@ -139,7 +139,7 @@ Open the `deployer/deployer/src/test.rs` file to follow along.
 // The contract that will be deployed by the deployer contract.
 mod contract {
     soroban_sdk::contractimport!(
-        file = "../../target/wasm32-unknown-unknown/release/soroban_deployer_test_contract.wasm"
+        file = "../contract/target/wasm32-unknown-unknown/release/soroban_deployer_test_contract.wasm"
     );
 }
 
@@ -171,7 +171,7 @@ file.
 ```rust
 mod contract {
     soroban_sdk::contractimport!(
-        file = "../../target/wasm32-unknown-unknown/release/soroban_deployer_test_contract.wasm"
+        file = "../contract/target/wasm32-unknown-unknown/release/soroban_deployer_test_contract.wasm"
     );
 }
 ```
@@ -263,15 +263,15 @@ both the deployer contract and the test contract.
 cargo build --target wasm32-unknown-unknown --release
 ```
 
-Both `.wasm` files should be found in the `../target` directory after building
+Both `.wasm` files should be found in both contract `target` directories after building
 both contracts:
 
 ```
-../target/wasm32-unknown-unknown/release/soroban_deployer_contract.wasm
+target/wasm32-unknown-unknown/release/soroban_deployer_contract.wasm
 ```
 
 ```
-../target/wasm32-unknown-unknown/release/soroban_deployer_test_contract.wasm
+target/wasm32-unknown-unknown/release/soroban_deployer_test_contract.wasm
 ```
 
 ## Run the Contract

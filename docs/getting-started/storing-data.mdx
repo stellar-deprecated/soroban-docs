@@ -158,10 +158,10 @@ To build the contract, use the `cargo build` command.
 cargo build --target wasm32-unknown-unknown --release
 ```
 
-A `.wasm` file should be outputted in the `../target` directory:
+A `.wasm` file should be outputted in the `target` directory:
 
 ```
-../target/wasm32-unknown-unknown/release/soroban_increment_contract.wasm
+target/wasm32-unknown-unknown/release/soroban_increment_contract.wasm
 ```
 
 ## Run the Contract
@@ -170,7 +170,7 @@ If you have [`soroban-cli`] installed, you can invoke contract functions in the 
 
 ```sh
 soroban contract invoke \
-    --wasm ../target/wasm32-unknown-unknown/release/soroban_increment_contract.wasm \
+    --wasm target/wasm32-unknown-unknown/release/soroban_increment_contract.wasm \
     --id 1 \
     -- \
     increment
@@ -186,7 +186,7 @@ Rerun the invoke with the `--footprint` option to view the [footprint] of the in
 
 ```sh
 soroban contract invoke \
-    --wasm ../target/wasm32-unknown-unknown/release/soroban_increment_contract.wasm \
+    --wasm target/wasm32-unknown-unknown/release/soroban_increment_contract.wasm \
     --id 1 \
     --footprint \
     -- \

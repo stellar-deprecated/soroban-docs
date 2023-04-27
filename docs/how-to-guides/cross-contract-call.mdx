@@ -65,7 +65,7 @@ impl ContractA {
 
 ```rust title="cross_contract/contract_b/src/lib.rs"
 mod contract_a {
-    soroban_sdk::contractimport!(file = "../../target/wasm32-unknown-unknown/release/soroban_cross_contract_a_contract.wasm");
+    soroban_sdk::contractimport!(file = "../contract_a/target/wasm32-unknown-unknown/release/soroban_cross_contract_a_contract.wasm");
 }
 
 pub struct ContractB;
@@ -145,7 +145,7 @@ on Contract A.
 ```rust title="cross_contract_calls/src/a.rs"
 mod contract_a {
     soroban_sdk::contractimport!(
-        file = "../../target/wasm32-unknown-unknown/release/soroban_cross_contract_a_contract.wasm"
+        file = "../contract_a/target/wasm32-unknown-unknown/release/soroban_cross_contract_a_contract.wasm"
     );
 }
 
@@ -237,7 +237,7 @@ To build the contract into a `.wasm` file, use the `cargo build` command. Both
 cargo build --target wasm32-unknown-unknown --release
 ```
 
-Both `.wasm` files should be found in the `../target` directory after building
+Both `.wasm` files should be found in both contract `target` directories after building
 both contracts:
 
 ```

@@ -630,6 +630,9 @@ impl VaultTrait for Vault {
         let share_token_client = token::Client::new(&e, &get_token_share(&e));
         share_token_client.xfer(&to, &e.current_contract_address(), &amount);
 
+        let token_client = token::Client::new(&e, &get_token(&e));
+        token_client.xfer(&e.current_contract_address(), &to, &(&amount/&100));
+
         let balance = get_token_balance(&e);
         let balance_shares = get_balance_shares(&e);
 
@@ -691,6 +694,7 @@ fn test() {
     let token_share = token::Client::new(&e, &contract_share);
 
     token.mint(&admin1, &user, &1000);
+    token.mint(&admin1, &vault.address(), &100);
     assert_eq!(token.balance(&user), 1000);
 
     assert_eq!(token_share.balance(&user), 0);
@@ -698,12 +702,13 @@ fn test() {
     assert_eq!(token_share.balance(&user), 100);
     assert_eq!(token_share.balance(&vault.address()), 0);
     assert_eq!(token.balance(&user), 900);
-    assert_eq!(token.balance(&vault.address()), 100);
+    assert_eq!(token.balance(&vault.address()), 200);
 
+    let amount = 100/100;
     vault.withdraw(&user, &100);
-    assert_eq!(token.balance(&user), 1000);
+    assert_eq!(token.balance(&user), 1000+amount);
     assert_eq!(token_share.balance(&user), 0);
-    assert_eq!(token.balance(&vault.address()), 0);
+    assert_eq!(token.balance(&vault.address()), 99);
     assert_eq!(token_share.balance(&vault.address()), 0);
 }
 ```

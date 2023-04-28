@@ -1405,7 +1405,14 @@ soroban contract invoke \
     --amount 100
 ```
 
-After recieving a SUCCESS message, we should check our account balance again. We can do this by running the `balance.sh` script.
+We should recieve a SUCCESS message with the withdrawal amount. 
+
+```bash
+SUCCESS
+"100"
+```
+
+Now is a good time to check our account balance again. We can do this by running the `balance.sh` script.
 
 We should see our balance has increased the amount we withdrew plus yield (amount/100) or %1 of out withdraw amount.
 

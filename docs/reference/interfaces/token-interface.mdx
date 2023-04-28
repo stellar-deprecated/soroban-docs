@@ -180,3 +180,54 @@ pub trait Contract {
     fn symbol(env: soroban_sdk::Env) -> soroban_sdk::Bytes;
 }
 ```
+
+### Handling Failure Conditions
+In the token interface, there are several instances where function calls can fail due to various reasons such as lack of proper authorization, insufficient allowance or balance, etc. To handle these failure conditions, it is important to specify the expected behavior when such situations arise.
+
+Its important to note the that the token interface not only incorporates the authorization concept for matching asset authorization in Stellar Classic, but it also utilizes the Soroban authorization mechanism. So, if you try to make a token call and it fails, it could be because of either token authorization processes. 
+
+To provide more context, when you use the token interface, there is a function called `authorized` that returns "true" if an address has token authorization. 
+
+More details on Authorization can be found [here](../../learn/authorization).
+
+For the functions in the token interface, [trapping](https://doc.rust-lang.org/book/ch09-00-error-handling.html) should be used as the standard way to handle failure conditions since the interface is not designed to return error codes. This means that when a function encounters an error, it will halt execution and revert any state changes that occurred during the function call.
+
+### Failure Conditions
+Here is a list of basic failure conditions and their expected behavior for functions in the token interface:
+
+#### Admin functions:
+
+- If the admin did not authorize the call, the function should trap.
+- If the admin attempts to perform an invalid action (e.g., minting a negative amount), the function should trap.
+
+#### Token functions:
+
+- If the caller is not authorized to perform the action (e.g., transferring tokens without proper authorization), the function should trap.
+- If the action would result in an invalid state (e.g., transferring more tokens than available in the balance or allowance), the function should trap.
+
+### Example: Handling Insufficient Allowance in `burn_from` function
+
+In the `burn_from` function, the token contract should check whether the spender has enough allowance to burn the specified amount of tokens from the `from` address. If the allowance is insufficient, the function should trap, halting execution and reverting any state changes.
+
+Here's an example of how the `burn_from` function can be modified to handle this failure condition:
+
+```rust
+fn burn_from(
+    env: soroban_sdk::Env,
+    spender: Address,
+    from: Address,
+    amount: i128,
+) {
+    // Check if the spender has enough allowance
+    let current_allowance = allowance(env, from, spender);
+    if current_allowance < amount {
+        // Trap if the allowance is insufficient
+        panic!("Insufficient allowance");
+    }
+
+    // Proceed with burning tokens
+    // ...
+}
+```
+
+By clearly outlining how to handle failures and incorporating the right error management techniques in the token interface, we can make token contracts stronger and safer.

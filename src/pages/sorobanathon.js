@@ -35,7 +35,8 @@ export default function Sorobanathon() {
         </div>
         <div className='hp--maxWidth'>
           <div className='hp--content'>
-            <h1>Welcome to Sorobanathon: Equinox<br/>February 3rd - April 1st, 2023.</h1>
+            <h1>Sorobanathon: Equinox<br/>February 3rd - April 1st, 2023.</h1>
+            <p>On April 1st, 2023 we wraped up Sorobanathon! Thank you to our dedicated participants</p>
             <p>Sorobanathon is back for the new year! Once again, you can earn rewards by experimenting with Soroban and creating content to share your experience. We are looking for any kind of content, big or small!</p>
             <p><strong>Our goals</strong> with Sorobanathon: Equinox are to continue gathering feedback that will guide the development of Soroban, and more importantly, to generate content that will help kickstart the Soroban ecosystem. So roll up your sleeves, experiment, and have some fun!</p>
             <p>During First Light, we received a ton of requests to increase the reward band to allow for more extensive projects… and we are happy to announce that in Sorobanathon: Equinox, you can earn from 25XLM all the way to up to 10,000 XLM for a single submission! This is a <strong>fun, low-lift way to tinker with Soroban</strong> while you help shape its development and grow the ecosystem as a whole.</p>

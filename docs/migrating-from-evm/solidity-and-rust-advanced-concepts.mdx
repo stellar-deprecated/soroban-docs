@@ -557,14 +557,6 @@ fn mint_shares(e: &Env, to: Address, amount: i128) {
     put_total_shares(e, total + amount);
 }
 
-fn transfer(e: &Env, contract_id: BytesN<32>, to: Address, amount: i128) {
-    token::Client::new(e, &contract_id).xfer(&e.current_contract_address(), &to, &amount);
-}
-
-fn transfer_token(e: &Env, to: Address, amount: i128) {
-    transfer(e, get_token(e), to, amount);
-}
-
 pub trait VaultTrait {
     // Sets the token contract addresses for this vault
     fn initialize(e: Env, token_wasm_hash: BytesN<32>, token: BytesN<32>);
@@ -582,6 +574,7 @@ pub trait VaultTrait {
     // Returns amount of token withdrawn
     fn withdraw(e: Env, to: Address, amount: i128) -> i128;
 
+    // Returns the amount of token that can be withdrawn for the given amount of vault shares
     fn get_rsrvs(e: Env) -> i128;
 }
 
@@ -632,7 +625,11 @@ impl VaultTrait for Vault {
         share_token_client.xfer(&to, &e.current_contract_address(), &amount);
 
         let token_client = token::Client::new(&e, &get_token(&e));
-        token_client.xfer(&e.current_contract_address(), &to, &(&amount/&100));
+        token_client.xfer(
+            &e.current_contract_address(),
+            &to,
+            &(&amount + (&amount / &100)),
+        );
 
         let balance = get_token_balance(&e);
         let balance_shares = get_balance_shares(&e);
@@ -640,12 +637,12 @@ impl VaultTrait for Vault {
         let total_shares = get_total_shares(&e);
 
         if total_shares < amount {
-            panic!("not enought shares to complete withdrawal");
+            panic!("not enought shares to withdraw");
         }
 
         burn_shares(&e, balance_shares);
-        transfer_token(&e, to.clone(), amount);
-        put_reserve(&e, balance - amount);
+        put_total_shares(&e, total_shares - amount);
+        put_reserve(&e, balance);
 
         amount
     }
@@ -694,23 +691,26 @@ fn test() {
     let contract_share: [u8; 32] = vault.share_id().into();
     let token_share = token::Client::new(&e, &contract_share);
 
-    token.mint(&admin1, &user, &1000);
+    token.mint(&admin1, &user, &100);
     token.mint(&admin1, &vault.address(), &100);
-    assert_eq!(token.balance(&user), 1000);
+    assert_eq!(token.balance(&vault.address()), 100);
+    assert_eq!(token.balance(&user), 100);
 
     assert_eq!(token_share.balance(&user), 0);
     vault.deposit(&user, &100);
     assert_eq!(token_share.balance(&user), 100);
     assert_eq!(token_share.balance(&vault.address()), 0);
-    assert_eq!(token.balance(&user), 900);
+    assert_eq!(token.balance(&user), 0);
     assert_eq!(token.balance(&vault.address()), 200);
+    assert_eq!(vault.get_rsrvs(), 200);
 
     let withdraw_amount = 100;
     vault.withdraw(&user, &withdraw_amount);
     let yield_amount = &(withdraw_amount / 100);
-    assert_eq!(token.balance(&user), 1000 + yield_amount);
+    assert_eq!(token.balance(&user), 100 + yield_amount);
     assert_eq!(token_share.balance(&user), 0);
     assert_eq!(token.balance(&vault.address()), 99);
+    assert_eq!(vault.get_rsrvs(), 99);
     assert_eq!(token_share.balance(&vault.address()), 0);
 }
 ```
@@ -1007,7 +1007,7 @@ Nice! We deposited tokens to the vault and recieved shares in return. Now, let's
 - `transfer_token` is called to transfer tokens from the vault contract to the withdrawer.
 - `put_reserve` stores the current token balance in a reserved location.
 
->_Note_ : In the withdrawal function, you'll notice that the transfer amount is defined as `&(&amount / &100)`. This is a simple yield calculation that assumes the yield to be 1% of the amount being withdrawn. However, it's important to note that this is a very simplistic approach and is not suitable for production-grade systems. The purpose of this calculation is to demonstrate how yield can be generated from a vault contract. In reality, yield calculations are more complex and involve various factors such as market conditions, risk management, and fees.
+> _Note_ : In the withdrawal function, you'll notice that the transfer amount is defined as `&(&amount / &100)`. This is a simple yield calculation that assumes the yield to be 1% of the amount being withdrawn. However, it's important to note that this is a very simplistic approach and is not suitable for production-grade systems. The purpose of this calculation is to demonstrate how yield can be generated from a vault contract. In reality, yield calculations are more complex and involve various factors such as market conditions, risk management, and fees.
 
 If the user were to call the `withdraw` method with 100 shares, the following would happen:
 
@@ -1088,7 +1088,7 @@ soroban contract invoke \
     mint \
     --admin G... \
     --to G... \
-    --amount 1000000000000000000000000000
+    --amount 100
 ```
 
 </TabItem>
@@ -1212,8 +1212,6 @@ soroban contract invoke \
 
 </Tabs>
 
-> _Note_ : The walkthrough below requires two futurenet accounts. To create and fund a new account, you can use the [futurenet laboratory](https://laboratory.stellar.org/#account-creator?network=futurenet).
-
 First, we need to build the vault contract. We can do this by running the `build.sh` script from our vault directory.
 
 ```bash
@@ -1226,10 +1224,11 @@ Next, we need to deploy the token contract. We can do this by running the `deplo
 ```bash
 soroban contract deploy \
     --wasm soroban_token_contract.wasm \
-    --source <FIRST_ACCOUNT_SECRET_KEY> \
+    --source <SECRET_KEY> \
     --rpc-url https://rpc-futurenet.stellar.org:443 \
     --network-passphrase 'Test SDF Future Network ; October 2022'
 ```
+
 We should recieve a SUCCESS message with the token contract ID. We will need this ID for the next step.
 
 ```bash
@@ -1244,54 +1243,15 @@ Next we need to initialize the token contract. We can do this by running the `in
 soroban contract invoke \
     --wasm soroban_token_contract.wasm \
     --id <TOKEN_CONTRACT_ID> \
-    --source <FIRST_ACCOUNT_SECRET_KEY> \
+    --source <SECRET_KEY> \
     --rpc-url https://rpc-futurenet.stellar.org:443 \
     --network-passphrase 'Test SDF Future Network ; October 2022' \
     -- \
     initialize \
-    --admin <FIRST_ACCOUNT_ADDRESS> \
+    --admin <USER_ADDRESS> \
     --decimal 18 \
     --name <TOKEN_NAME> \
     --symbol <TOKEN_SYMBOL>
-```
-
-After recieving a SUCCESS message, we can mint some tokens. We can do this by running the `mint.sh` script.
-
-```bash
-soroban contract invoke \
-    --wasm soroban_token_contract.wasm \
-    --id <TOKEN_CONTRACT_ID> \
-    --source <FIRST_ACCOUNT_SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
-    -- \
-    mint \
-    --admin <FIRST_ACCOUNT_ADDRESS> \
-    --to <FIRST_OR_SECOND_ACCOUNT_ADDRESS> \
-    --amount 100
-```
-
-Be sure to mint some tokens to your second account as well. This will be used for "funding" the vault contract.
-
-After recieving a SUCCESS message, we can check the balance of the account. We can do this by running the `balance.sh` script.
-
-```bash
-soroban contract invoke \
-    --wasm soroban_token_contract.wasm \
-    --id <TOKEN_CONTRACT_ID> \
-    --source <ANY_ACCOUNT_SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
-    -- \
-        balance \
-    --id <FIRST_OR_SECOND_ACCOUNT_ADDRESS> 
-```
-
-We should recieve a SUCCESS message with the balance of the account.
-
-```bash
-SUCCESS
-100
 ```
 
 Next, we need to deploy the vault contract. We can do this by running the `deploy_vault.sh` script.
@@ -1299,7 +1259,7 @@ Next, we need to deploy the vault contract. We can do this by running the `deplo
 ```bash
 soroban contract deploy \
     --wasm soroban_vault_contract.wasm \
-    --source <FIRST_ACCOUNT_SECRET_KEY> \
+    --source <SECRET_KEY> \
     --rpc-url https://rpc-futurenet.stellar.org:443 \
     --network-passphrase 'Test SDF Future Network ; October 2022'
 ```
@@ -1330,7 +1290,7 @@ Now we need to initialize the vault contract. We can do this by running the `ini
 soroban contract invoke \
     --wasm soroban_vault_contract.wasm \
     --id <VAULT_CONTRACT_ID> \
-    --source <FIRST_ACCOUNT_SECRET_KEY> \
+    --source <SECRET_KEY> \
     --rpc-url https://rpc-futurenet.stellar.org:443 \
     --network-passphrase 'Test SDF Future Network ; October 2022' \
     -- \
@@ -1339,34 +1299,59 @@ soroban contract invoke \
     --token <TOKEN_CONTRACT_ID>
 ```
 
-After recieving a SUCCESS message, we can deposit some tokens.
-Let's start with a deposit from our second account. We can do this by running the `deposit.sh` script. 
+After recieving a SUCCESS message, we will mint some tokens to both our User Account and Vault Contract addresses. We can do this by running the `mint.sh` script.
+
+Its important to note that the vault contract id will need to change formats for the call to work. We can convert the vault contract id to the correct format by pasting its address in a [Hex to StrKey Tool](https://strkey-encode.xycloo.com/).
+
+![Hex to StrKey Tool](../../static/img/hex2str.png)
 
 ```bash
 soroban contract invoke \
-    --wasm soroban_vault_contract.wasm \
-    --id <VAULT_CONTRACT_ID> \
-    --source <SECOND_ACCOUNT_ASECRET_KEY> \
+    --wasm soroban_token_contract.wasm \
+    --id <TOKEN_CONTRACT_ID> \
+    --source <SECRET_KEY> \
     --rpc-url https://rpc-futurenet.stellar.org:443 \
     --network-passphrase 'Test SDF Future Network ; October 2022' \
     -- \
-    deposit \
-    --to <SECOND_ACCOUNT_ADDRESS> \
+    mint \
+    --admin <USER_ADDRESS> \
+    --to <USER_OR_VAULT_ADDRESS> \
     --amount 100
 ```
 
-And then again from our first account. We can do this by running the `deposit.sh` script. With the `--source` and `--to` flags switched.
+After recieving a SUCCESS message, we can check the balance of the account. We can do this by running the `balance.sh` script.
+
+```bash
+soroban contract invoke \
+    --wasm soroban_token_contract.wasm \
+    --id <TOKEN_CONTRACT_ID> \
+    --source <SECRET_KEY> \
+    --rpc-url https://rpc-futurenet.stellar.org:443 \
+    --network-passphrase 'Test SDF Future Network ; October 2022' \
+    -- \
+        balance \
+    --id <USER_ADDRESS>
+```
+
+We should recieve a SUCCESS message with the balance of the account.
+
+```bash
+SUCCESS
+100
+```
+
+After recieving a SUCCESS message, we can deposit some tokens into our vault. We can do this by running the `deposit.sh` script.
 
 ```bash
 soroban contract invoke \
     --wasm soroban_vault_contract.wasm \
     --id <VAULT_CONTRACT_ID> \
-    --source <FIRST_ACCOUNT_ASECRET_KEY> \
+    --source <ACCOUNT_SECRET_KEY> \
     --rpc-url https://rpc-futurenet.stellar.org:443 \
     --network-passphrase 'Test SDF Future Network ; October 2022' \
     -- \
     deposit \
-    --to <FIRST_ACCOUNT_ADDRESS> \
+    --to <USER_ADDRESS> \
     --amount 100
 ```
 
@@ -1376,7 +1361,7 @@ After recieving a SUCCESS message, we can check the reserves of the vault. We ca
 soroban contract invoke \
     --wasm soroban_vault_contract.wasm \
     --id <VAULT_CONTRACT_ID> \
-    --source <FIRST_ACCOUNT_SECRET_KEY> \
+    --source <SECRET_KEY> \
     --rpc-url https://rpc-futurenet.stellar.org:443 \
     --network-passphrase 'Test SDF Future Network ; October 2022' \
     -- \
@@ -1390,22 +1375,24 @@ SUCCESS
 "200"
 ```
 
+100 from the deposit and 100 from the mint.
+
 Now we can withdraw some tokens from the vault. We can do this by running the `withdraw.sh` script.
 
 ```bash
 soroban contract invoke \
     --wasm soroban_vault_contract.wasm \
     --id <VAULT_CONTRACT_ID> \
-    --source <FIRST_ACCOUNT_SECRET_KEY> \
+    --source <SECRET_KEY> \
     --rpc-url https://rpc-futurenet.stellar.org:443 \
     --network-passphrase 'Test SDF Future Network ; October 2022' \
     -- \
     withdraw \
-    --to <FIRST_ACCOUNT_ADDRESS> \
+    --to <USER_ADDRESS> \
     --amount 100
 ```
 
-We should recieve a SUCCESS message with the withdrawal amount. 
+We should recieve a SUCCESS message with the withdrawal amount.
 
 ```bash
 SUCCESS

@@ -399,14 +399,13 @@ function deposit() public payable {
 The [panic!](https://doc.rust-lang.org/book/ch09-00-error-handling.html) macro serves as Rust's error handling mechanism, which closely resembles the `require` function in Solidity.
 
 ```rust
-
 fn deposit() {
-    let attached_deposit = env::attached_deposit();
-    if attached_deposit < 1_000_000_000_000_000_000 {
-        panic!(b"Not enough Ether sent");
+        let deposit_amount = e.storage().get_unchecked(&DataKey::Deposit).unwrap();
+        if deposit_amount < 1_000_000_000_000_000_000 {
+            panic!(b"Not enough XLM sent");
+        }
+        // ...
     }
-    // ...
-}
 ```
 
 ### Address-Related Functionality
@@ -459,4 +458,4 @@ Rust provides a number of time-based variables that can be used to access inform
 
 Overall the Rust equivalents of Solidity concepts are very similar. The main difference is that Rust uses `env` instead of `msg` to access information about the current transaction.
 
-For more information on Solidity concepts and their Rust equivalents, it is recommend that one refer to both the [Soroban-SDK documentation](https://docs.rs/soroban-sdk/latest/soroban_sdk/struct.Env.html) and the [Solidity documentation](https://docs.soliditylang.org/en/v0.8.19/cheatsheet.html).
+For more information on Solidity concepts and their Rust equivalents, it is recommend that one refer to both the [Soroban Rust SDK documentation](https://docs.rs/soroban-sdk/latest/soroban_sdk/struct.Env.html) and the [Solidity documentation](https://docs.soliditylang.org/en/v0.8.19/cheatsheet.html).

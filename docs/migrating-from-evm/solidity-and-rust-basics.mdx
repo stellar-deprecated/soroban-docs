@@ -1,12 +1,12 @@
 ---
 sidebar_position: 1
 title: Solidity and Rust Syntax, Data Types, and Basic Constructs
-description: Explore the fundamentals of Solidity and Rust Syntax, Data Types, and Basic Constructs
+description: Explore the fundamentals of Solidity and Rust Syntax, Data Types, and Basic Constructs.
 ---
 
 # Getting Started with Rust and Solidity
 
-In this tutorial, we'll explore Rust and Solidity, two powerful programming languages. Rust, a systems programming language, is renowned for its safety, concurrency, and performance features, which can be advantageous when building smart contracts. On the other hand, Solidity is a high-level language specifically designed for creating smart contracts on the Ethereum Virtual Machine.
+In this tutorial, we'll explore Rust and Solidity, two powerful programming languages. Rust, a systems programming language, is renowned for its safety, concurrency, and performance features, which can be advantageous when building smart contracts. On the other hand, Solidity is a high-level language specifically designed for creating smart contracts on the Ethereum Virtual Machine. This section aims to provide a high-level overview of the similarities and differences between the two languages.
 
 ## Table of Contents
 
@@ -169,7 +169,7 @@ pub enum Enum {
 
 In this section, we will provide a concise introduction to some fundamental concepts in Rust: `Modules`, `Macros`, `Structs`, `Traits`, and `Attribute Macros`.
 
-These concepts are essential for understanding and writing efficient Rust code and will help you along your Soroban developer journey.
+These concepts are essential for understanding and writing efficient Rust code, and they will assist you on your journey as a Soroban developer.
 
 #### 1. Modules
 
@@ -185,7 +185,7 @@ mod my_module {
 
 #### 2. Macros
 
-Macros in Rust are powerful tools that allow you to define reusable chunks of code. They are defined with the `macro_rules!` keyword and can be invoked with a `!` after the macro's name. Macros employ pattern matching to generate code at compile time.
+Macros in Rust are powerful tools that allow you to define reusable chunks of code. They are defined with the `macro_rules!` keyword and can be invoked with a `!` after the macro's name. Macros employ [pattern matching](https://doc.rust-lang.org/book/ch18-00-patterns.html) to generate code at compile time.
 
 ```rust
 macro_rules! my_macro {
@@ -201,7 +201,7 @@ fn main() {
 
 #### 3. Structs
 
-Structs are custom data types in Rust that enable you to bundle data together. They provide a way to define and create more complex data structures
+Structs are custom data types in Rust that enable you to bundle data together. They provide a way to define and create more complex data structures.
 
 ```rust
 struct MyStruct {
@@ -408,7 +408,7 @@ impl IncrementContract {
 }
 ```
 
-This code is an implementation of a smart contract written in Rust using the `Soroban SDK`, a Rust-based smart contract development toolkit developed by the [Stellar Development Foundation (SDF)](https://stellar.org/foundation) . The `Soroban SDK` is a powerful Rust library that provides a set of tools for writing smart contracts that run on the [Soroban](https://soroban.stellar.org/) WebAssembly runtime.
+This code is an implementation of a smart contract written in Rust using the [`Soroban Rust SDK`](../reference/sdks/rust), a Rust-based smart contract development toolkit developed by the [Stellar Development Foundation (SDF)](https://stellar.org/foundation) . The Soroban Rust SDK provides a powerful set of tools for writing smart contracts that run on the Soroban Virtual Machine.
 
 Here's a line-by-line explanation of what the code is doing:
 
@@ -416,31 +416,33 @@ Here's a line-by-line explanation of what the code is doing:
 #![no_std]
 ```
 
-This is a Rust attribute that tells the Rust compiler not to link the [Rust standard ibrary](https://doc.rust-lang.org/std/). Since Soroban is a [WebAssembly](https://webassembly.org/) runtime, it doesn't have access to the Rust standard library, so this attribute is needed.
+This is a Rust attribute that tells the Rust compiler not to link the [Rust standard ibrary](https://doc.rust-lang.org/std/). Since the Soroban Rust SDK uses its own set of logic, it doesn't need to utilize to the Rust standard library, so this attribute is needed.
 
 ```rust
 use soroban_sdk::{contractimpl, log, Env, Symbol};
 ```
 
-This code imports necessary items from the `Soroban SDK` for writing a smart contract. The `contractimpl` [macro](https://doc.rust-lang.org/book/ch19-06-macros.html) is used to implement the smart contract, while the `log` macro is used for logging messages. The `Env` struct represents the environment the contract is executing in, and the `Symbol` type is a small, efficient string type.
+This code imports necessary items from the Soroban Rust SDK for writing a smart contract. The `contractimpl` [macro](https://doc.rust-lang.org/book/ch19-06-macros.html) is used to implement the smart contract, while the `log` macro is used for logging messages. The `Env` struct represents the environment the contract is executing in, and the `Symbol` type is a small, efficient string type.
 
 ```rust
 const COUNTER: Symbol = Symbol::short("COUNTER");
 ```
 
-This creates a new `Symbol` value with the string "COUNTER". The constant `COUNTER` is then used as a key to identify the count value stored in the contract storage.
+This creates a new `Symbol` value with the string "COUNTER". The constant `COUNTER` is then used as a key to identify the count value stored in the contract `storage`.
 
 ```rust
 pub struct IncrementContract;
 ```
 
-This defines a public struct `IncrementContract`, which will contain the implementation of the smart contract.
+This defines a public struct, `IncrementContract`, which will contain the implementation of the smart contract.
 
 ```rust
 #[contractimpl] impl IncrementContract {}
 ```
 
 This is a macro that implements the `IncrementContract` struct as a smart contract.
+
+As previously noted, the `#[contractimpl]` attribute exports public functions to the Soroban environment. Meaning, these functions become accessible within the implementation and can be invoked by other contracts or directly by transactions upon deployment.
 
 ```rust
 pub fn increment(env: Env) -> u32 {}
@@ -449,16 +451,16 @@ pub fn increment(env: Env) -> u32 {}
 This is a public function called `increment` that takes an `Env` struct as an argument and returns a `u32`. `Env` is the environment the contract is executing in, and `u32` is the type of the value returned by the function.
 
 ```rust
-let mut count: u32 = env .storage() .get(&COUNTER) .unwrap_or(Ok(0)) // If no value set, assume 0. .unwrap();
+let mut count: u32 = env.storage().get(&COUNTER).unwrap_or(Ok(0)).unwrap(); // If no value set, assume 0.
 ```
 
-This retrieves the current count from the contract storage. The `storage` method on the `Env` struct returns a storage object that can be used to store and retrieve data. `get` retrieves the value associated with the `COUNTER` symbol from the storage. If there is no value associated with the symbol, it assumes the value 0. The `unwrap` method is used to panic if the value of `COUNTER` is not a `u32`.
+In this line of code, a mutable variable named `count` of type unsigned 32-bit integer (`u32`) is being created. The storage environment is accessed using `env.storage()`, and the value associated with the key `COUNTER` is retrieved using the `get` method. If there is no value set for the key `COUNTER`, a default value of 0 is used. Finally, the `unwrap()` method is called to extract the actual value from the `Ok` wrapper, which is then assigned to the `count` variable.
 
 ```rust
 log!(&env, "count: {}", count);
 ```
 
-This logs the current count using the `log` macro provided by the `Soroban SDK`.
+This logs the current count using the `log` macro provided by the Soroban Rust SDK.
 
 ```rust
 count += 1;
@@ -488,9 +490,9 @@ This is a public function called `get_count` that takes an `Env` struct as an ar
 env.storage().get(&COUNTER).unwrap_or(Ok(0)).unwrap()
 ```
 
-This retrieves the current count from the contract storage. The `storage` method on the `Env` struct returns a storage object that can be used to store and retrieve data. `get` retrieves the value associated with the `COUNTER` symbol from the storage. If there is no value associated with the symbol, it assumes the value 0. The `unwrap` method is used to panic if the value of `COUNTER` is not a `u32`.
+This is a repeat of the code we saw earlier, which retrieves the value associated with the key `COUNTER` from the contract storage. If there is no value set for the key `COUNTER`, a default value of 0 is used. Finally, the `unwrap()` method is called to extract the actual value from the `Ok` wrapper, which is then returned to the caller of the function.
 
-Now that we have written our smart contract, it's time to explore how we can interact with it using the [Soroban-CLI](https://soroban.stellar.org/docs/reference/soroban-cli). This powerful command-line tool allows us to interact with the Soroban runtime from a local machine, providing us with an efficient and flexible way to manage our smart contract.
+Now that we have written our smart contract, it's time to explore how we can interact with it using the [Soroban-CLI](https://soroban.stellar.org/docs/reference/soroban-cli). This powerful command-line tool allows us to interact with the Soroban Virtual Machine from a local machine, providing us with an efficient and flexible way to manage our smart contract.
 
 ### Interacting with the Smart Contract
 
@@ -501,6 +503,13 @@ cargo new --lib increment
 ```
 
 Once the project is created, replace the `src/lib.rs` file with the [code example above](#writing-and-interacting-with-a-simple-counter-in-rust).
+
+```rust
+// Remember to replace your lib.rs file with the code example above.
+// This is just a reference to point you in the right direction.
+#[contractimpl]
+impl IncrementContract {...}
+```
 
 Then, add the following dependencies to the `Cargo.toml` file:
 
@@ -541,7 +550,7 @@ debug-assertions = true
 
 :::
 
-Next, Build the project using the cargo build command.
+Next, Build the project using the `cargo build` command.
 
 ```bash
 cd increment
@@ -554,7 +563,7 @@ To interact with the contract, we can use the `soroban contract invoke` command 
 
 ```bash
 soroban contract invoke \
- --wasm ./target/wasm32-unknown-unknown/release/increment.wasm \
+ --wasm target/wasm32-unknown-unknown/release/increment.wasm \
  --id 1 \
  -- \
 increment
@@ -572,7 +581,7 @@ To get the current value of the counter, you can use the following command:
 
 ```bash
 soroban contract invoke \
- --wasm ./target/wasm32-unknown-unknown/release/increment.wasm \
+ --wasm target/wasm32-unknown-unknown/release/increment.wasm \
  --id 1 \
  -- \
  get_count
@@ -584,4 +593,4 @@ The output should be the current value of the counter, assuming the counter has 
 3
 ```
 
-And that's it! You've learned how to write and test simple smart contracts in Solidity and Rust. In the next section, we'll learn how to write and test more complex smart contracts.
+And that's it! You've learned how to write and interact with simple smart contracts in Solidity and Rust. In the upcoming sections, we'll learn about advanced smart contract concepts, the similarites and diffrences between Solidity and Rust, and how to develop and deploy smart contracts with Soroban.

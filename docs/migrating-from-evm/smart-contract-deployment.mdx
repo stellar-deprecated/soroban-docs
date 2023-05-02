@@ -1,15 +1,15 @@
 ---
 sidebar_position: 3
-title: "Smart Contract Deployment with Solidity, Rust, and Soroban"
-description: "Explore advanced Solidity and Rust concepts, craft secure and efficient Rust code for smart contracts, leverage Rust and Soroban for tailored contract logic, and deploy and test your contracts in a testnet environment."
+title: Smart Contract Development with Soroban and Hardhat
+description: Explore advanced Solidity and Rust concepts, craft secure and efficient Rust code for smart contracts, leverage Rust and Soroban for tailored contract logic, and deploy and test your contracts in a testnet environment.
 ---
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
-# Smart Contract Deployment with Solidity, Rust, and Soroban
+# Smart Contract Development with Soroban and Hardhat
 
-In this tutorial, we will discover the similarities in smart contract deployment by examing workflows with Hardhat and Soroban. We will dive into the intricacies of each framework, learn to write secure and efficient smart contract code, and harness the power of Rust and Soroban to create customized contract logic.
+In this tutorial, we will discover the similarities in smart contract deployment by examing workflows with [Soroban](../../) and [Hardhat](https://hardhat.org/). We will dive into the intricacies of each framework, learn to write secure and efficient smart contract code, and harness the power of Rust and Soroban to create customized contract logic.
 
 ## Table of Contents
 
@@ -24,27 +24,27 @@ In this tutorial, we will discover the similarities in smart contract deployment
 
 Soroban and Hardhat are both frameworks that enable developers to build, test, and deploy smart contracts. In this section, we will delve into the similarities and distinctions between these two frameworks.
 
-### Soroban
+### Soroban Framework
 
-Soroban is a Rust-based framework tailored for developing smart contracts on the Stellar network. It offers a suite of tools to facilitate the building, testing, and deployment of smart contracts. Designed as a lightweight framework, Soroban allows developers to write smart contracts in Rust and deploy them on the Stellar network.
+Soroban is a Rust-based framework tailored for developing smart contracts on the Stellar network. Designed as a lightweight framework, with [tools to support developers](../reference/command-line), Soroban allows developers to develop smart contracts through a simple and intuitive workflow.
 
 ### Hardhat
 
-Hardhat serves as a development environment for compiling, deploying, testing, and debugging Ethereum software. It assists developers in managing and automating recurring tasks inherent to building smart contracts and dApps while seamlessly introducing more functionality around this workflow.
+Hardhat serves as a development environment for compiling, deploying, testing, and debugging smart contracts for the EVM. It assists developers in managing and automating recurring tasks inherent to building smart contracts.
 
 ### Similarities
 
-Both Soroban and Hardhat are frameworks that empower developers to build, test, and deploy smart contracts. They provide an array of tools for constructing, testing, and deploying smart contracts and enable developers to write smart contracts and deploy them on their respective virtual machines.
+Soroban and Hardhat are powerful frameworks designed to streamline the process of building, testing, and deploying smart contracts. Equipped with a comprehensive suite of tools, these frameworks facilitate the development of smart contracts and their deployment on their respective virtual machines.
 
 ### Differences
 
-Soroban emphasizes its lightweight design, enabling developers to write smart contracts in Rust and deploy them on the Stellar network. On the other hand, Hardhat is crafted as a comprehensive development environment for the Ethereum Virtual Machine.
+Soroban, with its lightweight design, offers developers an exceptional platform for writing Rust-based smart contracts and deploying them effortlessly on the Stellar network. In contrast, Hardhat serves primarily as a development environment tailored for the Ethereum Virtual Machine, providing a different focus and target audience.
 
 ## Hardhat vs Soroban SDKs
 
-Hardhat offers a streamlined workflow for deploying smart contracts on the Ethereum Virtual Machine. In this section, we will discuss key components such as `ethers.js`, `scripts`, and `testing`.
+Hardhat offers a streamlined workflow for deploying smart contracts on the Ethereum Virtual Machine, with key components such as `ethers.js`, `scripts`, and `testing` playing crucial roles.
 
-Futhermore, we will delve into the [Soroban SDKs](../category/sdks) and examine their parallels with Hardhat components in terms of smart contract development and deployment processes.
+On the other hand, Soroban presents a compelling alternative, boasting powerful SDKs that facilitate smart contract development and deployment. In the upcoming section, we will delve into [Soroban's SDKs](../category/sdks), drawing comparisons with Hardhat components, and highlighting the unique advantages each platform brings to the table.
 
 ### Ethers.js
 
@@ -60,9 +60,9 @@ async function main() {
 }
 ```
 
-#### Soroban Client
+### Soroban Client
 
-Soroban offers a comparable library, [`js-soroban-client`](../reference/sdks/js), that enables seamless interaction with the Soroban network. This library supplies a comprehensive networking layer API for `soroban-rpc` methods, simplifying the process of building and signing transactions. Additionally, `js-soroban-client` streamlines communication with `soroban-rpc` instances and supports submitting transactions or querying network state with ease.
+Soroban offers a comparable library, [`js-soroban-client`](../reference/sdks/js), that enables seamless interaction smart contracts deployed on the Stellar Newtork. This library supplies a comprehensive networking layer API for `soroban-rpc` methods, simplifying the process of building and signing transactions. Additionally, `js-soroban-client` streamlines communication with `soroban-rpc` instances and supports submitting transactions or querying network state with ease.
 
 ### Scripts
 
@@ -87,7 +87,7 @@ main()
   });
 ```
 
-#### Soroban Scripts
+### Soroban Scripts
 
 Soroban offers an extensive collection of SDKs that include scripting capabilities, ensuring a smooth workflow for deploying and managing smart contracts. Developers can automate tasks such as compiling, deploying, and interacting with smart contracts using a variety of SDKs that support scripting in languages like [`JavaScript`, `TypeScript`, `Python` and others](../category/sdks).
 
@@ -149,7 +149,7 @@ describe("MyContract", function () {
 });
 ```
 
-#### Soroban Testing
+### Soroban Testing
 
 Soroban enables users to leverage the power of Rust's testing framework to write tests for their smart contracts. These tests can be written in Rust and run using the `cargo test` command.
 
@@ -173,13 +173,13 @@ fn test() {
 }
 ```
 
-In summary, while Hardhat provides an excellent environment for deploying smart contracts on the EVM, Soroban's Rust-based framework offers significant advantages in terms of safety and performance, making it an ideal choice for building secure and efficient smart contracts.
+In summary, while Hardhat provides an excellent environment for deploying smart contracts on the EVM, Soroban's Rust-based framework offers significant advantages in terms of performance, making it an ideal choice for building secure and efficient smart contracts.
 
 ## Developing Smart Contracts with Rust and Soroban
 
 ### Introduction
 
-Now that we've examined the deployment workflow with Hardhat, let's explore developing smart contracts with Rust and Soroban. The key advantage of using Soroban is its ability to leverage Rust's safety features and performance, making it an excellent choice for developing secure and efficient smart contracts.
+Now that we've examined the deployment workflow with Hardhat, let's explore developing and deploying smart contracts with Rust and Soroban. The key advantage of using Soroban is its ability to leverage Rust's safety features and performance, making it an excellent choice for developing secure and efficient smart contracts.
 
 We've learned that Smart contracts are self-executing contracts that can be programmed to automatically enforce the rules and regulations of a particular agreement. They are a core component of decentralized applications (dApps) and blockchain technology. In this section, we will learn how to use Rust and Soroban to develop and deploy custom smart contract logic.
 
@@ -189,19 +189,34 @@ If you haven't already setup up the dev environment for Soroban, you can get sta
 
 This project requires using the `soroban_token_contract.wasm` file which you will need to import manually.
 
-First, you will need to clone the `v0.7.0` tag of soroban-examples repository:
+First, you will need to clone the `v0.7.0` tag of `soroban-examples` repository:
 
 ```zsh
 git clone -b v0.7.0 https://github.com/stellar/soroban-examples
 ```
 
-then navigate to the `soroban-examples/token` directory and run the following command:
+Then, navigate to the `soroban-examples/token` directory
+
+```zsh
+cd soroban-examples/token
+```
+
+Next, build the Token contract using the following command:
 
 ```zsh
 cargo build --target wasm32-unknown-unknown --release
 ```
 
 This will build the `soroban_token_contract.wasm` file which you will need to import into your project. The `soroban_token_contract.wasm` file is located in the `soroban-examples/target/wasm32-unknown-unknown/release` directory.
+
+```
+soroban-examples
+├── target
+│   └── wasm32-unknown-unknown
+│       └── release
+│           └── soroban_token_contract.wasm
+└──
+```
 
 Once we have the Token, lets create a new smart contract that uses it.
 
@@ -215,7 +230,7 @@ Here is a breakdown of the contract mechanics
 - The DeFi protocol uses the users' deposits to generate yield.
 - User burns shares to withdraw their tokens + yield.
 
-Lets create a new Rust project by running the following command in your terminal:
+In a new terminal, lets create a new Rust project by running the following command:
 
 ```zsh
 cargo new vault
@@ -227,7 +242,7 @@ Now lets add the `soroban_token_contract.wasm` file to the `vault` project. To d
 
 ![vault-project](../../static/img/vault-project.png)
 
-Next, we'll need to add the Soroban SDK as a dependency. To do this, open the `Cargo.toml` file in your project and ensure that it looks like the following:
+Next, we'll need to add the Soroban SDK as a dependency. To do this, open the `Cargo.toml` file in your project and ensure that it matches the following:
 
 ```toml
 [package]
@@ -261,7 +276,7 @@ inherits = "release"
 debug-assertions = true
 ```
 
-In this project we will create 3 files:
+In this project we will need to create 3 files:
 
 - `src/lib.rs` - This is where we will write our vault smart contract logic.
 - `src/test.rs` - This is where we will write our tests.
@@ -740,7 +755,9 @@ impl TokenTrait for Token {
 </TabItem>
 </Tabs>
 
-Lets break down what happens in the `lib.rs` file above and find how "yield" is generated from our vault contract
+Now that we've added these files to our project, lets break down what happens in the `lib.rs` file above and discover how "yield" is generated from our vault contract
+
+First, let's take a look at what happens when a user deposits tokens into the vault contract.
 
 ```rust
 fn deposit(e: Env, to: Address, amount: i128) {
@@ -760,6 +777,7 @@ fn deposit(e: Env, to: Address, amount: i128) {
 }
 ```
 
+- The `deposit` function is called by the depositor to deposit tokens into the vault contract.
 - The `xfer` method of the `token_client` instance transfers tokens from the depositor to the vault contract.
 - The current token balance and total shares issued by the vault contract are obtained using the `get_token_balance` and `get_total_shares` functions, respectively.
 - `mint_shares` is called to issue new shares to the depositor.
@@ -773,7 +791,7 @@ If the user were to call the `deposit` method with 100 tokens, the following wou
 - The total shares issued by the vault contract would be updated to 100.
 - 100 shares would be issued to the depositor.
 
-Nice! We deposited tokens to the vault and recieved shares in return. Now, let's see what happens when we withdraw tokens from the vault.
+Now, let's see what happens when a user withdraws tokens from the vault.
 
 ```rust
 fn withdraw(e: Env, to: Address, amount: i128) -> i128 {
@@ -807,12 +825,13 @@ fn withdraw(e: Env, to: Address, amount: i128) -> i128 {
 }
 ```
 
+- The `withdraw` function is called by the withdrawer to withdraw tokens from the vault contract.
 - The `xfer` method of the `share_token_client` instance transfers shares from the withdrawer to the vault contract.
 - The `xfer` method of the `token_client` instance transfers tokens from the vault contract to the withdrawer.
 - `burn_shares` is called to burn the shares that were transferred to the vault contract.
 - `put_reserve` stores the current token balance in a reserved location.
 
-> _Note_ : In the withdrawal function, you'll notice that the transfer amount is defined as `&(&amount / &100)`. This is a simple yield calculation that assumes the yield to be 1% of the amount being withdrawn. However, it's important to note that this is a very simplistic approach and is not suitable for production-grade systems. The purpose of this calculation is to demonstrate how yield can be generated from a vault contract. In reality, yield calculations are more complex and involve various factors such as market conditions, risk management, and fees.
+> _Note_ : In the withdrawal function, you'll notice that the transfer amount is defined as `&(&amount + (&amount / &100))`. This is a simple yield calculation that assumes the yield to be 1% of the amount being withdrawn. However, it's important to note that this is a very simplistic approach and may not be suitable for production-grade systems. In reality, yield calculations are more complex and involve various factors such as market conditions, risk management, and fees.
 
 If the user were to call the `withdraw` method with 100 shares, the following would happen:
 
@@ -837,6 +856,10 @@ test test::test ... ok
 ```
 
 ### Vault Contract Deployment and Interaction
+
+Now that we have a working vault contract, we can deploy it to a network and interact with it.
+
+This section requires you to have a funded Keypair to use with Stellar's Futurenet. You can create and fund one using the [Stellar Laboratory](https://laboratory.stellar.org/#account-creator?network=futurenet).
 
 Below you will find a series of commands that will help you build, deploy and interact with the vault and token contracts. You can use them to follow along as we walk through the process of building, deploying and interacting with the contracts. It may behoove you to keep these commands in a `scripts` directory in your project. This way, you can easily run them from your terminal.
 
@@ -1044,6 +1067,14 @@ SUCCESS
 
 Next we need to initialize the token contract. We can do this by running the `initialize_token.sh` script.
 
+Its important to note that `name` and `symbol` must be `Bytes` values. You can achieve this by converting a given value into its corresponding SHA-256 hash.
+
+Here are some examples:
+
+USDC: `8591ee9090c0c02ca1f103cb637131d8f358870aba145245ff083e138fdd705b`
+
+USD: `a26cdf3a6e709124385d4d7eb9bff6b897a58ed5597fbab779b89849dbe81b21`
+
 ```bash
 soroban contract invoke \
     --wasm soroban_token_contract.wasm \
@@ -1063,7 +1094,7 @@ Next, we need to deploy the vault contract. We can do this by running the `deplo
 
 ```bash
 soroban contract deploy \
-    --wasm soroban_vault_contract.wasm \
+    --wasm target/wasm32-unknown-unknown/release/vault.wasm \
     --source <SECRET_KEY> \
     --rpc-url https://rpc-futurenet.stellar.org:443 \
     --network-passphrase 'Test SDF Future Network ; October 2022'
@@ -1093,7 +1124,7 @@ Now we need to initialize the vault contract. We can do this by running the `ini
 
 ```bash
 soroban contract invoke \
-    --wasm soroban_vault_contract.wasm \
+    --wasm target/wasm32-unknown-unknown/release/vault.wasm \
     --id <VAULT_CONTRACT_ID> \
     --source <SECRET_KEY> \
     --rpc-url https://rpc-futurenet.stellar.org:443 \
@@ -1104,7 +1135,7 @@ soroban contract invoke \
     --token <TOKEN_CONTRACT_ID>
 ```
 
-After recieving a SUCCESS message, we will mint some tokens to both our User Account and Vault Contract addresses. We can do this by running the `mint.sh` script.
+After recieving a SUCCESS message, we will mint some tokens to **both** our User Account and Vault Contract addresses. We can do this by running the `mint.sh` script.
 
 Its important to note that the vault contract id will need to change formats for the call to work. We can convert the vault contract id to the correct format by pasting its address in a [Hex to StrKey Tool](https://strkey-encode.xycloo.com/).
 
@@ -1149,7 +1180,7 @@ After recieving a SUCCESS message, we can deposit some tokens into our vault. We
 
 ```bash
 soroban contract invoke \
-    --wasm soroban_vault_contract.wasm \
+    --wasm target/wasm32-unknown-unknown/release/vault.wasm \
     --id <VAULT_CONTRACT_ID> \
     --source <ACCOUNT_SECRET_KEY> \
     --rpc-url https://rpc-futurenet.stellar.org:443 \
@@ -1164,7 +1195,7 @@ After recieving a SUCCESS message, we can check the reserves of the vault. We ca
 
 ```bash
 soroban contract invoke \
-    --wasm soroban_vault_contract.wasm \
+    --wasm target/wasm32-unknown-unknown/release/vault.wasm \
     --id <VAULT_CONTRACT_ID> \
     --source <SECRET_KEY> \
     --rpc-url https://rpc-futurenet.stellar.org:443 \
@@ -1186,7 +1217,7 @@ Now we can withdraw some tokens from the vault. We can do this by running the `w
 
 ```bash
 soroban contract invoke \
-    --wasm soroban_vault_contract.wasm \
+    --wasm target/wasm32-unknown-unknown/release/vault.wasm \
     --id <VAULT_CONTRACT_ID> \
     --source <SECRET_KEY> \
     --rpc-url https://rpc-futurenet.stellar.org:443 \

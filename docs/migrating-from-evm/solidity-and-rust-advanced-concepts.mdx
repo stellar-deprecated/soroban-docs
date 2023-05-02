@@ -1,15 +1,15 @@
 ---
 sidebar_position: 2
-title: "Advanced Smart Contracts with Solidity, Rust, and Soroban"
-description: "Learn advanced Solidity and Rust concepts, write safe and efficient Rust code, use Rust and Soroban for custom smart contract logic, and deploy and test in a local development environment."
+title: Advanced Smart Contract Concepts with Solidity and Rust
+description: Learn advanced Solidity and Rust concepts and write safe and efficient smart contracts.
 ---
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
-# Advanced Smart Contracts with Solidity, Rust, and Soroban
+# Advanced Smart Contract Concepts with Solidity and Rust
 
-In this tutorial, we will cover advanced Solidity and Rust concepts such as inheritance, interfaces, libraries, and modifiers. Additionally, we will learn how to write safe and efficient Rust code for smart contracts, use Rust and Soroban to develop custom smart contract logic, and deploy and test smart contracts in a local development environment.
+In this tutorial, we will cover advanced Solidity and Rust concepts such as inheritance, interfaces, libraries, and modifiers. Additionally, we will learn how to write safe and efficient Rust code for smart contracts. Finally, we will learn how to convert common Solidity concepts to Rust.
 
 ## Table of Contents
 
@@ -17,14 +17,14 @@ In this tutorial, we will cover advanced Solidity and Rust concepts such as inhe
 2. [Advanced Rust Concepts](#advanced-rust-concepts)
 3. [Writing Safe and Efficient Rust Code for Smart Contracts](#writing-safe-and-efficient-rust-code-for-smart-contracts)
 4. [Solidity to Rust: Common Concepts, and Best Practices](#solidity-to-rust-common-concepts-and-best-practices)
-5. [Using Rust and Soroban for Smart Contract Development](#rust-and-soroban)
-6. [Vault Contract Deployment and Interaction](#vault-contract-deployment-and-interaction)
 
 ## Advanced Solidity Concepts
 
 ### Inheritance
 
 In Solidity, smart contracts can inherit properties and functions from other contracts. This is achieved using the `is` keyword.
+
+Here is an example of a parent contract that defines a function called `messageFromParent` that returns a string:
 
 ```javascript
 contract Parent {
@@ -40,9 +40,13 @@ contract Child is Parent {
 }
 ```
 
+In this example, the `Child` contract inherits the `messageFromParent` function from the `Parent` contract. The `Child` contract can then call the `messageFromParent` function directly.
+
 ### Interfaces
 
-Interfaces are similar to abstract contracts, but they cannot have any function implementations. They only contain function signatures. Contracts can implement interfaces using the `is` keyword, similar to inheritance.
+Interfaces are similar to contracts, but they cannot have any function implementations. They only contain function signatures. Contracts can implement interfaces using the `is` keyword, similar to inheritance.
+
+Here is example of an interface that defines a function called `doSomething` that returns a `uint256`:
 
 ```javascript
 interface SomeInterface {
@@ -59,9 +63,11 @@ contract SomeContract is SomeInterface {
 }
 ```
 
+In this example, the `SomeContract` contract implements the `SomeInterface` interface. It's implementation returns a `u256` that is incremented each time the `doSomething` function is called.
+
 ### Libraries
 
-Libraries are similar to contracts, but they cannot have any state variables. They are used to store reusable code that can be used by other contracts. Libraries are deployed once and can be used by multiple contracts. They are defined using the `library` keyword.
+Libraries are similar to contracts, but they cannot have any state variables. They are used to store reusable code that can be used by other contracts. Libraries are deployed once and can be used by multiple contracts. They are defined using the `library` keyword. They are invoked by using the `using` keyword.
 
 ```javascript
 library SafeMath {
@@ -83,6 +89,8 @@ contract MyContract {
     }
 }
 ```
+
+In this example, the `SafeMath` library is used in the `increment` function. The `increment` function uses the `add` function from the `SafeMath` library to increment the `value` variable.
 
 ### Modifiers
 
@@ -109,11 +117,13 @@ contract MyContract is Ownable {
 }
 ```
 
+In this example, the `onlyOwner` modifier is used to restrict access to the `doSomething` function. The `doSomething` function can only be called by the `owner` of the contract which was defined during deployment as `msg.sender`.
+
 ## Advanced Rust Concepts
 
 ### Crates
 
-A library in Rust is a collection of precompiled programs, scripts, or routines that can be easily reused by programmers when writing code. This allows them to avoid reinventing the wheel by not having to implement the same logic or program multiple times. In Rust, libraries are also known as crates. There are two types of crates in Rust: [Binary crates and Library crates](https://doc.rust-lang.org/book/ch07-01-packages-and-crates.html).
+A crate in Rust is a collection of precompiled programs, scripts, or routines that can be easily reused by programmers when writing code. This allows them to avoid reinventing the wheel by not having to implement the same logic or program multiple times. There are two types of crates in Rust: [Binary crates and Library crates](https://doc.rust-lang.org/book/ch07-01-packages-and-crates.html).
 
 Binary crates are crates that can be executed as standalone programs. Library crates are crates that are meant to be used by other programs. Library crates can be imported into other programs using the `use` keyword.
 
@@ -132,8 +142,6 @@ soroban-sdk = { workspace = true, features = ["testutils", "alloc"] }
 Then they would import the `alloc` crate into their smart contract:
 
 ```rust
-#![no_std]
-
 // Imports
 #![no_std]
 use soroban_sdk::{contractimpl, Env};
@@ -159,11 +167,13 @@ impl AllocContract {
 }
 ```
 
+In this example, the `alloc` crate is imported into the smart contract using the `extern crate alloc;` statement. The `alloc` crate is then used to create a temporary vector that holds values from 0 to `count`. The values in the vector are then summed and returned.
+
 For more details on how to use the `alloc` crate, including a hands on practical exercise, visit the [alloc section](../how-to-guides/alloc#how-it-works) of the documentation.
 
 ### Modules
 
-In Rust, modules consist of a cohesive set of related functions and types that are often organized together for better organization and reusability. These modules can be reused across multiple projects by publishing them as crates, which are essentially self-contained packages that can be easily imported into any Rust project.
+In Rust, modules consist of a cohesive set of related functions and types that are often organized together for better organization and reusability. These modules can be reused across multiple projects by publishing them as crates.
 
 Here is an example of a module that implements `SafeMath` logic with an `add` function:
 
@@ -205,11 +215,13 @@ mod test;
 
 Notice that we use the `checked_add` function from the standard library to ensure that the addition does not overflow. This is important because if the addition overflows, it could lead to unexpected behavior in the contract.
 
-Even when Rust code is compiled with the #![no_std] flag, it is still possible to use some of the standard library's features, such as the `checked_add` function. This is because Rust provides the option to selectively import modules and functions from the standard library, allowing developers to use only the specific features they need.
+Even when Rust code is compiled with the `#![no_std]` flag, it is still possible to use some of the standard library's features, such as the `checked_add` function. This is because Rust provides the option to selectively import modules and functions from the standard library, allowing developers to use only the specific features they need.
 
 ### Traits
 
 Rust does not have a built-in modifier system like Solidity. However, you can achieve similar functionality using `traits` and their implementations.
+
+In the example below, we will illustrate the inherticance of traits using the `Ownable` trait.
 
 ```rust
 #![no_std]
@@ -260,28 +272,30 @@ Heres a breakdown of the code above:
 
 - First, we define the `Ownable` trait, which defines a single method called `is_owner`. This method takes an `Address` as an argument and returns a boolean value indicating whether or not the address is the owner of the contract.
 - Next, we implement the `Ownable` trait for the `OwnableContract` struct. This allows us to use the `is_owner` method on instances of the `OwnableContract` struct.
-- Then, we define a modifier called `only_owner` that takes an instance of the `OwnableContract` struct and an `Address` as arguments. This modifier returns a boolean value indicating whether or not the address is the owner of the contract.
-- Finally, we implement the contract for the `OwnableContract` struct. This allows us to use the `change_number` method on instances of the `OwnableContract` struct.
+- Then, we define a "modifier" called `only_owner` that takes an instance of the `OwnableContract` struct and an `Address` as arguments. This "modifier" returns a boolean value indicating whether or not the address is the owner of the contract.
+- Finally, we implement the contract for the `OwnableContract` struct. This allows only the `owner` of the contract to use the `change_number` method on instances of the `OwnableContract` struct.
 
-It's worth mentioning that the Soroban SDK comes with several built-in requirements that developers can use, such as the [`require_auth`](https://docs.rs/soroban-sdk/latest/soroban_sdk/struct.Address.html#method.require_auth) method provided by the `Address` struct.
+It's worth mentioning that the Soroban Rust SDK comes with several built-in requirements that developers can use, such as the [`require_auth`](https://docs.rs/soroban-sdk/latest/soroban_sdk/struct.Address.html#method.require_auth) method provided by the `Address` struct.
 
 ### Interfaces
 
-Interfaces are an essential part of building smart contracts with the `Soroban SDK`.
+Interfaces are an essential part of building smart contracts with Soroban.
 
-There are many types of smart contract interfaces, and each has a specific purpose. One example of a smart contract interface built with `Soroban SDK` is the [Token Interface](../reference/interfaces/token-interface). This interface ensures that tokens deployed on Soroban are interoperable with contracts built to support Soroban's built-in tokens. The Token Interface consists of three compatibility requirements:
+There are many types of smart contract interfaces, and each has a specific purpose. One example of an interface built with Soroban is the [Token Interface](../reference/interfaces/token-interface). This interface ensures that tokens deployed on Soroban are interoperable with contracts built to support Soroban's built-in tokens. The Token Interface consists of three compatibility requirements:
 
 - `function interface`
 - `authorization`
 - `events`
 
-For more information on smart contract interfaces built with Soroban SDK, including the Token Interface, visit the [interfaces section](../category/interfaces) of the documentation.
+For more information on smart contract interfaces built with Soroban, including the Token Interface, visit the [interfaces section](../category/interfaces) of the documentation.
 
 ## Writing Safe and Efficient Rust Code for Smart Contracts
 
 When writing Rust code for smart contracts, it's important to focus on safety and efficiency. Some tips include:
 
 - Use the [`Result`](https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html) type to to handle errors in a safe and predictable way. In smart contracts, it's important to avoid panicking, as this can lead to unpredictable behavior. Instead, Result can be used to handle errors and ensure that the contract behaves as expected.
+
+In the example below, the `add` function returns a `Result` type, which can either be `Ok` or `Err`. If the addition does not overflow, the function returns `Ok`, otherwise it returns `Err`.
 
 ```rust
 pub fn add(a: u32, b: u32) -> Result<u32, &'static str> {
@@ -291,13 +305,15 @@ pub fn add(a: u32, b: u32) -> Result<u32, &'static str> {
 
 - Use the `checked_` family of functions, such as `checked_add`, `checked_sub`, etc., to perform arithmetic operations in a safe and efficient manner. These functions check for overflows and underflows and return an error if one occurs.
 
+In the example below, the `add` function uses the `checked_add` function to perform the addition. If the addition overflows, the function returns an error.
+
 ```rust
 pub fn add(a: u32, b: u32) -> u32 {
     a.checked_add(b).expect("Addition overflow")
 }
 ```
 
-- Use `cargo` and `clippy` to enforcing code quality, style, and efficiency in Rust. `cargo` is Rust's package manager and provides a number of tools for building and testing Rust code. `clippy` is a linter that can help identify potential issues in the code, such as unused variables or functions that could be optimized.
+- Use `cargo` and `clippy` to enforce code quality, style, and efficiency in Rust. `cargo` is Rust's package manager and provides a number of tools for building and testing Rust code. `clippy` is a linter that can help identify potential issues in the code, such as unused variables or functions that could be optimized.
 
 To use clippy with cargo, you'll first need to install it. You can do this by running the following command in your terminal:
 
@@ -352,39 +368,93 @@ fn main() {
 
 ## Solidity to Rust: Common Concepts and Best Practices
 
-In this sectiopn we will explore key Solidity concepts and provide their Rust equivalents. We will discuss the following topics:
+In this section we will explore key Solidity concepts and provide their Rust equivalents. We will discuss the following topics:
 
-- Solidity message properties and their Rust equivalents
-- Error Handling in Solidity and Rust
+- Message Properties
+- Error Handling
 - Address-related functionality
 - Function visibility specifiers
 - Time-based variables
 
-### Solidity Message Properties and Their Rust Equivalents
+### Message Properties
 
-Solidity provides a number of message properties that can be used to access information about the current transaction. These properties include:
+The Soroban Rust SDK and Solidity provide a number of message properties that can be used to access information about the current transaction. These properties include:
+
+#### Solidity
 
 - `msg.sender`: The address of the account that sent the transaction.
 - `msg.value`: The amount of Ether sent with the transaction.
 - `msg.data`: The data sent with the transaction.
 
-In contrast to Solidity's global variables, Soroban relies on passing an `Env` argument to all functions. For instance, you would use `env.storage().get(key)` to access storage. The `Env` type allows access to the environment in which the contract is executing.
+Here's a simple example of a smart contract that demonstrates the use of each
 
-- `Env::storage`: Get a [Storage](https://docs.rs/soroban-sdk/0.7.0/soroban_sdk/storage/struct.Storage.html) struct for accessing and update contract data that has been stored.
-- Used as `Env::storage().get()` or `Env::storage().set()`.
+```javascript
+pragma solidity ^0.8.0;
+
+contract SimpleContract {
+    address public sender;
+    uint public value;
+    bytes public data;
+
+    // Caller must send Ether and data to this function.
+    // This function will store the sender, value, and data.
+    function sendData(bytes calldata _data) external payable {
+        sender = msg.sender;
+        value = msg.value;
+        data = _data;
+    }
+}
+```
+
+These are a part of Solidity's global variables, which are accessible from any function in the contract.
+
+#### Rust
+
+In contrast to Solidity's global variables, Soroban relies on passing an [`Env`](https://docs.rs/soroban-sdk/0.7.0/soroban_sdk/struct.Env.html) argument to all functions which provides access to the environment the contract is executing within.
+
+The `Env` provides access to information about the currently executing contract, who invoked it, contract data, functions for signing, hashing, etc.
+
+For instance, you would use `env.storage().get(key)` to access a target value from the contract's [storage](https://docs.rs/soroban-sdk/0.7.0/soroban_sdk/storage/struct.Storage.html).
+
+- `Env::storage` is used to get a struct for accessing and updating contract data that has been stored.
+- Used as `env.storage().get()` or `env.storage().set()`.
 - Additionally, we utilize the `clone()` method, a prevalent trait in Rust that allows for the explicit duplication of an object.
 
-For example to get the sender address from a `fn` call:
+See the example below for implementations of `Env::storage()` and `clone()`
+
+- `env.storage().set()`
 
 ```rust
-// public function `increment` that takes an `Address` and a `u32` as arguments
-pub fn increment(env: Env, user: Address, value: u32
+use soroban_sdk::{Env, Symbol};
 
+let storage = env.storage();
+let key = Symbol::short("key");
+env.storage().set(&key);
+```
 
+- `env.storage().get()`
+
+```rust
+use soroban_sdk::{Env, Symbol};
+
+let storage = env.storage();
+e.storage().get(&key);
+```
+
+- `clone()`
+
+```rust
+use soroban_sdk::{Env, Address};
+
+pub fn return_user(env: Env, user: Address)
 let user_address: Address = user.clone();
 ```
 
-### Error Handling in Solidity and Rust
+### Error Handling
+
+The Soroban Rust SDK and Solidity provide a number of ways to handle errors. These include:
+
+#### Solidity
 
 Solidity provides a `require` function that can be used to check for certain conditions and revert the transaction if they are not met. For example, the following code sets a minimum value for the amount of Ether sent with the transaction:
 
@@ -396,11 +466,13 @@ function deposit() public payable {
 }
 ```
 
+#### Rust
+
 The [panic!](https://doc.rust-lang.org/book/ch09-00-error-handling.html) macro serves as Rust's error handling mechanism, which closely resembles the `require` function in Solidity.
 
 ```rust
 fn deposit() {
-        let deposit_amount = e.storage().get_unchecked(&DataKey::Deposit).unwrap();
+        let deposit_amount = e.storage().get(&amount).unwrap();
         if deposit_amount < 1_000_000_000_000_000_000 {
             panic!(b"Not enough XLM sent");
         }
@@ -410,51 +482,170 @@ fn deposit() {
 
 ### Address-Related Functionality
 
-Solidity provides a number of functions for working with addresses. These functions include:
+The Soroban Rust SDK and Solidity provide a number of functions for working with addresses. These functions include:
+
+#### Solidity
 
 - `address(this)`: Returns the address of the current contract.
 - `address payable(this)`: Returns the address of the current contract as a payable address.
 - `address(address)`: Returns the address of the specified account.
 - `address payable(address)`: Returns the address of the specified account as a payable address.
 
-Rust provides a number of functions for working with addresses. These functions include:
+Below is an example of a smart contract that illustrates how contracts can be retrieved
 
-- `Env::get_current_contract_address(self)`: Returns the Address object corresponding to the current executing contract.
+```javascript
+pragma solidity ^0.8.0;
+
+contract SimpleContract {
+    address public contractAddress = address(this);
+    address public randomAddress = 0x1234567890123456789012345678901234567890;
+
+    address public payableAddress = payable(address(this));
+    address public payableRandomAddress = payable(0x1234567890123456789012345678901234567890);
+}
+```
+
+There would be no diffrence in appearance between a regular address and a payable address in Solidity.
+
+#### Rust
+
+- `Env::get_current_contract_address()`: Returns the Address object corresponding to the current executing contract.
 - Used as `e.current_contract_address()`
-- `Env::get_current_contract_id(self)`: Returns the 32-byte hash identifier of the current executing contract.
+- `Env::get_current_contract_id()`: Returns the 32-byte hash identifier of the current executing contract.
 - Used as `e.current_contract_id()`
 
 The `Env` not only provides essential information about the currently executing contract and its invoker, but also offers access to contract data and functions for signing, hashing, and more. The construction or conversion of most types in Soroban requires access to an `Env` instance.
 
+Here is an example of a smart contract that illustrates how contracts can be retrieved
+
+```rust
+#![no_std]
+use soroban_sdk::{contractimpl, log, Address, Env, Symbol};
+
+pub struct SimpleContract;
+
+#[contractimpl]
+impl SimpleContract {
+    /// increment increments an internal counter, and returns the value.
+    pub fn return_user(env: Env, user: Address) {
+        let user_address: Address = user.clone();
+        let user_contract_id = env.current_contract_address();
+        let user_contract_address = env.current_contract_id();
+    }
+}
+```
+
 ### Function Visibility Specifiers
 
-Solidity provides a number of function visibility specifiers that can be used to control who can call a function. These specifiers include:
+The Soroban Rust SDK and Solidity provide a number of function visibility specifiers that can be used to control who can call a function. These specifiers include:
+
+#### Solidity
 
 - `public`: Anyone can call the function.
 - `external`: Only other contracts can call the function.
 - `internal`: Only the current contract and contracts that inherit from it can call the function.
 - `private`: Only the current contract can call the function.
 
-Rust provides a number of function visibility specifiers that can be used to control who can call a function. These specifiers include:
+Here is an example of a smart contract that illustrates how function visibility is used in Solidity:
 
-- `pub`: Anyone can call the function.
-- `pub(crate)`: Only other contracts can call the function.
-- `pub(super)`: Only the current contract and contracts that inherit from it can call the function.
-- `pub(self)`: Only the current contract can call the function.
+```javascript
+pragma solidity ^0.8.0;
+
+contract SimpleContract {
+    function publicFunction() public {}
+    function externalFunction() external {}
+    function internalFunction() internal {}
+    function privateFunction() private {}
+}
+```
+
+#### Rust
+
+- `pub`: The item (function, struct, etc.) is accessible from any module or scope.
+- `pub(crate)`: The item is accessible only within the current crate.
+- `pub(super)`: The item is accessible only within its parent module.
+- `pub(in path::to::module)`: The item is accessible only within the specified module path.
+
+Here is an example of a module that illustrates how function visibility is used in Rust:
+
+```rust
+mod outer {
+    pub struct PublicStruct {
+        pub field: u32,
+    }
+
+    pub(crate) struct CrateStruct {
+        pub(crate) field: u32,
+    }
+
+    // This struct is private becuase it is not marked as `pub`.
+    struct PrivateStruct {
+        field: u32,
+    }
+
+    mod inner {
+        pub(super) struct SuperStruct {
+            pub(super) field: u32,
+        }
+    }
+
+    pub fn public_function() {
+        let public_struct = PublicStruct { field: 1 };
+        let crate_struct = CrateStruct { field: 2 };
+        let private_struct = PrivateStruct { field: 3 };
+        let super_struct = inner::SuperStruct { field: 4 };
+    }
+}
+```
 
 ### Time-Based Variables
 
-Solidity provides a number of time-based variables that can be used to access information about the current block. These variables include:
+The Soroban Rust SDK and Solidity provide a number of time-based variables that can be used to access information about the current block(EVM) or ledger(Soroban). These variables include:
+
+#### Solidity
 
 - `block.timestamp`: The timestamp of the current block.
 - `block.number`: The number of the current block.
 
-Rust provides a number of time-based variables that can be used to access information about the current block. These variables include:
+Here is an example of a smart contract that illustrates how time-based variables are used in Solidity:
+
+```javascript
+pragma solidity ^0.8.0;
+
+contract SimpleContract {
+    function getTimestamp() public view returns (uint256) {
+        return block.timestamp;
+    }
+
+    function getBlockNumber() public view returns (uint256) {
+        return block.number;
+    }
+}
+```
+
+#### Rust
 
 - `Env::get_ledger_timestamp(self.env())`: Returns a unix timestamp for when the ledger was closed.
 - Used as `env.ledger().timestamp()`
 - `Env::get_ledger_sequence(self.env())`: Returns the sequence number of the ledger.
 - Used as `env.ledger().sequence()`
+
+Here is an example of a smart contract that illustrates how time-based variables are used in Rust:
+
+```rust
+#![no_std]
+use soroban_sdk::{contractimpl, Address, Env};
+
+pub struct SimpleContract;
+
+#[contractimpl]
+impl SimpleContract {
+    pub fn get_timestamp(env: Env) {
+        let timestamp = env.ledger().timestamp();
+        let sequence = env.ledger().sequence();
+    }
+}
+```
 
 Overall the Rust equivalents of Solidity concepts are very similar. The main difference is that Rust uses `env` instead of `msg` to access information about the current transaction.
 

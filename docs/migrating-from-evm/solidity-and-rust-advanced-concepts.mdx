@@ -1,4 +1,5 @@
 ---
+sidebar_position: 2
 title: "Advanced Smart Contracts with Solidity, Rust, and Soroban"
 description: "Learn advanced Solidity and Rust concepts, write safe and efficient Rust code, use Rust and Soroban for custom smart contract logic, and deploy and test in a local development environment."
 ---
@@ -15,8 +16,9 @@ In this tutorial, we will cover advanced Solidity and Rust concepts such as inhe
 1. [Advanced Solidity Concepts](#advanced-solidity-concepts)
 2. [Advanced Rust Concepts](#advanced-rust-concepts)
 3. [Writing Safe and Efficient Rust Code for Smart Contracts](#writing-safe-and-efficient-rust-code-for-smart-contracts)
-4. [Using Rust and Soroban for Smart Contract Development](#rust-and-soroban)
-5. [Vault Contract Deployment and Interaction](#vault-contract-deployment-and-interaction)
+4. [Solidity to Rust: Common Concepts, and Best Practices](#solidity-to-rust-common-concepts-and-best-practices)
+5. [Using Rust and Soroban for Smart Contract Development](#rust-and-soroban)
+6. [Vault Contract Deployment and Interaction](#vault-contract-deployment-and-interaction)
 
 ## Advanced Solidity Concepts
 
@@ -24,7 +26,7 @@ In this tutorial, we will cover advanced Solidity and Rust concepts such as inhe
 
 In Solidity, smart contracts can inherit properties and functions from other contracts. This is achieved using the `is` keyword.
 
-```solidity
+```javascript
 contract Parent {
     function messageFromParent() public pure returns (string memory) {
         return "Hello from Parent";
@@ -42,7 +44,7 @@ contract Child is Parent {
 
 Interfaces are similar to abstract contracts, but they cannot have any function implementations. They only contain function signatures. Contracts can implement interfaces using the `is` keyword, similar to inheritance.
 
-```solidity
+```javascript
 interface SomeInterface {
     function doSomething() external returns (uint256);
 }
@@ -61,7 +63,7 @@ contract SomeContract is SomeInterface {
 
 Libraries are similar to contracts, but they cannot have any state variables. They are used to store reusable code that can be used by other contracts. Libraries are deployed once and can be used by multiple contracts. They are defined using the `library` keyword.
 
-```solidity
+```javascript
 library SafeMath {
     function add(uint256 a, uint256 b) internal pure returns (uint256) {
         uint256 c = a + b;
@@ -86,7 +88,7 @@ contract MyContract {
 
 Modifiers are used to change the behavior of functions in a declarative way. They are defined using the `modifier` keyword. Modifiers can be used to perform common checks such as validating inputs, checking permissions, and more.
 
-```solidity
+```javascript
 contract Ownable {
     address public owner;
 
@@ -109,124 +111,78 @@ contract MyContract is Ownable {
 
 ## Advanced Rust Concepts
 
-### Inheritance
+### Crates
 
-Rust does not support classical inheritance like Solidity or other object-oriented languages. However, you can achieve similar functionality using `traits` and their implementations.
+A library in Rust is a collection of precompiled programs, scripts, or routines that can be easily reused by programmers when writing code. This allows them to avoid reinventing the wheel by not having to implement the same logic or program multiple times. In Rust, libraries are also known as crates. There are two types of crates in Rust: [Binary crates and Library crates](https://doc.rust-lang.org/book/ch07-01-packages-and-crates.html).
 
-Here is an example of a `Greeter` trait that defines a `hello` function:
+Binary crates are crates that can be executed as standalone programs. Library crates are crates that are meant to be used by other programs. Library crates can be imported into other programs using the `use` keyword.
 
-```rust
-#![no_std]
-use soroban_sdk::{contractimpl, vec, Env, Symbol, Vec};
+Here is an example of a workflow that implements allocation (`alloc`) logic within a smart contract:
 
-// Define the Greeter trait
-pub trait Greeter {
-    fn hello(&self, env: Env, to: Symbol) -> Vec<Symbol>;
-}
+First a user would include the `alloc` crate in their `Cargo.toml` file:
 
-// Implement the Greeter trait for the HelloContract struct
-pub struct HelloContract;
+```toml
+[dependencies]
+soroban-sdk = { workspace = true, features = ["alloc"] }
 
-impl Greeter for HelloContract {
-    fn hello(&self, env: Env, to: Symbol) -> Vec<Symbol> {
-        vec![&env, Symbol::short("Hello"), to]
-    }
-}
-
-// Add a contract implementation for the HelloContract struct
-#[contractimpl]
-impl HelloContract {
-    // Define a public method that delegates the call to the hello method from the Greeter trait
-    pub fn greet(env: Env, to: Symbol, from: Symbol) -> Vec<Symbol> {
-        let mut greeting = Self.hello(env.clone(), to);
-        greeting.push_back(Symbol::short("From"));
-        greeting.push_back(from);
-        greeting
-    }
-}
-
-#[cfg(test)]
-
-mod test;
+[dev_dependencies]
+soroban-sdk = { workspace = true, features = ["testutils", "alloc"] }
 ```
 
-Lets break down the code above:
-
-```rust
-#![no_std]
-use soroban_sdk::{contractimpl, vec, Env, Symbol, Vec};
-```
-
-The `#![no_std]` attribute tells the Rust compiler to not link the standard library. This is required for smart contracts because they are compiled to WebAssembly, which does not have a standard library. The `use` statement then imports several types from the `Soroban SDK`, including the `contractimpl` macro, `vec` module, `Env` struct, `Symbol` struct, and `Vec` type.
-
-```rust
-pub trait Greeter {
-    fn hello(&self, env: Env, to: Symbol) -> Vec<Symbol>;
-}
-
-pub struct HelloContract;
-
-impl Greeter for HelloContract {
-    fn hello(&self, env: Env, to: Symbol) -> Vec<Symbol> {
-        vec![&env, Symbol::short("Hello"), to]
-    }
-}
-```
-
-The `Greeter` trait defines a single function called `hello`. The `HelloContract` struct implements the `Greeter` trait by defining the `hello` function. The `hello` function returns a `Vec` of `Symbol`s that contains the `Env`, `Hello`, and `to` parameters.
-
-```rust
-#[contractimpl]
-
-impl HelloContract {
-    pub fn greet(env: Env, to: Symbol, from: Symbol) -> Vec<Symbol> {
-        let mut greeting = Self.hello(env.clone(), to);
-        greeting.push_back(Symbol::short("From"));
-        greeting.push_back(from);
-        greeting
-    }
-}
-```
-
-The `#[contractimpl]` attribute tells the `contractimpl` macro to generate a contract implementation for the `HelloContract` struct. The `HelloContract` struct must implement the `Greeter` trait in order for the macro to generate a contract implementation. The `greet` function is a public method that delegates the call to the `hello` method from the `Greeter` trait. It then adds the `from` parameter to the end of the `greeting` vector and returns it.
-
-Example output:
-
-```zsh
-["Hello","Alice","From","Bob"]
-```
-
-### Interfaces
-
-Interfaces are an essential part of building smart contracts with the `Soroban SDK`.
-
-There are many types of smart contract interfaces, and each has a specific purpose. One example of a smart contract interface built with `Soroban SDK` is the Token Interface. This interface ensures that tokens deployed on Soroban are interoperable with contracts built to support Soroban's built-in tokens. The Token Interface consists of three compatibility requirements:
-
-- function interface
-- authorization
-- events
-
-For more information on smart contract interfaces built with Soroban SDK, including the Token Interface, visit the [interfaces section](../category/interfaces) of the documentation.
-
-### Libraries
-
-In Rust, libraries are essentially a collection of related functions and types, usually organized in modules. They can be shared across multiple projects by publishing them as crates.
-
-Here is an example of a library that defines a `SafeMath` module with an `add` function:
+Then they would import the `alloc` crate into their smart contract:
 
 ```rust
 #![no_std]
 
 // Imports
+#![no_std]
 use soroban_sdk::{contractimpl, Env};
 
-mod safe_math {
-    pub fn add(a: u32, b: u32) -> Result<u32, &'static str> {
-        a.checked_add(b).ok_or("Addition overflow")
+extern crate alloc;
+
+pub struct AllocContract;
+
+#[contractimpl]
+impl AllocContract {
+    /// Allocates a temporary vector holding values (0..count), then computes and returns their sum.
+    pub fn sum(_env: Env, count: u32) -> u32 {
+        let mut v1 = alloc::vec![];
+        (0..count).for_each(|i| v1.push(i));
+
+        let mut sum = 0;
+        for i in v1 {
+            sum += i;
+        }
+
+        sum
     }
 }
+```
 
-// math_contract.rs
+For more details on how to use the `alloc` crate, including a hands on practical exercise, visit the [alloc section](../how-to-guides/alloc#how-it-works) of the documentation.
+
+### Modules
+
+In Rust, modules consist of a cohesive set of related functions and types that are often organized together for better organization and reusability. These modules can be reused across multiple projects by publishing them as crates, which are essentially self-contained packages that can be easily imported into any Rust project.
+
+Here is an example of a module that implements `SafeMath` logic with an `add` function:
+
+```rust
+#![no_std]
+
+mod safe_math
+
+// mod safe_math {
+//     pub fn add(a: u32, b: u32) -> Result<u32, &'static str> {
+//          a.checked_add(b).ok_or("Addition overflow")
+//      }
+// }
+
+
+// Imports
+use soroban_sdk::{contractimpl, Env};
+use safe_math::add;
+
 pub trait MathContract {
     fn add(&self, env: Env, a: u32, b: u32) -> u32;
 }
@@ -251,7 +207,7 @@ Notice that we use the `checked_add` function from the standard library to ensur
 
 Even when Rust code is compiled with the #![no_std] flag, it is still possible to use some of the standard library's features, such as the `checked_add` function. This is because Rust provides the option to selectively import modules and functions from the standard library, allowing developers to use only the specific features they need.
 
-### Modifiers
+### Traits
 
 Rust does not have a built-in modifier system like Solidity. However, you can achieve similar functionality using `traits` and their implementations.
 
@@ -300,7 +256,26 @@ impl OwnableContract {
 mod test;
 ```
 
-It's worth mentioning that the Soroban SDK comes with several built-in requirements that developers can use, such as the require_auth method provided by the Address struct [more details can be found in the official documentation](https://docs.rs/soroban-sdk/latest/soroban_sdk/struct.Address.html#method.require_auth).
+Heres a breakdown of the code above:
+
+- First, we define the `Ownable` trait, which defines a single method called `is_owner`. This method takes an `Address` as an argument and returns a boolean value indicating whether or not the address is the owner of the contract.
+- Next, we implement the `Ownable` trait for the `OwnableContract` struct. This allows us to use the `is_owner` method on instances of the `OwnableContract` struct.
+- Then, we define a modifier called `only_owner` that takes an instance of the `OwnableContract` struct and an `Address` as arguments. This modifier returns a boolean value indicating whether or not the address is the owner of the contract.
+- Finally, we implement the contract for the `OwnableContract` struct. This allows us to use the `change_number` method on instances of the `OwnableContract` struct.
+
+It's worth mentioning that the Soroban SDK comes with several built-in requirements that developers can use, such as the [`require_auth`](https://docs.rs/soroban-sdk/latest/soroban_sdk/struct.Address.html#method.require_auth) method provided by the `Address` struct.
+
+### Interfaces
+
+Interfaces are an essential part of building smart contracts with the `Soroban SDK`.
+
+There are many types of smart contract interfaces, and each has a specific purpose. One example of a smart contract interface built with `Soroban SDK` is the [Token Interface](../reference/interfaces/token-interface). This interface ensures that tokens deployed on Soroban are interoperable with contracts built to support Soroban's built-in tokens. The Token Interface consists of three compatibility requirements:
+
+- `function interface`
+- `authorization`
+- `events`
+
+For more information on smart contract interfaces built with Soroban SDK, including the Token Interface, visit the [interfaces section](../category/interfaces) of the documentation.
 
 ## Writing Safe and Efficient Rust Code for Smart Contracts
 
@@ -375,1048 +350,113 @@ fn main() {
 }
 ```
 
-## Rust and Soroban
+## Solidity to Rust: Common Concepts and Best Practices
 
-### Introduction
+In this sectiopn we will explore key Solidity concepts and provide their Rust equivalents. We will discuss the following topics:
 
-We've learned that Smart contracts are self-executing contracts that can be programmed to automatically enforce the rules and regulations of a particular agreement. They are a core component of decentralized applications (dApps) and blockchain technology. In this section, we will learn how to use Rust and Soroban to develop and deploy custom smart contract logic.
+- Solidity message properties and their Rust equivalents
+- Error Handling in Solidity and Rust
+- Address-related functionality
+- Function visibility specifiers
+- Time-based variables
 
-### Setup
+### Solidity Message Properties and Their Rust Equivalents
 
-If you haven't already setup up the dev environment for Soroban, you can get started by following the steps on the [Setup Page](http://localhost:3000/docs/getting-started/setup).
+Solidity provides a number of message properties that can be used to access information about the current transaction. These properties include:
 
-This project requires using the `soroban_token_contract.wasm` file which you will need to import manually.
+- `msg.sender`: The address of the account that sent the transaction.
+- `msg.value`: The amount of Ether sent with the transaction.
+- `msg.data`: The data sent with the transaction.
 
-First, you will need to clone the v0.7.0 tag of soroban-examples repository:
+In contrast to Solidity's global variables, Soroban relies on passing an `Env` argument to all functions. For instance, you would use `env.storage().get(key)` to access storage. The `Env` type allows access to the environment in which the contract is executing.
 
-```zsh
-git clone -b v0.7.0 https://github.com/stellar/soroban-examples
-```
+- `Env::storage`: Get a [Storage](https://docs.rs/soroban-sdk/0.7.0/soroban_sdk/storage/struct.Storage.html) struct for accessing and update contract data that has been stored.
+- Used as `Env::storage().get()` or `Env::storage().set()`.
+- Additionally, we utilize the `clone()` method, a prevalent trait in Rust that allows for the explicit duplication of an object.
 
-then navigate to the `soroban-examples/token` directory and run the following command:
-
-```zsh
-cargo build --target wasm32-unknown-unknown --release
-```
-
-This will build the `soroban_token_contract.wasm` file which you will need to import into your project. The `soroban_token_contract.wasm` file is located in the `soroban-examples/target/wasm32-unknown-unknown/release` directory.
-
-Once we have the Token, lets create a new smart contract that uses it.
-
-### Writing a Smart Contract
-
-Let's start by writing a simple example of a vault contract that allows users to deposit funds and withdraw their funds with generated yield.
-
-Here is a breakdown of the contract mechanics
-
-- Shares are minted when a user deposits.
-- The DeFi protocol uses the users' deposits to generate yield.
-- User burns shares to withdraw their tokens + yield.
-
-Lets create a new Rust project by running the following command in your terminal:
-
-```zsh
-cargo new vault
-```
-
-This will create a new Rust project called `vault`.
-
-Now lets add the `soroban_token_contract.wasm` file to the `vault` project. To do this, we can drag and drop the file into the `vault` project directory.
-
-![vault-project](../../static/img/vault-project.png)
-
-Next, we'll need to add the Soroban SDK as a dependency. To do this, open the `Cargo.toml` file in your project and ensure that it looks like the following:
-
-```toml
-[package]
-name = "vault"
-version = "0.0.0"
-edition = "2021"
-publish = false
-
-[lib]
-crate-type = ["cdylib"]
-
-[dependencies]
-soroban-sdk = { version = "0.7.0", git = "https://github.com/stellar/rs-soroban-sdk", rev = "8abd3353c728f09ee1c8a2544f67a853e915afc2"}
-num-integer = { version = "0.1.45", default-features = false, features = ["i128"] }
-
-[dev_dependencies]
-soroban-sdk = { version = "0.7.0", git = "https://github.com/stellar/rs-soroban-sdk", rev = "8abd3353c728f09ee1c8a2544f67a853e915afc2", features = ["testutils"] }
-
-[profile.release]
-opt-level = "z"
-overflow-checks = true
-debug = 0
-strip = "symbols"
-debug-assertions = false
-panic = "abort"
-codegen-units = 1
-lto = true
-
-[profile.release-with-logs]
-inherits = "release"
-debug-assertions = true
-```
-
-In this project we will create 3 files:
-
-- `src/lib.rs` - This is where we will write our vault smart contract logic.
-- `src/test.rs` - This is where we will write our tests.
-- `src/token.rs` - This is file inherits the token contact that we imported earlier. It's also where we will write our token creation logic.
-
-To interact with the token contract, we'll use a built in interface that you can find in the `token_interface.rs` tab. This interface includes the `initialize` and `mint` functions that we will use to create and mint tokens for us to use in our vault contract. If you want to see the full code of the token contract, you can check it out [here](https://github.com/stellar/soroban-examples/tree/main/token/src).
-
-<Tabs>
-<TabItem value="lib.rs" label="src/lib.rs">
+For example to get the sender address from a `fn` call:
 
 ```rust
-#![no_std]
+// public function `increment` that takes an `Address` and a `u32` as arguments
+pub fn increment(env: Env, user: Address, value: u32
 
-mod test;
-mod token;
 
-use soroban_sdk::{contractimpl, Address, Bytes, BytesN, ConversionError, Env, RawVal, TryFromVal};
-use token::create_contract;
+let user_address: Address = user.clone();
+```
 
-#[derive(Clone, Copy)]
-#[repr(u32)]
-pub enum DataKey {
-    Token = 0,
-    TokenShare = 1,
-    TotalShares = 2,
-    Reserve = 3,
-}
+### Error Handling in Solidity and Rust
 
-impl TryFromVal<Env, DataKey> for RawVal {
-    type Error = ConversionError;
+Solidity provides a `require` function that can be used to check for certain conditions and revert the transaction if they are not met. For example, the following code sets a minimum value for the amount of Ether sent with the transaction:
 
-    fn try_from_val(_env: &Env, v: &DataKey) -> Result<Self, Self::Error> {
-        Ok((*v as u32).into())
-    }
-}
+```javascript
 
-fn get_token(e: &Env) -> BytesN<32> {
-    e.storage().get_unchecked(&DataKey::Token).unwrap()
-}
-
-fn get_token_share(e: &Env) -> BytesN<32> {
-    e.storage().get_unchecked(&DataKey::TokenShare).unwrap()
-}
-
-fn get_total_shares(e: &Env) -> i128 {
-    e.storage().get_unchecked(&DataKey::TotalShares).unwrap()
-}
-
-fn get_reserve(e: &Env) -> i128 {
-    e.storage().get_unchecked(&DataKey::Reserve).unwrap()
-}
-
-fn get_balance(e: &Env, contract_id: BytesN<32>) -> i128 {
-    token::Client::new(e, &contract_id).balance(&e.current_contract_address())
-}
-
-fn get_token_balance(e: &Env) -> i128 {
-    get_balance(e, get_token(e))
-}
-
-fn get_balance_shares(e: &Env) -> i128 {
-    get_balance(e, get_token_share(e))
-}
-
-fn put_token(e: &Env, contract_id: BytesN<32>) {
-    e.storage().set(&DataKey::Token, &contract_id);
-}
-
-fn put_token_share(e: &Env, contract_id: BytesN<32>) {
-    e.storage().set(&DataKey::TokenShare, &contract_id);
-}
-
-fn put_total_shares(e: &Env, amount: i128) {
-    e.storage().set(&DataKey::TotalShares, &amount)
-}
-
-fn put_reserve(e: &Env, amount: i128) {
-    e.storage().set(&DataKey::Reserve, &amount)
-}
-
-fn burn_shares(e: &Env, amount: i128) {
-    let total = get_total_shares(e);
-    let share_contract_id = get_token_share(e);
-
-    token::Client::new(e, &share_contract_id).burn(&e.current_contract_address(), &amount);
-    put_total_shares(e, total - amount);
-}
-
-fn mint_shares(e: &Env, to: Address, amount: i128) {
-    let total = get_total_shares(e);
-    let share_contract_id = get_token_share(e);
-
-    token::Client::new(e, &share_contract_id).mint(&e.current_contract_address(), &to, &amount);
-
-    put_total_shares(e, total + amount);
-}
-
-pub trait VaultTrait {
-    // Sets the token contract addresses for this vault
-    fn initialize(e: Env, token_wasm_hash: BytesN<32>, token: BytesN<32>);
-
-    // Returns the token contract address for the vault share token
-    fn share_id(e: Env) -> BytesN<32>;
-
-    // Deposits token. Also mints vault shares for the "to" Identifier. The amount minted
-    // is determined based on the difference between the reserves stored by this contract, and
-    // the actual balance of token for this contract.
-    fn deposit(e: Env, to: Address, amount: i128);
-
-    // xfers share_amount of vault share tokens to this contract, burns all vaults share tokens in this contracts, and sends the
-    // corresponding amount of token to "to".
-    // Returns amount of token withdrawn
-    fn withdraw(e: Env, to: Address, amount: i128) -> i128;
-
-    // Returns the amount of token that can be withdrawn for the given amount of vault shares
-    fn get_rsrvs(e: Env) -> i128;
-}
-
-struct Vault;
-
-#[contractimpl]
-impl VaultTrait for Vault {
-    fn initialize(e: Env, token_wasm_hash: BytesN<32>, token: BytesN<32>) {
-        let share_contract_id = create_contract(&e, &token_wasm_hash, &token);
-        token::Client::new(&e, &share_contract_id).initialize(
-            &e.current_contract_address(),
-            &7u32,
-            &Bytes::from_slice(&e, b"Vault Share Token"),
-            &Bytes::from_slice(&e, b"VLT"),
-        );
-
-        put_token(&e, token);
-        put_token_share(&e, share_contract_id.try_into().unwrap());
-        put_total_shares(&e, 0);
-        put_reserve(&e, 0);
-    }
-
-    fn share_id(e: Env) -> BytesN<32> {
-        get_token_share(&e)
-    }
-
-    fn deposit(e: Env, to: Address, amount: i128) {
-        // Depositor needs to authorize the deposit
-        to.require_auth();
-
-        let token_client = token::Client::new(&e, &get_token(&e));
-
-        token_client.xfer(&to, &e.current_contract_address(), &amount);
-
-        let balance_a = get_token_balance(&e);
-        let total_shares = get_total_shares(&e);
-
-        mint_shares(&e, to, amount);
-        put_reserve(&e, balance_a);
-        put_total_shares(&e, total_shares + amount)
-    }
-
-    fn withdraw(e: Env, to: Address, amount: i128) -> i128 {
-        to.require_auth();
-
-        // First transfer the vault shares that need to be redeemed
-        let share_token_client = token::Client::new(&e, &get_token_share(&e));
-        share_token_client.xfer(&to, &e.current_contract_address(), &amount);
-
-        let token_client = token::Client::new(&e, &get_token(&e));
-        token_client.xfer(
-            &e.current_contract_address(),
-            &to,
-            &(&amount + (&amount / &100)),
-        );
-
-        let balance = get_token_balance(&e);
-        let balance_shares = get_balance_shares(&e);
-
-        let total_shares = get_total_shares(&e);
-
-        if total_shares < amount {
-            panic!("not enought shares to withdraw");
-        }
-
-        burn_shares(&e, balance_shares);
-        put_total_shares(&e, total_shares - amount);
-        put_reserve(&e, balance);
-
-        amount
-    }
-
-    fn get_rsrvs(e: Env) -> i128 {
-        get_reserve(&e)
-    }
+function deposit() public payable {
+    require(msg.value >= 1 ether, "Not enough Ether sent");
+    // ...
 }
 ```
 
-</TabItem>
-<TabItem value="test.rs" label="src/test.rs" default>
+The [panic!](https://doc.rust-lang.org/book/ch09-00-error-handling.html) macro serves as Rust's error handling mechanism, which closely resembles the `require` function in Solidity.
 
 ```rust
-#![cfg(test)]
 
-use crate::{token, VaultClient};
-
-use soroban_sdk::{testutils::Address as _, Address, BytesN, Env};
-
-fn create_token_contract(e: &Env, admin: &Address) -> token::Client {
-    token::Client::new(&e, &e.register_stellar_asset_contract(admin.clone()))
-}
-
-fn create_vault_contract(e: &Env, token_wasm_hash: &BytesN<32>, token: &BytesN<32>) -> VaultClient {
-    let vault = VaultClient::new(e, &e.register_contract(None, crate::Vault {}));
-    vault.initialize(token_wasm_hash, token);
-    vault
-}
-
-fn install_token_wasm(e: &Env) -> BytesN<32> {
-    soroban_sdk::contractimport!(file = "./soroban_token_contract.wasm");
-    e.install_contract_wasm(WASM)
-}
-
-#[test]
-fn test() {
-    let e: Env = Default::default();
-
-    let admin1 = Address::random(&e);
-
-    let token = create_token_contract(&e, &admin1);
-    let user = Address::random(&e);
-    let vault = create_vault_contract(&e, &install_token_wasm(&e), &token.contract_id);
-
-    let contract_share: [u8; 32] = vault.share_id().into();
-    let token_share = token::Client::new(&e, &contract_share);
-
-    token.mint(&admin1, &user, &100);
-    token.mint(&admin1, &vault.address(), &100);
-    assert_eq!(token.balance(&vault.address()), 100);
-    assert_eq!(token.balance(&user), 100);
-
-    assert_eq!(token_share.balance(&user), 0);
-    vault.deposit(&user, &100);
-    assert_eq!(token_share.balance(&user), 100);
-    assert_eq!(token_share.balance(&vault.address()), 0);
-    assert_eq!(token.balance(&user), 0);
-    assert_eq!(token.balance(&vault.address()), 200);
-    assert_eq!(vault.get_rsrvs(), 200);
-
-    let withdraw_amount = 100;
-    vault.withdraw(&user, &withdraw_amount);
-    let yield_amount = &(withdraw_amount / 100);
-    assert_eq!(token.balance(&user), 100 + yield_amount);
-    assert_eq!(token_share.balance(&user), 0);
-    assert_eq!(token.balance(&vault.address()), 99);
-    assert_eq!(vault.get_rsrvs(), 99);
-    assert_eq!(token_share.balance(&vault.address()), 0);
+fn deposit() {
+    let attached_deposit = env::attached_deposit();
+    if attached_deposit < 1_000_000_000_000_000_000 {
+        panic!(b"Not enough Ether sent");
+    }
+    // ...
 }
 ```
 
-</TabItem>
-<TabItem value="token.rs" label="src/token.rs" default>
+### Address-Related Functionality
 
-```rust
-#![allow(unused)]
-use soroban_sdk::{Bytes, BytesN, Env};
+Solidity provides a number of functions for working with addresses. These functions include:
 
-soroban_sdk::contractimport!(file = "./soroban_token_contract.wasm");
+- `address(this)`: Returns the address of the current contract.
+- `address payable(this)`: Returns the address of the current contract as a payable address.
+- `address(address)`: Returns the address of the specified account.
+- `address payable(address)`: Returns the address of the specified account as a payable address.
 
-pub fn create_contract(e: &Env, token_wasm_hash: &BytesN<32>, token_a: &BytesN<32>) -> BytesN<32> {
-    let mut salt = Bytes::new(e);
-    salt.append(&token_a.clone().into());
+Rust provides a number of functions for working with addresses. These functions include:
 
-    let salt = e.crypto().sha256(&salt);
-    e.deployer()
-        .with_current_contract(&salt)
-        .deploy(token_wasm_hash)
-}
-```
+- `Env::get_current_contract_address(self)`: Returns the Address object corresponding to the current executing contract.
+- Used as `e.current_contract_address()`
+- `Env::get_current_contract_id(self)`: Returns the 32-byte hash identifier of the current executing contract.
+- Used as `e.current_contract_id()`
 
-</TabItem>
+The `Env` not only provides essential information about the currently executing contract and its invoker, but also offers access to contract data and functions for signing, hashing, and more. The construction or conversion of most types in Soroban requires access to an `Env` instance.
 
-<TabItem value="token_interface.rs" label="src/token_interface.rs">
+### Function Visibility Specifiers
 
-```rust
-//! This contract demonstrates a sample implementation of the Soroban token
-//! interface.
-use crate::admin::{check_admin, has_administrator, write_administrator};
-use crate::allowance::{read_allowance, spend_allowance, write_allowance};
-use crate::balance::{is_authorized, write_authorization};
-use crate::balance::{read_balance, receive_balance, spend_balance};
-use crate::event;
-use crate::metadata::{
-    read_decimal, read_name, read_symbol, write_decimal, write_name, write_symbol,
-};
-use soroban_sdk::{contractimpl, Address, Bytes, Env};
+Solidity provides a number of function visibility specifiers that can be used to control who can call a function. These specifiers include:
 
-pub trait TokenTrait {
-    fn initialize(e: Env, admin: Address, decimal: u32, name: Bytes, symbol: Bytes);
+- `public`: Anyone can call the function.
+- `external`: Only other contracts can call the function.
+- `internal`: Only the current contract and contracts that inherit from it can call the function.
+- `private`: Only the current contract can call the function.
 
-    fn allowance(e: Env, from: Address, spender: Address) -> i128;
+Rust provides a number of function visibility specifiers that can be used to control who can call a function. These specifiers include:
 
-    fn incr_allow(e: Env, from: Address, spender: Address, amount: i128);
+- `pub`: Anyone can call the function.
+- `pub(crate)`: Only other contracts can call the function.
+- `pub(super)`: Only the current contract and contracts that inherit from it can call the function.
+- `pub(self)`: Only the current contract can call the function.
 
-    fn decr_allow(e: Env, from: Address, spender: Address, amount: i128);
+### Time-Based Variables
 
-    fn balance(e: Env, id: Address) -> i128;
+Solidity provides a number of time-based variables that can be used to access information about the current block. These variables include:
 
-    fn spendable(e: Env, id: Address) -> i128;
+- `block.timestamp`: The timestamp of the current block.
+- `block.number`: The number of the current block.
 
-    fn authorized(e: Env, id: Address) -> bool;
+Rust provides a number of time-based variables that can be used to access information about the current block. These variables include:
 
-    fn xfer(e: Env, from: Address, to: Address, amount: i128);
+- `Env::get_ledger_timestamp(self.env())`: Returns a unix timestamp for when the ledger was closed.
+- Used as `env.ledger().timestamp()`
+- `Env::get_ledger_sequence(self.env())`: Returns the sequence number of the ledger.
+- Used as `env.ledger().sequence()`
 
-    fn xfer_from(e: Env, spender: Address, from: Address, to: Address, amount: i128);
+Overall the Rust equivalents of Solidity concepts are very similar. The main difference is that Rust uses `env` instead of `msg` to access information about the current transaction.
 
-    fn burn(e: Env, from: Address, amount: i128);
-
-    fn burn_from(e: Env, spender: Address, from: Address, amount: i128);
-
-    fn clawback(e: Env, admin: Address, from: Address, amount: i128);
-
-    fn set_auth(e: Env, admin: Address, id: Address, authorize: bool);
-
-    fn mint(e: Env, admin: Address, to: Address, amount: i128);
-
-    fn set_admin(e: Env, admin: Address, new_admin: Address);
-
-    fn decimals(e: Env) -> u32;
-
-    fn name(e: Env) -> Bytes;
-
-    fn symbol(e: Env) -> Bytes;
-}
-
-fn check_nonnegative_amount(amount: i128) {
-    if amount < 0 {
-        panic!("negative amount is not allowed: {}", amount)
-    }
-}
-
-pub struct Token;
-
-#[contractimpl]
-impl TokenTrait for Token {
-    fn initialize(e: Env, admin: Address, decimal: u32, name: Bytes, symbol: Bytes) {
-        if has_administrator(&e) {
-            panic!("already initialized")
-        }
-        write_administrator(&e, &admin);
-
-        write_decimal(&e, u8::try_from(decimal).expect("Decimal must fit in a u8"));
-        write_name(&e, name);
-        write_symbol(&e, symbol);
-    }
-
-    fn allowance(e: Env, from: Address, spender: Address) -> i128 {
-        read_allowance(&e, from, spender)
-    }
-
-    fn incr_allow(e: Env, from: Address, spender: Address, amount: i128) {
-        from.require_auth();
-
-        check_nonnegative_amount(amount);
-
-        let allowance = read_allowance(&e, from.clone(), spender.clone());
-        let new_allowance = allowance
-            .checked_add(amount)
-            .expect("Updated allowance doesn't fit in an i128");
-
-        write_allowance(&e, from.clone(), spender.clone(), new_allowance);
-        event::incr_allow(&e, from, spender, amount);
-    }
-
-    fn decr_allow(e: Env, from: Address, spender: Address, amount: i128) {
-        from.require_auth();
-
-        check_nonnegative_amount(amount);
-
-        let allowance = read_allowance(&e, from.clone(), spender.clone());
-        if amount >= allowance {
-            write_allowance(&e, from.clone(), spender.clone(), 0);
-        } else {
-            write_allowance(&e, from.clone(), spender.clone(), allowance - amount);
-        }
-        event::decr_allow(&e, from, spender, amount);
-    }
-
-    fn balance(e: Env, id: Address) -> i128 {
-        read_balance(&e, id)
-    }
-
-    fn spendable(e: Env, id: Address) -> i128 {
-        read_balance(&e, id)
-    }
-
-    fn authorized(e: Env, id: Address) -> bool {
-        is_authorized(&e, id)
-    }
-
-    fn xfer(e: Env, from: Address, to: Address, amount: i128) {
-        from.require_auth();
-
-        check_nonnegative_amount(amount);
-        spend_balance(&e, from.clone(), amount);
-        receive_balance(&e, to.clone(), amount);
-        event::transfer(&e, from, to, amount);
-    }
-
-    fn xfer_from(e: Env, spender: Address, from: Address, to: Address, amount: i128) {
-        spender.require_auth();
-
-        check_nonnegative_amount(amount);
-        spend_allowance(&e, from.clone(), spender, amount);
-        spend_balance(&e, from.clone(), amount);
-        receive_balance(&e, to.clone(), amount);
-        event::transfer(&e, from, to, amount)
-    }
-
-    fn burn(e: Env, from: Address, amount: i128) {
-        from.require_auth();
-
-        check_nonnegative_amount(amount);
-        spend_balance(&e, from.clone(), amount);
-        event::burn(&e, from, amount);
-    }
-
-    fn burn_from(e: Env, spender: Address, from: Address, amount: i128) {
-        spender.require_auth();
-
-        check_nonnegative_amount(amount);
-        spend_allowance(&e, from.clone(), spender, amount);
-        spend_balance(&e, from.clone(), amount);
-        event::burn(&e, from, amount)
-    }
-
-    fn clawback(e: Env, admin: Address, from: Address, amount: i128) {
-        check_nonnegative_amount(amount);
-        check_admin(&e, &admin);
-        admin.require_auth();
-        spend_balance(&e, from.clone(), amount);
-        event::clawback(&e, admin, from, amount);
-    }
-
-    fn set_auth(e: Env, admin: Address, id: Address, authorize: bool) {
-        check_admin(&e, &admin);
-        admin.require_auth();
-        write_authorization(&e, id.clone(), authorize);
-        event::set_auth(&e, admin, id, authorize);
-    }
-
-    fn mint(e: Env, admin: Address, to: Address, amount: i128) {
-        check_nonnegative_amount(amount);
-        check_admin(&e, &admin);
-        admin.require_auth();
-        receive_balance(&e, to.clone(), amount);
-        event::mint(&e, admin, to, amount);
-    }
-
-    fn set_admin(e: Env, admin: Address, new_admin: Address) {
-        check_admin(&e, &admin);
-        admin.require_auth();
-        write_administrator(&e, &new_admin);
-        event::set_admin(&e, admin, new_admin);
-    }
-
-    fn decimals(e: Env) -> u32 {
-        read_decimal(&e)
-    }
-
-    fn name(e: Env) -> Bytes {
-        read_name(&e)
-    }
-
-    fn symbol(e: Env) -> Bytes {
-        read_symbol(&e)
-    }
-}
-```
-
-</TabItem>
-</Tabs>
-
-Lets break down what happens in the `lib.rs` file above and find how "yield" is generated from our vault contract
-
-```rust
-    fn deposit(e: Env, to: Address, amount: i128) {
-        // Depositor needs to authorize the deposit
-        to.require_auth();
-
-        let token_client = token::Client::new(&e, &get_token(&e));
-
-        token_client.xfer(&to, &e.current_contract_address(), &amount);
-
-        let balance_a = get_token_balance(&e);
-        let total_shares = get_total_shares(&e);
-
-        mint_shares(&e, to, amount);
-        put_reserve(&e, balance_a);
-        put_total_shares(&e, total_shares + amount)
-    }
-```
-
-- The `xfer` method of the `token_client` instance transfers tokens from the depositor to the vault contract.
-- The current token balance and total shares issued by the vault contract are obtained using the `get_token_balance` and `get_total_shares` functions, respectively.
-- `mint_shares` is called to issue new shares to the depositor.
-- `put_reserve` stores the current token balance in a reserved location.
-- `put_total_shares` updates the total shares issued by the vault contract.
-
-If the user were to call the `deposit` method with 100 tokens, the following would happen:
-
-- 100 tokens would be transferred from the depositor to the vault contract.
-- The current token balance would be stored in a reserved location.
-- The total shares issued by the vault contract would be updated to 100.
-- 100 shares would be issued to the depositor.
-
-Nice! We deposited tokens to the vault and recieved shares in return. Now, let's see what happens when we withdraw tokens from the vault.
-
-```rust
-    fn withdraw(e: Env, to: Address, amount: i128) -> i128 {
-        to.require_auth();
-
-        // First transfer the vault shares that need to be redeemed
-        let share_token_client = token::Client::new(&e, &get_token_share(&e));
-        share_token_client.xfer(&to, &e.current_contract_address(), &amount);
-
-        let token_client = token::Client::new(&e, &get_token(&e));
-        token_client.xfer(&e.current_contract_address(), &to, &(&amount/&100));
-
-        let balance = get_token_balance(&e);
-        let balance_shares = get_balance_shares(&e);
-
-        let total_shares = get_total_shares(&e);
-
-        if total_shares < amount {
-            panic!("not enought shares to complete withdrawal");
-        }
-
-        burn_shares(&e, balance_shares);
-        transfer_token(&e, to.clone(), amount);
-        put_reserve(&e, balance - amount);
-
-        amount
-    }
-```
-
-- The `xfer` method of the `share_token_client` instance transfers shares from the withdrawer to the vault contract.
-- The `xfer` method of the `token_client` instance transfers tokens from the vault contract to the withdrawer.
-- `burn_shares` is called to burn the shares that were transferred to the vault contract.
-- `transfer_token` is called to transfer tokens from the vault contract to the withdrawer.
-- `put_reserve` stores the current token balance in a reserved location.
-
-> _Note_ : In the withdrawal function, you'll notice that the transfer amount is defined as `&(&amount / &100)`. This is a simple yield calculation that assumes the yield to be 1% of the amount being withdrawn. However, it's important to note that this is a very simplistic approach and is not suitable for production-grade systems. The purpose of this calculation is to demonstrate how yield can be generated from a vault contract. In reality, yield calculations are more complex and involve various factors such as market conditions, risk management, and fees.
-
-If the user were to call the `withdraw` method with 100 shares, the following would happen:
-
-- 100 shares would be transferred from the withdrawer to the vault contract.
-- The current token balance would be stored in a reserved location.
-- 100 shares would be burned.
-- 100 + (100/100) tokens would be transferred from the vault contract to the withdrawer.
-
-### Testing
-
-To test the vault contract, we will can simply run the following command in our terminal from our vault contract directory:
-
-```zsh
-cargo test
-```
-
-This will run the tests that we've written in the `src/test.rs` file.
-
-```zsh
-running 1 test
-test test::test ... ok
-```
-
-### Vault Contract Deployment and Interaction
-
-Below you will find a series of commands that will help you build, deploy and interact with the vault and token contracts. You can use them to follow along as we walk through the process of building, deploying and interacting with the contracts. It may behoove you to keep these commands in a `scripts` directory in your project. This way, you can easily run them from your terminal.
-
-<Tabs>
-<TabItem value="build" label="build.sh">
-
-```bash
-cargo build --target wasm32-unknown-unknown --release
-```
-
-</TabItem>
-
-<TabItem value="deploy token" label="deploy_token.sh">
-
-```bash
-soroban contract deploy \
-    --wasm soroban_token_contract.wasm \
-    --source S... \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022'
-```
-
-</TabItem>
-
-<TabItem value="initialize token" label="initialize_token.sh">
-
-```bash
-soroban contract invoke \
-    --wasm soroban_token_contract.wasm \
-    --id <TOKEN_CONTRACT_ID> \
-    --source S... \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
-    -- \
-    initialize \
-    --admin G... \
-    --decimal 18 \
-    --name <TOKEN_NAME> \
-    --symbol <TOKEN_SYMBOL>
-```
-
-</TabItem>
-
-<TabItem value="mint" label="mint.sh">
-
-```bash
-soroban contract invoke \
-    --wasm soroban_token_contract.wasm \
-    --id <TOKEN_CONTRACT_ID> \
-    --source S... \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
-    -- \
-    mint \
-    --admin G... \
-    --to G... \
-    --amount 100
-```
-
-</TabItem>
-
-<TabItem value="balance" label="balance.sh">
-
-```bash
-soroban contract invoke \
-    --wasm soroban_token_contract.wasm \
-    --id <TOKEN_CONTRACT_ID> \
-    --source S... \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
-    -- \
-        balance \
-    --id G...
-```
-
-</TabItem>
-
-<TabItem value="insatll wasm" label="install.sh">
-
-```bash
-soroban contract install --wasm soroban_token_contract.wasm
-```
-
-</TabItem>
-
-<TabItem value="deploy vault" label="deploy_vault.sh">
-
-```bash
-soroban contract deploy \
-    --wasm target/wasm32-unknown-unknown/release/vault.wasm \
-    --source S... \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022'
-```
-
-</TabItem>
-
-<TabItem value="initialize vault" label="initialize_vault.sh">
-
-```bash
-soroban contract invoke \
-    --wasm target/wasm32-unknown-unknown/release/vault.wasm \
-    --id <VAULT_CONTRACT_ID> \
-    --source S... \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
-    -- \
-    initialize \
-    --token_wasm_hash 73593275ee3bcacc2aef8d641a1d5108618064bdfff84a826576b8caff395add \
-    --token <TOKEN_CONTRACT_ID>
-```
-
-</TabItem>
-
-<TabItem value="get share" label="share_id.sh">
-
-```bash
-soroban contract invoke \
-    --wasm target/wasm32-unknown-unknown/release/vault.wasm \
-    --id <VAULT_CONTRACT_ID> \
-    --source S... \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
-    -- \
-    share_id
-```
-
-</TabItem>
-
-<TabItem value="deposit" label="deposit.sh">
-
-```bash
-soroban contract invoke \
-    --wasm target/wasm32-unknown-unknown/release/vault.wasm \
-    --id <VAULT_CONTRACT_ID> \
-    --source S... \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
-    -- \
-    deposit \
-    --to G... \
-    --amount 100
-```
-
-</TabItem>
-
-<TabItem value="reserve" label="get_rsrv.sh">
-
-```bash
-soroban contract invoke \
-    --wasm target/wasm32-unknown-unknown/release/vault.wasm \
-    --id <VAULT_CONTRACT_ID> \
-    --source S... \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
-    -- \
-    get_rsrvs \
-```
-
-</TabItem>
-
-<TabItem value="withdraw" label="withdraw">
-
-```bash
-soroban contract invoke \
-    --wasm target/wasm32-unknown-unknown/release/vault.wasm \
-    --id <VAULT_CONTRACT_ID> \
-    --source S... \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
-    -- \
-    withdraw \
-    --to G... \
-    --amount 100
-```
-
-</TabItem>
-
-</Tabs>
-
-First, we need to build the vault contract. We can do this by running the `build.sh` script from our vault directory.
-
-```bash
-##cd vault
-cargo build --target wasm32-unknown-unknown --release
-```
-
-Next, we need to deploy the token contract. We can do this by running the `deploy_token.sh` script.
-
-```bash
-soroban contract deploy \
-    --wasm soroban_token_contract.wasm \
-    --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022'
-```
-
-We should recieve a SUCCESS message with the token contract ID. We will need this ID for the next step.
-
-```bash
-SUCCESS
-SUCCESS
-42b50b954e868b1255e20c9180ab53fb2112f035fb3dcff15b47bdd18ef05284
-```
-
-Next we need to initialize the token contract. We can do this by running the `initialize_token.sh` script.
-
-```bash
-soroban contract invoke \
-    --wasm soroban_token_contract.wasm \
-    --id <TOKEN_CONTRACT_ID> \
-    --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
-    -- \
-    initialize \
-    --admin <USER_ADDRESS> \
-    --decimal 18 \
-    --name <TOKEN_NAME> \
-    --symbol <TOKEN_SYMBOL>
-```
-
-Next, we need to deploy the vault contract. We can do this by running the `deploy_vault.sh` script.
-
-```bash
-soroban contract deploy \
-    --wasm soroban_vault_contract.wasm \
-    --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022'
-```
-
-We should recieve a SUCCESS message with the vault contract ID. We will need this ID for the next step.
-
-```bash
-SUCCESS
-SUCCESS
-07829f515df7d320101a8643b685c82d16e15d92bd11a49d2623a8b93b28bfd8
-```
-
-Now we need to get the WASM hash of the token contract. We can do this by running the `get_token_wasm_hash.sh` script.
-
-```bash
-soroban contract install --wasm soroban_token_contract.wasm
-```
-
-We should recieve the WASM hash of the token contract.
-
-```bash
-73593275ee3bcacc2aef8d641a1d5108618064bdfff84a826576b8caff395add
-```
-
-Now we need to initialize the vault contract. We can do this by running the `initialize_vault.sh` script.
-
-```bash
-soroban contract invoke \
-    --wasm soroban_vault_contract.wasm \
-    --id <VAULT_CONTRACT_ID> \
-    --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
-    -- \
-    initialize \
-    --token_wasm_hash 73593275ee3bcacc2aef8d641a1d5108618064bdfff84a826576b8caff395add \
-    --token <TOKEN_CONTRACT_ID>
-```
-
-After recieving a SUCCESS message, we will mint some tokens to both our User Account and Vault Contract addresses. We can do this by running the `mint.sh` script.
-
-Its important to note that the vault contract id will need to change formats for the call to work. We can convert the vault contract id to the correct format by pasting its address in a [Hex to StrKey Tool](https://strkey-encode.xycloo.com/).
-
-![Hex to StrKey Tool](../../static/img/hex2str.png)
-
-```bash
-soroban contract invoke \
-    --wasm soroban_token_contract.wasm \
-    --id <TOKEN_CONTRACT_ID> \
-    --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
-    -- \
-    mint \
-    --admin <USER_ADDRESS> \
-    --to <USER_OR_VAULT_ADDRESS> \
-    --amount 100
-```
-
-After recieving a SUCCESS message, we can check the balance of the account. We can do this by running the `balance.sh` script.
-
-```bash
-soroban contract invoke \
-    --wasm soroban_token_contract.wasm \
-    --id <TOKEN_CONTRACT_ID> \
-    --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
-    -- \
-        balance \
-    --id <USER_ADDRESS>
-```
-
-We should recieve a SUCCESS message with the balance of the account.
-
-```bash
-SUCCESS
-100
-```
-
-After recieving a SUCCESS message, we can deposit some tokens into our vault. We can do this by running the `deposit.sh` script.
-
-```bash
-soroban contract invoke \
-    --wasm soroban_vault_contract.wasm \
-    --id <VAULT_CONTRACT_ID> \
-    --source <ACCOUNT_SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
-    -- \
-    deposit \
-    --to <USER_ADDRESS> \
-    --amount 100
-```
-
-After recieving a SUCCESS message, we can check the reserves of the vault. We can do this by running the `reserves.sh` script.
-
-```bash
-soroban contract invoke \
-    --wasm soroban_vault_contract.wasm \
-    --id <VAULT_CONTRACT_ID> \
-    --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
-    -- \
-    get_rsrvs
-```
-
-We should recieve a SUCCESS message with the reserves of the vault.
-
-```bash
-SUCCESS
-"200"
-```
-
-100 from the deposit and 100 from the mint.
-
-Now we can withdraw some tokens from the vault. We can do this by running the `withdraw.sh` script.
-
-```bash
-soroban contract invoke \
-    --wasm soroban_vault_contract.wasm \
-    --id <VAULT_CONTRACT_ID> \
-    --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
-    -- \
-    withdraw \
-    --to <USER_ADDRESS> \
-    --amount 100
-```
-
-We should recieve a SUCCESS message with the withdrawal amount.
-
-```bash
-SUCCESS
-"100"
-```
-
-Now is a good time to check our account balance again. We can do this by running the `balance.sh` script.
-
-We should see our balance has increased the amount we withdrew plus yield (amount/100) or %1 of out withdraw amount.
-
-```bash
-SUCCESS
-101
-```
-
-And finally, we can check the reserves of the vault again. We can do this by running the `reserves.sh` script.
-
-We should see the reserves of the vault have decreased by the amount we withdrew + yield.
-
-```bash
-SUCCESS
-"99"
-```
-
-And there you have it! You have successfully deployed and interacted with the vault contract!
-
-Its important to note that this is not a production ready contract and is only meant to demonstrate the capabilities of the Soroban smart contract platform. We hope to see much more complex yield contracts deployed on the Soroban in the future, and we hope you will be a part of it!
+For more information on Solidity concepts and their Rust equivalents, it is recommend that one refer to both the [Soroban-SDK documentation](https://docs.rs/soroban-sdk/latest/soroban_sdk/struct.Env.html) and the [Solidity documentation](https://docs.soliditylang.org/en/v0.8.19/cheatsheet.html).

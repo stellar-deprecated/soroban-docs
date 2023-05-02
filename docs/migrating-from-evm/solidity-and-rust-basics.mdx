@@ -1,5 +1,5 @@
 ---
-sidebar_position: 2
+sidebar_position: 1
 title: Solidity and Rust Syntax, Data Types, and Basic Constructs
 description: Explore the fundamentals of Solidity and Rust Syntax, Data Types, and Basic Constructs
 ---
@@ -16,7 +16,7 @@ In this tutorial, we'll explore Rust and Solidity, two powerful programming lang
 
 ## Solidity Syntax, Data Types, and Basic Constructs
 
-Solidity is a high-level programming language for implementing smart contracts on the Ethereum blockchain. It has a syntax similar to JavaScript and supports a variety of data types and constructs.
+Solidity is a programming language designed specifically for creating smart contracts on the Ethereum Virtual Machine (EVM). It has a syntax similar to JavaScript and supports a variety of data types and constructs.
 
 ```javascript
 pragma solidity ^0.8.0;
@@ -42,28 +42,80 @@ Solidity supports various data types, such as:
 - Enums: `enum`
 - Mapping: `mapping`
 
+Here are examples of implementations for each data type:
+
+```javascript
+pragma solidity ^0.8.0;
+
+contract DataTypesExample {
+    // Boolean
+    bool public isCompleted = false;
+
+    // Integer (signed and unsigned)
+    int256 public signedInteger = -10;
+    uint256 public unsignedInteger = 10;
+
+    // Address
+    address public userAddress = 0x742d35Cc6634C0532925a3b844Bc454e4438f44e;
+
+    // String
+    string public greeting = "Hello, World!";
+
+    // Bytes (fixed-size and dynamic-size)
+    bytes2 public fixedBytes = 0x1234;
+    bytes32 public dynamicBytes = "Hello, Solidity!";
+
+    // Arrays (dynamic-size and fixed-size)
+    uint[] public dynamicArray = [1, 2, 3];
+    uint[5] public fixedArray = [1, 2, 3, 4, 5];
+
+    // Struct
+    struct Person {
+        string name;
+        uint age;
+    }
+    Person public person = Person("Alice", 30);
+
+    // Enums
+    enum Status { Open, Closed, Pending }
+    Status public currentStatus = Status.Open;
+    Status public nextStatus = Status.Closed;
+    Status public previousStatus = Status.Pending;
+
+    // Mapping
+    mapping(address => uint) public balances;
+
+    constructor() {
+        balances[msg.sender] = 100;
+    }
+}
+```
+
 ### Basic Constructs
 
 Some of the basic constructs in Solidity include:
 
-1. Variables: Declared with a data type and an identifier.
-2. Functions: Defined with the `function` keyword.
-3. Modifiers: Used to modify functions' behavior.
-4. Events: Used to log changes in the contract state.
-5. Inheritance: Solidity supports single and multiple inheritance.
+1. `Variables`: Declared with a data type and an identifier.
+2. `Functions`: Defined with the `function` keyword.
+3. `Modifiers`: Used to modify functions' behavior.
+4. `Events`: Used to log changes in the contract state.
+5. `Inheritance`: Solidity supports single and multiple inheritance.
+
+We will explore some of these constructs in more detail in the next article, [Advanced Solidity Concepts](solidity-and-rust-advanced-concepts#advanced-solidity-concepts).
 
 ## Understanding Rust Syntax, Data Types, and Ownership Model
 
-Rust is a systems programming language designed for safety, concurrency, and performance. It enforces strict ownership and borrowing rules to prevent data races and other common bugs.
+Rust is a programming language that is well-suited for building smart contracts due to its emphasis on safety, concurrency, and performance. It enforces strict ownership and borrowing rules to prevent data races and other common bugs.
 
 ```rust
 fn main() {
     println!("Hello, world!");
+}
 ```
 
 ### Data Types
 
-The Soroban Rust SDK supports several [built-in data types](../learn/built-in-types), such as:
+The [Soroban Rust SDK](https://docs.rs/soroban-sdk/0.7.0/soroban_sdk/index.html) supports several [built-in data types](../learn/built-in-types), such as:
 
 - Unsigned 32-bit Integer (`u32`)
 - Signed 32-bit Integer (`i32`)
@@ -80,19 +132,145 @@ The Soroban Rust SDK supports several [built-in data types](../learn/built-in-ty
 
 The Soroban Rust SDK also supports several [custom data types](../learn/custom-types), such as:
 
-- Structs (with Named Fields): A custom type consisting of named fields stored on the ledger as a map of key-value pairs.
-- Structs (with Unnamed Fields): A custom type consisting of unnamed fields stored on the ledger as a vector of values.
-- Enum (Unit and Tuple Variants): A custom type consisting of unit and tuple variants stored on the ledger as a two-element vector, with the first element being the name of the variant and the second being the value.
-- Enum (Integer Variants): A custom type consisting of integer variants stored on the ledger as the u32 value.
+- `Structs` (with Named Fields): A custom type consisting of named fields stored on the ledger as a `map` of key-value pairs.
+- `Structs` (with Unnamed Fields): A custom type consisting of unnamed fields stored on the ledger as a vector of values.
+- `Enum` (Unit and Tuple Variants): A custom type consisting of unit and tuple variants stored on the ledger as a two-element vector, with the first element being the name of the variant and the second being the value.
+- `Enum` (Integer Variants): A custom type consisting of integer variants stored on the ledger as the `u32` value.
+
+The following are examples of implementations for each data type:
+
+```rust
+let unsigned_32_bit: u32 = 42;
+let signed_32_bit: i32 = -42;
+let unsigned_64_bit: u64 = 42;
+let signed_64_bit: i64 = -42;
+let unsigned_128_bit: u128 = 42;
+let signed_128_bit: i128 = -42;
+let boolean: bool = true;
+let symbol = Symbol::short("SampleSymbol");
+let bytes = Bytes::from_slice(&env, &[1; 32]);
+let bytes = BytesN::from_array(&env, &[0; 32]);
+let vec = vec![&env, 0, 1, 2, 3];
+let map = map![&env, (2, 20), (1, 10)];
+let address = Address::new([0u8; 32]);
+
+pub struct State {
+    pub count: u32,
+    pub last_incr: u32,
+}
+
+pub enum Enum {
+    A = 1,
+    B = 2,
+}
+```
+
+### A Brief Introduction to Modules, Macros, Structs, Traits, and Attribute Macros
+
+In this section, we will provide a concise introduction to some fundamental concepts in Rust: `Modules`, `Macros`, `Structs`, `Traits`, and `Attribute Macros`.
+
+These concepts are essential for understanding and writing efficient Rust code and will help you along your Soroban developer journey.
+
+#### 1. Modules
+
+Modules in Rust are used to organize and separate code into different namespaces. They enable better code organization, reusability, and encapsulation. To define a module, use the `mod` keyword followed by a block containing the module's contents.
+
+```rust
+mod my_module {
+    pub fn my_function() {
+        println!("Hello from my_module!");
+    }
+}
+```
+
+#### 2. Macros
+
+Macros in Rust are powerful tools that allow you to define reusable chunks of code. They are defined with the `macro_rules!` keyword and can be invoked with a `!` after the macro's name. Macros employ pattern matching to generate code at compile time.
+
+```rust
+macro_rules! my_macro {
+    () => {
+        println!("Hello from my_macro!");
+    };
+}
+
+fn main() {
+    my_macro!();
+}
+```
+
+#### 3. Structs
+
+Structs are custom data types in Rust that enable you to bundle data together. They provide a way to define and create more complex data structures
+
+```rust
+struct MyStruct {
+    field1: i32,
+    field2: String,
+}
+
+fn main() {
+    let my_instance = MyStruct {
+        field1: 42,
+        field2: String::from("Hello"),
+    };
+}
+```
+
+#### 4. Traits
+
+Traits in Rust define a shared set of behaviors for different types. They can be thought of as interfaces in other languages. Traits are defined with the `trait` keyword, and their methods can be implemented for different types using the `impl` keyword.
+
+```rust
+trait MyTrait {
+    fn my_method(&self);
+}
+
+struct MyStruct;
+
+impl MyTrait for MyStruct {
+    fn my_method(&self) {
+        println!("Hello from MyTrait's my_method!");
+    }
+}
+```
+
+#### 5. Attribute Macros
+
+Attribute macros in Rust are a form of procedural macros that enable you to define custom attributes for various language elements such as functions, structs, and enums. They can modify or generate code based on the annotated items.
+
+```rust
+// To use an attribute macro, first import it with `use`
+use my_attribute_macro::my_attribute;
+
+// Then apply the attribute to an element in your code
+#[my_attribute]
+fn my_function() {
+    println!("Hello from my_function!");
+}
+```
+
+During your Soroban developer journey, you will frequently encounter the attribute macro [`#[contractimpl]`](https://docs.rs/soroban-sdk/0.7.0/soroban_sdk/attr.contractimpl.html) which exports publicly accessible functions to the Soroban environment.
+
+Functions that are publicly accessible in the implementation are invocable by other contracts, or directly by transactions, when deployed.
+
+```rust
+#[contractimpl]
+impl HelloContract {
+    pub fn hello(env: Env, to: Symbol) -> Vec<Symbol> {
+        vec![&env, Symbol::short("Hello"), to]
+    }
+}
+```
 
 ### Ownership Model
 
-Rust enforces **strict ownership rules** to manage memory and resources:
+Rust enforces [**strict ownership rules**](https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html) to manage memory and resources:
 
 - Each value has a single owner.
 - When the owner goes out of scope, the value is automatically deallocated.
-- Borrowing: Values can be borrowed as immutable or mutable references.
-- Lifetimes: Used to ensure that references remain valid.
+- [`Borrowing`](https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html): Values can be borrowed as immutable or mutable references.
+- [`Lifetimes`](https://doc.rust-lang.org/rust-by-example/scope/lifetime.html): Used to ensure that references remain valid.
 
 To learn more about Rust's Contract Dialect, check out the [Contract Rust Dialect Page](../learn/rust-dialect).
 
@@ -100,7 +278,7 @@ To learn more about Rust's Contract Dialect, check out the [Contract Rust Dialec
 
 In this section, we'll learn how to write and interact with simple smart contracts in Solidity and Rust.
 
-### Writing a Simple Smart Contract in Solidity
+### Writing a Smart Contract in Solidity
 
 Here's an example of a simple Solidity smart contract for a counter:
 
@@ -121,7 +299,7 @@ pragma solidity ^0.8.0;
 }
 ```
 
-This is a simple smart contract that implements a counter in Solidity, a programming language used for creating smart contracts on the Ethereum Virtual Machine. Let's break down the code line by line:
+Let's break down the [layout of the code](https://docs.soliditylang.org/en/v0.8.19/layout-of-source-files.html#spdx-license-identifier) line by line:
 
 ```javascript
 // SPDX-License-Identifier: UNLICENSED
@@ -133,7 +311,7 @@ This is a comment that identifies the license for the code. It's not required fo
 pragma solidity ^0.8.0;
 ```
 
-This specifies the version of Solidity that this code was written for. In this case, it's version 0.8.0 or higher.
+This specifies the version of Solidity that this code was written for. In this case, it's version `0.8.0` or higher.
 
 ```javascript
 contract Counter {}
@@ -145,7 +323,7 @@ This defines a new Solidity contract called `Counter`.
 uint256 private _count;
 ```
 
-This is a private variable called `_count` of type `uint256` (unsigned integer). This variable will be used to store the current value of the counter.
+This is a [`private variable`](https://docs.soliditylang.org/en/v0.8.19/cheatsheet.html#function-visibility-specifiers) called `_count` of type `uint256` (unsigned integer). This variable will be used to store the current value of the counter. It is marked as `private`, which means it can only be accessed from within the contract.
 
 ```javascript
 function getCount() public view returns (uint256) {
@@ -153,7 +331,7 @@ function getCount() public view returns (uint256) {
 }
 ```
 
-This is a function called `getCount()` that returns the current value of the counter. The function is marked as `public`, which means it can be called from outside the contract. The view keyword indicates that this function doesn't modify the state of the contract. The returns keyword specifies the return type of the function.
+This is a function called `getCount()` that returns the current value of the counter. The function is marked as `public`, which means it can be called from outside the contract. The `view` keyword indicates that this function doesn't modify the state of the contract. The `returns` keyword specifies the return type of the function.
 
 ```javascript
 function increment() public {
@@ -161,11 +339,11 @@ function increment() public {
 }
 ```
 
-This is a function called `increment()` that increments the counter by 1. It doesn't return anything, but it modifies the state of the contract. Like `getCount()`, it's marked as `public`, which means it can be called from outside the contract.
+This is a function called `increment()` that increments the counter by 1. It doesn't return anything, but it modifies the state of the contract. Like `getCount()`, it's marked as `public`, which means it can be called from both inside and outside the contract.
 
 ### Interacting with the Smart Contract
 
-We can interact with the smart contract using the Remix IDE. To do so, follow these steps:
+We can interact with the smart contract using the `Remix IDE`. To do so, follow these steps:
 
 1. Click the following link to [open the Gist in Remix](https://remix.ethereum.org/#version=soljson-v0.8.18+commit.87f61d96.js&optimize=false&runs=200&gist=416ab15a6beed9d91cf2f615625ffe48&lang=en&evmVersion=null).
 
@@ -174,7 +352,7 @@ We can interact with the smart contract using the Remix IDE. To do so, follow th
 ![Counter](../../static/img/counter.png)
 
 3. Press `cmd + s` to compile the contract.
-4. Navigate to the Deploy & Run Transactions tab and click the Deploy button.
+4. Navigate to the `Deploy & Run Transactions` tab and click the `Deploy` button.
 
 ![Deploy](../../static/img/deploy-counter.png)
 
@@ -186,6 +364,8 @@ The contract should appear under the `Deployed Contracts` tab:
 6. Click the `getCount` button to get the current count.
 
 ![Increment](../../static/img/increment.png)
+
+Up to this point, we've covered the basics of writing, deploying to a sandbox VM, and interacting with a simple smart contract using Solidity. In the following section, we will extend our knowledge by learning how to achieve the same outcomes using Rust.
 
 ### Writing and Interacting with a Simple Counter in Rust
 
@@ -228,7 +408,7 @@ impl IncrementContract {
 }
 ```
 
-This code is an implementation of a smart contract written in Rust using the Soroban SDK, a Rust-based smart contract development toolkit.
+This code is an implementation of a smart contract written in Rust using the `Soroban SDK`, a Rust-based smart contract development toolkit developed by the [Stellar Development Foundation (SDF)](https://stellar.org/foundation) . The `Soroban SDK` is a powerful Rust library that provides a set of tools for writing smart contracts that run on the [Soroban](https://soroban.stellar.org/) WebAssembly runtime.
 
 Here's a line-by-line explanation of what the code is doing:
 
@@ -236,13 +416,13 @@ Here's a line-by-line explanation of what the code is doing:
 #![no_std]
 ```
 
-This is a Rust attribute that tells the Rust compiler not to link the Rust standard library. Since Soroban is a WebAssembly runtime, it doesn't have access to the Rust standard library, so this attribute is needed.
+This is a Rust attribute that tells the Rust compiler not to link the [Rust standard ibrary](https://doc.rust-lang.org/std/). Since Soroban is a [WebAssembly](https://webassembly.org/) runtime, it doesn't have access to the Rust standard library, so this attribute is needed.
 
 ```rust
 use soroban_sdk::{contractimpl, log, Env, Symbol};
 ```
 
-This code imports necessary items from the Soroban SDK for writing a smart contract. The `contractimpl` macro is used to implement the smart contract, while the `log` macro is used for logging messages. The `Env` struct represents the environment the contract is executing in, and the `Symbol` type is a small, efficient string type.
+This code imports necessary items from the `Soroban SDK` for writing a smart contract. The `contractimpl` [macro](https://doc.rust-lang.org/book/ch19-06-macros.html) is used to implement the smart contract, while the `log` macro is used for logging messages. The `Env` struct represents the environment the contract is executing in, and the `Symbol` type is a small, efficient string type.
 
 ```rust
 const COUNTER: Symbol = Symbol::short("COUNTER");
@@ -278,7 +458,7 @@ This retrieves the current count from the contract storage. The `storage` method
 log!(&env, "count: {}", count);
 ```
 
-This logs the current count using the `log` macro provided by the Soroban SDK.
+This logs the current count using the `log` macro provided by the `Soroban SDK`.
 
 ```rust
 count += 1;
@@ -302,13 +482,15 @@ This returns the updated count to the caller of the function.
 pub fn get_count(env: Env) -> u32 {}
 ```
 
-This is a public function called `get_count` that takes an `Env` struct as an argument and returns a `u32`. `Env` is the environment the contract is executing in, and `u32` is the type of the value returned by the function.
+This is a public function called `get_count` that takes an `Env` struct as an argument and returns a `u32`. Once more we see the `Env` which is the environment the contract is executing in, and `u32` as the type of the value returned by the function.
 
 ```rust
 env.storage().get(&COUNTER).unwrap_or(Ok(0)).unwrap()
 ```
 
 This retrieves the current count from the contract storage. The `storage` method on the `Env` struct returns a storage object that can be used to store and retrieve data. `get` retrieves the value associated with the `COUNTER` symbol from the storage. If there is no value associated with the symbol, it assumes the value 0. The `unwrap` method is used to panic if the value of `COUNTER` is not a `u32`.
+
+Now that we have written our smart contract, it's time to explore how we can interact with it using the [Soroban-CLI](https://soroban.stellar.org/docs/reference/soroban-cli). This powerful command-line tool allows us to interact with the Soroban runtime from a local machine, providing us with an efficient and flexible way to manage our smart contract.
 
 ### Interacting with the Smart Contract
 
@@ -355,11 +537,11 @@ inherits = "release"
 debug-assertions = true
 ```
 
-:::info For a detailed explanation of the dependencies, check out the [Hello World Example](../getting-started/hello-world).
+:::info For a detailed explanation of the `Cargo.toml` configuration used in this tutorial, check out the [Hello World Example](../getting-started/hello-world#import-soroban-sdk-and-features).
 
 :::
 
-Build the project using the cargo build command.
+Next, Build the project using the cargo build command.
 
 ```bash
 cd increment
@@ -378,7 +560,11 @@ soroban contract invoke \
 increment
 ```
 
-The output should be the current value of the counter, which in this case is `1`.
+The output should be the current value of the counter, which in this case is:
+
+```bash
+1
+```
 
 You can use the same `soroban contract invoke` command to increment the counter multiple times.
 
@@ -392,6 +578,10 @@ soroban contract invoke \
  get_count
 ```
 
-The output should be the current value of the counter, assuming the counter has been incremented 3 times, the output will be `3`.
+The output should be the current value of the counter, assuming the counter has been incremented 3 times, the output will be:
+
+```bash
+3
+```
 
 And that's it! You've learned how to write and test simple smart contracts in Solidity and Rust. In the next section, we'll learn how to write and test more complex smart contracts.

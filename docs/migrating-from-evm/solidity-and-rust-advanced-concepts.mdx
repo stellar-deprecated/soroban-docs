@@ -26,7 +26,7 @@ In Solidity, smart contracts can inherit properties and functions from other con
 
 Here is an example of a parent contract that defines a function called `messageFromParent` that returns a string:
 
-```javascript
+```solidity
 contract Parent {
     function messageFromParent() public pure returns (string memory) {
         return "Hello from Parent";
@@ -48,7 +48,7 @@ Interfaces are similar to contracts, but they cannot have any function implement
 
 Here is example of an interface that defines a function called `doSomething` that returns a `uint256`:
 
-```javascript
+```solidity
 interface SomeInterface {
     function doSomething() external returns (uint256);
 }
@@ -69,7 +69,7 @@ In this example, the `SomeContract` contract implements the `SomeInterface` inte
 
 Libraries are similar to contracts, but they cannot have any state variables. They are used to store reusable code that can be used by other contracts. Libraries are deployed once and can be used by multiple contracts. They are defined using the `library` keyword. They are invoked by using the `using` keyword.
 
-```javascript
+```solidity
 library SafeMath {
     function add(uint256 a, uint256 b) internal pure returns (uint256) {
         uint256 c = a + b;
@@ -96,7 +96,7 @@ In this example, the `SafeMath` library is used in the `increment` function. The
 
 Modifiers are used to change the behavior of functions in a declarative way. They are defined using the `modifier` keyword. Modifiers can be used to perform common checks such as validating inputs, checking permissions, and more.
 
-```javascript
+```solidity
 contract Ownable {
     address public owner;
 
@@ -388,7 +388,7 @@ The Soroban Rust SDK and Solidity provide a number of message properties that ca
 
 Here's a simple example of a smart contract that demonstrates the use of each
 
-```javascript
+```solidity
 pragma solidity ^0.8.0;
 
 contract SimpleContract {
@@ -458,7 +458,7 @@ The Soroban Rust SDK and Solidity provide a number of ways to handle errors. The
 
 Solidity provides a `require` function that can be used to check for certain conditions and revert the transaction if they are not met. For example, the following code sets a minimum value for the amount of Ether sent with the transaction:
 
-```javascript
+```solidity
 
 function deposit() public payable {
     require(msg.value >= 1 ether, "Not enough Ether sent");
@@ -493,7 +493,7 @@ The Soroban Rust SDK and Solidity provide a number of functions for working with
 
 Below is an example of a smart contract that illustrates how contracts can be retrieved
 
-```javascript
+```solidity
 pragma solidity ^0.8.0;
 
 contract SimpleContract {
@@ -548,7 +548,7 @@ The Soroban Rust SDK and Solidity provide a number of function visibility specif
 
 Here is an example of a smart contract that illustrates how function visibility is used in Solidity:
 
-```javascript
+```solidity
 pragma solidity ^0.8.0;
 
 contract SimpleContract {
@@ -609,7 +609,7 @@ The Soroban Rust SDK and Solidity provide a number of time-based variables that 
 
 Here is an example of a smart contract that illustrates how time-based variables are used in Solidity:
 
-```javascript
+```solidity
 pragma solidity ^0.8.0;
 
 contract SimpleContract {

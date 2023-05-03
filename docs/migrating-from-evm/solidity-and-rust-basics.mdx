@@ -18,7 +18,7 @@ In this tutorial, we'll explore Rust and Solidity, two powerful programming lang
 
 Solidity is a programming language designed specifically for creating smart contracts on the Ethereum Virtual Machine (EVM). It has a syntax similar to JavaScript and supports a variety of data types and constructs.
 
-```javascript
+```solidity
 pragma solidity ^0.8.0;
 
 contract HelloWorld {
@@ -44,7 +44,7 @@ Solidity supports various data types, such as:
 
 Here are examples of implementations for each data type:
 
-```javascript
+```solidity
 pragma solidity ^0.8.0;
 
 contract DataTypesExample {
@@ -282,7 +282,7 @@ In this section, we'll learn how to write and interact with simple smart contrac
 
 Here's an example of a simple Solidity smart contract for a counter:
 
-```javascript
+```solidity
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
@@ -301,31 +301,31 @@ pragma solidity ^0.8.0;
 
 Let's break down the [layout of the code](https://docs.soliditylang.org/en/v0.8.19/layout-of-source-files.html#spdx-license-identifier) line by line:
 
-```javascript
+```solidity
 // SPDX-License-Identifier: UNLICENSED
 ```
 
 This is a comment that identifies the license for the code. It's not required for the code to run, but it's good practice to include licensing information.
 
-```javascript
+```solidity
 pragma solidity ^0.8.0;
 ```
 
 This specifies the version of Solidity that this code was written for. In this case, it's version `0.8.0` or higher.
 
-```javascript
+```solidity
 contract Counter {}
 ```
 
 This defines a new Solidity contract called `Counter`.
 
-```javascript
+```solidity
 uint256 private _count;
 ```
 
 This is a [`private variable`](https://docs.soliditylang.org/en/v0.8.19/cheatsheet.html#function-visibility-specifiers) called `_count` of type `uint256` (unsigned integer). This variable will be used to store the current value of the counter. It is marked as `private`, which means it can only be accessed from within the contract.
 
-```javascript
+```solidity
 function getCount() public view returns (uint256) {
     return _count;
 }
@@ -333,7 +333,7 @@ function getCount() public view returns (uint256) {
 
 This is a function called `getCount()` that returns the current value of the counter. The function is marked as `public`, which means it can be called from outside the contract. The `view` keyword indicates that this function doesn't modify the state of the contract. The `returns` keyword specifies the return type of the function.
 
-```javascript
+```solidity
 function increment() public {
     _count += 1;
 }

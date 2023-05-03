@@ -171,6 +171,127 @@ In this example, the `alloc` crate is imported into the smart contract using the
 
 For more details on how to use the `alloc` crate, including a hands on practical exercise, visit the [alloc section](../how-to-guides/alloc#how-it-works) of the documentation.
 
+#### Inherting Functionality from Other Crates
+
+We can illustrate another example of inheritance by importing functionality into a crate from other crates in the same project in the following example:
+
+Below is a function from the [`event.rs`](https://github.com/stellar/soroban-examples/blob/main/token/src/event.rs) file from our [Token](https://github.com/stellar/soroban-examples/tree/main/token) example.
+
+```rust
+use soroban_sdk::{Address, Env, Symbol};
+...
+pub(crate) fn mint(e: &Env, admin: Address, to: Address, amount: i128) {
+    let topics = (Symbol::short("mint"), admin, to);
+    e.events().publish(topics, amount);
+}
+```
+
+This function will publish a mint event to the blockchain with the following output:
+
+```
+Emit event with topics = ["mint", admin: Address, to: Address], data = [amount: i128]
+```
+
+We'll also use a function from our [`admin.rs`](https://github.com/stellar/soroban-examples/blob/main/token/src/admin.rs) file.
+
+```rust
+// Metering: covered by components
+pub fn read_administrator(e: &Host) -> Result<Address, HostError> {
+    let key = DataKey::Admin;
+    let rv = e.get_contract_data(key.try_into_val(e)?)?;
+    Ok(rv.try_into_val(e)?)
+}
+```
+
+This function returns a `Result` object that contains the administrator's address.
+
+Lastly, we'll implement a function from our [`balance.rs`](https://github.com/stellar/soroban-examples/blob/main/token/src/balance.rs) file.
+
+```rust
+pub fn receive_balance(e: &Env, addr: Address, amount: i128) {
+    let balance = read_balance(e, addr.clone());
+    if !is_authorized(e, addr.clone()) {
+        panic!("can't receive when deauthorized");
+    }
+    write_balance(e, addr, balance + amount);
+}
+```
+
+This function writes an amount to an address' balance.
+
+The `event.rs` is imported into the [`contract.rs`](https://github.com/stellar/soroban-examples/blob/main/token/src/contract.rs) file which holds the logic for our token contract.
+
+```rust
+//contract.rs
+
+//imports
+use crate::event;
+use crate::admin::{read_administrator};
+use crate::balance::{receive_balance};
+
+// trait logic
+pub trait TokenTrait {
+fn mint(e: Env, to: Address, amount: i128);
+}
+
+// struct logic
+pub struct Token;
+
+// impl logic
+
+#[contractimpl]
+impl TokenTrait for Token {
+fn mint(e: Env, to: Address, amount: i128) {
+        check_nonnegative_amount(amount);
+        let admin = read_administrator(&e);
+        admin.require_auth();
+        receive_balance(&e, to.clone(), amount);
+        event::mint(&e, admin, to, amount);
+    }
+}
+```
+
+As you can see, the `event.rs`, `admin.rs`, and `balance.rs` files are imported into the `contract.rs` file using the `use` keyword. This allows us to use the functions from those files in the `mint` function of our `contract.rs` file.
+
+#### Inheriting Functionality using `contractimport!`
+
+The Soroban Rust SDK provides a powerful macro, [`contractimport`](https://docs.rs/soroban-sdk/latest/soroban_sdk/macro.contractimport.html), which allows a user to import a contract from its WASM file, generating a client, types, and constant holding the contract file.
+
+Here is an example of how to use the `contractimport` macro taken from the [token.rs](https://github.com/stellar/soroban-examples/blob/main/liquidity_pool/src/token.rs) file from our [Liqudity Pool example](https://github.com/stellar/soroban-examples/blob/main/liquidity_pool):
+
+First, we see that the wasm file from the [previously built token example](https://github.com/stellar/soroban-examples/blob/main/token)is imported into the `token.rs` file using the `contractimport` macro:
+
+```rust
+//token.rs
+soroban_sdk::contractimport!(
+    file = "../token/target/wasm32-unknown-unknown/release/soroban_token_contract.wasm"
+);
+```
+
+We see then that our token contract is imported into our [`lib.rs`](https://github.com/stellar/soroban-examples/blob/main/liquidity_pool/src/lib.rs) file and a `Client` is generated for us to access functionality from the token contract:
+
+```rust
+//lib.rs
+mod token;
+
+fn get_balance(e: &Env, contract_id: BytesN<32>) -> i128 {
+    token::Client::new(e, &contract_id).balance(&e.current_contract_address())
+}
+
+fn transfer(e: &Env, contract_id: BytesN<32>, to: Address, amount: i128) {
+    token::Client::new(e, &contract_id).transfer(&e.current_contract_address(), &to, &amount);
+}
+
+struct LiquidityPool;
+
+#[contractimpl]
+impl LiquidityPoolTrait for LiquidityPool {
+let token_a_client = token::Client::new(&e, &get_token_a(&e));
+}
+```
+
+In the above example, we use `contractimport` to interact with the token file via a `Client` that was generated for the `token` module. This `Client` was created using a Contract trait that matches the interface of the contract, a ContractClient struct that contains functions for each function in the contract, and types for all contract types defined in the contract.
+
 ### Modules
 
 In Rust, modules consist of a cohesive set of related functions and types that are often organized together for better organization and reusability. These modules can be reused across multiple projects by publishing them as crates.
@@ -281,7 +402,7 @@ It's worth mentioning that the Soroban Rust SDK comes with several built-in requ
 
 Interfaces are an essential part of building smart contracts with Soroban.
 
-There are many types of smart contract interfaces, and each has a specific purpose. One example of an interface built with Soroban is the [Token Interface](../reference/interfaces/token-interface). This interface ensures that tokens deployed on Soroban are interoperable with contracts built to support Soroban's built-in tokens. The Token Interface consists of three compatibility requirements:
+There are many types of smart contract interfaces, and each has a specific purpose. One example of an interface built with Soroban is the [Token Interface](../../reference/interfaces/token-interface). This interface ensures that tokens deployed on Soroban are interoperable with contracts built to support Soroban's built-in tokens. The Token Interface consists of three compatibility requirements:
 
 - `function interface`
 - `authorization`

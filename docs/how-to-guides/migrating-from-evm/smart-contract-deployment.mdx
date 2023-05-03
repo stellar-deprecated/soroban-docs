@@ -240,7 +240,7 @@ This will create a new Rust project called `vault`.
 
 Now lets add the `soroban_token_contract.wasm` file to the `vault` project. To do this, we can drag and drop the file into the `vault` project directory.
 
-![vault-project](../../static/img/vault-project.png)
+![vault-project](../../../static/img/vault-project.png)
 
 Next, we'll need to add the Soroban SDK as a dependency. To do this, open the `Cargo.toml` file in your project and ensure that it matches the following:
 
@@ -1139,7 +1139,7 @@ After recieving a SUCCESS message, we will mint some tokens to **both** our User
 
 Its important to note that the vault contract id will need to change formats for the call to work. We can convert the vault contract id to the correct format by pasting its address in a [Hex to StrKey Tool](https://strkey-encode.xycloo.com/).
 
-![Hex to StrKey Tool](../../static/img/hex2str.png)
+![Hex to StrKey Tool](../../../static/img/hex2str.png)
 
 ```bash
 soroban contract invoke \

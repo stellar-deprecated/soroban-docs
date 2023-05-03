@@ -115,7 +115,7 @@ fn main() {
 
 ### Data Types
 
-The [Soroban Rust SDK](https://docs.rs/soroban-sdk/0.7.0/soroban_sdk/index.html) supports several [built-in data types](../learn/built-in-types), such as:
+The [Soroban Rust SDK](https://docs.rs/soroban-sdk/0.7.0/soroban_sdk/index.html) supports several [built-in data types](../../learn/built-in-types), such as:
 
 - Unsigned 32-bit Integer (`u32`)
 - Signed 32-bit Integer (`i32`)
@@ -130,7 +130,7 @@ The [Soroban Rust SDK](https://docs.rs/soroban-sdk/0.7.0/soroban_sdk/index.html)
 - Map (`Map`): ordered key-value dictionary
 - Address (`Address`): universal opaque identifier used in contracts
 
-The Soroban Rust SDK also supports several [custom data types](../learn/custom-types), such as:
+The Soroban Rust SDK also supports several [custom data types](../../learn/custom-types), such as:
 
 - `Structs` (with Named Fields): A custom type consisting of named fields stored on the ledger as a `map` of key-value pairs.
 - `Structs` (with Unnamed Fields): A custom type consisting of unnamed fields stored on the ledger as a vector of values.
@@ -272,7 +272,7 @@ Rust enforces [**strict ownership rules**](https://doc.rust-lang.org/book/ch04-0
 - [`Borrowing`](https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html): Values can be borrowed as immutable or mutable references.
 - [`Lifetimes`](https://doc.rust-lang.org/rust-by-example/scope/lifetime.html): Used to ensure that references remain valid.
 
-To learn more about Rust's Contract Dialect, check out the [Contract Rust Dialect Page](../learn/rust-dialect).
+To learn more about Rust's Contract Dialect, check out the [Contract Rust Dialect Page](../../learn/rust-dialect).
 
 ## Writing and Interacting with Simple Smart Contracts
 
@@ -408,7 +408,7 @@ impl IncrementContract {
 }
 ```
 
-This code is an implementation of a smart contract written in Rust using the [`Soroban Rust SDK`](../reference/sdks/rust), a Rust-based smart contract development toolkit developed by the [Stellar Development Foundation (SDF)](https://stellar.org/foundation) . The Soroban Rust SDK provides a powerful set of tools for writing smart contracts that run on the Soroban Virtual Machine.
+This code is an implementation of a smart contract written in Rust using the [`Soroban Rust SDK`](../../reference/sdks/rust), a Rust-based smart contract development toolkit developed by the [Stellar Development Foundation (SDF)](https://stellar.org/foundation) . The Soroban Rust SDK provides a powerful set of tools for writing smart contracts that run on the Soroban Virtual Machine.
 
 Here's a line-by-line explanation of what the code is doing:
 
@@ -492,7 +492,7 @@ env.storage().get(&COUNTER).unwrap_or(Ok(0)).unwrap()
 
 This is a repeat of the code we saw earlier, which retrieves the value associated with the key `COUNTER` from the contract storage. If there is no value set for the key `COUNTER`, a default value of 0 is used. Finally, the `unwrap()` method is called to extract the actual value from the `Ok` wrapper, which is then returned to the caller of the function.
 
-Now that we have written our smart contract, it's time to explore how we can interact with it using the [Soroban-CLI](https://soroban.stellar.org/docs/reference/soroban-cli). This powerful command-line tool allows us to interact with the Soroban Virtual Machine from a local machine, providing us with an efficient and flexible way to manage our smart contract.
+Now that we have written our smart contract, it's time to explore how we can interact with it using the [Soroban-CLI](../../reference/soroban-cli). This powerful command-line tool allows us to interact with the Soroban Virtual Machine from a local machine, providing us with an efficient and flexible way to manage our smart contract.
 
 ### Interacting with the Smart Contract
 
@@ -546,7 +546,7 @@ inherits = "release"
 debug-assertions = true
 ```
 
-:::info For a detailed explanation of the `Cargo.toml` configuration used in this tutorial, check out the [Hello World Example](../getting-started/hello-world#import-soroban-sdk-and-features).
+:::info For a detailed explanation of the `Cargo.toml` configuration used in this tutorial, check out the [Hello World Example](../../getting-started/hello-world#import-soroban-sdk-and-features).
 
 :::
 

@@ -1,11 +1,10 @@
-import React from 'react'
-import Head from '@docusaurus/Head';
-import Layout from '@theme/Layout'
-import clsx from 'clsx'
+import React from "react";
+import Head from "@docusaurus/Head";
+import Layout from "@theme/Layout";
 
-import './index.scss'
+import "./index.scss";
 
-export default function Home() {
+export default function Landing() {
   return (
     <Layout>
       <Head>
@@ -22,114 +21,426 @@ export default function Home() {
           content="Soroban is a smart contracts platform that is designed with purpose and built to perform. The Futurenet has launched! Start experimenting now!"
         />
       </Head>
-      
-      <main className='homepage'>
-        <div className="hp--hero">
-          <img className='hp--topRight' src="./img/homepage/top-right.svg" />
-          <img className='hp--bottomLeft' src="./img/homepage/bottom-left.svg" />
 
-          <div className="hp--heroInfo hp--maxWidth">
-            <img className='hp--logo' src="./img/homepage/soroban-white.svg" alt='Soroban' />
-            <img className='hp--arrows' src="./img/homepage/arrows.svg" />
-            <h1 className="hp--h1">Introducing Soroban</h1>
-            <h2 className="hp--h2">Soroban is a smart contracts platform that is designed with purpose and built to perform. The Futurenet has launched! Start experimenting now!</h2>
-            <a href="/#build-and-earn-rewards" className='hp--button'>Build &amp; Earn Rewards</a>
-            <a href="/docs" className='hp--button button--gray'>Docs</a>
-          </div>
-        </div>
-
-        <div className='hp--designedFor hp--maxWidth'>
-          <h1>Designed For</h1>
-
-          <div className='hp--features'>
-            <div className='hp--muchExcite orange'>
-              <div className="hp--front">
-                <img src="./img/homepage/battery.svg" />
-                <p>Batteries-Included Developer Experience</p>
-              </div>
-
-              <ul className="hp--back">
-                <li>A local sandbox for fast setup and iterative development</li>
-                <li>Plug-and-play SDKs for simple and complex authorization</li>
-                <li>Flexibility to reuse common functionality between contracts and access to built-in/out-of-the box contracts</li>
-                <li>Written in Rust from end-to-end, for Rust developers, which taps into a growing ecosystem of safe and efficient tooling</li>
-              </ul>
-            </div>
-
-            <div className='hp--muchExcite white'>
-              <div className="hp--front">
-                <img src="./img/homepage/scale.svg" />
-                <p>Scale</p>
-              </div>
-
-              <ul className="hp--back">
-                <li>Transaction footprints allow scaling to multiple cores</li>
-                <li>Contracts without deserialization / serialization loops</li>
-                <li>A calibrated fee model that represents compute and maximizes throughput while reducing cost</li>
-                <li>Solving state bloat: the elephant in the room</li>
-              </ul>
-            </div>
-
-            <div className='hp--muchExcite red'>
-              <div className="hp--front">
-                <img src="./img/homepage/railroad.svg" />
-                <p>Access to Financial Rails via Stellar</p>
-              </div>
-
-              <ul className="hp--back">
-                <li>Stellar speed and reliability – with 5 seconds to finality per contract</li>
-                <li>On a proven  network that has been live since 2015 and is processing 150 tps as we speak</li>
-                <li>A global anchor network of on/off ramps and assets, including worldwide cash access</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div id="build-and-earn-rewards" className='hp--cta hp--maxWidth'>
-          <h2>Build & Earn</h2>
-          <a href="https://share.hsforms.com/1U3FFLQBPQzCLKtv1vS8T-Q4u978" className='hp--imgLink'>
-            <img src='./img/homepage/sorobanathon.svg' />
-          </a>
-          <h1>Stellar Community Fund</h1>
-          <p>
-          Submit your Soroban project to the <a href="https://communityfund.stellar.org/">Stellar Community Fund</a> and receive up to $150K worth of XLM in awards. This is your chance to play a fundamental role in bootstrapping the Soroban  ecosystem by creating the  tools, protocols, dApps, and resources necessary for it to thrive. 
-          </p>
-          <p>New to Soroban? Need more time to noodle on an idea for submission? Play around with Soroban and get inspired:</p>
-          <ul>
-            <li>Launch your Soroban education on <a href="https://quest.stellar.org/">Stellar Quest</a>, and earn rewards for completing exciting challenges  basic building blocks of Soroban</li>
-            <li>Experiment, build, and tinker in <a href="/sorobanathon">Sorobanathon: Equinox</a> and earn XLM for submitting tutorials, code examples, and more based on your experience building with Soroban.</li>
-          </ul>
-          <a href="https://communityfund.stellar.org/" className='hp--button'>Submit Your Project</a>
-        </div>
-
-        <div className='hp--cta hp--maxWidth'>
-          <h2>
-            Connect with developers, <br />
-            be the first to get updates
-          </h2>
-          <a href="https://discord.gg/6ZCcYqbC96" className='hp--imgLink'>
-            <img src='./img/homepage/discord.svg' />
-          </a>
-          <h1>Join the Discord</h1>
-          <p>
-            Our lively Discord server is the place to interact with the vibrant community of Soroban developers, stay on top of important announcements, and share your feedback about Soroban.  
-          </p>
-          <a href="https://discord.gg/6ZCcYqbC96" className='hp--button'>Join the Discord</a>
-        </div>
-
-        <div className='bp--startYourJourney'>
-          <img className='hp--topRight' src="./img/homepage/top-right.svg" />
-          <img className='hp--arrows' src="./img/homepage/arrows.svg" />
-
-          <div className='hp--cta hp--maxWidth'>
-            <h1>Start your Journey</h1>
-            <p>
-              Get set up, see tutorials and examples, <br/> and read more about the nuts and bolts of Soroban.
-            </p>
-            <a href="/docs" className='hp--button'>Read the Docs</a>
-          </div>
-        </div>
+      <main className="Landing">
+        <Hero />
+        <Designed />
+        <Learn />
+        <GettingStarted />
+        <Earn />
+        <SCF />
+        <Soroban />
+        <MediaSection />
+        <Footer />
       </main>
     </Layout>
-  )
+  );
 }
+
+const Hero = () => (
+  <div className="Hero">
+    <div className="Hero__wrapper hp-center">
+      <div>
+        <div className="Hero__logo">
+          <img src="/img/landing/soroban-white.svg" alt="Logo" />
+        </div>
+
+        <div className="Hero__title">
+          <div>Introducing</div>
+          <div>Soroban</div>
+        </div>
+      </div>
+
+      <div className="Hero__right">
+        <p>
+          A developer-friendly, Rust-based smart contracts platform designed for
+          scale and sensibility. Currently live on the test network
+          dubbed Futurenet, Soroban seamlessly integrates with and works
+          alongside the existing Stellar blockchain.
+        </p>
+
+        <p>
+          Start building on Soroban today with the help of established tools and
+          documentation, or explore earning opportunities with the Soroban
+          Adoption Fund programs.
+        </p>
+
+        <div className="Hero__btn-group">
+          <a
+            href="/#build-and-earn-rewards"
+            className="hp-btn hp-btn-secondary"
+          >
+            Earn
+          </a>
+
+          <a href="/docs" className="hp-btn hp-btn-primary">
+            Docs
+          </a>
+        </div>
+      </div>
+    </div>
+    <img className="Hero__img1" src="/img/landing/image-1.svg" alt="1" />
+    <img className="Hero__img2" src="/img/landing/image-2.svg" alt="2" />
+    <img className="Hero__img3" src="/img/landing/image-3.svg" alt="3" />
+    <img className="Hero__img4" src="/img/landing/image-4.svg" alt="4" />
+    <img className="Hero__img5" src="/img/landing/image-5.svg" alt="5" />
+  </div>
+);
+
+const Designed = () => (
+  <div className="Designed">
+    <div className="Designed__wrapper hp-center hp-center--sm">
+      <h2 className="Designed__title">Designed For</h2>
+
+      <div className="Designed__cards">
+        <DesignedCard title="Batteries-Included Developer Experience">
+          With tools such as plug-and-play SDKs, Soroban CLI, RPC server, and
+          local sandbox, Soroban provides a user-friendly experience that gets
+          developers up and running quickly. Start building with
+          flexible, reusable functions and ready-to-use contracts.
+        </DesignedCard>
+
+        <DesignedCard title="Scale">
+          Soroban is designed with scalability in mind. Boost performance with multi-core scaling, 
+          an optimized fee model, and without pesky serialization loops. Soroban also tackles the 
+          elephant in the room head-on by addressing the solution to state bloat.
+        </DesignedCard>
+
+        <DesignedCard title="Real-World Utility">
+          Connect to Stellar’s unparalleled interoperability by accessing its
+          wide variety of on-chain assets and worldwide on and off-ramps. Also,
+          benefit from five-second contract finality on a proven and mature
+          network boasting 150 TPS.
+        </DesignedCard>
+      </div>
+    </div>
+  </div>
+);
+
+const DesignedCard = ({ title, children }) => (
+  <div className="DesignedCard">
+    <div className="DesignedCard__title">
+      <p>{title}</p>
+    </div>
+
+    <div className="DesignedCard__wrapper">
+      <div>
+        <img src="/img/landing/designed-for-icon.svg" alt="Designed for" />
+      </div>
+      <p>{children}</p>
+    </div>
+  </div>
+);
+
+const Learn = () => (
+  <div className="Learn">
+    <div className="Learn__wrapper hp-center">
+      <div className="Learn__left">
+        <h2 className="Learn__title">Learn</h2>
+
+        <p>
+          Getting started with Soroban is easy! Just install the Rust toolchain
+          and Soroban CLI to begin writing your first Soroban smart contract.
+          Learn more and continue building by checking out Soroban
+          documentation.
+        </p>
+      </div>
+
+      <div className="Learn__right">
+        <pre className="Learn__code">
+          {`#![no_std]
+use soroban_sdk::{contractimpl, vec, Env, Symbol, Vec};
+
+pub struct HelloContract;
+
+#[contractimpl]
+impl HelloContract {
+    pub fn hello(env: Env, to: Symbol) -> Vec<Symbol> {
+        vec![&env, Symbol::short("Hello"), to]
+    }
+}`}
+        </pre>
+
+        <div className="Learn__btn-group">
+          <a href="/docs" className="hp-btn hp-btn-secondary">
+            Go to Docs
+          </a>
+          <a
+            className="hp-btn hp-btn-primary"
+            rel="noreferrer"
+            href="/#build-and-earn-rewards"
+          >
+            Earn
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const GettingStarted = () => (
+  <div className="GettingStarted">
+    <div className="hp-center">
+      <h2 className="GettingStarted__title">Getting Started</h2>
+
+      <div className="GettingStarted__cards">
+        <GettingStartedCard
+          title="Setup"
+          subtitle="Install and configure Rust and the Soroban CLI."
+          href="/docs/getting-started/setup"
+        />
+
+        <GettingStartedCard
+          index="1."
+          title="Hello World"
+          subtitle="Create your first Soroban contract."
+          href="/docs/getting-started/hello-world"
+        />
+
+        <GettingStartedCard
+          index="2."
+          title="Storing Data"
+          subtitle="Write simple Soroban contract that stores and retrieves data."
+          href="/docs/getting-started/storing-data"
+        />
+
+        <GettingStartedCard
+          index="3."
+          title="Deploy to a local network"
+          subtitle="Use docker and the Stellar Quickstart image to run a local network."
+          href="/docs/getting-started/deploy-to-a-local-network"
+        />
+
+        <GettingStartedCard
+          index="4."
+          title="Connect Freighter wallet"
+          subtitle="Freighter is a browser extension that can sign Soroban transactions."
+          href="/docs/getting-started/connect-freighter-wallet"
+        />
+
+        <GettingStartedCard
+          index="5."
+          title="Deploy to Futurenet"
+          subtitle="Deploy and invoke your contracts on the Futurenet testnet."
+          href="/docs/getting-started/deploy-to-futurenet"
+        />
+      </div>
+    </div>
+  </div>
+);
+
+const GettingStartedCard = ({ index, title, subtitle, href }) => (
+  <a className="GettingStartedCard" href={href}>
+    {index && <p className="GettingStartedCard__index">{index}</p>}
+
+    <p className="GettingStartedCard__title">{title}</p>
+
+    <p className="GettingStartedCard__subtitle">{subtitle}</p>
+
+    <div className="GettingStartedCard__icon">
+      <img
+        className="GettingStartedCard__unactive"
+        src="/img/landing/arrow-black.svg"
+        alt="arrow"
+      />
+      <img
+        className="GettingStartedCard__active"
+        src="/img/landing/arrow-white.svg"
+        alt="arrow"
+      />
+    </div>
+  </a>
+);
+
+const Earn = () => (
+  <div className="Earn" id="build-and-earn-rewards">
+    <div className="Earn__wrapper hp-center hp-center--md">
+      <h2 className="Earn__title">Earn</h2>
+
+      <div className="Earn__right">
+        <p>
+          The Stellar Development Foundation (SDF)’s $100M Soroban Adoption Fund
+          encourages and supports developers as they learn, experiment, build,
+          and scale projects on Soroban. The fund is an umbrella for many
+          programs that support all levels of Soroban adoption, some of which
+          have launched and some of which have yet to launch.
+        </p>
+
+        <p>
+          These programs open doors for developers to become pioneers of the
+          Soroban ecosystem by encouraging them to build the vital tools and
+          projects that will make the platform successful.
+        </p>
+
+        <a
+          href="https://stellar.org/blog/a-developers-guide-to-soroban-adoption-fund-programs"
+          target="_blank"
+          className="hp-link"
+          rel="noreferrer"
+        >
+          <span>Read More</span>
+          <img src="/img/landing/arrow-white.svg" alt="arrow" />
+        </a>
+      </div>
+    </div>
+  </div>
+);
+
+const SCF = () => (
+  <div className="SCF">
+    <div className="SCF__wrapper hp-center hp-center--md">
+      <div className="SCF__left">
+        <img src="/img/landing/scf.svg" alt="Community Fund" />
+      </div>
+
+      <div className="SCF__right">
+        <h2 className="SCF__title">
+          <span>Stellar</span>
+          <span>Community</span>
+          <span>Fund</span>
+        </h2>
+
+        <p className="SCF__subtitle">
+          Submit your Soroban project to the Stellar Community Fund and receive
+          up to $150K worth of XLM in awards. This is your chance to play a
+          fundamental role in bootstrapping the Soroban ecosystem by creating
+          the tools, protocols, dApps, and resources necessary for it to thrive.
+        </p>
+
+        <a
+          href="https://communityfund.stellar.org/"
+          target="_blank"
+          className="hp-link hp-link__dark"
+          rel="noreferrer"
+        >
+          <span>Learn More</span>
+          <img src="/img/landing/arrow-black.svg" alt="arrow" />
+        </a>
+      </div>
+    </div>
+  </div>
+);
+
+const Soroban = () => (
+  <div className="Soroban">
+    <div className="Soroban__wrapper hp-center">
+      <h2>Soroban Quest</h2>
+      <p>
+        A series of quests designed for the beginner Soroban
+        developer. Earn unique NFTs by completing challenges that teach you
+        about custom types, auth storage, reverse engineering, and more, all in
+        a Gitpod environment.
+      </p>
+      <div className="Soroban__btn-group">
+          <a href="https://quest.stellar.org/soroban" className="hp-btn hp-btn-secondary">
+            Play Game
+          </a>
+        </div>
+    </div>
+  </div>
+);
+
+const MediaSection = () => (
+  <div className="MediaSection">
+    <div className="hp-center">
+      <h2 className="MediaSection__title">Guides and Videos</h2>
+
+      <div className="MediaSection__cards">
+        <MediaSectionCard
+          title="Soroban: A New Smart Contracts Platform"
+          tag="Youtube"
+          link="https://www.youtube.com/watch?v=Qwy0P1klpis"
+          imgSrc="https://img.youtube.com/vi/Qwy0P1klpis/maxresdefault.jpg"
+        />
+
+        <MediaSectionCard
+          title="Soroban: A New Smart Contract Standard"
+          tag="Guide"
+          link="https://stellar.org/blog/soroban-a-new-smart-contract-standard"
+          imgSrc="https://assets-global.website-files.com/5dee83171c0040227763490c/63465e69254eb2fc10dec495_sorobanpressrelease.png"
+        />
+
+        <MediaSectionCard
+          title="Soroban Talks: Instant Soroban Dev Environment Setup"
+          tag="Youtube"
+          link="https://www.youtube.com/watch?v=3in3EvVumiw"
+          imgSrc="https://img.youtube.com/vi/3in3EvVumiw/maxresdefault.jpg"
+        />
+
+        <MediaSectionCard
+          title="Building Soroban’s Minimum Viable Ecosystem"
+          tag="Guide"
+          link="https://stellar.org/developers-blog/building-sorobans-minimum-viable-ecosystem"
+          imgSrc="https://assets-global.website-files.com/5dee83171c0040227763490c/63f66c99c2b589d7e4177fec_soroban%20minimum%20viable%20ecosystem.png"
+        />
+
+        <MediaSectionCard
+          title="Soroban: First Impressions"
+          tag="Youtube"
+          link="https://www.youtube.com/watch?v=dN4TKnYr5nQ"
+          imgSrc="https://img.youtube.com/vi/dN4TKnYr5nQ/maxresdefault.jpg"
+        />
+
+        <MediaSectionCard
+          title="Building on Soroban: Three Teams' Journeys with Smart Contracts"
+          tag="Guide"
+          link="https://stellar.org/developers-blog/building-on-soroban-three-teams-journeys-smart-contracts"
+          imgSrc="https://assets-global.website-files.com/5dee83171c0040227763490c/641c9c3c8f93d7c7d1604909_Building%20on%20Soroban.png"
+        />
+      </div>
+    </div>
+  </div>
+);
+
+const MediaSectionCard = ({ tag, link, title, imgSrc }) => (
+  <a href={link} target="_blank" rel="noreferrer">
+    <div className="MediaSectionCard">
+      <div
+        className="MediaSectionCard__wrapper"
+        style={{ backgroundImage: `url(${imgSrc})` }}
+      >
+        <div className={`MediaSectionCard__tag MediaSectionCard__${tag}`}>
+          <p>{tag}</p>
+        </div>
+      </div>
+      <p className="MediaSectionCard__title">{title}</p>
+    </div>
+  </a>
+);
+
+const Footer = ({ title = "Get Connected" }) => (
+  <div className="Footer">
+    <div className="hp-center">
+      <div className="Footer__title">
+        <p>{title}</p>
+      </div>
+
+      <div className="Footer__cards">
+        <SocialCard
+          title="Discord"
+          src="./img/landing/discord-1.svg"
+          href="https://discord.gg/6ZCcYqbC96"
+        />
+
+        <SocialCard
+          title="Youtube"
+          src="./img/landing/youtube-1.svg"
+          href="https://www.youtube.com/@StellarDevelopmentFoundation"
+        />
+
+        <SocialCard
+          title="Twitter"
+          src="./img/landing/twitter-1.svg"
+          href="https://twitter.com/sorobanofficial"
+        />
+      </div>
+    </div>
+  </div>
+);
+
+const SocialCard = ({ title, src, href }) => (
+  <a href={href} target="_blank" rel="noreferrer" className="SocialCard">
+    <img className="SocialCard__icon" alt="" src={src} />
+    <span className="SocialCard__title">{title}</span>
+  </a>
+);

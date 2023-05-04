@@ -414,7 +414,7 @@ impl IncrementContract {
 }
 ```
 
-This code is an implementation of a smart contract written in Rust using the [`Soroban Rust SDK`](../../reference/sdks/rust), a Rust-based smart contract development toolkit developed by the [Stellar Development Foundation (SDF)](https://stellar.org/foundation) . The Soroban Rust SDK provides a powerful set of tools for writing smart contracts that run on the Soroban Virtual Machine.
+This code is an implementation of a smart contract written in Rust using the [`Soroban Rust SDK`](../../reference/sdks/rust), a Rust-based smart contract development toolkit developed by the [Stellar Development Foundation (SDF)](https://stellar.org/foundation). The Soroban Rust SDK provides a powerful set of tools for writing smart contracts that run on the Soroban Virtual Machine.
 
 Here's a line-by-line explanation of what the code is doing:
 
@@ -422,7 +422,7 @@ Here's a line-by-line explanation of what the code is doing:
 #![no_std]
 ```
 
-This is a Rust attribute that tells the Rust compiler not to link the [Rust standard ibrary](https://doc.rust-lang.org/std/). Since the Soroban Rust SDK uses its own set of logic, it doesn't need to utilize to the Rust standard library, so this attribute is needed.
+This is a Rust attribute that tells the Rust compiler not to link the [Rust standard library](https://doc.rust-lang.org/std/). Since the Soroban Rust SDK uses its own set of logic, it doesn't need to utilize the Rust standard library, so this attribute is needed.
 
 ```rust
 use soroban_sdk::{contractimpl, log, Env, Symbol};
@@ -454,7 +454,7 @@ As previously noted, the `#[contractimpl]` attribute exports public functions to
 pub fn increment(env: Env) -> u32 {}
 ```
 
-This is a public function called `increment` that takes an `Env` struct as an argument and returns a `u32`. `Env` is the environment the contract is executing in, and `u32` is the type of the value returned by the function.
+This is a public function called `increment` that takes an `Env` struct as an argument and returns a `u32`. `Env` is the environment the contract is executing in, and `u32` is the type of value returned by the function.
 
 ```rust
 let mut count: u32 = env.storage().get(&COUNTER).unwrap_or(Ok(0)).unwrap(); // If no value set, assume 0.
@@ -502,7 +502,7 @@ Now that we have written our smart contract, it's time to explore how we can int
 
 ### Interacting with the Smart Contract
 
-To interact the Rust counter, create a new Rust library using the cargo new command.
+To interact with the Rust counter, create a new Rust library using the cargo new command.
 
 ```bash
 cargo new --lib increment
@@ -599,4 +599,4 @@ The output should be the current value of the counter, assuming the counter has 
 3
 ```
 
-And that's it! You've learned how to write and interact with simple smart contracts in Solidity and Rust. In the upcoming sections, we'll learn about advanced smart contract concepts, the similarites and diffrences between Solidity and Rust, and how to develop and deploy smart contracts with Soroban.
+And that's it! You've learned how to write and interact with simple smart contracts in Solidity and Rust. In the upcoming sections, we'll learn about advanced smart contract concepts, the similarities and differences between Solidity and Rust, and how to develop and deploy smart contracts with Soroban.

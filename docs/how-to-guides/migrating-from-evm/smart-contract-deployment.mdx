@@ -40,7 +40,7 @@ Soroban and Hardhat are powerful frameworks designed to streamline the process o
 
 Soroban, with its lightweight design, offers developers an exceptional platform for writing Rust-based smart contracts and deploying them effortlessly on the Stellar network. In contrast, Hardhat serves primarily as a development environment tailored for the Ethereum Virtual Machine, providing a different focus and target audience.
 
-## Hardhat vs Soroban SDKs
+## Hardhat vs. Soroban SDKs
 
 Hardhat offers a streamlined workflow for deploying smart contracts on the Ethereum Virtual Machine, with key components such as `ethers.js`, `scripts`, and `testing` playing crucial roles.
 
@@ -62,7 +62,7 @@ async function main() {
 
 ### Soroban Client
 
-Soroban offers a comparable library, [`js-soroban-client`](../../reference/sdks/js), that enables seamless interaction smart contracts deployed on the Stellar Newtork. This library supplies a comprehensive networking layer API for `soroban-rpc` methods, simplifying the process of building and signing transactions. Additionally, `js-soroban-client` streamlines communication with `soroban-rpc` instances and supports submitting transactions or querying network state with ease.
+Soroban offers a comparable library, [`js-soroban-client`](../../reference/sdks/js), that enables seamless interaction smart contracts deployed on the Stellar Network. This library supplies a comprehensive networking layer API for `soroban-rpc` methods, simplifying the process of building and signing transactions. Additionally, `js-soroban-client` streamlines communication with `soroban-rpc` instances and supports submitting transactions or querying network state with ease.
 
 ### Scripts
 
@@ -89,7 +89,7 @@ main()
 
 ### Soroban Scripts
 
-Soroban offers an extensive collection of SDKs that include scripting capabilities, ensuring a smooth workflow for deploying and managing smart contracts. Developers can automate tasks such as compiling, deploying, and interacting with smart contracts using a variety of SDKs that support scripting in languages like [`JavaScript`, `TypeScript`, `Python` and others](../../category/sdks).
+Soroban offers an extensive collection of SDKs that include scripting capabilities, ensuring a smooth workflow for deploying and managing smart contracts. Developers can automate tasks such as compiling, deploying, and interacting with smart contracts using a variety of SDKs that support scripting in languages like [`JavaScript`, `TypeScript`, `Python`, and others](../../category/sdks).
 
 ```python
 # This example shows how to deploy a compiled contract to the Stellar network.
@@ -218,7 +218,7 @@ soroban-examples
 └──
 ```
 
-Once we have the Token, lets create a new smart contract that uses it.
+Once we have the Token, let's create a new smart contract that uses it.
 
 ### Writing a Smart Contract
 
@@ -230,7 +230,7 @@ Here is a breakdown of the contract mechanics
 - The DeFi protocol uses the users' deposits to generate yield.
 - User burns shares to withdraw their tokens + yield.
 
-In a new terminal, lets create a new Rust project by running the following command:
+In a new terminal, let's create a new Rust project by running the following command:
 
 ```zsh
 cargo new vault
@@ -238,7 +238,7 @@ cargo new vault
 
 This will create a new Rust project called `vault`.
 
-Now lets add the `soroban_token_contract.wasm` file to the `vault` project. To do this, we can drag and drop the file into the `vault` project directory.
+Now let's add the `soroban_token_contract.wasm` file to the `vault` project. To do this, we can drag and drop the file into the `vault` project directory.
 
 ![vault-project](../../../static/img/vault-project.png)
 
@@ -755,7 +755,7 @@ impl TokenTrait for Token {
 </TabItem>
 </Tabs>
 
-Now that we've added these files to our project, lets break down what happens in the `lib.rs` file above and discover how "yield" is generated from our vault contract
+Now that we've added these files to our project, let's break down what happens in the `lib.rs` file above and discover how "yield" is generated from our vault contract
 
 First, let's take a look at what happens when a user deposits tokens into the vault contract.
 
@@ -861,7 +861,7 @@ Now that we have a working vault contract, we can deploy it to a network and int
 
 This section requires you to have a funded Keypair to use with Stellar's Futurenet. You can create and fund one using the [Stellar Laboratory](https://laboratory.stellar.org/#account-creator?network=futurenet).
 
-Below you will find a series of commands that will help you build, deploy and interact with the vault and token contracts. You can use them to follow along as we walk through the process of building, deploying and interacting with the contracts. It may behoove you to keep these commands in a `scripts` directory in your project. This way, you can easily run them from your terminal.
+Below you will find a series of commands that will help you build, deploy and interact with the vault and token contracts. You can use them to follow along as we walk through the process of building, deploying, and interacting with the contracts. It may behoove you to keep these commands in a `scripts` directory in your project. This way, you can easily run them from your terminal.
 
 <Tabs>
 <TabItem value="build" label="build.sh">
@@ -1057,7 +1057,7 @@ soroban contract deploy \
     --network-passphrase 'Test SDF Future Network ; October 2022'
 ```
 
-We should recieve a SUCCESS message with the token contract ID. We will need this ID for the next step.
+We should receive a SUCCESS message with the token contract ID. We will need this ID for the next step.
 
 ```bash
 SUCCESS
@@ -1067,7 +1067,7 @@ SUCCESS
 
 Next we need to initialize the token contract. We can do this by running the `initialize_token.sh` script.
 
-Its important to note that `name` and `symbol` must be `Bytes` values. You can achieve this by converting a given value into its corresponding SHA-256 hash.
+It's important to note that `name` and `symbol` must be `Bytes` values. You can achieve this by converting a given value into its corresponding SHA-256 hash.
 
 Here are some examples:
 
@@ -1100,7 +1100,7 @@ soroban contract deploy \
     --network-passphrase 'Test SDF Future Network ; October 2022'
 ```
 
-We should recieve a SUCCESS message with the vault contract ID. We will need this ID for the next step.
+We should receive a SUCCESS message with the vault contract ID. We will need this ID for the next step.
 
 ```bash
 SUCCESS
@@ -1114,7 +1114,7 @@ Now we need to get the WASM hash of the token contract. We can do this by runnin
 soroban contract install --wasm soroban_token_contract.wasm
 ```
 
-We should recieve the WASM hash of the token contract.
+We should receive the WASM hash of the token contract.
 
 ```bash
 73593275ee3bcacc2aef8d641a1d5108618064bdfff84a826576b8caff395add
@@ -1137,7 +1137,7 @@ soroban contract invoke \
 
 After recieving a SUCCESS message, we will mint some tokens to **both** our User Account and Vault Contract addresses. We can do this by running the `mint.sh` script.
 
-Its important to note that the vault contract id will need to change formats for the call to work. We can convert the vault contract id to the correct format by pasting its address in a [Hex to StrKey Tool](https://strkey-encode.xycloo.com/).
+It's important to note that the vault contract id will need to change formats for the call to work. We can convert the vault contract id to the correct format by pasting its address in a [Hex to StrKey Tool](https://strkey-encode.xycloo.com/).
 
 ![Hex to StrKey Tool](../../../static/img/hex2str.png)
 
@@ -1155,7 +1155,7 @@ soroban contract invoke \
     --amount 100
 ```
 
-After recieving a SUCCESS message, we can check the balance of the account. We can do this by running the `balance.sh` script.
+After receiving a SUCCESS message, we can check the balance of the account. We can do this by running the `balance.sh` script.
 
 ```bash
 soroban contract invoke \
@@ -1169,14 +1169,14 @@ soroban contract invoke \
     --id <USER_ADDRESS>
 ```
 
-We should recieve a SUCCESS message with the balance of the account.
+We should receive a SUCCESS message with the balance of the account.
 
 ```bash
 SUCCESS
 100
 ```
 
-After recieving a SUCCESS message, we can deposit some tokens into our vault. We can do this by running the `deposit.sh` script.
+After receiving a SUCCESS message, we can deposit some tokens into our vault. We can do this by running the `deposit.sh` script.
 
 ```bash
 soroban contract invoke \
@@ -1191,7 +1191,7 @@ soroban contract invoke \
     --amount 100
 ```
 
-After recieving a SUCCESS message, we can check the reserves of the vault. We can do this by running the `reserves.sh` script.
+After receiving a SUCCESS message, we can check the reserves of the vault. We can do this by running the `reserves.sh` script.
 
 ```bash
 soroban contract invoke \
@@ -1204,7 +1204,7 @@ soroban contract invoke \
     get_rsrvs
 ```
 
-We should recieve a SUCCESS message with the reserves of the vault.
+We should receive a SUCCESS message with the reserves of the vault.
 
 ```bash
 SUCCESS
@@ -1228,7 +1228,7 @@ soroban contract invoke \
     --amount 100
 ```
 
-We should recieve a SUCCESS message with the withdrawal amount.
+We should receive a SUCCESS message with the withdrawal amount.
 
 ```bash
 SUCCESS
@@ -1237,7 +1237,7 @@ SUCCESS
 
 Now is a good time to check our account balance again. We can do this by running the `balance.sh` script.
 
-We should see our balance has increased the amount we withdrew plus yield (amount/100) or %1 of out withdraw amount.
+We should see our balance has increased the amount we withdrew plus yield (amount/100) or %1 of our withdraw amount.
 
 ```bash
 SUCCESS
@@ -1255,4 +1255,4 @@ SUCCESS
 
 And there you have it! You have successfully deployed and interacted with the vault contract!
 
-Its important to note that this is not a production ready contract and is only meant to demonstrate the capabilities of the Soroban smart contract platform. We hope to see much more complex yield contracts deployed on the Soroban in the future, and we hope you will be a part of it!
+It's important to note that this is not a production-ready contract and is only meant to demonstrate the capabilities of the Soroban smart contract platform. We hope to see much more complex yield contracts deployed on the Soroban in the future, and we hope you will be a part of it!

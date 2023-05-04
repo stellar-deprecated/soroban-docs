@@ -16,7 +16,7 @@ In this tutorial, we will cover advanced Solidity and Rust concepts such as inhe
 1. [Advanced Solidity Concepts](#advanced-solidity-concepts)
 2. [Advanced Rust Concepts](#advanced-rust-concepts)
 3. [Writing Safe and Efficient Rust Code for Smart Contracts](#writing-safe-and-efficient-rust-code-for-smart-contracts)
-4. [Solidity to Rust: Common Concepts, and Best Practices](#solidity-to-rust-common-concepts-and-best-practices)
+4. [Solidity to Rust: Common Concepts and Best Practices](#solidity-to-rust-common-concepts-and-best-practices)
 
 ## Advanced Solidity Concepts
 
@@ -46,7 +46,7 @@ In this example, the `Child` contract inherits the `messageFromParent` function 
 
 Interfaces are similar to contracts, but they cannot have any function implementations. They only contain function signatures. Contracts can implement interfaces using the `is` keyword, similar to inheritance.
 
-Here is example of an interface that defines a function called `doSomething` that returns a `uint256`:
+Here is an example of an interface that defines a function called `doSomething` that returns a `uint256`:
 
 ```solidity
 interface SomeInterface {
@@ -63,7 +63,7 @@ contract SomeContract is SomeInterface {
 }
 ```
 
-In this example, the `SomeContract` contract implements the `SomeInterface` interface. It's implementation returns a `u256` that is incremented each time the `doSomething` function is called.
+In this example, the `SomeContract` contract implements the `SomeInterface` interface. Its implementation returns a `u256` that is incremented each time the `doSomething` function is called.
 
 ### Libraries
 
@@ -169,7 +169,7 @@ impl AllocContract {
 
 In this example, the `alloc` crate is imported into the smart contract using the `extern crate alloc;` statement. The `alloc` crate is then used to create a temporary vector that holds values from 0 to `count`. The values in the vector are then summed and returned.
 
-For more details on how to use the `alloc` crate, including a hands on practical exercise, visit the [alloc section](../../how-to-guides/alloc#how-it-works) of the documentation.
+For more details on how to use the `alloc` crate, including a hands-on practical exercise, visit the [alloc section](../../how-to-guides/alloc#how-it-works) of the documentation.
 
 #### Inheriting Functionality from Other Crates
 
@@ -257,9 +257,9 @@ As you can see, the `event.rs`, `admin.rs`, and `balance.rs` files are imported 
 
 The Soroban Rust SDK provides a powerful macro, [`contractimport`](https://docs.rs/soroban-sdk/latest/soroban_sdk/macro.contractimport.html), which allows a user to import a contract from its WASM file, generating a client, types, and constant holding the contract file.
 
-Here is an example of how to use the `contractimport` macro taken from the [token.rs](https://github.com/stellar/soroban-examples/blob/main/liquidity_pool/src/token.rs) file from our [Liqudity Pool example](https://github.com/stellar/soroban-examples/blob/main/liquidity_pool):
+Here is an example of how to use the `contractimport` macro taken from the [token.rs](https://github.com/stellar/soroban-examples/blob/main/liquidity_pool/src/token.rs) file from our [Liquidity Pool example](https://github.com/stellar/soroban-examples/blob/main/liquidity_pool):
 
-First, we see that the wasm file from the [previously built token example](https://github.com/stellar/soroban-examples/blob/main/token)is imported into the `token.rs` file using the `contractimport` macro:
+First, we see that the wasm file from the [previously built token example](https://github.com/stellar/soroban-examples/blob/main/token) is imported into the `token.rs` file using the `contractimport` macro:
 
 ```rust
 //token.rs
@@ -342,7 +342,7 @@ Even when Rust code is compiled with the `#![no_std]` flag, it is still possible
 
 Rust does not have a built-in modifier system like Solidity. However, you can achieve similar functionality using `traits` and their implementations.
 
-In the example below, we will illustrate the inherticance of traits using the `Ownable` trait.
+In the example below, we will illustrate the inheritance of traits using the `Ownable` trait.
 
 ```rust
 #![no_std]
@@ -389,7 +389,7 @@ impl OwnableContract {
 mod test;
 ```
 
-Heres a breakdown of the code above:
+Here's a breakdown of the code above:
 
 - First, we define the `Ownable` trait, which defines a single method called `is_owner`. This method takes an `Address` as an argument and returns a boolean value indicating whether or not the address is the owner of the contract.
 - Next, we implement the `Ownable` trait for the `OwnableContract` struct. This allows us to use the `is_owner` method on instances of the `OwnableContract` struct.
@@ -414,7 +414,7 @@ For more information on smart contract interfaces built with Soroban, including 
 
 When writing Rust code for smart contracts, it's important to focus on safety and efficiency. Some tips include:
 
-- Use the [`Result`](https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html) type to to handle errors in a safe and predictable way. In smart contracts, it's important to avoid panicking, as this can lead to unpredictable behavior. Instead, Result can be used to handle errors and ensure that the contract behaves as expected.
+- Use the [`Result`](https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html) type to handle errors in a safe and predictable way. In smart contracts, it's important to avoid panicking, as this can lead to unpredictable behavior. Instead, Result can be used to handle errors and ensure that the contract behaves as expected.
 
 In the example below, the `add` function returns a `Result` type, which can either be `Ok` or `Err`. If the addition does not overflow, the function returns `Ok`, otherwise it returns `Err`.
 
@@ -589,7 +589,7 @@ function deposit() public payable {
 
 #### Rust
 
-The [panic!](https://doc.rust-lang.org/book/ch09-00-error-handling.html) macro serves as Rust's error handling mechanism, which closely resembles the `require` function in Solidity.
+The [panic!](https://doc.rust-lang.org/book/ch09-00-error-handling.html) macro serves as Rust's error-handling mechanism, which closely resembles the `require` function in Solidity.
 
 ```rust
 fn deposit() {
@@ -626,7 +626,7 @@ contract SimpleContract {
 }
 ```
 
-There would be no diffrence in appearance between a regular address and a payable address in Solidity.
+There would be no difference in appearance between a regular address and a payable address in Solidity.
 
 #### Rust
 
@@ -770,4 +770,4 @@ impl SimpleContract {
 
 Overall the Rust equivalents of Solidity concepts are very similar. The main difference is that Rust uses `env` instead of `msg` to access information about the current transaction.
 
-For more information on Solidity concepts and their Rust equivalents, it is recommend that one refer to both the [Soroban Rust SDK documentation](https://docs.rs/soroban-sdk/latest/soroban_sdk/struct.Env.html) and the [Solidity documentation](https://docs.soliditylang.org/en/v0.8.19/cheatsheet.html).
+For more information on Solidity concepts and their Rust equivalents, it is recommended that one refer to both the [Soroban Rust SDK documentation](https://docs.rs/soroban-sdk/latest/soroban_sdk/struct.Env.html) and the [Solidity documentation](https://docs.soliditylang.org/en/v0.8.19/cheatsheet.html).

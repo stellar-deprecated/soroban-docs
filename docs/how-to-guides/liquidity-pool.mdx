@@ -6,8 +6,49 @@ description: A constant-product liquidity pool contract.
 
 The [liquidity pool example] demonstrates how to write a constant product liquidity pool contract. The comments in the [source code] explain how the contract should be used.
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.7.0
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp] [oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.7.0
 
 [liquidity pool example]: https://github.com/stellar/soroban-examples/tree/v0.7.0/liquidity_pool
 [source code]: https://github.com/stellar/soroban-examples/blob/v0.7.0/liquidity_pool/src/lib.rs#L143
+
+## Run the Example
+
+First go through the [Setup] process to get your development environment configured, then clone the `v0.7.0` tag of `soroban-examples` repository:
+
+[Setup]: ../getting-started/setup.mdx
+
+```
+git clone -b v0.7.0 https://github.com/stellar/soroban-examples
+```
+
+Or, skip the development environment setup and open this example in [Gitpod][oigp].
+
+To run the tests for the example, we will need to build the token contract and then run the test commands. First, navigate to the `liquidity_pool` directory, and use `make`.
+
+```
+cd liquidity_pool
+make
+```
+
+You should see output that begins like this:
+
+```
+/Library/Developer/CommandLineTools/usr/bin/make
+-C ../token || break;
+cargo build --target wasm32-unknown-unknown --release
+```
+
+Once this is complete, you can run the tests:
+
+```zsh
+cargo test
+```
+
+You should see output similar to the following:
+
+```zsh
+running 1 test
+test test::test ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+```

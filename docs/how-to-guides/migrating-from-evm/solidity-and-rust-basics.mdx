@@ -36,8 +36,8 @@ Solidity supports various data types, such as:
 - Integer: `int` (signed) and `uint` (unsigned)
 - Address: `address`
 - String: `string`
-- Bytes: `bytes` (fixed-size) and `bytes32` (dynamic-size)
-- Arrays: `uint[]` (dynamic-size) and `uint[5]` (fixed-size)
+- Bytes: `bytes` (dynamic-size) and `bytes32` (fixed-size)
+- Arrays: dynamic-size or fixed-size and can be declared with various types.
 - Structs: `struct`
 - Enums: `enum`
 - Mapping: `mapping`
@@ -62,12 +62,18 @@ contract DataTypesExample {
     string public greeting = "Hello, World!";
 
     // Bytes (fixed-size and dynamic-size)
-    bytes2 public fixedBytes = 0x1234;
-    bytes32 public dynamicBytes = "Hello, Solidity!";
+    bytes public dynamicBytes = "hello, solidity";
+    bytes32 public fixedBytes = "hello, solidity";
 
     // Arrays (dynamic-size and fixed-size)
     uint[] public dynamicArray = [1, 2, 3];
     uint[5] public fixedArray = [1, 2, 3, 4, 5];
+
+    address[] public dynamicAddressArray = [0xd41d1744871f42Bb724D777A2d0Bf53FB43a0040, 0x1f514ae9834aEAF6c2c3eb6D20E27e865F419010];
+    address[3] public fixedAddressArray = [0xC90cd0D820D6dc447B3cD9545185B046873786A6, 0x401997E856CE51e0D4A8f26ce64952313BEA0E25, 0x221d3b9821f3Cc49B42E7dd487E2a6d1b3ed0E05];
+
+    bool[] public dynamicBoolArray = [true, false, true];
+    bool[2] public fixedBoolArray = [true, false];
 
     // Struct
     struct Person {

@@ -215,7 +215,9 @@ mod my_module {
 
 #### 2. Macros
 
-Macros in Rust are powerful tools that allow you to define reusable chunks of code. They are defined with the `macro_rules!` keyword and can be invoked with a `!` after the macro's name. Macros employ [pattern matching](https://doc.rust-lang.org/book/ch18-00-patterns.html) to generate code at compile time.
+[Macros](https://doc.rust-lang.org/book/ch19-06-macros.html) in Rust are powerful tools that allow you to do metaprogramming, enabling you to build chunks of reusable code at compile time.
+
+There are two basic types: [declarative](https://doc.rust-lang.org/book/ch19-06-macros.html#declarative-macros-with-macro_rules-for-general-metaprogramming) and [procedural](https://doc.rust-lang.org/book/ch19-06-macros.html#procedural-macros-for-generating-code-from-attributes) macros. The most common is the declarative macro, or plain "macro", which is defined with the `macro_rules!`
 
 ```rust
 macro_rules! my_macro {

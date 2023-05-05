@@ -438,13 +438,13 @@ pub fn add(a: u32, b: u32) -> u32 {
 
 To use clippy with cargo, you'll first need to install it. You can do this by running the following command in your terminal:
 
-```zsh
+```bash
 cargo install clippy
 ```
 
 Once clippy is installed, you can run it by running the following command in your terminal:
 
-```zsh
+```bash
 cargo clippy
 ```
 
@@ -454,13 +454,13 @@ This will run clippy on your entire project, checking for potential issues and p
 
 To use rustfmt with cargo, you'll first need to install it. You can do this by running the following command in your terminal:
 
-```zsh
+```bash
 cargo install rustfmt
 ```
 
 Once rustfmt is installed, you can run it by running the following command in your terminal:
 
-```zsh
+```bash
 cargo fmt
 ```
 
@@ -548,18 +548,21 @@ See the example below for implementations of `Env::storage()` and `clone()`
 ```rust
 use soroban_sdk::{Env, Symbol};
 
-let storage = env.storage();
-let key = Symbol::short("key");
-env.storage().set(&key);
+    pub fn set_storage(env: Env) {
+        let key = Symbol::short("key");
+        let value = Symbol::short("value");
+        env.storage().set(&key, &value);
+}
 ```
 
 - `env.storage().get()`
 
 ```rust
-use soroban_sdk::{Env, Symbol};
+use soroban_sdk::{Env};
 
-let storage = env.storage();
-e.storage().get(&key);
+    pub fn get_storage(env: Env) -> value {
+        env.storage().get(&key);
+}
 ```
 
 - `clone()`
@@ -567,8 +570,10 @@ e.storage().get(&key);
 ```rust
 use soroban_sdk::{Env, Address};
 
-pub fn return_user(env: Env, user: Address)
-let user_address: Address = user.clone();
+    pub fn return_user(user: Address) -> Address {
+        let user_address: Address = user.clone();
+        user_address
+}
 ```
 
 ### Error Handling
@@ -647,11 +652,11 @@ pub struct SimpleContract;
 
 #[contractimpl]
 impl SimpleContract {
-    /// increment increments an internal counter, and returns the value.
-    pub fn return_user(env: Env, user: Address) {
-        let user_address: Address = user.clone();
-        let user_contract_id = env.current_contract_address();
-        let user_contract_address = env.current_contract_id();
+    ///Example contract for returning Addresses or ids.
+    pub fn return_address(env: Env, user: Address) -> Address {
+        let current_contract_id = env.current_contract_id();
+        let current_contract_address = env.current_contract_address();
+        current_contract_address
     }
 }
 ```
@@ -746,9 +751,9 @@ contract SimpleContract {
 
 #### Rust
 
-- `Env::get_ledger_timestamp(self.env())`: Returns a unix timestamp for when the ledger was closed.
+- `Env::get_ledger_timestamp(self.env())`: Returns a unix timestamp for when the most recent ledger was closed.
 - Used as `env.ledger().timestamp()`
-- `Env::get_ledger_sequence(self.env())`: Returns the sequence number of the ledger.
+- `Env::get_ledger_sequence(self.env())`: Returns the sequence number of the most recently closed ledger.
 - Used as `env.ledger().sequence()`
 
 Here is an example of a smart contract that illustrates how time-based variables are used in Rust:

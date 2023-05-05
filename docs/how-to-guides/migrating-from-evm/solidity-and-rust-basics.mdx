@@ -10,11 +10,11 @@ In this tutorial, we'll explore Rust and Solidity, two powerful programming lang
 
 ## Table of Contents
 
-1. [Solidity Syntax, Data Types, and Basic Constructs](#solidity-syntax-data-types-and-basic-constructs)
-2. [Understanding Rust Syntax, Data Types, and Ownership Model](#understanding-rust-syntax-data-types-and-ownership-model)
+1. [Solidity Syntax, Data Types, and Basic Constructs](#solidity-syntax)
+2. [Rust Syntax, Data Types, and Ownership Model](#rust-syntax)
 3. [Writing and Interacting With Simple Smart Contracts](#writing-and-interacting-with-simple-smart-contracts)
 
-## Solidity Syntax, Data Types, and Basic Constructs
+### Solidity Syntax
 
 Solidity is a programming language designed specifically for creating smart contracts on the Ethereum Virtual Machine (EVM). It has a syntax similar to JavaScript and supports a variety of data types and constructs.
 
@@ -61,7 +61,7 @@ contract DataTypesExample {
     // String
     string public greeting = "Hello, World!";
 
-    // Bytes (fixed-size and dynamic-size)
+    // Bytes (dynamic-size and fixed-size)
     bytes public dynamicBytes = "hello, solidity";
     bytes32 public fixedBytes = "hello, solidity";
 
@@ -109,7 +109,7 @@ Some of the basic constructs in Solidity include:
 
 We will explore some of these constructs in more detail in the next article, [Advanced Solidity Concepts](solidity-and-rust-advanced-concepts#advanced-solidity-concepts).
 
-## Understanding Rust Syntax, Data Types, and Ownership Model
+### Rust Syntax
 
 Rust is a programming language that is well-suited for building smart contracts due to its emphasis on safety, concurrency, and performance. It enforces strict ownership and borrowing rules to prevent data races and other common bugs.
 
@@ -121,16 +121,13 @@ fn main() {
 
 ### Data Types
 
-The [Soroban Rust SDK](https://docs.rs/soroban-sdk/0.7.0/soroban_sdk/index.html) supports several [built-in data types](../../learn/built-in-types), such as:
+The [Soroban Rust SDK](https://docs.rs/soroban-sdk/0.7.0/soroban_sdk/index.html) supports a variety of primitive and [built-in data types](../../learn/built-in-types), such as:
 
-- Unsigned 32-bit Integer (`u32`)
-- Signed 32-bit Integer (`i32`)
-- Unsigned 64-bit Integer (`u64`)
-- Signed 64-bit Integer (`i64`)
-- Unsigned 128-bit Integer (`u128`)
-- Signed 128-bit Integer (`i128`)
+- 32-bit Integers: signed (`i32`) and unsigned (`u32`)
+- 64-bit Integers: signed (`i64`) and unsigned (`u64`)
+- 128-bit Integers: signed (`i128`) and unsigned (`u128`)
 - Bool (`bool`)
-- Symbol (`Symbol`): small efficient strings up to 32 characters in length and limited to a-z A-Z 0-9 \_ that are encoded into 64-bit integers
+- Symbols (`Symbol::new`): small efficient strings up to 32 characters in length and (`Symbol::short`) strings up to 9 characters in length, both are limited to the characters `a-zA-Z0-9_` and are encoded into 64-bit integers
 - Bytes, Strings (`Bytes`, `BytesN`): byte arrays and strings that can be passed to contracts and stores
 - Vec (`Vec`): sequential and indexable growable collection type
 - Map (`Map`): ordered key-value dictionary
@@ -146,28 +143,55 @@ The Soroban Rust SDK also supports several [custom data types](../../learn/custo
 The following are examples of implementations for each data type:
 
 ```rust
+// Integer (signed and unsigned)
 let unsigned_32_bit: u32 = 42;
 let signed_32_bit: i32 = -42;
 let unsigned_64_bit: u64 = 42;
 let signed_64_bit: i64 = -42;
 let unsigned_128_bit: u128 = 42;
 let signed_128_bit: i128 = -42;
+
+// Boolean
 let boolean: bool = true;
-let symbol = Symbol::short("SampleSymbol");
+
+// Symbols (short and new)
+let symbol_short = Symbol::short("Sample"); // up to 9 chars
+let symbol_new = Symbol::new("SampleSymbolExpression"); // up to 32 chars
+
+// Bytes (Bytes and BytesN)
 let bytes = Bytes::from_slice(&env, &[1; 32]);
-let bytes = BytesN::from_array(&env, &[0; 32]);
+let bytes_n = BytesN::from_array(&env, &[0; 32]);
+
+// Vec
 let vec = vec![&env, 0, 1, 2, 3];
+
+// Map
 let map = map![&env, (2, 20), (1, 10)];
+
+// Address
 let address = Address::new([0u8; 32]);
 
+// Struct (named fields)
 pub struct State {
     pub count: u32,
     pub last_incr: u32,
 }
 
+struct Tuple(u32, String);
+
+// Struct (unnamed fields)
+pub struct State(pub u32, pub u32);
+
+// Enum (unit and tuple variants)
 pub enum Enum {
-    A = 1,
-    B = 2,
+    A,
+    B(u32),
+}
+
+// Enum (integer variants)
+pub enum Enum {
+    A = 0,
+    B = 1,
 }
 ```
 
@@ -278,13 +302,17 @@ Rust enforces [**strict ownership rules**](https://doc.rust-lang.org/book/ch04-0
 - [`Borrowing`](https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html): Values can be borrowed as immutable or mutable references.
 - [`Lifetimes`](https://doc.rust-lang.org/rust-by-example/scope/lifetime.html): Used to ensure that references remain valid.
 
+### Smart Contract Dialect
+
+Contract development in Rust involves certain restrictions due to either unavailable features in the deployment environment or high runtime costs. Thus, the code written for contracts can be seen as a distinct _dialect_ of Rust, focusing on deterministic behavior and minimized code size.
+
 To learn more about Rust's Contract Dialect, check out the [Contract Rust Dialect Page](../../learn/rust-dialect).
 
 ## Writing and Interacting with Simple Smart Contracts
 
 In this section, we'll learn how to write and interact with simple smart contracts in Solidity and Rust.
 
-### Writing a Smart Contract in Solidity
+### Writing a Smart Counter in Solidity
 
 Here's an example of a simple Solidity smart contract for a counter:
 
@@ -305,13 +333,13 @@ pragma solidity ^0.8.0;
 }
 ```
 
-Let's break down the [layout of the code](https://docs.soliditylang.org/en/v0.8.19/layout-of-source-files.html#spdx-license-identifier) line by line:
+Let's break down the layout of the code line by line:
 
 ```solidity
 // SPDX-License-Identifier: UNLICENSED
 ```
 
-This is a comment that identifies the license for the code. It's not required for the code to run, but it's good practice to include licensing information.
+This is a comment that identifies the [license](https://docs.soliditylang.org/en/v0.8.19/layout-of-source-files.html#spdx-license-identifier)) for the code. It's not required for the code to run, but it's good practice to include licensing information.
 
 ```solidity
 pragma solidity ^0.8.0;
@@ -347,7 +375,7 @@ function increment() public {
 
 This is a function called `increment()` that increments the counter by 1. It doesn't return anything, but it modifies the state of the contract. Like `getCount()`, it's marked as `public`, which means it can be called from both inside and outside the contract.
 
-### Interacting with the Smart Contract
+### Interacting with the Solidity Smart Counter
 
 We can interact with the smart contract using the `Remix IDE`. To do so, follow these steps:
 
@@ -357,7 +385,7 @@ We can interact with the smart contract using the `Remix IDE`. To do so, follow 
 
 ![Counter](../../../static/img/counter.png)
 
-3. Press `cmd + s` to compile the contract.
+3. Press `Ctrl/Cmd + s` to compile the contract.
 4. Navigate to the `Deploy & Run Transactions` tab and click the `Deploy` button.
 
 ![Deploy](../../../static/img/deploy-counter.png)
@@ -371,9 +399,9 @@ The contract should appear under the `Deployed Contracts` tab:
 
 ![Increment](../../../static/img/increment.png)
 
-Up to this point, we've covered the basics of writing, deploying to a sandbox VM, and interacting with a simple smart contract using Solidity. In the following section, we will extend our knowledge by learning how to achieve the same outcomes using Rust.
+Up to this point, we've covered the basics of writing, deploying to a sandbox EVM, and interacting with a simple smart contract using Solidity. In the following section, we will extend our knowledge by learning how to achieve the same outcomes using Rust.
 
-### Writing and Interacting with a Simple Counter in Rust
+### Writing a Smart Counter in Rust
 
 In this section, we'll create a Rust program that simulates the functionality of the Counter smart contract. Here's an example of a simple counter in Rust:
 
@@ -394,7 +422,7 @@ impl IncrementContract {
             .storage()
             .get(&COUNTER)
             .unwrap_or(Ok(0)) // If no value set, assume 0.
-            .unwrap(); // Panic if the value of COUNTER is not u32.
+            .unwrap(); // Extract the actual value from the `Ok` wrapper
         log!(&env, "count: {}", count);
 
         // Increment the count.
@@ -422,7 +450,7 @@ Here's a line-by-line explanation of what the code is doing:
 #![no_std]
 ```
 
-This is a Rust attribute that tells the Rust compiler not to link the [Rust standard library](https://doc.rust-lang.org/std/). Since the Soroban Rust SDK uses its own set of logic, it doesn't need to utilize the Rust standard library, so this attribute is needed.
+This is a Rust attribute that tells the Rust compiler not to link the [Rust standard library](https://doc.rust-lang.org/std/). The standard library is extensive, and when deploying Soroban applications, we want to streamline the process as much as possible. By using `no_std`, we establish a leaner, "barebones" starting point for projects, encompassing only the Rust core and a few other essential components, rather than the full breadth of the standard library.
 
 ```rust
 use soroban_sdk::{contractimpl, log, Env, Symbol};
@@ -498,9 +526,9 @@ env.storage().get(&COUNTER).unwrap_or(Ok(0)).unwrap()
 
 This is a repeat of the code we saw earlier, which retrieves the value associated with the key `COUNTER` from the contract storage. If there is no value set for the key `COUNTER`, a default value of 0 is used. Finally, the `unwrap()` method is called to extract the actual value from the `Ok` wrapper, which is then returned to the caller of the function.
 
-Now that we have written our smart contract, it's time to explore how we can interact with it using the [Soroban-CLI](../../reference/soroban-cli). This powerful command-line tool allows us to interact with the Soroban Virtual Machine from a local machine, providing us with an efficient and flexible way to manage our smart contract.
+Now that we have written our smart contract, it's time to explore how we can interact with it using the [Soroban-CLI](../../reference/soroban-cli), one of many robust [Developer Tools](http://localhost:3000/docs/developer-tools) available. This powerful command-line tool allows us to interact with the Soroban Virtual Machine from a local machine, providing us with an efficient and flexible way to manage our smart contract.
 
-### Interacting with the Smart Contract
+### Interacting with the Rust Smart Counter
 
 To interact with the Rust counter, create a new Rust library using the cargo new command.
 
@@ -552,9 +580,7 @@ inherits = "release"
 debug-assertions = true
 ```
 
-:::info For a detailed explanation of the `Cargo.toml` configuration used in this tutorial, check out the [Hello World Example](../../getting-started/hello-world#import-soroban-sdk-and-features).
-
-:::
+> _Note_: For a detailed explanation of the `Cargo.toml` configuration used in this tutorial, check out the [Hello World Example](../../getting-started/hello-world#import-soroban-sdk-and-features).
 
 Next, build the project using the `cargo build` command.
 
@@ -569,10 +595,10 @@ To interact with the contract, we can use the `soroban contract invoke` command 
 
 ```bash
 soroban contract invoke \
- --wasm target/wasm32-unknown-unknown/release/increment.wasm \
- --id 1 \
- -- \
-increment
+    --wasm target/wasm32-unknown-unknown/release/increment.wasm \
+    --id 1 \
+    -- \
+    increment
 ```
 
 The output should be the current value of the counter, which in this case is:
@@ -587,10 +613,10 @@ To get the current value of the counter, you can use the following command:
 
 ```bash
 soroban contract invoke \
- --wasm target/wasm32-unknown-unknown/release/increment.wasm \
- --id 1 \
- -- \
- get_count
+    --wasm target/wasm32-unknown-unknown/release/increment.wasm \
+    --id 1 \
+    -- \
+    get_count
 ```
 
 The output should be the current value of the counter, assuming the counter has been incremented 3 times, the output will be:

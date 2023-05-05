@@ -191,19 +191,19 @@ This project requires using the `soroban_token_contract.wasm` file which you wil
 
 First, you will need to clone the `v0.7.0` tag of `soroban-examples` repository:
 
-```zsh
+```bash
 git clone -b v0.7.0 https://github.com/stellar/soroban-examples
 ```
 
 Then, navigate to the `soroban-examples/token` directory
 
-```zsh
+```bash
 cd soroban-examples/token
 ```
 
 Next, build the Token contract using the following command:
 
-```zsh
+```bash
 cargo build --target wasm32-unknown-unknown --release
 ```
 
@@ -232,8 +232,8 @@ Here is a breakdown of the contract mechanics
 
 In a new terminal, let's create a new Rust project by running the following command:
 
-```zsh
-cargo new vault
+```bash
+cargo new --lib vault
 ```
 
 This will create a new Rust project called `vault`.
@@ -255,11 +255,11 @@ publish = false
 crate-type = ["cdylib"]
 
 [dependencies]
-soroban-sdk = { version = "0.7.0", git = "https://github.com/stellar/rs-soroban-sdk", rev = "8abd3353c728f09ee1c8a2544f67a853e915afc2"}
+soroban-sdk = { version = "0.7.0"}
 num-integer = { version = "0.1.45", default-features = false, features = ["i128"] }
 
 [dev_dependencies]
-soroban-sdk = { version = "0.7.0", git = "https://github.com/stellar/rs-soroban-sdk", rev = "8abd3353c728f09ee1c8a2544f67a853e915afc2", features = ["testutils"] }
+soroban-sdk = { version = "0.7.0", features = ["testutils"] }
 
 [profile.release]
 opt-level = "z"
@@ -381,13 +381,14 @@ pub trait VaultTrait {
     // Returns the token contract address for the vault share token
     fn share_id(e: Env) -> BytesN<32>;
 
-    // Deposits token. Also mints vault shares for the "to" Identifier. The amount minted
+    // Deposits token. Also mints vault shares for the `to` Identifier. The amount minted
     // is determined based on the difference between the reserves stored by this contract, and
     // the actual balance of token for this contract.
     fn deposit(e: Env, to: Address, amount: i128);
 
-    // xfers share_amount of vault share tokens to this contract, burns all vaults share tokens in this contracts, and sends the
-    // corresponding amount of token to "to".
+    // sends `amount` of vault share tokens to this contract, burns all vaults share tokens
+    // in this contract, and sends the
+    // corresponding amount of token to `to`.
     // Returns amount of token withdrawn
     fn withdraw(e: Env, to: Address, amount: i128) -> i128;
 
@@ -418,7 +419,7 @@ impl VaultTrait for Vault {
         get_token_share(&e)
     }
 
-    fn deposit(e: Env, to: Address, amount: i128) {
+    fn deposit(e: Env, from: Address, amount: i128) {
         // Depositor needs to authorize the deposit
         to.require_auth();
 
@@ -844,13 +845,13 @@ If the user were to call the `withdraw` method with 100 shares, the following wo
 
 To test the vault contract, we will can simply run the following command in our terminal from our vault contract directory:
 
-```zsh
+```bash
 cargo test
 ```
 
 This will run the tests that we've written in the `src/test.rs` file.
 
-```zsh
+```bash
 running 1 test
 test test::test ... ok
 ```

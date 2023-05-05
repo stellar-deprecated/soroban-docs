@@ -42,7 +42,7 @@ test test::test ... ok
 
 ```rust title="custom_types/src/lib.rs"
 #[contracttype]
-#[derive(Clone, Default, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct State {
     pub count: u32,
     pub last_incr: u32,
@@ -87,7 +87,7 @@ Field names must be no more than 32 characters.
 
 ```rust
 #[contracttype]
-#[derive(Clone, Default, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct State {
     pub count: u32,
     pub last_incr: u32,

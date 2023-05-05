@@ -129,11 +129,17 @@ The [Soroban Rust SDK](https://docs.rs/soroban-sdk/0.7.0/soroban_sdk/index.html)
 - 64-bit Integers: signed (`i64`) and unsigned (`u64`)
 - 128-bit Integers: signed (`i128`) and unsigned (`u128`)
 - Bool (`bool`)
-- Symbols (`Symbol::new`): small efficient strings up to 32 characters in length and (`Symbol::short`) strings up to 9 characters in length, both are limited to the characters `a-zA-Z0-9_` and are encoded into 64-bit integers
 - Bytes, Strings (`Bytes`, `BytesN`): byte arrays and strings that can be passed to contracts and stores
 - Vec (`Vec`): sequential and indexable growable collection type
 - Map (`Map`): ordered key-value dictionary
 - Address (`Address`): universal opaque identifier used in contracts
+- Symbol:
+
+  - (`Symbol::new`): small efficient strings up to 32 characters in length an requires an env to be passed in
+
+  - (`Symbol::short`) small efficient strings up to 9 characters in length
+
+  Both are limited to the characters `a-zA-Z0-9_` and are encoded into 64-bit integers.
 
 #### Custom Data Types
 
@@ -158,7 +164,8 @@ let boolean: bool = true;
 
 // Symbols (short and new)
 let symbol_short = Symbol::short("Sample"); // up to 9 chars
-let symbol_new = Symbol::new("SampleSymbolExpression"); // up to 32 chars
+// env is &Env
+let symbol_new = Symbol::new(env, "SampleSymbolExpression");
 
 // Bytes (Bytes and BytesN)
 let bytes = Bytes::from_slice(&env, &[1; 32]);
@@ -343,7 +350,7 @@ Let's break down the layout of the code line by line:
 // SPDX-License-Identifier: UNLICENSED
 ```
 
-This is a comment that identifies the [license](https://docs.soliditylang.org/en/v0.8.19/layout-of-source-files.html#spdx-license-identifier)) for the code. It's not required for the code to run, but it's good practice to include licensing information.
+This is a comment that identifies the [license](https://docs.soliditylang.org/en/v0.8.19/layout-of-source-files.html#spdx-license-identifier) for the code. It's not required for the code to run, but it's good practice to include licensing information.
 
 ```solidity
 pragma solidity ^0.8.0;

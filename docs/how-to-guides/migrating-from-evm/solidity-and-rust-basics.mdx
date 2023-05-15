@@ -133,9 +133,10 @@ The [Soroban Rust SDK](https://docs.rs/soroban-sdk/0.7.0/soroban_sdk/index.html)
 - Vec (`Vec`): sequential and indexable growable collection type
 - Map (`Map`): ordered key-value dictionary
 - Address (`Address`): universal opaque identifier used in contracts
+- String (`String`): a contiguous growable array type containing u8s and requires an env to be passed in
 - Symbol:
 
-  - (`Symbol::new`): small efficient strings up to 32 characters in length an requires an env to be passed in
+  - (`Symbol::new`): small efficient strings up to 32 characters in length and requires an env to be passed in
 
   - (`Symbol::short`) small efficient strings up to 9 characters in length
 
@@ -161,6 +162,10 @@ let signed_128_bit: i128 = -42;
 
 // Boolean
 let boolean: bool = true;
+
+// String
+let msg: &str = "Hello";
+String::from_slice(&env, msg)
 
 // Symbols (short and new)
 let symbol_short = Symbol::short("Sample"); // up to 9 chars

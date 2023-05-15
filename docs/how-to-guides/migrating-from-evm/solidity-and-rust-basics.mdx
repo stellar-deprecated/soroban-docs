@@ -260,7 +260,7 @@ fn main() {
 
 #### 4. Traits
 
-Traits in Rust define a shared set of behaviors for different types. They can be thought of as interfaces in other languages. Traits are defined with the `trait` keyword, and their methods can be implemented for different types using the `impl` keyword.
+Traits in Rust define a shared set of behaviors that types can then either use as-is (default implementations) or implement themselves. They can be thought of as interfaces in other languages. Traits are defined with the `trait` keyword, and their methods can be implemented for different types using the `impl` keyword.
 
 ```rust
 trait MyTrait {
@@ -331,7 +331,7 @@ Here's an example of a simple Solidity smart contract for a counter:
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-    contract Counter {
+contract Counter {
     uint256 private _count;
 
     function getCount() public view returns (uint256) {

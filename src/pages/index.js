@@ -103,11 +103,11 @@ const Designed = () => (
         <DesignedCard title="Scale">
           Soroban is designed with scalability in mind. Boost performance with multi-core scaling, 
           an optimized fee model, and without pesky serialization loops. Soroban also tackles the 
-          elephant in the room head-on by addressing the solution to state bloat.
+          elephant in the room head-on by addressing the problem of state bloat.
         </DesignedCard>
 
         <DesignedCard title="Real-World Utility">
-          Connect to Stellar’s unparalleled interoperability by accessing its
+          Connect to Stellar’s exceptional interoperability by accessing its
           wide variety of on-chain assets and worldwide on and off-ramps. Also,
           benefit from five-second contract finality on a proven and mature
           network boasting 150 TPS.
@@ -200,7 +200,7 @@ const GettingStarted = () => (
         <GettingStartedCard
           index="2."
           title="Storing Data"
-          subtitle="Write simple Soroban contract that stores and retrieves data."
+          subtitle="Write a simple Soroban contract that stores and retrieves data."
           href="/docs/getting-started/storing-data"
         />
 
@@ -301,10 +301,11 @@ const SCF = () => (
         </h2>
 
         <p className="SCF__subtitle">
-          Submit your Soroban project to the Stellar Community Fund and receive
-          up to $150K worth of XLM in awards. This is your chance to play a
-          fundamental role in bootstrapping the Soroban ecosystem by creating
-          the tools, protocols, dApps, and resources necessary for it to thrive.
+          Submit your Soroban project to the Stellar Community Fund and request 
+          up to $150K worth of XLM in awards to cover 2-3 months of development costs.
+          This is your chance to play a fundamental role in bootstrapping the Soroban 
+          ecosystem by creating the tools, protocols, dApps, and resources necessary 
+          for it to thrive.
         </p>
 
         <a

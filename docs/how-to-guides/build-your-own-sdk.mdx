@@ -63,13 +63,17 @@ Enums with integer values should be translated into a `u32`.
 
 Errors are `u32` values that are translated into a [Status].
 
-### Meta Generation
+### Environment Meta Generation
 
 Contracts must contain a WASM custom section with name `contractenvmetav0` and containing a serialized [`SCEnvMetaEntry`]. The interface version stored within should match the version of the host functions supported.
 
 ### Contract Spec Generation
 
 Contracts should contain a WASM custom section with name `contractspecv0` and containing a serialized stream of [`SCSpecEntry`]. There should be a `SCSpecEntry` for every function, struct, and union exported by the contract.
+
+### Contract Meta Generation
+
+Contracts may optionally contain a WASM custom section with name `contractmetav0` and containing a serialized [`SCMetaEntry`]. Contracts may store any metadata in the entries that can be used by applications and tooling off-network.
 
 ## Testing
 

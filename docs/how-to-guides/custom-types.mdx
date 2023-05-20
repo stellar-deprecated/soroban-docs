@@ -7,19 +7,19 @@ description: Defining data structures that can be stored on the ledger.
 The [custom types example] demonstrates how to define your own data structures that can be stored on the ledger, or used as inputs and outputs to contract invocations. This example is an extension of the [storing data example].
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.7.0
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.8.4
 
-[custom types example]: https://github.com/stellar/soroban-examples/tree/v0.7.0/custom_types
+[custom types example]: https://github.com/stellar/soroban-examples/tree/v0.8.4/custom_types
 [storing data example]: getting-started/storing-data.mdx
 
 ## Run the Example
 
-First go through the [Setup] process to get your development environment configured, then clone the `v0.7.0` tag of `soroban-examples` repository:
+First go through the [Setup] process to get your development environment configured, then clone the `v0.8.4` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.7.0 https://github.com/stellar/soroban-examples
+git clone -b v0.8.4 https://github.com/stellar/soroban-examples
 ```
 
 Or, skip the development environment setup and open this example in [Gitpod][oigp].
@@ -42,7 +42,7 @@ test test::test ... ok
 
 ```rust title="custom_types/src/lib.rs"
 #[contracttype]
-#[derive(Clone, Default, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct State {
     pub count: u32,
     pub last_incr: u32,
@@ -54,24 +54,35 @@ pub struct IncrementContract;
 
 #[contractimpl]
 impl IncrementContract {
+    /// Increment increments an internal counter, and returns the value.
     pub fn increment(env: Env, incr: u32) -> u32 {
+        // Get the current count.
         let mut state = Self::get_state(env.clone());
+
+        // Increment the count.
         state.count += incr;
         state.last_incr = incr;
-        env.storage().set(STATE, &state);
+
+        // Save the count.
+        env.storage().set(&STATE, &state);
+
+        // Return the count to the caller.
         state.count
     }
-
+    /// Return the current state.
     pub fn get_state(env: Env) -> State {
         env.storage()
-            .get(STATE)
-            .unwrap_or_else(|| Ok(State::default())) // If no value set, assume 0.
+            .get(&STATE)
+            .unwrap_or(Ok(State {
+                count: 0,
+                last_incr: 0,
+            })) // If no value set, assume 0.
             .unwrap() // Panic if the value of COUNTER is not a State.
     }
 }
 ```
 
-Ref: https://github.com/stellar/soroban-examples/tree/v0.7.0/custom_types
+Ref: https://github.com/stellar/soroban-examples/tree/v0.8.4/custom_types
 
 ## How it Works
 
@@ -87,7 +98,7 @@ Field names must be no more than 32 characters.
 
 ```rust
 #[contracttype]
-#[derive(Clone, Default, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct State {
     pub count: u32,
     pub last_incr: u32,
@@ -134,14 +145,17 @@ pub fn increment(env: Env, incr: u32) -> u32 {
     let mut state = Self::get_state(env.clone());
     state.count += incr;
     state.last_incr = incr;
-    env.storage().set(STATE, &state);
+    env.storage().set(&STATE, &state);
     state.count
 }
 
 pub fn get_state(env: Env) -> State {
     env.storage()
-        .get(STATE)
-        .unwrap_or_else(|| Ok(State::default())) // If no value set, assume 0.
+        .get(&STATE)
+        .unwrap_or(Ok(State {
+            count: 0,
+            last_incr: 0,
+        })) // If no value set, assume 0.
         .unwrap() // Panic if the value of COUNTER is not a State.
 }
 ```

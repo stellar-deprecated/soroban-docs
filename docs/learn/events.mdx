@@ -92,8 +92,7 @@ and contains -
 The `fn_return` diagnostic event is emitted when a contract call completes and contains -
 * Topics
    1. The symbol "fn_return".
-   2. The contract id of the currently executing contract.
-   3. A symbol containing the name of the function that is about to return.
+   2. A symbol containing the name of the function that is about to return.
 * Data
   1. The value returned by the contract function. 
 
@@ -105,9 +104,7 @@ changes. `diagnosticEvents` on the other hand contain events that are not
 useful for most users, but may be helpful in debugging issues or building the
 contract call stack. Because they won't be used by most users, they can be
 optionally enabled because they are not hashed into the ledger, and therefore
-are not part of the protocol. (Note that meta is not hashed into the ledger hash
-at the moment, but the plan is to hash in `TransactionMetaV3.hashes`, which
-notably does not include a hash for `diagnosticEvents`). This is done so a
+are not part of the protocol. This is done so a
 stellar-core node can stay in sync with the network while emitting these events
 that normally would not be useful for most users.
 

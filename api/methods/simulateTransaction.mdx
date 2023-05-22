@@ -19,7 +19,7 @@ Submit a trial contract invocation to get back return values, expected transacti
     - `xdr`: `<xdr.ScVal>` - (optional) Only present on success. xdr-encoded return value of the Host Function call.
     - `auth`: `<xdr.ContractAuth[]>` - Per-address authorizations recorded when simulating this Host Function call. (an array of serialized base64 strings)
   - `transactionData`: `<xdr.SorobanTransactionData>` - The Soroban Transaction Data used when simulating this operation. (serialized in a base64 string).
-  - `events`: `<xdr.DiagnosticEvent[]>` - Events emitted during the all the contract invocation(s). (an array of serialized base64 strings)
+  - `events`: `<xdr.DiagnosticEvent[]>` - Events emitted during all of the contract invocation(s). (an array of serialized base64 strings)
   - `latestLedger`: `<string>` - Stringified-number of the current latest ledger observed by the node when this response was generated.
   - `error`: `<string>` - (optional) only present if the transaction failed. This field will include more details from `stellar-core` about why the invoke host function call failed.
 

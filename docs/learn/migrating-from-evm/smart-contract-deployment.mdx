@@ -381,10 +381,10 @@ pub trait VaultTrait {
     // Returns the token contract address for the vault share token
     fn share_id(e: Env) -> BytesN<32>;
 
-    // Deposits token. Also mints vault shares for the `to` Identifier. The amount minted
+    // Deposits token. Also mints vault shares for the `from` Identifier. The amount minted
     // is determined based on the difference between the reserves stored by this contract, and
     // the actual balance of token for this contract.
-    fn deposit(e: Env, to: Address, amount: i128);
+    fn deposit(e: Env, from: Address, amount: i128);
 
     // sends `amount` of vault share tokens to this contract, burns all vaults share tokens
     // in this contract, and sends the
@@ -421,16 +421,16 @@ impl VaultTrait for Vault {
 
     fn deposit(e: Env, from: Address, amount: i128) {
         // Depositor needs to authorize the deposit
-        to.require_auth();
+        from.require_auth();
 
         let token_client = token::Client::new(&e, &get_token(&e));
 
-        token_client.xfer(&to, &e.current_contract_address(), &amount);
+        token_client.xfer(&from, &e.current_contract_address(), &amount);
 
         let balance_a = get_token_balance(&e);
         let total_shares = get_total_shares(&e);
 
-        mint_shares(&e, to, amount);
+        mint_shares(&e, from, amount);
         put_reserve(&e, balance_a);
         put_total_shares(&e, total_shares + amount)
     }
@@ -761,18 +761,18 @@ Now that we've added these files to our project, let's break down what happens i
 First, let's take a look at what happens when a user deposits tokens into the vault contract.
 
 ```rust
-fn deposit(e: Env, to: Address, amount: i128) {
+fn deposit(e: Env, from: Address, amount: i128) {
     // Depositor needs to authorize the deposit
-    to.require_auth();
+    from.require_auth();
 
     let token_client = token::Client::new(&e, &get_token(&e));
 
-    token_client.xfer(&to, &e.current_contract_address(), &amount);
+    token_client.xfer(&from, &e.current_contract_address(), &amount);
 
     let balance_a = get_token_balance(&e);
     let total_shares = get_total_shares(&e);
 
-    mint_shares(&e, to, amount);
+    mint_shares(&e, from, amount);
     put_reserve(&e, balance_a);
     put_total_shares(&e, total_shares + amount)
 }
@@ -1001,7 +1001,7 @@ soroban contract invoke \
     --network-passphrase 'Test SDF Future Network ; October 2022' \
     -- \
     deposit \
-    --to G... \
+    --from G... \
     --amount 100
 ```
 
@@ -1138,9 +1138,32 @@ soroban contract invoke \
 
 After recieving a SUCCESS message, we will mint some tokens to **both** our User Account and Vault Contract addresses. We can do this by running the `mint.sh` script.
 
-It's important to note that the vault contract id will need to change formats for the call to work. We can convert the vault contract id to the correct format by pasting its address in a [Hex to StrKey Tool](https://strkey-encode.xycloo.com/).
+It's important to note that the vault contract id will need to change formats for the call to work. We can convert the vault contract id to the correct format by leveraging the [`js-soroban-client`](https://stellar.github.io/js-soroban-client/index.html). 
 
-![Hex to StrKey Tool](../../../static/img/hex2str.png)
+First, navigate to and clone the following [runkit](https://runkit.com/julian-dev28/646d1922af84810008c2a537).
+
+Then, replace `contractId` with your own vault contract id.
+
+```ts
+const StellarSdk = require('soroban-client')
+
+function getContractKey(contractId) {
+    const contractIdBytes = Buffer.from(contractId, 'hex')
+    const contractKey = StellarSdk.StrKey.encodeContract(contractIdBytes)
+    return contractKey
+}
+
+const contractId = <VAULT_CONTRACT_ID>
+console.log("Contract Key: " + getContractKey(contractId))
+```
+
+You should see an output similar to the following:
+
+```ts
+"Contract Key: CBBLKC4VJ2DIWESV4IGJDAFLKP5SCEXQGX5T3T7RLND33UMO6BJIJFMM"
+```
+
+Now we can run the `mint.sh` script with the correct vault contract address.
 
 ```bash
 soroban contract invoke \
@@ -1188,7 +1211,7 @@ soroban contract invoke \
     --network-passphrase 'Test SDF Future Network ; October 2022' \
     -- \
     deposit \
-    --to <USER_ADDRESS> \
+    --from <USER_ADDRESS> \
     --amount 100
 ```
 

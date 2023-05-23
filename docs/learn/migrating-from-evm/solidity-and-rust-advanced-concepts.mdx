@@ -895,7 +895,7 @@ The transfer2 function follows a similar pattern but uses the `require_auth_for_
 
 By utilizing these authorization methods provided by the `Address` object from the Soroban Rust SDK, the contract enforces that only authorized callers can perform the transfers. This approach enhances the security of the contract by ensuring that sensitive operations can only be executed by authorized parties.
 
-Soroban's approach to authorization in this example offers several advantages over Solidity's model of ERC20 by eliminating the need for separate approval management. Instead, authorization checks are directly incorporated into any Soroban function. This simplifies the contract codebase and reduces the complexity associated with managing separate approval states.
+Soroban's approach to authorization in this example offers several advantages over Solidity's model of ERC20 by eliminating the need for separate approval management. Instead, authorization checks can be directly incorporated into any Soroban function. This simplifies the contract codebase and reduces the complexity associated with managing separate approval states.
 
 Soroban authorization provides Contract-level Authorization, Account Abstraction Functionality, and more advanced Authorization checks. To learn more about these advantages, visit the [Authorization section](../../learn/authorization) of the documentation.
 

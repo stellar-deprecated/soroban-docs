@@ -667,9 +667,9 @@ Soroban has some differences from Solidity in terms of addresses and other funct
 
 One significant difference is the use of the `Env` object in Soroban. The `Env` object encapsulates various functionalities related to contract execution, data access, and more. It provides a unified interface for interacting with the Soroban environment within the context of a contract. By utilizing the `Env` object, Soroban enables a more modular and flexible approach to contract development.
 
-Additionally, Soroban's emphasis on simplicity and safety contributes to its differences in address-related functionality. The use of the `Address` object in Soroban provides a type-safe representation of addresses and allows for easier handling and validation. This helps prevent common programming errors and enhances code security.
+To further explain, the `Env` type offers a gateway to the environment where the contract operates. It provides information about the ongoing contract, the entity invoking it, contract data, and functions for signing, hashing, and so forth. Most types demand access to an `Env` for their construction or conversion.
 
-The differences in Soroban's address-related functionality, such as retrieving the current contract address and identifier through the `Env` object, provide a more explicit and structured approach to contract development. These differences aim to improve clarity, maintainability, and security in Soroban smart contracts.
+Meanwhile, the  `Address` object serves as a potent tool for authentication and [authorization](#authorization). For instance, it can be used to authorize token transfers, acting as a security gatekeeper within the system. This feature amplifies the functionality of addresses in Soroban, making them not just a means of identification or storage, but also a key player in verifying and authorizing transactions.
 
 ### Function Visibility Specifiers
 
@@ -864,9 +864,7 @@ These Solidity examples illustrate some common authorization patterns used in Et
 
 Soroban's design principles prioritize flexibility, security, and testability, which have led to differences in how authorization is handled compared to Solidity.
 
-In a [previous example](solidity-and-rust-advanced-concepts#traits), we demonstrated how the `Ownable` trait is implemented for the `OwnableContract` struct. This allows instances of `OwnableContract` to utilize the `is_owner` method defined in the `Ownable` trait.
-
-Additionally, Soroban provides built-in functions such as `require_auth` and `require_auth_for_args` through the `Address` struct. These functions help enforce authorization rules within contracts. During on-chain execution, the Soroban host performs the necessary authentication, including verifying signatures and **ensuring replay prevention**. This alleviates the burden of authentication from the contracts themselves, promoting security and reducing potential vulnerabilities.
+Soroban provides built-in functions such as `require_auth` and `require_auth_for_args` through the `Address` struct. These functions help enforce authorization rules within contracts. During on-chain execution, the Soroban host performs the necessary authentication, including verifying signatures and **ensuring replay prevention**. This alleviates the burden of authentication from the contracts themselves, promoting security and reducing potential vulnerabilities. 
 
 Here is an example of a smart contract that illustrates how authorization is handled in Soroban:
 
@@ -891,7 +889,7 @@ In this example, we have a Soroban contract that includes two public functions: 
 
 Inside the Transfer function, the `require_auth` method is invoked on the address object. This method ensures that the caller of the contract has the necessary authorization to execute the transfer.
 
-The transfer2 function follows a similar pattern but uses the `require_auth_for_args` method instead. It takes the same parameters as transfer but provides a tuple (amount / 2,) as the argument to `require_auth_for_args`. This method verifies that the caller has authorized the contract invocation with the specific arguments.
+The `transfer2` function follows a similar pattern but uses the `require_auth_for_args` method instead. It takes the same parameters as transfer but provides a tuple (amount / 2,) as the argument to `require_auth_for_args`. This method verifies that the caller has authorized the contract invocation with the specific arguments.
 
 By utilizing these authorization methods provided by the `Address` object from the Soroban Rust SDK, the contract enforces that only authorized callers can perform the transfers. This approach enhances the security of the contract by ensuring that sensitive operations can only be executed by authorized parties.
 
@@ -901,6 +899,6 @@ Soroban authorization provides Contract-level Authorization, Account Abstraction
 
 ## Summary
 
-Overall the Soroban equivalents of Solidity concepts are very similar. The main difference is that Soroban uses `env` instead of `msg` to access information about the entire contract execution environment, including the state of the contract, addresses involved, and more. Authorization is also handled differently in Soroban, as it is built into the core functionality of the SDK and is more robust than relying on smart contract code alone.
+Overall the Soroban equivalents of Solidity concepts are very similar. However, there are notable differences worth highlighting. Soroban uses `env` instead of `msg` to access information about the entire contract execution environment, including the state of the contract, addresses involved, and more. Authorization is also handled differently in Soroban, as it is built into the core functionality of the SDK and is more robust than relying on smart contract code alone.
 
 For more information on Solidity concepts and their Soroban equivalents, it is recommended that one refer to both the [Soroban Rust SDK documentation](https://docs.rs/soroban-sdk/latest/soroban_sdk/struct.Env.html) and the [Solidity documentation](https://docs.soliditylang.org/en/v0.8.19/cheatsheet.html).

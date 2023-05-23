@@ -846,6 +846,7 @@ If the user were to call the `withdraw` method with 100 shares, the following wo
 To test the vault contract, we will can simply run the following command in our terminal from our vault contract directory:
 
 ```bash
+#cd vault
 cargo test
 ```
 
@@ -863,6 +864,8 @@ Now that we have a working vault contract, we can deploy it to a network and int
 This section requires you to have a funded Keypair to use with Stellar's Futurenet. You can create and fund one using the [Stellar Laboratory](https://laboratory.stellar.org/#account-creator?network=futurenet).
 
 Below you will find a series of commands that will help you build, deploy and interact with the vault and token contracts. You can use them to follow along as we walk through the process of building, deploying, and interacting with the contracts. It may behoove you to keep these commands in a `scripts` directory in your project. This way, you can easily run them from your terminal.
+
+> _Note_ : If you decide to use scripts, be sure to double-check your import paths.
 
 <Tabs>
 <TabItem value="build" label="build.sh">
@@ -1017,18 +1020,18 @@ soroban contract invoke \
     --rpc-url https://rpc-futurenet.stellar.org:443 \
     --network-passphrase 'Test SDF Future Network ; October 2022' \
     -- \
-    get_rsrvs \
+    get_rsrvs
 ```
 
 </TabItem>
 
-<TabItem value="withdraw" label="withdraw">
+<TabItem value="withdraw" label="withdraw.sh">
 
 ```bash
 soroban contract invoke \
     --wasm target/wasm32-unknown-unknown/release/vault.wasm \
     --id <VAULT_CONTRACT_ID> \
-    --source  \
+    --source <SECRET_KEY> \
     --rpc-url https://rpc-futurenet.stellar.org:443 \
     --network-passphrase 'Test SDF Future Network ; October 2022' \
     -- \
@@ -1268,7 +1271,7 @@ SUCCESS
 101
 ```
 
-And finally, we can check the reserves of the vault again. We can do this by running the `reserves.sh` script.
+And finally, we can check the reserves of the vault again. We can do this by running the `get_rsrv.sh` script.
 
 We should see the reserves of the vault have decreased by the amount we withdrew + yield.
 

@@ -866,7 +866,7 @@ Soroban's design principles prioritize flexibility, security, and testability, w
 
 In a [previous example](solidity-and-rust-advanced-concepts#traits), we demonstrated how the `Ownable` trait is implemented for the `OwnableContract` struct. This allows instances of `OwnableContract` to utilize the `is_owner` method defined in the `Ownable` trait.
 
-Additionally, Soroban provides built-in functions such as `require_auth` and `require_auth_for_args` through the `Address` struct. These functions help enforce authorization rules within contracts. During on-chain execution, the Soroban host performs the necessary authentication, including verifying signatures and ensuring replay prevention. This alleviates the burden of authentication from the contracts themselves, promoting security and reducing potential vulnerabilities.
+Additionally, Soroban provides built-in functions such as `require_auth` and `require_auth_for_args` through the `Address` struct. These functions help enforce authorization rules within contracts. During on-chain execution, the Soroban host performs the necessary authentication, including verifying signatures and **ensuring replay prevention**. This alleviates the burden of authentication from the contracts themselves, promoting security and reducing potential vulnerabilities.
 
 Here is an example of a smart contract that illustrates how authorization is handled in Soroban:
 

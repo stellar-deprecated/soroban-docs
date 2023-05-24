@@ -10,13 +10,17 @@ account contract can be used with the Soroban auth framework, so that any time
 an `Address` pointing at this contract instance is used, the custom logic
 implemented here is applied.
 
-The custom accounts are exclusive to Soroban and can't be used to perform the
-regular Stellar operations.
+Custom accounts are exclusive to Soroban and can't be used to perform other
+Stellar operations.
 
-Implementing a proper custom account contract requires a very good
-understanding of authentication and authorization and requires rigorous
-testing and review. The example here is *not* a full-fledged account contract -
-use it as an API reference only.
+:::danger
+
+Implementing a custom account contract requires a very good understanding of
+authentication and authorization and requires rigorous testing and review. The
+example here is *not* a full-fledged account contract - use it as an API
+reference only.
+
+:::
 
 :::caution
 
@@ -26,19 +30,19 @@ around them yet beyond the Soroban SDK support.
 :::
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.7.0
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.8.4
 
-[custom account example]: https://github.com/stellar/soroban-examples/tree/v0.7.0/account
+[custom account example]: https://github.com/stellar/soroban-examples/tree/v0.8.4/account
 
 ## Run the Example
 
 First go through the [Setup] process to get your development environment
-configured, then clone the `v0.7.0` tag of `soroban-examples` repository:
+configured, then clone the `v0.8.4` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.7.0 https://github.com/stellar/soroban-examples
+git clone -b v0.8.4 https://github.com/stellar/soroban-examples
 ```
 
 Or, skip the development environment setup and open this example in [Gitpod][oigp].
@@ -60,18 +64,19 @@ test test::test_token_auth ... ok
 
 Open the `account/src/lib.rs` file to follow along.
 
-Any account contract has to implement a special function `__check_auth` that 
-takes the signature payload, signatures and authorization context.
+Account contracts implement a special function `__check_auth` that takes the
+signature payload, signatures and authorization context. The function should
+error if auth is declined, otherwise auth will be approved.
 
-The example contract here uses `ed25519` keys for signature verification and
-supports multiple unweighted signers. It also implements a policy that allows
+This example contract uses ed25519 keys for signature verification and supports
+multiple equally weighted signers. It also implements a policy that allows
 setting per-token limits on transfers. The token can be spent beyond the limit
-only if every signature is provided. 
+only if every signature is provided.
 
 For example, the user may initialize this contract with 2 keys and introduce 100
 USDC spend limit. This way they can use a single key to sign their contract
-invocations and be sure that even if they sign a malicious transaction they 
-won't lose more than 100 USDC.
+invocations and be sure that even if they sign a malicious transaction they
+won't spend more than 100 USDC.
 
 ### Initialization
 
@@ -95,9 +100,8 @@ pub fn init(env: Env, signers: Vec<BytesN<32>>) {
 }
 ```
 
-Account contracts are the few contracts that need to work with the public keys
-explicitly and not the `Address` type. Here we initialize the contract with
-ed25519 keys.
+This account contract needs to work with the public keys explicitly. Here we
+initialize the contract with ed25519 keys.
 
 ### Policy modification
 
@@ -128,7 +132,7 @@ pub fn __check_auth(
     env: Env,
     signature_payload: BytesN<32>,
     signatures: Vec<Signature>,
-    auth_context: Vec<AuthorizationContext>,
+    auth_context: Vec<Context>,
 ) -> Result<(), AccError> {
     // Perform authentication.
     authenticate(&env, &signature_payload, &signatures)?;
@@ -136,10 +140,10 @@ pub fn __check_auth(
     let tot_signers: u32 = env.storage().get(&DataKey::SignerCnt).unwrap().unwrap();
     let all_signed = tot_signers == signatures.len();
 
-    let curr_contract_id = env.current_contract_id();
+    let curr_contract = env.current_contract_address();
 
     // This is a map for tracking the token spend limits per token. This
-    // makes sure that if e.g. multiple `xfer` calls are being authorized
+    // makes sure that if e.g. multiple `transfer` calls are being authorized
     // for the same token we still respect the limit for the total
     // transferred amount (and not the 'per-call' limits).
     let mut spend_left_per_token = Map::<BytesN<32>, i128>::new(&env);
@@ -148,7 +152,7 @@ pub fn __check_auth(
         verify_authorization_policy(
             &env,
             &context.unwrap(),
-            &curr_contract_id,
+            &curr_contract,
             all_signed,
             &mut spend_left_per_token,
         )?;
@@ -157,9 +161,9 @@ pub fn __check_auth(
 }
 ```
 
-`__check_auth` is a special function that turns a contract into an 'account
-contract'. It will get called by the Soroban host every time 
-`require_auth/require_auth_for_args` is called for the address of this contract.
+`__check_auth` is a special function that account contracts implement. It will
+be called by the Soroban environment every time `require_auth` or
+`require_auth_for_args` is called for the address of the account contract.
 
 Here it is implemented in two steps. First, authentication is performed using
 the signature payload and a vector of signatures. Second, authorization policy
@@ -167,11 +171,12 @@ is enforced using the `auth_context` vector. This vector contains all the
 contract calls that are being authorized by the provided signatures.
 
 `__check_auth` is a reserved function and can only be called by the Soroban
-host as a callback from `require_auth` host function. All the direct calls to
- `__check_auth` will fail. This makes it safe to write to the account contract
- storage from `__check_auth`, as it's guaranteed to not be called in unexpected
- context (so it's possible to e.g. persist the spend limits without worrying
- that they'll be exhausted via just calling `__check_auth` directly).
+environment in response to a call to `require_auth`. Any direct call to
+`__check_auth` will fail. This makes it safe to write to the account contract
+storage from `__check_auth`, as it's guaranteed to not be called in unexpected
+context. In this example it's possible to persist the spend limits without
+worrying that they'll be exhausted via a bad actor calling `__check_auth`
+directly.
 
 ### Authentication
 
@@ -213,27 +218,26 @@ the payload and also that they belong to the signers of this account contract.
 ```rust
 fn verify_authorization_policy(
     env: &Env,
-    context: &AuthorizationContext,
-    curr_contract_id: &BytesN<32>,
+    context: &Context,
+    curr_contract: &Address,
     all_signed: bool,
     spend_left_per_token: &mut Map<BytesN<32>, i128>,
 ) -> Result<(), AccError> {
     // For the account control every signer must sign the invocation.
-    if &context.contract == curr_contract_id {
+    if &context.contract() == curr_contract {
         if !all_signed {
             return Err(AccError::NotEnoughSigners);
         }
     }
 ```
 
-We verify the policy per `AuthorizationContext` i.e. per one `require_auth` 
-call. 
-The policy for the account contract itself enforces every signer to have signed
-the method call.
+We verify the policy per `Context`. i.e. Per one `require_auth` call. The policy
+for the account contract itself enforces every signer to have signed the method
+call.
 
 ```rust
 // Otherwise, we're only interested in functions that spend tokens.
-if context.fn_name != XFER_FN && context.fn_name != INCR_ALLOW_FN {
+if context.fn_name != TRANSFER_FN && context.fn_name != Symbol::new(env, "increase_allowance") {
     return Ok(());
 }
 
@@ -251,7 +255,7 @@ let spend_left: Option<i128> =
 
 // 'None' means that the contract is outside of the policy.
 if let Some(spend_left) = spend_left {
-    // 'amount' is the third argument in both `approve` and `xfer`.
+    // 'amount' is the third argument in both `approve` and `transfer`.
     // If the contract has a different signature, it's safer to panic
     // here, as it's expected to have the standard interface.
     let spent: i128 = context
@@ -279,7 +283,7 @@ function we don't exceed the spending limits.
 
 Open the [`account/src/test.rs`] file to follow along.
 
-[`account/src/test.rs`]: https://github.com/stellar/soroban-examples/tree/v0.7.0/account/src/test.rs
+[`account/src/test.rs`]: https://github.com/stellar/soroban-examples/tree/v0.8.4/account/src/test.rs
 
 Refer to another examples for the general information on the test setup.
 
@@ -318,38 +322,40 @@ env.invoke_account_contract_check_auth::<AccError>(
 ```
 
 `__check_auth` can't be called directly as regular contract functions, hence we
-need to use `invoke_account_contract_check_auth` testing utility that emulates
+need to use `try_invoke_contract_check_auth` testing utility that emulates
 being called by the Soroban host during a `require_auth` call.
 
 ```rust
-let account_address = Address::from_contract_id(&env, &account_contract.contract_id);
 // Add a spend limit of 1000 per 1 signer.
 account_contract.add_limit(&token, &1000);
 // Verify that this call needs to be authorized.
 assert_eq!(
-    env.recorded_top_authorizations(),
-    std::vec![(
-        account_address.clone(),
-        account_contract.contract_id.clone(),
+    env.auths(),
+    [(
+        account_contract.address.clone(),
+        account_contract.address.clone(),
         Symbol::short("add_limit"),
         (token.clone(), 1000_i128).into_val(&env),
     )]
 );
 ```
-`env.recorded_top_authorizations()` can still be used for the functions that
-aren't `__check_auth` and use the regular Soroban auth. As it usually happens
-in tests, authorizations are just recorded and `__check_auth` is not actually
-called.
+
+Asserting the contract-specific error to `try_invoke_contract_check_auth` allows
+verifying the exact error code and makes sure that the verification has failed
+due to not having enough signers and not for any other reason.
+
+It's a good idea for the account contract to have detailed error codes and
+verify that they are returned when they are expected.
 
 ```rust
 assert_eq!(
-    env.invoke_account_contract_check_auth::<AccError>(
-        &account_contract.contract_id,
+    env.try_invoke_contract_check_auth::<AccError>(
+        &account_contract.address.contract_id(),
         &payload,
         &vec![&env, sign(&env, &signers[0], &payload)],
         &vec![
             &env,
-            token_auth_context(&env, &token, Symbol::new(&env, "xfer"), 1001)
+            token_auth_context(&env, &token, Symbol::new(&env, "transfer"), 1001)
         ],
     )
     .err()
@@ -357,10 +363,4 @@ assert_eq!(
     .unwrap(),
     AccError::NotEnoughSigners
 );
-```  
-Passing the contract-specific error to `invoke_account_contract_check_auth`
-allows verifying the exact error code and makes sure that the verification has
-failed due to not having enough signers and not for any other reason. 
-
-It's a good idea for the account contract to have detailed error codes and
-verify that they are returned when they are expected.
+```

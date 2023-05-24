@@ -181,6 +181,18 @@ pub trait Contract {
 }
 ```
 
+### Metadata
+
+Another requirement for complying with the token interface is to write the
+standard metadata (`decimal`, `name`, and `symbol`) for the token in a specific
+format. This format allows users to directly read constant data from the ledger
+instead of invoking a WASM function. The [token
+example](https://github.com/stellar/soroban-examples/blob/main/token/src/metadata.rs)
+demonstrates how to use the Rust
+[soroban-token-sdk](https://github.com/stellar/rs-soroban-sdk/blob/main/soroban-token-sdk/src/lib.rs)
+to write the metadata, and we strongly encourage token implementations to follow
+this approach.
+
 ### Handling Failure Conditions
 In the token interface, there are several instances where function calls can fail due to various reasons such as lack of proper authorization, insufficient allowance or balance, etc. To handle these failure conditions, it is important to specify the expected behavior when such situations arise.
 

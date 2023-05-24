@@ -6,21 +6,21 @@ description: Using the allocator feature of the SDK.
 
 The [allocator example] demonstrates how to utilize the allocator feature when writing a contract.
 
-[allocator example]: https://github.com/stellar/soroban-examples/tree/v0.7.0/alloc
+[allocator example]: https://github.com/stellar/soroban-examples/tree/v0.8.4/alloc
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.7.0
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.8.4
 
 The `soroban-sdk` crate provides a lightweight bump-pointer allocator which can be used to emulate heap memory allocation in a WASM smart contract.
 
 ## Run the Example
 
-First go through the [Setup] process to get your development environment configured, then clone the `v0.7.0` tag of `soroban-examples` repository:
+First go through the [Setup] process to get your development environment configured, then clone the `v0.8.4` tag of `soroban-examples` repository:
 
 [setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.7.0 https://github.com/stellar/soroban-examples
+git clone -b v0.8.4 https://github.com/stellar/soroban-examples
 ```
 
 Or, skip the development environment setup and open this example in [Gitpod][oigp].
@@ -45,10 +45,10 @@ This example depends on the `alloc` feature in `soroban-sdk`. To include it, add
 
 ```rust title="alloc/Cargo.toml"
 [dependencies]
-soroban-sdk = { workspace = true, features = ["alloc"] }
+soroban-sdk = { version = "0.8.4", features = ["alloc"] }
 
 [dev_dependencies]
-soroban-sdk = { workspace = true, features = ["testutils", "alloc"] }
+soroban-sdk = { version = "0.8.4", features = ["testutils", "alloc"] }
 ```
 
 ## Code
@@ -78,7 +78,7 @@ impl AllocContract {
 }
 ```
 
-Ref: https://github.com/stellar/soroban-examples/tree/v0.7.0/alloc
+Ref: https://github.com/stellar/soroban-examples/tree/v0.8.4/alloc
 
 ## How it Works
 

@@ -140,27 +140,23 @@ administrator.
 ## Using Stellar Asset Contract with other contracts
 
 From the contract perspective Stellar Asset Contract is not different from any
-other token that implements the Soroban token interface. That's why in order
-to generate a client to use it `soroban_token_spec` can be used:
+other token that implements the Soroban token interface. The Rust SDK contains
+a pregenerated client for any contract that implements the token interface:
 
 ```rust
-// Import the token spec to generate the client for the token interface (
-// including SAC).
-mod token {
-    soroban_sdk::contractimport!(file = "../soroban_token_spec.wasm");
-}
+use soroban_sdk::token;
 
 struct MyContract;
 
 #[contractimpl]
 impl MyContract {
   fn token_fn(e: Env, token_id: BytesN<32>) {
-    // Create a client instance for the provided token identifier. If the 
+    // Create a client instance for the provided token identifier. If the
     // `token_id` value corresponds to an SAC contract, then SAC implementation
     // is used.
     let client = token::Client::new(&env, &token_id);
     // Call token operations.
-    client.xfer(...);
+    client.transfer(...);
   }
 }
 ```
@@ -196,4 +192,4 @@ implementation.
 This interface can be found in the [SDK]. It extends the common 
 [token interface](tokens.mdx).
 
-[SDK]: https://github.com/stellar/rs-soroban-sdk/blob/v0.7.0/soroban-token-spec/src/lib.rs
+[SDK]: https://github.com/stellar/rs-soroban-sdk/blob/v0.8.4/soroban-sdk/src/token.rs

@@ -38,25 +38,84 @@ Preview releases are software releases that are also released to the [Futurenet]
 | Laboratory | todo |
 | Futurenet Network Passphrase | `Test SDF Future Network ; October 2022` |
 
+### Breaking changes note
+
+todo: add breaking changes
+
 ### Changelog
 
 #### XDR
+
+- XDR for upgradeable config entries.
+- Fix U/I128 and U/I256 number representation for consistent sorting.
+- Add contract metadata.
+- Remove using "+"" if dirty.
+- Update to pick up config settings for contract data.
 
 See https://github.com/stellar/rs-stellar-xdr/releases v0.0.16 for more details.
 
 #### Soroban Environment
 
+- Implement the Arbitrary fuzzing trait for contract value-types.
+- Introduce temporary storage in Soroban host.
+- Remove unnecessary trait bounds on MeteredVec and MeteredOrdMap.
+- Remove admin argument from the token admin interface.
+- Token rename.
+- Make all the functions starting with "__" reserved.
+- Add Comparison fixes.
+- Add Token metadata.
+- Add soroban_env_host::host::LegacyEpoch.
+- Adapt {ui}{128,256} to new xdr definitions; add {ui}256 host functions.
+- Add a host function to update the contract Wasm executable.
+- Decouple CostModel inputs from iterations; fit and extract model params.
+- Don't allow invalid chars in Symbol objects.
+- Update rust-version.
+- Verify sig order.
+- Update host corresponding to fee-related XDR changes.
+- Undo pub(crate)ing of fn in host.
+- Use network configs for metering.
+- Allow re-registering over a contract.
+- Fix event name.
+- Allow getting top-level authorizations in enforced mode.
+- Fix unsoundness in RawVal::get_tag.
+- Fix comparison of RawVals of differing types and objectness.
+- Expose a list of all auths.
+- Remove redundant clone calls.
+- Initial configuration of cargo-deny.
+- Move to syn2.
+- Add a library for the fee computation to the host.
+- Fix the cargo-deny matrix in rust.yml.
+
 See https://github.com/stellar/rs-soroban-env/releases v0.0.16 for more details.
 
 #### Soroban Rust SDK
+
+- Move AuthorizationContext into SDK and add address method.
+- Move auth testutils into sdk.
+- Rename Client::contract to Client::address.
+- Hide warnings about snake case in generated client.
 
 See https://github.com/stellar/rs-soroban-sdk/releases v0.8.4 for more details.
 
 #### Soroban RPC
 
+- Add support for fees calculations.
+- Add support for multi-host function invocations.
+- Print xdr version in dev builds.
+- Read configuration from toml file.
+- Add metrics support.
+- Improved error logging.
+- Add admin endpoint.
+- Add graceful shutdown.
+
 See https://github.com/stellar/soroban-tools/releases v0.8.0 for more details.
 
 #### Soroban CLI
+
+- Add support for fees.
+- Add meta output when inspecting contract.
+- Support passing identity instead of address.
+- Support token interface changes.
 
 See https://github.com/stellar/soroban-tools/releases v0.8.0 for more details.
 

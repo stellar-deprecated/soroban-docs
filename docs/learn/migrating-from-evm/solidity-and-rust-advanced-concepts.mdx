@@ -531,11 +531,11 @@ These are a part of Solidity's global variables, which are accessible from any f
 
 #### Soroban
 
-In contrast to Solidity's global variables, Soroban relies on passing an [`Env`](https://docs.rs/soroban-sdk/0.7.0/soroban_sdk/struct.Env.html) argument to all functions which provides access to the environment the contract is executing within.
+In contrast to Solidity's global variables, Soroban relies on passing an [`Env`](https://docs.rs/soroban-sdk/latest/soroban_sdk/struct.Env.html) argument to all functions which provides access to the environment the contract is executing within.
 
 The `Env` provides access to information about the currently executing contract, who invoked it, contract data, functions for signing, hashing, etc.
 
-For instance, you would use `env.storage().get(key)` to access a target value from the contract's [storage](https://docs.rs/soroban-sdk/0.7.0/soroban_sdk/storage/struct.Storage.html).
+For instance, you would use `env.storage().get(key)` to access a target value from the contract's [storage](https://docs.rs/soroban-sdk/latest/soroban_sdk/struct.Env.html).
 
 - `Env::storage` is used to get a struct for accessing and updating contract data that has been stored.
 - Used as `env.storage().get()` or `env.storage().set()`.

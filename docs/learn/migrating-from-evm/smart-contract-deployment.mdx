@@ -189,10 +189,10 @@ If you haven't already setup up the dev environment for Soroban, you can get sta
 
 This project requires using the `soroban_token_contract.wasm` file which you will need to import manually.
 
-First, you will need to clone the `v0.7.0` tag of `soroban-examples` repository:
+First, you will need to clone the `v0.8.4` tag of `soroban-examples` repository:
 
 ```bash
-git clone -b v0.7.0 https://github.com/stellar/soroban-examples
+git clone -b v0.8.4 https://github.com/stellar/soroban-examples
 ```
 
 Then, navigate to the `soroban-examples/token` directory
@@ -255,11 +255,11 @@ publish = false
 crate-type = ["cdylib"]
 
 [dependencies]
-soroban-sdk = { version = "0.7.0"}
+soroban-sdk = { version = "0.8.1" }
 num-integer = { version = "0.1.45", default-features = false, features = ["i128"] }
 
 [dev_dependencies]
-soroban-sdk = { version = "0.7.0", features = ["testutils"] }
+soroban-sdk = { version = "0.8.1", features = ["testutils"] }
 
 [profile.release]
 opt-level = "z"
@@ -293,7 +293,9 @@ To interact with the token contract, we'll use a built in interface that you can
 mod test;
 mod token;
 
-use soroban_sdk::{contractimpl, Address, Bytes, BytesN, ConversionError, Env, RawVal, TryFromVal};
+use soroban_sdk::{
+    contractimpl, contractmeta, Address, Bytes, BytesN, ConversionError, Env, RawVal, TryFromVal,
+};
 use token::create_contract;
 
 #[derive(Clone, Copy)]
@@ -369,10 +371,24 @@ fn mint_shares(e: &Env, to: Address, amount: i128) {
     let total = get_total_shares(e);
     let share_contract_id = get_token_share(e);
 
-    token::Client::new(e, &share_contract_id).mint(&e.current_contract_address(), &to, &amount);
+    token::Client::new(e, &share_contract_id).mint(&to, &amount);
 
     put_total_shares(e, total + amount);
 }
+
+fn transfer(e: &Env, contract_id: BytesN<32>, to: Address, amount: i128) {
+    token::Client::new(e, &contract_id).transfer(&e.current_contract_address(), &to, &amount);
+}
+
+fn transfer_token(e: &Env, to: Address, amount: i128) {
+    transfer(e, get_token(e), to, amount);
+}
+
+// Metadata that is added on to the WASM custom section
+contractmeta!(
+    key = "Description",
+    val = "A Vault with a 1% return on investment per deposit."
+);
 
 pub trait VaultTrait {
     // Sets the token contract addresses for this vault
@@ -386,13 +402,11 @@ pub trait VaultTrait {
     // the actual balance of token for this contract.
     fn deposit(e: Env, from: Address, amount: i128);
 
-    // sends `amount` of vault share tokens to this contract, burns all vaults share tokens
-    // in this contract, and sends the
+    // transfers `amount` of vault share tokens to this contract, burns all pools share tokens in this contracts, and sends the
     // corresponding amount of token to `to`.
     // Returns amount of token withdrawn
     fn withdraw(e: Env, to: Address, amount: i128) -> i128;
 
-    // Returns the amount of token that can be withdrawn for the given amount of vault shares
     fn get_rsrvs(e: Env) -> i128;
 }
 
@@ -406,7 +420,7 @@ impl VaultTrait for Vault {
             &e.current_contract_address(),
             &7u32,
             &Bytes::from_slice(&e, b"Vault Share Token"),
-            &Bytes::from_slice(&e, b"VLT"),
+            &Bytes::from_slice(&e, b"Vault"),
         );
 
         put_token(&e, token);
@@ -425,14 +439,12 @@ impl VaultTrait for Vault {
 
         let token_client = token::Client::new(&e, &get_token(&e));
 
-        token_client.xfer(&from, &e.current_contract_address(), &amount);
+        token_client.transfer(&from, &e.current_contract_address(), &amount);
 
-        let balance_a = get_token_balance(&e);
-        let total_shares = get_total_shares(&e);
+        let balance = get_token_balance(&e);
 
         mint_shares(&e, from, amount);
-        put_reserve(&e, balance_a);
-        put_total_shares(&e, total_shares + amount)
+        put_reserve(&e, balance);
     }
 
     fn withdraw(e: Env, to: Address, amount: i128) -> i128 {
@@ -440,10 +452,10 @@ impl VaultTrait for Vault {
 
         // First transfer the vault shares that need to be redeemed
         let share_token_client = token::Client::new(&e, &get_token_share(&e));
-        share_token_client.xfer(&to, &e.current_contract_address(), &amount);
+        share_token_client.transfer(&to, &e.current_contract_address(), &amount);
 
         let token_client = token::Client::new(&e, &get_token(&e));
-        token_client.xfer(
+        token_client.transfer(
             &e.current_contract_address(),
             &to,
             &(&amount + (&amount / &100)),
@@ -452,15 +464,8 @@ impl VaultTrait for Vault {
         let balance = get_token_balance(&e);
         let balance_shares = get_balance_shares(&e);
 
-        let total_shares = get_total_shares(&e);
-
-        if total_shares < amount {
-            panic!("not enought shares to withdraw");
-        }
-
         burn_shares(&e, balance_shares);
-        put_total_shares(&e, total_shares - amount);
-        put_reserve(&e, balance);
+        put_reserve(&e, balance - amount);
 
         amount
     }
@@ -476,16 +481,21 @@ impl VaultTrait for Vault {
 
 ```rust
 #![cfg(test)]
+extern crate std;
 
 use crate::{token, VaultClient};
 
-use soroban_sdk::{testutils::Address as _, Address, BytesN, Env};
+use soroban_sdk::{testutils::Address as _, Address, BytesN, Env, IntoVal, Symbol};
 
-fn create_token_contract(e: &Env, admin: &Address) -> token::Client {
-    token::Client::new(&e, &e.register_stellar_asset_contract(admin.clone()))
+fn create_token_contract<'a>(e: &Env, admin: &Address) -> token::Client<'a> {
+    token::Client::new(e, &e.register_stellar_asset_contract(admin.clone()))
 }
 
-fn create_vault_contract(e: &Env, token_wasm_hash: &BytesN<32>, token: &BytesN<32>) -> VaultClient {
+fn create_vault_contract<'a>(
+    e: &Env,
+    token_wasm_hash: &BytesN<32>,
+    token: &BytesN<32>,
+) -> VaultClient<'a> {
     let vault = VaultClient::new(e, &e.register_contract(None, crate::Vault {}));
     vault.initialize(token_wasm_hash, token);
     vault
@@ -498,37 +508,70 @@ fn install_token_wasm(e: &Env) -> BytesN<32> {
 
 #[test]
 fn test() {
-    let e: Env = Default::default();
+    let e = Env::default();
+    e.mock_all_auths();
 
     let admin1 = Address::random(&e);
 
     let token = create_token_contract(&e, &admin1);
-    let user = Address::random(&e);
+
+    let user1 = Address::random(&e);
     let vault = create_vault_contract(&e, &install_token_wasm(&e), &token.contract_id);
 
     let contract_share: [u8; 32] = vault.share_id().into();
     let token_share = token::Client::new(&e, &contract_share);
 
-    token.mint(&admin1, &user, &100);
-    token.mint(&admin1, &vault.address(), &100);
+    token.mint(&user1, &200);
+    assert_eq!(token.balance(&user1), 200);
+    token.mint(&vault.address(), &100);
     assert_eq!(token.balance(&vault.address()), 100);
-    assert_eq!(token.balance(&user), 100);
 
-    assert_eq!(token_share.balance(&user), 0);
-    vault.deposit(&user, &100);
-    assert_eq!(token_share.balance(&user), 100);
+    vault.deposit(&user1, &100);
+    assert_eq!(
+        e.auths(),
+        [
+            (
+                user1.clone(),
+                vault.contract_id.clone(),
+                Symbol::short("deposit"),
+                (&user1, 100_i128).into_val(&e)
+            ),
+            (
+                user1.clone(),
+                token.contract_id.clone(),
+                Symbol::short("transfer"),
+                (&user1, vault.address(), 100_i128).into_val(&e)
+            ),
+        ]
+    );
+
+    assert_eq!(token_share.balance(&user1), 100);
     assert_eq!(token_share.balance(&vault.address()), 0);
-    assert_eq!(token.balance(&user), 0);
+    assert_eq!(token.balance(&user1), 100);
     assert_eq!(token.balance(&vault.address()), 200);
-    assert_eq!(vault.get_rsrvs(), 200);
 
-    let withdraw_amount = 100;
-    vault.withdraw(&user, &withdraw_amount);
-    let yield_amount = &(withdraw_amount / 100);
-    assert_eq!(token.balance(&user), 100 + yield_amount);
-    assert_eq!(token_share.balance(&user), 0);
+    vault.withdraw(&user1, &100);
+    assert_eq!(
+        e.auths(),
+        [
+            (
+                user1.clone(),
+                vault.contract_id.clone(),
+                Symbol::short("withdraw"),
+                (&user1, 100_i128).into_val(&e)
+            ),
+            (
+                user1.clone(),
+                token_share.contract_id.clone(),
+                Symbol::short("transfer"),
+                (&user1, vault.address(), 100_i128).into_val(&e)
+            ),
+        ]
+    );
+
+    assert_eq!(token.balance(&user1), 201);
+    assert_eq!(token_share.balance(&user1), 0);
     assert_eq!(token.balance(&vault.address()), 99);
-    assert_eq!(vault.get_rsrvs(), 99);
     assert_eq!(token_share.balance(&vault.address()), 0);
 }
 ```
@@ -542,10 +585,9 @@ use soroban_sdk::{Bytes, BytesN, Env};
 
 soroban_sdk::contractimport!(file = "./soroban_token_contract.wasm");
 
-pub fn create_contract(e: &Env, token_wasm_hash: &BytesN<32>, token_a: &BytesN<32>) -> BytesN<32> {
+pub fn create_contract(e: &Env, token_wasm_hash: &BytesN<32>, token: &BytesN<32>) -> BytesN<32> {
     let mut salt = Bytes::new(e);
-    salt.append(&token_a.clone().into());
-
+    salt.append(&token.clone().into());
     let salt = e.crypto().sha256(&salt);
     e.deployer()
         .with_current_contract(&salt)
@@ -560,46 +602,45 @@ pub fn create_contract(e: &Env, token_wasm_hash: &BytesN<32>, token_a: &BytesN<3
 ```rust
 //! This contract demonstrates a sample implementation of the Soroban token
 //! interface.
-use crate::admin::{check_admin, has_administrator, write_administrator};
+use crate::admin::{has_administrator, read_administrator, write_administrator};
 use crate::allowance::{read_allowance, spend_allowance, write_allowance};
 use crate::balance::{is_authorized, write_authorization};
 use crate::balance::{read_balance, receive_balance, spend_balance};
 use crate::event;
-use crate::metadata::{
-    read_decimal, read_name, read_symbol, write_decimal, write_name, write_symbol,
-};
+use crate::metadata::{read_decimal, read_name, read_symbol, write_metadata};
 use soroban_sdk::{contractimpl, Address, Bytes, Env};
+use soroban_token_sdk::TokenMetadata;
 
 pub trait TokenTrait {
     fn initialize(e: Env, admin: Address, decimal: u32, name: Bytes, symbol: Bytes);
 
     fn allowance(e: Env, from: Address, spender: Address) -> i128;
 
-    fn incr_allow(e: Env, from: Address, spender: Address, amount: i128);
+    fn increase_allowance(e: Env, from: Address, spender: Address, amount: i128);
 
-    fn decr_allow(e: Env, from: Address, spender: Address, amount: i128);
+    fn decrease_allowance(e: Env, from: Address, spender: Address, amount: i128);
 
     fn balance(e: Env, id: Address) -> i128;
 
-    fn spendable(e: Env, id: Address) -> i128;
+    fn spendable_balance(e: Env, id: Address) -> i128;
 
     fn authorized(e: Env, id: Address) -> bool;
 
-    fn xfer(e: Env, from: Address, to: Address, amount: i128);
+    fn transfer(e: Env, from: Address, to: Address, amount: i128);
 
-    fn xfer_from(e: Env, spender: Address, from: Address, to: Address, amount: i128);
+    fn transfer_from(e: Env, spender: Address, from: Address, to: Address, amount: i128);
 
     fn burn(e: Env, from: Address, amount: i128);
 
     fn burn_from(e: Env, spender: Address, from: Address, amount: i128);
 
-    fn clawback(e: Env, admin: Address, from: Address, amount: i128);
+    fn clawback(e: Env, from: Address, amount: i128);
 
-    fn set_auth(e: Env, admin: Address, id: Address, authorize: bool);
+    fn set_authorized(e: Env, id: Address, authorize: bool);
 
-    fn mint(e: Env, admin: Address, to: Address, amount: i128);
+    fn mint(e: Env, to: Address, amount: i128);
 
-    fn set_admin(e: Env, admin: Address, new_admin: Address);
+    fn set_admin(e: Env, new_admin: Address);
 
     fn decimals(e: Env) -> u32;
 
@@ -623,17 +664,25 @@ impl TokenTrait for Token {
             panic!("already initialized")
         }
         write_administrator(&e, &admin);
+        if decimal > u8::MAX.into() {
+            panic!("Decimal must fit in a u8");
+        }
 
-        write_decimal(&e, u8::try_from(decimal).expect("Decimal must fit in a u8"));
-        write_name(&e, name);
-        write_symbol(&e, symbol);
+        write_metadata(
+            &e,
+            TokenMetadata {
+                decimal,
+                name,
+                symbol,
+            },
+        )
     }
 
     fn allowance(e: Env, from: Address, spender: Address) -> i128 {
         read_allowance(&e, from, spender)
     }
 
-    fn incr_allow(e: Env, from: Address, spender: Address, amount: i128) {
+    fn increase_allowance(e: Env, from: Address, spender: Address, amount: i128) {
         from.require_auth();
 
         check_nonnegative_amount(amount);
@@ -644,10 +693,10 @@ impl TokenTrait for Token {
             .expect("Updated allowance doesn't fit in an i128");
 
         write_allowance(&e, from.clone(), spender.clone(), new_allowance);
-        event::incr_allow(&e, from, spender, amount);
+        event::increase_allowance(&e, from, spender, amount);
     }
 
-    fn decr_allow(e: Env, from: Address, spender: Address, amount: i128) {
+    fn decrease_allowance(e: Env, from: Address, spender: Address, amount: i128) {
         from.require_auth();
 
         check_nonnegative_amount(amount);
@@ -658,14 +707,14 @@ impl TokenTrait for Token {
         } else {
             write_allowance(&e, from.clone(), spender.clone(), allowance - amount);
         }
-        event::decr_allow(&e, from, spender, amount);
+        event::decrease_allowance(&e, from, spender, amount);
     }
 
     fn balance(e: Env, id: Address) -> i128 {
         read_balance(&e, id)
     }
 
-    fn spendable(e: Env, id: Address) -> i128 {
+    fn spendable_balance(e: Env, id: Address) -> i128 {
         read_balance(&e, id)
     }
 
@@ -673,7 +722,7 @@ impl TokenTrait for Token {
         is_authorized(&e, id)
     }
 
-    fn xfer(e: Env, from: Address, to: Address, amount: i128) {
+    fn transfer(e: Env, from: Address, to: Address, amount: i128) {
         from.require_auth();
 
         check_nonnegative_amount(amount);
@@ -682,7 +731,7 @@ impl TokenTrait for Token {
         event::transfer(&e, from, to, amount);
     }
 
-    fn xfer_from(e: Env, spender: Address, from: Address, to: Address, amount: i128) {
+    fn transfer_from(e: Env, spender: Address, from: Address, to: Address, amount: i128) {
         spender.require_auth();
 
         check_nonnegative_amount(amount);
@@ -709,31 +758,31 @@ impl TokenTrait for Token {
         event::burn(&e, from, amount)
     }
 
-    fn clawback(e: Env, admin: Address, from: Address, amount: i128) {
+    fn clawback(e: Env, from: Address, amount: i128) {
         check_nonnegative_amount(amount);
-        check_admin(&e, &admin);
+        let admin = read_administrator(&e);
         admin.require_auth();
         spend_balance(&e, from.clone(), amount);
         event::clawback(&e, admin, from, amount);
     }
 
-    fn set_auth(e: Env, admin: Address, id: Address, authorize: bool) {
-        check_admin(&e, &admin);
+    fn set_authorized(e: Env, id: Address, authorize: bool) {
+        let admin = read_administrator(&e);
         admin.require_auth();
         write_authorization(&e, id.clone(), authorize);
-        event::set_auth(&e, admin, id, authorize);
+        event::set_authorized(&e, admin, id, authorize);
     }
 
-    fn mint(e: Env, admin: Address, to: Address, amount: i128) {
+    fn mint(e: Env, to: Address, amount: i128) {
         check_nonnegative_amount(amount);
-        check_admin(&e, &admin);
+        let admin = read_administrator(&e);
         admin.require_auth();
         receive_balance(&e, to.clone(), amount);
         event::mint(&e, admin, to, amount);
     }
 
-    fn set_admin(e: Env, admin: Address, new_admin: Address) {
-        check_admin(&e, &admin);
+    fn set_admin(e: Env, new_admin: Address) {
+        let admin = read_administrator(&e);
         admin.require_auth();
         write_administrator(&e, &new_admin);
         event::set_admin(&e, admin, new_admin);
@@ -765,25 +814,25 @@ fn deposit(e: Env, from: Address, amount: i128) {
     // Depositor needs to authorize the deposit
     from.require_auth();
 
-    let token_client = token::Client::new(&e, &get_token(&e));
+    let token = token::Client::new(&e, &get_token(&e));
 
-    token_client.xfer(&from, &e.current_contract_address(), &amount);
+    token.transfer(&from, &e.current_contract_address(), &amount);
 
-    let balance_a = get_token_balance(&e);
-    let total_shares = get_total_shares(&e);
+    // Now calculate how many new vault shares to mint
+    let balance = get_token_balance(&e);
 
-    mint_shares(&e, from, amount);
-    put_reserve(&e, balance_a);
-    put_total_shares(&e, total_shares + amount)
+    let shares = amount;
+
+    mint_shares(&e, from, shares);
+    put_reserve(&e, balance + shares);
 }
 ```
 
 - The `deposit` function is called by the depositor to deposit tokens into the vault contract.
-- The `xfer` method of the `token_client` instance transfers tokens from the depositor to the vault contract.
+- The `transfer` method of the `token_client` instance transfers tokens from the depositor to the vault contract.
 - The current token balance and total shares issued by the vault contract are obtained using the `get_token_balance` and `get_total_shares` functions, respectively.
-- `mint_shares` is called to issue new shares to the depositor.
+- `mint_shares` is called to issue new shares to the depositor and updates the total shares issued by the vault contract.
 - `put_reserve` stores the current token balance in a reserved location.
-- `put_total_shares` updates the total shares issued by the vault contract.
 
 If the user were to call the `deposit` method with 100 tokens, the following would happen:
 
@@ -800,10 +849,9 @@ fn withdraw(e: Env, to: Address, amount: i128) -> i128 {
 
     // First transfer the vault shares that need to be redeemed
     let share_token_client = token::Client::new(&e, &get_token_share(&e));
-    share_token_client.xfer(&to, &e.current_contract_address(), &amount);
-
+    share_token_client.transfer(&to, &e.current_contract_address(), &amount);
     let token_client = token::Client::new(&e, &get_token(&e));
-    token_client.xfer(
+    token_client.transfer(
         &e.current_contract_address(),
         &to,
         &(&amount + (&amount / &100)),
@@ -812,23 +860,16 @@ fn withdraw(e: Env, to: Address, amount: i128) -> i128 {
     let balance = get_token_balance(&e);
     let balance_shares = get_balance_shares(&e);
 
-    let total_shares = get_total_shares(&e);
-
-    if total_shares < amount {
-        panic!("not enought shares to withdraw");
-    }
-
     burn_shares(&e, balance_shares);
-    put_total_shares(&e, total_shares - amount);
-    put_reserve(&e, balance);
+    put_reserve(&e, balance - amount);
 
     amount
 }
 ```
 
 - The `withdraw` function is called by the withdrawer to withdraw tokens from the vault contract.
-- The `xfer` method of the `share_token_client` instance transfers shares from the withdrawer to the vault contract.
-- The `xfer` method of the `token_client` instance transfers tokens from the vault contract to the withdrawer.
+- The `transfer` method of the `share_token_client` instance transfers shares from the withdrawer to the vault contract.
+- The `transfer_token` method of the `token_client` instance transfers tokens from the vault contract to the withdrawer.
 - `burn_shares` is called to burn the shares that were transferred to the vault contract.
 - `put_reserve` stores the current token balance in a reserved location.
 
@@ -1141,29 +1182,30 @@ soroban contract invoke \
 
 After recieving a SUCCESS message, we will mint some tokens to **both** our User Account and Vault Contract addresses. We can do this by running the `mint.sh` script.
 
-It's important to note that the vault contract id will need to change formats for the call to work. We can convert the vault contract id to the correct format by leveraging the [`js-soroban-client`](https://stellar.github.io/js-soroban-client/index.html). 
+It's important to note that the vault contract id will need to change formats for the call to work. We can convert the vault contract id to the correct format by leveraging the [`js-soroban-client`](https://stellar.github.io/js-soroban-client/index.html).
 
 First, navigate to and clone the following [runkit](https://runkit.com/julian-dev28/646d1922af84810008c2a537).
 
 Then, replace `contractId` with your own vault contract id.
 
 ```ts
-const StellarSdk = require('soroban-client')
+const StellarSdk = require("soroban-client");
 
 function getContractKey(contractId) {
-    const contractIdBytes = Buffer.from(contractId, 'hex')
-    const contractKey = StellarSdk.StrKey.encodeContract(contractIdBytes)
-    return contractKey
+  const contractIdBytes = Buffer.from(contractId, "hex");
+  const contractKey = StellarSdk.StrKey.encodeContract(contractIdBytes);
+  return contractKey;
 }
 
-const contractId = <VAULT_CONTRACT_ID>
-console.log("Contract Key: " + getContractKey(contractId))
+const contractId = <VAULT_CONTRACT_ID>(
+  console.log("Contract Key: " + getContractKey(contractId))
+);
 ```
 
 You should see an output similar to the following:
 
 ```ts
-"Contract Key: CBBLKC4VJ2DIWESV4IGJDAFLKP5SCEXQGX5T3T7RLND33UMO6BJIJFMM"
+"Contract Key: CBBLKC4VJ2DIWESV4IGJDAFLKP5SCEXQGX5T3T7RLND33UMO6BJIJFMM";
 ```
 
 Now we can run the `mint.sh` script with the correct vault contract address.

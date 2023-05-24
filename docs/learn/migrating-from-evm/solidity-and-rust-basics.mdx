@@ -231,7 +231,7 @@ mod my_module {
 
 [Macros](https://doc.rust-lang.org/book/ch19-06-macros.html) in Rust are powerful tools that allow you to do metaprogramming, enabling you to build chunks of reusable code at compile time.
 
-There are two basic types: [declarative](https://doc.rust-lang.org/book/ch19-06-macros.html#declarative-macros-with-macro_rules-for-general-metaprogramming) and [procedural](https://doc.rust-lang.org/book/ch19-06-macros.html#procedural-macros-for-generating-code-from-attributes) macros. The most common is the declarative macro, or plain "macro", which is defined with the `macro_rules!`
+There are two basic types: [declarative](https://doc.rust-lang.org/book/ch19-06-macros.html#declarative-macros-with-macro_rules-for-general-metaprogramming) and [procedural](https://doc.rust-lang.org/book/ch19-06-macros.html#procedural-macros-for-generating-code-from-attributes) macros. The most common is the declarative macro, or plain "macro", which is defined with `macro_rules!`
 
 ```rust
 macro_rules! my_macro {
@@ -487,7 +487,8 @@ pub struct IncrementContract;
 This defines a public struct, `IncrementContract`, which will contain the implementation of the smart contract.
 
 ```rust
-#[contractimpl] impl IncrementContract {}
+#[contractimpl]
+impl IncrementContract {}
 ```
 
 This is a macro that implements the `IncrementContract` struct as a smart contract.

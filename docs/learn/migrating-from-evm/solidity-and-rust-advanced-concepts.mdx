@@ -286,7 +286,7 @@ struct LiquidityPool;
 
 #[contractimpl]
 impl LiquidityPoolTrait for LiquidityPool {
-let token_a_client = token::Client::new(&e, &get_token_a(&e));
+    let token_a_client = token::Client::new(&e, &get_token_a(&e));
 }
 ```
 
@@ -402,7 +402,7 @@ It's worth mentioning that the Soroban Rust SDK comes with several built-in requ
 
 Interfaces are an essential part of building smart contracts with Soroban.
 
-There are many types of smart contract interfaces, and each has a specific purpose. One example of an interface built with Soroban is the [Token Interface](../../reference/interfaces/token-interface). This interface ensures that tokens deployed on Soroban are interoperable with contracts built to support Soroban's built-in tokens. The Token Interface consists of three compatibility requirements:
+There are many types of smart contract interfaces, and each has a specific purpose. One example of an interface built with Soroban is the [Token Interface](../../reference/interfaces/token-interface). This interface ensures that tokens deployed on Soroban are interoperable with Soroban's built-in tokens (such as the Stellar Asset Contract). The Token Interface consists of three compatibility requirements:
 
 - `function interface`
 - `authorization`
@@ -537,11 +537,11 @@ The `Env` provides access to information about the currently executing contract,
 
 For instance, you would use `env.storage().get(key)` to access a target value from the contract's [storage](https://docs.rs/soroban-sdk/latest/soroban_sdk/struct.Env.html).
 
-- `Env::storage` is used to get a struct for accessing and updating contract data that has been stored.
+- `env.storage()` is used to get a struct for accessing and updating contract data that has been stored.
 - Used as `env.storage().get()` or `env.storage().set()`.
 - Additionally, we utilize the `clone()` method, a prevalent trait in Rust that allows for the explicit duplication of an object.
 
-See the example below for implementations of `Env::storage()` and `clone()`
+See the example below for implementations of `env.storage()` and `clone()`
 
 - `env.storage().set()`
 
@@ -597,18 +597,17 @@ function deposit() public payable {
 The [panic!](https://doc.rust-lang.org/book/ch09-00-error-handling.html) macro serves as Rust's error-handling mechanism, which closely resembles the `require` function in Solidity.
 
 ```rust
-fn deposit() {
-        let deposit_amount = e.storage().get(&amount).unwrap();
-        if deposit_amount < 1_000_000_000_000_000_000 {
-            panic!(b"Not enough XLM sent");
-        }
+pub fn simple_deposit(amount: u32) {
+    if amount < 1_000_000 {
+        panic!("amount too low");
+    }
         // ...
     }
 ```
 
 ### Address-Related Functionality
 
-The Soroban Rust SDK and Solidity provide a number of functions for working with addresses. These functions include:
+Both Soroban and Solidity provide provide a number of functions for working with addresses. These functions include:
 
 #### Solidity
 
@@ -635,14 +634,11 @@ There would be no difference in appearance between a regular address and a payab
 
 #### Soroban
 
-- `Env::get_current_contract_address()`: Returns the Address object corresponding to the current executing contract.
-- Used as `e.current_contract_address()`
-- `Env::get_current_contract_id()`: Returns the 32-byte hash identifier of the current executing contract.
-- Used as `e.current_contract_id()`
+- `e.current_contract_address()`: Returns the Address object corresponding to the current executing contract.
 
 The `Env` not only provides essential information about the currently executing contract and its invoker, but also offers access to contract data and functions for signing, hashing, and more. The construction or conversion of most types in Soroban requires access to an `Env` instance.
 
-Here is an example of a smart contract that illustrates how contracts can be retrieved
+Here is an example of a smart contract that illustrates how contracts can be retrieved:
 
 ```rust
 #![no_std]
@@ -652,9 +648,8 @@ pub struct SimpleContract;
 
 #[contractimpl]
 impl SimpleContract {
-    ///Example contract for returning Addresses or ids.
-    pub fn return_address(env: Env, user: Address) -> Address {
-        let current_contract_id = env.current_contract_id();
+    ///Example contract for returning a contract Address.
+    pub fn return_address(env: Env) -> Address {
         let current_contract_address = env.current_contract_address();
         current_contract_address
     }
@@ -786,10 +781,8 @@ contract SimpleContract {
 
 #### Soroban
 
-- `Env::get_ledger_timestamp(self.env())`: Returns a unix timestamp for when the most recent ledger was closed.
-- Used as `env.ledger().timestamp()`
-- `Env::get_ledger_sequence(self.env())`: Returns the sequence number of the most recently closed ledger.
-- Used as `env.ledger().sequence()`
+- `env.ledger().timestamp()`: Returns a unix timestamp for when the most recent ledger was closed.
+- `env.ledger().sequence()`: Returns the sequence number of the most recently closed ledger.
 
 Here is an example of a smart contract that illustrates how time-based variables are used in Rust:
 

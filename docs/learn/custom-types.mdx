@@ -35,7 +35,7 @@ should be marginal most of the time.
 
 ```rust
 #[contracttype]
-#[derive(Clone, Default, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct State {
     pub count: u32,
     pub last_incr: u32,
@@ -62,7 +62,7 @@ order that they appear in the field list.
 
 ```rust
 #[contracttype]
-#[derive(Clone, Default, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct State(pub u32, pub u32);
 ```
 

@@ -344,15 +344,10 @@ a.hp-link {
     margin-bottom: 2rem;
   }
 
-  &__right {
-    transform: translateX(5%);
-  }
-
   &__code {
     font-family: var(--ifm-font-family-mono);
     line-height: 150%;
 
-    width: 100vw;
     flex-shrink: 0;
     background-color: var(--primary-black);
     border: 1px solid var(--gray-5);

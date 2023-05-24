@@ -112,3 +112,44 @@ The current (Futurenet) limits are as follows:
 
 Apart from these resource limits, there is also a maximum contract size limit 
 of 64 KB.
+
+# Metering
+Metering is a crucial mechanism within the host environment that accounts for the resource costs, such as CPU instructions and RAM usage, incurred during the execution of a smart contract. The outcomes of metering act as the canonical truth of a smart contract's execution cost and serve as an input for fee computations.
+
+## Why Metering
+The Soroban smart contract execution environment comprises a host and a guest. The host encapsulates shared functionalities for all contracts, including host objects, functions, and a WASM interpreter (VM). The guest environment is where the compiled WASM contract is interpreted and executed. Detailed discussion about these environments can be found in [Environment Concepts](environment-concepts.mdx).
+
+The division between the host and guest environments, and the shared functionalities between them, necessitates a unique approach to resource accounting. In particular, the resources required for executing WASM instructions and running host functions must be accounted for uniformly, with costs denoted in terms of CPU instructions and memory bytes. Consider two contracts, A and B, both comprising the same number of WASM instructions. If Contract A repeatedly calls host functions for complex computations while Contract B executes pure arithmetic operations within the VM, Contract A should be more costly. This difference should be accurately represented in the metering process.
+
+In essence, metering ensures fairness, thwarts resource manipulation and attacks, and generates a deterministic and reproducible measure of runtime resource costs.
+
+## Methodology
+To maintain equivalence in metering between the host and guest, computation costs on both sides are expressed in terms of cpu instructions and memory bytes (representing CPU and RAM usage). Metering and limit-checking occur within the host environment, and pre-calibrated numerical models are used to ensure results are deterministic.
+
+### Cost Types
+Metering is segmented into host components, referred to as cost types. Each cost type can be viewed as a "meta instruction" symbolizing a specific host operation, having a known complexity and depends on a runtime input. For instance, cost type `ComputeSha256Hash` represents the cost of computing the SHA256 hash of a byte array.
+
+:::info
+
+Execution of WASM instructions is accounted for as a host cost type `WasmInsnExec`, which has a constant CPU cost per WASM instruction. This methodology treats guest instructions and host executions equivalently.
+
+:::
+
+For a complete list of host cost types and their definitions, please refer to [`ContractCostType`](https://github.com/stellar/stellar-xdr/blob/404c42e5fee3c2dd552ba4ed91bf02cfa86bb0d3/Stellar-contract-config-setting.x#L83-L129).
+
+### Cost Parameters
+
+The cost types are carefully selected to:
+1. Serve as comprehensive building blocks for all significant contract execution costs.
+2. Ensure each component cost increases at most linearly (i.e., constant or linear) with respect to its input. That is, `y = a + bx`, where `y` is the cost output, `x` is the input, and `a`, `b` are the constant and linear model parameters, respectively.
+
+Each cost type has a separate model for both resource types (CPU and memory).
+
+The parameters for each model, `a` and `b`, are calibrated and fitted offline against inputs of various sizes. The collection of all model cost parameters form the network configurable entries (see [ConfigSettingsEntry](https://github.com/stellar/stellar-xdr/blob/404c42e5fee3c2dd552ba4ed91bf02cfa86bb0d3/Stellar-contract-config-setting.x#L172C31-L175)), which can be updated through network consensus.
+
+### Metering Process
+Before contract execution, the host environment is prepared with the cost parameters and a budget defining the resource limits. Metering is then implemented to measure the cumulative resource consumption during host execution.
+
+During execution, whenever a component (a code block defining a cost type) is encountered, the corresponding model computes the resource output from the runtime input and increments the meter accordingly. The meter checks the cumulative consumption against the budget limit. If the limit is exceeded, an error is produced, and execution is terminated.
+
+If the contract execution concludes within the specified resource limits, the metered total of CPU instructions is recorded and utilized as the input for fee calculation. Note that while memory usage is not included in the fee computation, it is nevertheless subject to the resource limits.

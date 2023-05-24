@@ -292,6 +292,9 @@ impl LiquidityPoolTrait for LiquidityPool {
 
 In the above example, we use `contractimport` to interact with the token file via a `Client` that was generated for the `token` module. This `Client` was created using a Contract trait that matches the interface of the contract, a ContractClient struct that contains functions for each function in the contract, and types for all contract types defined in the contract.
 
+#### A Note on Inheritance and Composability
+While we've been using the term "inheritance" to help make the transition from Solidity smoother, let's clarify an important aspect of Rust: it does not support inheritance as we traditionally understand it. Instead, Rust practices "composability", meaning it uses functions from different crates, which are akin to packages, in a modular fashion. So, when we discuss `contractimport!`, we're actually observing composability in action, not "inheritance". Rust does not foster the "is a" relationship inherent in OOP languages. Instead, it enables us to reuse and assemble code effectively across different scopes. This is a technical truth that is important to understand; however, it's worth noting that this fact doesn't impact the practical usage of Soroban throughout this guide.
+
 ### Modules
 
 In Rust, modules consist of a cohesive set of related functions and types that are often organized together for better organization and reusability. These modules can be reused across multiple projects by publishing them as crates.

@@ -8,7 +8,7 @@ The [cross contract call example] demonstrates how to call a contract from
 another contract.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.7.0
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.8.4
 
 :::info
 
@@ -20,17 +20,17 @@ appreciated [here](https://github.com/stellar/rs-soroban-sdk/issues/new/choose).
 
 :::
 
-[cross contract call example]: https://github.com/stellar/soroban-examples/tree/v0.7.0/cross_contract_calls
+[cross contract call example]: https://github.com/stellar/soroban-examples/tree/v0.8.4/cross_contract_calls
 
 ## Run the Example
 
 First go through the [Setup] process to get your development environment
-configured, then clone the `v0.7.0` tag of `soroban-examples` repository:
+configured, then clone the `v0.8.4` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.7.0 https://github.com/stellar/soroban-examples
+git clone -b v0.8.4 https://github.com/stellar/soroban-examples
 ```
 
 Or, skip the development environment setup and open this example in [Gitpod][oigp].
@@ -65,21 +65,23 @@ impl ContractA {
 
 ```rust title="cross_contract/contract_b/src/lib.rs"
 mod contract_a {
-    soroban_sdk::contractimport!(file = "../../target/wasm32-unknown-unknown/release/soroban_cross_contract_a_contract.wasm");
+    soroban_sdk::contractimport!(
+        file = "../contract_a/target/wasm32-unknown-unknown/release/soroban_cross_contract_a_contract.wasm"
+    );
 }
 
 pub struct ContractB;
 
 #[contractimpl]
 impl ContractB {
-    pub fn add_with(env: Env, contract_id: BytesN<32>, x: u32, y: u32) -> u32 {
-        let client = contract_a::Client::new(&env, contract_id);
+    pub fn add_with(env: Env, contract: Address, x: u32, y: u32) -> u32 {
+        let client = contract_a::Client::new(&env, &contract);
         client.add(&x, &y)
     }
 }
 ```
 
-Ref: https://github.com/stellar/soroban-examples/tree/v0.7.0/cross_contract
+Ref: https://github.com/stellar/soroban-examples/tree/v0.8.4/cross_contract
 
 ## How it Works
 
@@ -136,8 +138,7 @@ but in this simple example it is being passed in as a parameter each time.
 
 The contract imports Contract A into the `contract_a` module.
 
-The `contract_a::ContractClient` is constructed pointing at the contract ID
-passed in.
+The `contract_a::Client` is constructed pointing at the contract ID passed in.
 
 The client is used to execute the `add` function with the `x` and `y` parameters
 on Contract A.
@@ -145,7 +146,7 @@ on Contract A.
 ```rust title="cross_contract_calls/src/a.rs"
 mod contract_a {
     soroban_sdk::contractimport!(
-        file = "../../target/wasm32-unknown-unknown/release/soroban_cross_contract_a_contract.wasm"
+        file = "../contract_a/target/wasm32-unknown-unknown/release/soroban_cross_contract_a_contract.wasm"
     );
 }
 
@@ -153,8 +154,8 @@ pub struct ContractB;
 
 #[contractimpl]
 impl ContractB {
-    pub fn add_with(env: Env, contract_id: BytesN<32>, x: u32, y: u32) -> u32 {
-        let client = contract_a::ContractClient::new(&env, contract_id);
+    pub fn add_with(env: Env, contract: Address, x: u32, y: u32) -> u32 {
+        let client = contract_a::Client::new(&env, &contract);
         client.add(&x, &y)
     }
 }
@@ -237,7 +238,7 @@ To build the contract into a `.wasm` file, use the `cargo build` command. Both
 cargo build --target wasm32-unknown-unknown --release
 ```
 
-Both `.wasm` files should be found in the `../target` directory after building
+Both `.wasm` files should be found in both contract `target` directories after building
 both contracts:
 
 ```

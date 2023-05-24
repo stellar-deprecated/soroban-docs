@@ -7,7 +7,7 @@ description: Deploying a contract from another contract.
 The [deployer example] demonstrates how to deploy contracts using a contract.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.7.0
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.8.4
 
 :::info
 
@@ -16,17 +16,17 @@ tests deploy one with the other.
 
 :::
 
-[deployer example]: https://github.com/stellar/soroban-examples/tree/v0.7.0/deployer
+[deployer example]: https://github.com/stellar/soroban-examples/tree/v0.8.4/deployer
 
 ## Run the Example
 
 First go through the [Setup] process to get your development environment
-configured, then clone the `v0.7.0` tag of `soroban-examples` repository:
+configured, then clone the `v0.8.4` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.7.0 https://github.com/stellar/soroban-examples
+git clone -b v0.8.4 https://github.com/stellar/soroban-examples
 ```
 
 Or, skip the development environment setup and open this example in [Gitpod][oigp].
@@ -53,18 +53,21 @@ pub struct Deployer;
 
 #[contractimpl]
 impl Deployer {
-    /// Deploy the contract using WASM hash and after deployment invoke the init
-    /// function of the contract with the given arguments. Returns the
-    /// contract ID and result of the init function.
+    /// Deploy the contract wasm and after deployment invoke the init function
+    /// of the contract with the given arguments. Returns the contract ID and
+    /// result of the init function.
     pub fn deploy(
         env: Env,
-        salt: Bytes,
+        salt: BytesN<32>,
         wasm_hash: BytesN<32>,
         init_fn: Symbol,
         init_args: Vec<RawVal>,
-    ) -> (BytesN<32>, RawVal) {
+    ) -> (Address, RawVal) {
         // Deploy the contract using the installed WASM code with given hash.
-        let id = env.deployer().with_current_contract(salt).deploy(wasm_hash);
+        let id = env
+            .deployer()
+            .with_current_contract(&salt)
+            .deploy(&wasm_hash);
         // Invoke the init function with the given arguments.
         let res: RawVal = env.invoke_contract(&id, &init_fn, init_args);
         // Return the contract ID of the deployed contract and the result of
@@ -74,7 +77,7 @@ impl Deployer {
 }
 ```
 
-Ref: https://github.com/stellar/soroban-examples/tree/v0.7.0/deployer
+Ref: https://github.com/stellar/soroban-examples/tree/v0.8.4/deployer
 
 ## How it Works
 
@@ -114,7 +117,10 @@ The contract ID is deterministic and is derived from the deploying contract and
 the salt.
 
 ```rust
-let id = env.deployer().with_current_contract(salt).deploy(wasm_hash);
+let id = env
+    .deployer()
+    .with_current_contract(&salt)
+    .deploy(&wasm_hash);
 ```
 
 The contract invokes the new contract's initialization function and passes
@@ -139,7 +145,8 @@ Open the `deployer/deployer/src/test.rs` file to follow along.
 // The contract that will be deployed by the deployer contract.
 mod contract {
     soroban_sdk::contractimport!(
-        file = "../../target/wasm32-unknown-unknown/release/soroban_deployer_test_contract.wasm"
+        file =
+            "../contract/target/wasm32-unknown-unknown/release/soroban_deployer_test_contract.wasm"
     );
 }
 
@@ -148,11 +155,11 @@ fn test() {
     let env = Env::default();
     let client = DeployerClient::new(&env, &env.register_contract(None, Deployer));
 
-    // Install the WASM that will be deployed by the deployer contract.
+    // Install the WASM code to be deployed from the deployer contract.
     let wasm_hash = env.install_contract_wasm(contract::WASM);
 
     // Deploy contract using deployer, and include an init function to call.
-    let salt = Bytes::from_array(&env, &[0; 32]);
+    let salt = BytesN::from_array(&env, &[0; 32]);
     let init_fn = Symbol::short("init");
     let init_fn_args = (5u32,).into_val(&env);
     let (contract_id, init_result) = client.deploy(&salt, &wasm_hash, &init_fn, &init_fn_args);
@@ -171,7 +178,7 @@ file.
 ```rust
 mod contract {
     soroban_sdk::contractimport!(
-        file = "../../target/wasm32-unknown-unknown/release/soroban_deployer_test_contract.wasm"
+        file = "../contract/target/wasm32-unknown-unknown/release/soroban_deployer_test_contract.wasm"
     );
 }
 ```
@@ -188,10 +195,10 @@ const KEY: Symbol = Symbol::short("value");
 #[contractimpl]
 impl Contract {
     pub fn init(env: Env, value: u32) {
-        env.storage().set(KEY, value);
+        env.storage().set(&KEY, &value);
     }
     pub fn value(env: Env) -> u32 {
-        env.storage().get_unchecked(KEY).unwrap()
+        env.storage().get_unchecked(&KEY).unwrap()
     }
 }
 ```
@@ -217,7 +224,7 @@ let wasm_hash = env.install_contract_wasm(contract::WASM);
 Register the deployer contract with the environment.
 
 ```rust
-env.register_contract(&deployer_id, Deployer);
+env.register_contract(None, Deployer);
 ```
 
 Create a client to invoke the `Deployer` contract.
@@ -238,7 +245,7 @@ pass in a single `5u32` argument.
 
 ```rust
 // Deploy contract using deployer, and include an init function to call.
-let salt = Bytes::from_array(&env, &[0; 32]);
+let salt = BytesN::from_array(&env, &[0; 32]);
 let init_fn = Symbol::short("init");
 let init_fn_args = (5u32,).into_val(&env);
 let (contract_id, init_result) = client.deploy(&salt, &wasm_hash, &init_fn, &init_fn_args);
@@ -263,15 +270,15 @@ both the deployer contract and the test contract.
 cargo build --target wasm32-unknown-unknown --release
 ```
 
-Both `.wasm` files should be found in the `../target` directory after building
+Both `.wasm` files should be found in both contract `target` directories after building
 both contracts:
 
 ```
-../target/wasm32-unknown-unknown/release/soroban_deployer_contract.wasm
+target/wasm32-unknown-unknown/release/soroban_deployer_contract.wasm
 ```
 
 ```
-../target/wasm32-unknown-unknown/release/soroban_deployer_test_contract.wasm
+target/wasm32-unknown-unknown/release/soroban_deployer_test_contract.wasm
 ```
 
 ## Run the Contract

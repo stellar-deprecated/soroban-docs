@@ -8,20 +8,20 @@ The [events example] demonstrates how to publish events from a contract. This
 example is an extension of the [storing data example].
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.7.0
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.8.4
 
-[events example]: https://github.com/stellar/soroban-examples/tree/v0.7.0/events
+[events example]: https://github.com/stellar/soroban-examples/tree/v0.8.4/events
 [storing data example]: getting-started/storing-data.mdx
 
 ## Run the Example
 
 First go through the [Setup] process to get your development environment
-configured, then clone the `v0.7.0` tag of `soroban-examples` repository:
+configured, then clone the `v0.8.4` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.7.0 https://github.com/stellar/soroban-examples
+git clone -b v0.8.4 https://github.com/stellar/soroban-examples
 ```
 
 Or, skip the development environment setup and open this example in [Gitpod][oigp].
@@ -49,21 +49,36 @@ pub struct IncrementContract;
 
 #[contractimpl]
 impl IncrementContract {
+    /// Increment increments an internal counter, and returns the value.
     pub fn increment(env: Env) -> u32 {
+        // Get the current count.
         let mut count: u32 = env
             .storage()
-            .get(COUNTER)
+            .get(&COUNTER)
             .unwrap_or(Ok(0)) // If no value set, assume 0.
             .unwrap(); // Panic if the value of COUNTER is not u32.
+
+        // Increment the count.
         count += 1;
-        env.storage().set(COUNTER, count);
-        env.events().publish((COUNTER, Symbol::short("increment")), count);
+
+        // Save the count.
+        env.storage().set(&COUNTER, &count);
+
+        // Publish an event about the increment occuring.
+        // The event has two topics:
+        //   - The "COUNTER" symbol.
+        //   - The "increment" symbol.
+        // The event data is the count.
+        env.events()
+            .publish((COUNTER, Symbol::short("increment")), count);
+
+        // Return the count to the caller.
         count
     }
 }
 ```
 
-Ref: https://github.com/stellar/soroban-examples/tree/v0.7.0/events
+Ref: https://github.com/stellar/soroban-examples/tree/v0.8.4/events
 
 ## How it Works
 
@@ -156,7 +171,7 @@ fn test() {
                 2u32.into_val(&env)
             ),
             (
-                contract_id.clone(),
+                contract_id,
                 (Symbol::short("COUNTER"), Symbol::short("increment")).into_val(&env),
                 3u32.into_val(&env)
             ),
@@ -219,10 +234,10 @@ To build the contract, use the `cargo build` command.
 cargo build --target wasm32-unknown-unknown --release
 ```
 
-A `.wasm` file should be outputted in the `../target` directory:
+A `.wasm` file should be outputted in the `target` directory:
 
 ```
-../target/wasm32-unknown-unknown/release/soroban_events_contract.wasm
+target/wasm32-unknown-unknown/release/soroban_events_contract.wasm
 ```
 
 ## Run the Contract
@@ -232,7 +247,7 @@ using it.
 
 ```sh
 soroban contract invoke \
-    --wasm ../target/wasm32-unknown-unknown/release/soroban_events_contract.wasm \
+    --wasm target/wasm32-unknown-unknown/release/soroban_events_contract.wasm \
     --id 1 \
     -- \
     increment

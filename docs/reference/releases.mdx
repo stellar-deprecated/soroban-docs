@@ -94,13 +94,13 @@ See https://github.com/stellar/rs-soroban-env/releases v0.0.16 for more details.
 - Move auth testutils into sdk.
 - Rename Client::contract to Client::address.
 - Hide warnings about snake case in generated client.
-- Return Address when deploy not BytesN<32>.
+- Return Address when deploy not BytesN(32).
 - Remove Address::account_id facility
-- Replace BytesN<32> for contract IDs with Address.
+- Replace BytesN(32) for contract IDs with Address.
 - Remove temp storage.
 - Remove dependence on auth when registering stellar asset contract in tests.
 - Improve docs for mock auth fns.
-- Use BytesN<32> for the Salt.
+- Use BytesN(32) for the Salt.
 - Introduce temporary storage support in SDK.
 - Fix broken link.
 - Remove 'admin' param from the SDK token spec.
@@ -112,7 +112,7 @@ See https://github.com/stellar/rs-soroban-env/releases v0.0.16 for more details.
 - Remove superfluous env parameters.
 - Add macro for code metadata.
 - Add utils for metadata and token metadata.
-- Add conversions from Address<>ScAddress.
+- Add conversions from Address to ScAddress.
 - Update rust-version.
 - Add a function to update current contract's executable with provided Wasm.
 - Hide Env.host() in docs.

@@ -315,11 +315,11 @@ impl TryFromVal<Env, DataKey> for RawVal {
     }
 }
 
-fn get_token(e: &Env) -> BytesN<32> {
+fn get_token(e: &Env) -> Address {
     e.storage().get_unchecked(&DataKey::Token).unwrap()
 }
 
-fn get_token_share(e: &Env) -> BytesN<32> {
+fn get_token_share(e: &Env) -> Address {
     e.storage().get_unchecked(&DataKey::TokenShare).unwrap()
 }
 
@@ -331,8 +331,8 @@ fn get_reserve(e: &Env) -> i128 {
     e.storage().get_unchecked(&DataKey::Reserve).unwrap()
 }
 
-fn get_balance(e: &Env, contract_id: BytesN<32>) -> i128 {
-    token::Client::new(e, &contract_id).balance(&e.current_contract_address())
+fn get_balance(e: &Env, contract: Address) -> i128 {
+    token::Client::new(e, &contract).balance(&e.current_contract_address())
 }
 
 fn get_token_balance(e: &Env) -> i128 {
@@ -343,12 +343,12 @@ fn get_balance_shares(e: &Env) -> i128 {
     get_balance(e, get_token_share(e))
 }
 
-fn put_token(e: &Env, contract_id: BytesN<32>) {
-    e.storage().set(&DataKey::Token, &contract_id);
+fn put_token(e: &Env, contract: Address) {
+    e.storage().set(&DataKey::Token, &contract);
 }
 
-fn put_token_share(e: &Env, contract_id: BytesN<32>) {
-    e.storage().set(&DataKey::TokenShare, &contract_id);
+fn put_token_share(e: &Env, contract: Address) {
+    e.storage().set(&DataKey::TokenShare, &contract);
 }
 
 fn put_total_shares(e: &Env, amount: i128) {
@@ -376,8 +376,8 @@ fn mint_shares(e: &Env, to: Address, amount: i128) {
     put_total_shares(e, total + amount);
 }
 
-fn transfer(e: &Env, contract_id: BytesN<32>, to: Address, amount: i128) {
-    token::Client::new(e, &contract_id).transfer(&e.current_contract_address(), &to, &amount);
+fn transfer(e: &Env, token: Address, to: Address, amount: i128) {
+    token::Client::new(e, &token).transfer(&e.current_contract_address(), &to, &amount);
 }
 
 fn transfer_token(e: &Env, to: Address, amount: i128) {
@@ -392,10 +392,10 @@ contractmeta!(
 
 pub trait VaultTrait {
     // Sets the token contract addresses for this vault
-    fn initialize(e: Env, token_wasm_hash: BytesN<32>, token: BytesN<32>);
+    fn initialize(e: Env, token_wasm_hash: BytesN<32>, token: Address);
 
     // Returns the token contract address for the vault share token
-    fn share_id(e: Env) -> BytesN<32>;
+    fn share_id(e: Env) -> Address;
 
     // Deposits token. Also mints vault shares for the `from` Identifier. The amount minted
     // is determined based on the difference between the reserves stored by this contract, and
@@ -414,7 +414,7 @@ struct Vault;
 
 #[contractimpl]
 impl VaultTrait for Vault {
-    fn initialize(e: Env, token_wasm_hash: BytesN<32>, token: BytesN<32>) {
+    fn initialize(e: Env, token_wasm_hash: BytesN<32>, token: Address) {
         let share_contract_id = create_contract(&e, &token_wasm_hash, &token);
         token::Client::new(&e, &share_contract_id).initialize(
             &e.current_contract_address(),
@@ -429,7 +429,7 @@ impl VaultTrait for Vault {
         put_reserve(&e, 0);
     }
 
-    fn share_id(e: Env) -> BytesN<32> {
+    fn share_id(e: Env) -> Address {
         get_token_share(&e)
     }
 
@@ -494,7 +494,7 @@ fn create_token_contract<'a>(e: &Env, admin: &Address) -> token::Client<'a> {
 fn create_vault_contract<'a>(
     e: &Env,
     token_wasm_hash: &BytesN<32>,
-    token: &BytesN<32>,
+    token: &Address,
 ) -> VaultClient<'a> {
     let vault = VaultClient::new(e, &e.register_contract(None, crate::Vault {}));
     vault.initialize(token_wasm_hash, token);
@@ -516,15 +516,17 @@ fn test() {
     let token = create_token_contract(&e, &admin1);
 
     let user1 = Address::random(&e);
-    let vault = create_vault_contract(&e, &install_token_wasm(&e), &token.contract_id);
+    
+    let vault = create_vault_contract(&e, &install_token_wasm(&e), &token.address);
 
-    let contract_share: [u8; 32] = vault.share_id().into();
+    let contract_share: &Address = &vault.share_id();
+
     let token_share = token::Client::new(&e, &contract_share);
 
     token.mint(&user1, &200);
     assert_eq!(token.balance(&user1), 200);
-    token.mint(&vault.address(), &100);
-    assert_eq!(token.balance(&vault.address()), 100);
+    token.mint(&vault.address, &100);
+    assert_eq!(token.balance(&vault.address), 100);
 
     vault.deposit(&user1, &100);
     assert_eq!(
@@ -532,23 +534,23 @@ fn test() {
         [
             (
                 user1.clone(),
-                vault.contract_id.clone(),
+                vault.address.clone(),
                 Symbol::short("deposit"),
                 (&user1, 100_i128).into_val(&e)
             ),
             (
                 user1.clone(),
-                token.contract_id.clone(),
+                token.address.clone(),
                 Symbol::short("transfer"),
-                (&user1, vault.address(), 100_i128).into_val(&e)
+                (&user1, &vault.address, 100_i128).into_val(&e)
             ),
         ]
     );
 
     assert_eq!(token_share.balance(&user1), 100);
-    assert_eq!(token_share.balance(&vault.address()), 0);
+    assert_eq!(token_share.balance(&vault.address), 0);
     assert_eq!(token.balance(&user1), 100);
-    assert_eq!(token.balance(&vault.address()), 200);
+    assert_eq!(token.balance(&vault.address), 200);
 
     vault.withdraw(&user1, &100);
     assert_eq!(
@@ -556,23 +558,23 @@ fn test() {
         [
             (
                 user1.clone(),
-                vault.contract_id.clone(),
+                vault.address.clone(),
                 Symbol::short("withdraw"),
                 (&user1, 100_i128).into_val(&e)
             ),
             (
                 user1.clone(),
-                token_share.contract_id.clone(),
+                token_share.address.clone(),
                 Symbol::short("transfer"),
-                (&user1, vault.address(), 100_i128).into_val(&e)
+                (&user1, &vault.address, 100_i128).into_val(&e)
             ),
         ]
     );
 
     assert_eq!(token.balance(&user1), 201);
     assert_eq!(token_share.balance(&user1), 0);
-    assert_eq!(token.balance(&vault.address()), 99);
-    assert_eq!(token_share.balance(&vault.address()), 0);
+    assert_eq!(token.balance(&vault.address), 99);
+    assert_eq!(token_share.balance(&vault.address), 0);
 }
 ```
 
@@ -581,13 +583,13 @@ fn test() {
 
 ```rust
 #![allow(unused)]
-use soroban_sdk::{Bytes, BytesN, Env};
+use soroban_sdk::{xdr::ToXdr, Address, Bytes, BytesN, Env};
 
 soroban_sdk::contractimport!(file = "./soroban_token_contract.wasm");
 
-pub fn create_contract(e: &Env, token_wasm_hash: &BytesN<32>, token: &BytesN<32>) -> BytesN<32> {
+pub fn create_contract(e: &Env, token_wasm_hash: &BytesN<32>, token: &Address) -> Address {
     let mut salt = Bytes::new(e);
-    salt.append(&token.clone().into());
+    salt.append(&token.to_xdr(e));
     let salt = e.crypto().sha256(&salt);
     e.deployer()
         .with_current_contract(&salt)

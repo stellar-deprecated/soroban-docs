@@ -843,7 +843,7 @@ If the user were to call the `deposit` method with 100 tokens, the following wou
 - The total shares issued by the vault contract would be updated to 100.
 - 100 shares would be issued to the depositor.
 
-Now, let's see what happens when a user withdraws tokens from the vault.
+Now let's see what happens when a user withdraws tokens from the vault.
 
 ```rust
 fn withdraw(e: Env, to: Address, amount: i128) -> i128 {
@@ -1103,11 +1103,9 @@ soroban contract deploy \
     --network-passphrase 'Test SDF Future Network ; October 2022'
 ```
 
-We should receive a SUCCESS message with the token contract ID. We will need this ID for the next step.
+We should receive an output with the token contract ID. We will need this ID for the next step.
 
 ```bash
-SUCCESS
-SUCCESS
 42b50b954e868b1255e20c9180ab53fb2112f035fb3dcff15b47bdd18ef05284
 ```
 
@@ -1146,11 +1144,9 @@ soroban contract deploy \
     --network-passphrase 'Test SDF Future Network ; October 2022'
 ```
 
-We should receive a SUCCESS message with the vault contract ID. We will need this ID for the next step.
+We should receive an output with the vault contract ID. We will need this ID for the next step.
 
 ```bash
-SUCCESS
-SUCCESS
 07829f515df7d320101a8643b685c82d16e15d92bd11a49d2623a8b93b28bfd8
 ```
 
@@ -1163,27 +1159,12 @@ soroban contract install --wasm soroban_token_contract.wasm
 We should receive the WASM hash of the token contract.
 
 ```bash
-73593275ee3bcacc2aef8d641a1d5108618064bdfff84a826576b8caff395add
+68f5c739b568664e3c4f4b7787958ce4ba527cc310fb0de0fea707dc1d6bd3c3
 ```
 
 Now we need to initialize the vault contract. We can do this by running the `initialize_vault.sh` script.
 
-```bash
-soroban contract invoke \
-    --wasm target/wasm32-unknown-unknown/release/vault.wasm \
-    --id <VAULT_CONTRACT_ID> \
-    --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
-    -- \
-    initialize \
-    --token_wasm_hash 73593275ee3bcacc2aef8d641a1d5108618064bdfff84a826576b8caff395add \
-    --token <TOKEN_CONTRACT_ID>
-```
-
-After recieving a SUCCESS message, we will mint some tokens to **both** our User Account and Vault Contract addresses. We can do this by running the `mint.sh` script.
-
-It's important to note that the vault contract id will need to change formats for the call to work. We can convert the vault contract id to the correct format by leveraging the [`js-soroban-client`](https://stellar.github.io/js-soroban-client/index.html).
+It's important to note that the token contract id will need to change formats for the call to work. We can convert the token contract id to the correct format by leveraging the [`js-soroban-client`](https://stellar.github.io/js-soroban-client/index.html).
 
 First, navigate to and clone the following [runkit](https://runkit.com/julian-dev28/646d1922af84810008c2a537).
 
@@ -1198,7 +1179,7 @@ function getContractKey(contractId) {
   return contractKey;
 }
 
-const contractId = <VAULT_CONTRACT_ID>(
+const contractId = <TOKEN_CONTRACT_ID>(
   console.log("Contract Key: " + getContractKey(contractId))
 );
 ```
@@ -1207,6 +1188,37 @@ You should see an output similar to the following:
 
 ```ts
 "Contract Key: CBBLKC4VJ2DIWESV4IGJDAFLKP5SCEXQGX5T3T7RLND33UMO6BJIJFMM";
+```
+
+```bash
+soroban contract invoke \
+    --wasm target/wasm32-unknown-unknown/release/vault.wasm \
+    --id <VAULT_CONTRACT_ID> \
+    --source <SECRET_KEY> \
+    --rpc-url https://rpc-futurenet.stellar.org:443 \
+    --network-passphrase 'Test SDF Future Network ; October 2022' \
+    -- \
+    initialize \
+    --token_wasm_hash 73593275ee3bcacc2aef8d641a1d5108618064bdfff84a826576b8caff395add \
+    --token <TOKEN_CONTRACT_ADDRESS>
+```
+
+After recieving the transaction has been submitted, we will mint some tokens to **both** our User Account and Vault Contract addresses. We can do this by running the `mint.sh` script.
+
+Similar to changing the token contract id, the vault contract will need to change formats for the call to work. We can convert the vault contract id to the correct format by repeating the steps above to convert the token contract id but this time with the vault contract id.
+
+```ts
+const StellarSdk = require("soroban-client");
+
+function getContractKey(contractId) {
+  const contractIdBytes = Buffer.from(contractId, "hex");
+  const contractKey = StellarSdk.StrKey.encodeContract(contractIdBytes);
+  return contractKey;
+}
+
+const contractId = <VAULT_CONTRACT_ID>(
+  console.log("Contract Key: " + getContractKey(contractId))
+);
 ```
 
 Now we can run the `mint.sh` script with the correct vault contract address.
@@ -1224,7 +1236,7 @@ soroban contract invoke \
     --amount 100
 ```
 
-After receiving a SUCCESS message, we can check the balance of the account. We can do this by running the `balance.sh` script.
+After submitting the transaction, we can check the balance of the account. We can do this by running the `balance.sh` script.
 
 ```bash
 soroban contract invoke \
@@ -1238,14 +1250,13 @@ soroban contract invoke \
     --id <USER_ADDRESS>
 ```
 
-We should receive a SUCCESS message with the balance of the account.
+We should receive an output with the balance of the account.
 
 ```bash
-SUCCESS
 100
 ```
 
-After receiving a SUCCESS message, we can deposit some tokens into our vault. We can do this by running the `deposit.sh` script.
+Now we can deposit some tokens into our vault. We can do this by running the `deposit.sh` script.
 
 ```bash
 soroban contract invoke \
@@ -1260,7 +1271,7 @@ soroban contract invoke \
     --amount 100
 ```
 
-After receiving a SUCCESS message, we can check the reserves of the vault. We can do this by running the `reserves.sh` script.
+After submitting the transaction, we can check the reserves of the vault. We can do this by running the `reserves.sh` script.
 
 ```bash
 soroban contract invoke \
@@ -1273,10 +1284,9 @@ soroban contract invoke \
     get_rsrvs
 ```
 
-We should receive a SUCCESS message with the reserves of the vault.
+We should receive an output with the reserves of the vault.
 
 ```bash
-SUCCESS
 "200"
 ```
 
@@ -1297,10 +1307,9 @@ soroban contract invoke \
     --amount 100
 ```
 
-We should receive a SUCCESS message with the withdrawal amount.
+We should receive an output with the withdrawal amount.
 
 ```bash
-SUCCESS
 "100"
 ```
 
@@ -1309,7 +1318,6 @@ Now is a good time to check our account balance again. We can do this by running
 We should see our balance has increased the amount we withdrew plus yield (amount/100) or %1 of our withdraw amount.
 
 ```bash
-SUCCESS
 101
 ```
 
@@ -1318,7 +1326,6 @@ And finally, we can check the reserves of the vault again. We can do this by run
 We should see the reserves of the vault have decreased by the amount we withdrew + yield.
 
 ```bash
-SUCCESS
 "99"
 ```
 

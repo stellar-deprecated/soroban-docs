@@ -26,6 +26,7 @@ $max-screen: 1248px;
   --useful-off-white: #f2f2f2;
   --gray-5: #e0e0e0;
   --color-theme-purple-01: #3e1bdb;
+  --color-theme-teal-01: #4daaa9;
   --color-type-paragraph: #666;
 
   /* Gaps */
@@ -75,7 +76,7 @@ a.hp-btn {
   font-family: "IBM Plex Sans";
 
   &-primary {
-    color: var(--color-theme-purple-01);
+    color: var(--color-theme-teal-01);
     background-color: var(--primary-white);
   }
 

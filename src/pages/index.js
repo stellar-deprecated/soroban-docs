@@ -53,8 +53,8 @@ const Hero = () => (
 
       <div className="Hero__right">
         <p>
-          A developer-friendly, Rust-based smart contracts platform designed for
-          scale and sensibility. Currently live on the test network
+          A developer-friendly, Rust-based smart contracts platform sensibly
+          designed with scalability in mind. Currently live on the test network
           dubbed Futurenet, Soroban seamlessly integrates with and works
           alongside the existing Stellar blockchain.
         </p>
@@ -101,8 +101,8 @@ const Designed = () => (
         </DesignedCard>
 
         <DesignedCard title="Scale">
-          Soroban is designed with scalability in mind. Boost performance with multi-core scaling, 
-          an optimized fee model, and without pesky serialization loops. Soroban also tackles the 
+          Soroban is designed with scalability in mind. Boost performance with multi-core scaling,
+          an optimized fee model, and without pesky serialization loops. Soroban also tackles the
           elephant in the room head-on by addressing the problem of state bloat.
         </DesignedCard>
 
@@ -301,10 +301,10 @@ const SCF = () => (
         </h2>
 
         <p className="SCF__subtitle">
-          Submit your Soroban project to the Stellar Community Fund and request 
+          Submit your Soroban project to the Stellar Community Fund and request
           up to $150K worth of XLM in awards to cover 2-3 months of development costs.
-          This is your chance to play a fundamental role in bootstrapping the Soroban 
-          ecosystem by creating the tools, protocols, dApps, and resources necessary 
+          This is your chance to play a fundamental role in bootstrapping the Soroban
+          ecosystem by creating the tools, protocols, dApps, and resources necessary
           for it to thrive.
         </p>
 

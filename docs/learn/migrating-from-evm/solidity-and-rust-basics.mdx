@@ -121,7 +121,7 @@ fn main() {
 
 ### Data Types
 
-The [Soroban Rust SDK](https://docs.rs/soroban-sdk/0.7.0/soroban_sdk/index.html) supports a variety of [Built-In Types](../../learn/built-in-types) which consist of both Primitive and [Custom Types](../../learn/custom-types), such as:
+The [Soroban Rust SDK](https://docs.rs/soroban-sdk/latest/soroban_sdk/index.html) supports a variety of [Built-In Types](../../learn/built-in-types) which consist of both Primitive and [Custom Types](../../learn/custom-types), such as:
 
 #### Primitive Data Types
 
@@ -296,7 +296,7 @@ fn my_function() {
 }
 ```
 
-During your Soroban developer journey, you will frequently encounter the attribute macro [`#[contractimpl]`](https://docs.rs/soroban-sdk/0.7.0/soroban_sdk/attr.contractimpl.html) which exports publicly accessible functions to the Soroban environment.
+During your Soroban developer journey, you will frequently encounter the attribute macro [`#[contractimpl]`](https://docs.rs/soroban-sdk/latest/soroban_sdk/index.html) which exports publicly accessible functions to the Soroban environment.
 
 Functions that are publicly accessible in the implementation are invocable by other contracts, or directly by transactions, when deployed.
 
@@ -577,10 +577,10 @@ crate-type = ["cdylib"]
 testutils = ["soroban-sdk/testutils"]
 
 [dependencies]
-soroban-sdk = "0.7.0"
+soroban-sdk = "0.8.4"
 
 [dev_dependencies]
-soroban-sdk = { version = "0.7.0", features = ["testutils"] }
+soroban-sdk = { version = "0.8.4", features = ["testutils"] }
 
 [profile.release]
 opt-level = "z"

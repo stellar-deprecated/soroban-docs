@@ -1111,13 +1111,13 @@ We should receive an output with the token contract ID. We will need this ID for
 
 Next we need to initialize the token contract. We can do this by running the `initialize_token.sh` script.
 
-It's important to note that `name` and `symbol` must be `Bytes` values. You can achieve this by converting a given value into its corresponding SHA-256 hash.
+It's important to note that `name` and `symbol` must be `Bytes` values. You can achieve this by converting a given value into its corresponding hex-encoded byte values.
 
 Here are some examples:
 
-USDC: `8591ee9090c0c02ca1f103cb637131d8f358870aba145245ff083e138fdd705b`
+USDC: `55534443`
 
-USD: `a26cdf3a6e709124385d4d7eb9bff6b897a58ed5597fbab779b89849dbe81b21`
+USD: `555344`
 
 ```bash
 soroban contract invoke \

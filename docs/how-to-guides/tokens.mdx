@@ -524,8 +524,6 @@ satisfy the commonly used [token interface] to maximize interoperability.
 
 [Stellar Asset Contract]: stellar-asset-contract.mdx
 
-{/* TODO: Flesh out the following "main concept" sections a bit more */}
-
 ### Separation of Functionality
 
 You have likely noticed that this example contract is broken into discrete
@@ -617,13 +615,38 @@ _require_ the right kind of behavior to take place.
 
 :::
 
-### Compatible with Classic Stellar Assets
+### Compatibility with Classic Stellar Assets
 
-We should describe how this can be useful for assets that are already issued
-on Stellar, as well as capable of all the same asset control tools that already
-exist baked-in at the protocol level (clawbacks, auth_required, etc.)
+One of the key benefits of the Stellar network is that assets are first-class
+citizens. On a protocol-level, asset issuers have a robust set of tools to
+manage the authorization and behavior of assets. Any asset that already exists
+on the Stellar network can also make use of the Stellar Asset Contract on the
+Soroban platform. All that is required is a simple, one-time action of wrapping
+the asset to be deployed for Soroban.
 
-{/* /TODO */}
+At that point, the asset can make use of all the features of the Stellar Asset
+Contract that are highlighted in this example (allowance, mint, burn, etc.),
+while still maintaing the high-quality asset issuer features included with
+Classic Stellar.
+
+Additionally, all that comes with **no contract writing required**. Any asset
+can be easily wrapped, using the [Soroban-CLI]:
+
+```bash
+soroban lab token wrap \
+    --asset USDC:GCYEIQEWOCTTSA72VPZ6LYIZIK4W4KNGJR72UADIXUXG45VDFRVCQTYE
+```
+
+:::note
+
+A Stellar asset could be wrapped for Soroban by _any_ user. This command will
+set the asset issuer account as the `admin` address for the Soroban token,
+meaning that issuer account will still maintain control over asset minting,
+authorization, etc.
+
+:::
+
+[Soroban-CLI]: ../reference/soroban-cli
 
 ## Tests
 

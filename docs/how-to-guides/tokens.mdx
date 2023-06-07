@@ -54,17 +54,6 @@ test test::test ... ok
 
 ## Code
 
-{/*
-TODO: Is this the best way to present the source code here? I've put each of
-the files into its own "tab" within the markdown, and code blocks are within
-each of those tabs. Are they all needed here? Should we just cram them into one
-code block (that seems like a pretty obvious no to me, lol)?
-
-Docusaurus does seem to be _pretty_ picky about whitespace if you want to
-include code blocks within the tabs, so maybe maintainability of this document
-is something to consider here?
-*/}
-
 :::note
 
 The source code for this [token example] is broken into several smaller modules.
@@ -937,16 +926,12 @@ which is the Soroban environment that the contract will run in.
 let e = Env::default();
 ```
 
-{/* TODO: Fact-check me here please. I'm not sure I've described this accurately */}
-
 We mock authentication checks in the tests, which allows the tests to proceed as
 if all users/addresses/contracts/etc. had successfully authenticated.
 
 ```rust
 e.mock_all_auths();
 ```
-
-{/* /TODO */}
 
 We're also using a `create_token` function to ease the repetition of having to
 register and initialize our token contract. The resulting `token` client is then
@@ -972,8 +957,6 @@ type with `Client` appended. For example, in our contract the contract type is
 
 The eight tests created for this example contract test a range of possible conditions,
 and ensure the contract responds appropriately to each one:
-
-{/* TODO: Include more (any?) details about what each test is checking for */}
 
 - The `test()` function...
 - The `test_burn()` function...

@@ -91,7 +91,7 @@ Since host objects are immutable, there is limited risk to passing a shared refe
 
 ### Footprint
 
-As mentioned in the [persisting data](../learn/persisting-data.mdx) section, a contract can only load or store `CONTRACT_DATA` entries that are declared in a _footprint_ associated with its invocation.
+As mentioned in the [persisting data](../data-management/persisting-data.mdx) section, a contract can only load or store `CONTRACT_DATA` entries that are declared in a _footprint_ associated with its invocation.
 
 A footprint is a set of ledger keys, each marked as either read-only or read-write. Read-only keys are available to the transaction for reading, read-write available for reading, writing or both.
 
@@ -105,38 +105,16 @@ In any event -- whether successful or failing -- the real transaction will execu
 
 ### Authorization
 
-See [authorization overview](authorization.mdx) and authorization in
-transactions [section][auth-data] for general information on Soroban
-authorization.
+See [authorization overview](authorization.mdx) and authorization in transactions [section][auth-data] for general information on Soroban authorization.
 
 [auth-data]: ../how-to-guides/invoking-contracts-with-transactions.mdx#authorization-data
 
-Preflight mechanism can also be used to compute the `AuthorizedInvocation` trees
-that have to be authorized by the `Address`es in order for all the
-`require_auth` checks to pass.
+Preflight mechanism can also be used to compute the `AuthorizedInvocation` trees that have to be authorized by the `Address`es in order for all the `require_auth` checks to pass.
 
-Soroban host provides a special 'recording' mode for auth. Whenever 
-`require_auth` is called host records its context (address, contract id,
-function, arguments), attributes it to an `AuthorizedInvocation` tree, and marks
-it as successful. Then after the invocation has finished, preflight can return
-all the recorded trees, as well as the required nonce values.
+Soroban host provides a special 'recording' mode for auth. Whenever `require_auth` is called host records its context (address, contract id, function, arguments), attributes it to an `AuthorizedInvocation` tree, and marks it as successful. Then after the invocation has finished, preflight can return all the recorded trees, as well as the required nonce values.
 
-Given this information from preflight, the client only needs to provide these
-trees and nonces to the respective `Address`es for signing and then build the
-final transaction using the preflight output and the corresponding signatures.
+Given this information from preflight, the client only needs to provide these trees and nonces to the respective `Address`es for signing and then build the final transaction using the preflight output and the corresponding signatures.
 
-The recording auth mode is optional for preflight. For example, when dealing
-with the custom account contracts, it may be necessary to preflight the custom
-account's `__check_auth` code (that is simply omitted in the recording auth mode),
-for example, to get its ledger footprint. The non-recording mode is referred to
-as 'enforcing'. Enforcing mode is basically equivalent to running the 
-transaction on-chain (with possibly a slightly stale ledger state) and hence it
-requires all the signatures to be valid.
+The recording auth mode is optional for preflight. For example, when dealing with the custom account contracts, it may be necessary to preflight the custom account's `__check_auth` code (that is simply omitted in the recording auth mode), for example, to get its ledger footprint. The non-recording mode is referred to as 'enforcing'. Enforcing mode is basically equivalent to running the transaction on-chain (with possibly a slightly stale ledger state) and hence it requires all the signatures to be valid.
 
-Note, that the recording auth mode never emulates authorization failures. The
-reason for that is that failing authorization is always an exceptional 
-situation (the `Address`es for which you don't anticipate successful 
-authorization shouldn't be used in the first place). It is similar to how, for
-example, the preflight doesn't emulate failures caused by the incorrect
-footprint. Preflight with enforcing auth mode may still be used to verify the
-signatures before executing the transaction on-chain.
+Note, that the recording auth mode never emulates authorization failures. The reason for that is that failing authorization is always an exceptional situation (the `Address`es for which you don't anticipate successful authorization shouldn't be used in the first place). It is similar to how, for example, the preflight doesn't emulate failures caused by the incorrect footprint. Preflight with enforcing auth mode may still be used to verify the signatures before executing the transaction on-chain.

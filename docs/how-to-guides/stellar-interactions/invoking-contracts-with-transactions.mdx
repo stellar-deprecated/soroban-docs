@@ -1,5 +1,5 @@
 ---
-sidebar_position: 19
+sidebar_position: 30
 title: Invoking and Creating Contracts with Stellar Transactions
 description: A description of the InvokeHostFunctionOp operation.
 ---
@@ -16,8 +16,7 @@ The `InvokeHostFunctionOp` can be used to perform the following Soroban operatio
 
 ## InvokeHostFunctionOp
 
-The XDR of `HostFunction` and `InvokeHostFunctionOp` below can be found
-[here][XDR].
+The XDR of `HostFunction` and `InvokeHostFunctionOp` below can be found [here][XDR].
 
 [XDR]: https://github.com/stellar/stellar-xdr/blob/c2e702c70951ff59a1eff257f08cf38d47210e5f/Stellar-transaction.x#L550
 
@@ -112,9 +111,7 @@ The `functions` in `InvokeHostFunctionOp` will be executed by the Soroban host e
 
 This is currently only supported for `HOST_FUNCTION_TYPE_INVOKE_CONTRACT`.
 
-Soroban [authorization framework](../learn/authorization.mdx) provides a
-standardized way for passing authorization data to the contract invocations via
-`ContractAuth` structures.
+Soroban [authorization framework](../learn/authorization.mdx) provides a standardized way for passing authorization data to the contract invocations via `ContractAuth` structures.
 
 ```c++
 struct AddressWithNonce
@@ -131,27 +128,15 @@ struct ContractAuth
 };
 ```
 
-`ContractAuth` contains a tree of invocations authorized by an `Address` and
-the corresponding signature (in `Address`-dependent format).
+`ContractAuth` contains a tree of invocations authorized by an `Address` and the corresponding signature (in `Address`-dependent format).
 
 In order to build a `ContractAuth` the following is required:
 
 - `Address` that authorizes the invocations and the corresponding `nonce`.
-  - When `addressWithNonce` is missing, then it means that the transaction
-  source account (or operation source when present) authorizes these 
-  invocations. `signatureArgs` have to be skipped as well in this case.
-  - `nonce` has to correspond to the `contractID` of the `rootInvocation`. It
-  is stored in the ledger entry with `CONTRACT_DATA` key with `contractID` from
-  `rootInvocation` and `SCVal` `key` with the following value:
-  `ScVal::LedgerKeyNonce(ScNonceKey{ nonce_address })` (when not present, nonce 
-  is equal to `0`).
+  - When `addressWithNonce` is missing, then it means that the transaction source account (or operation source when present) authorizes these invocations. `signatureArgs` have to be skipped as well in this case.
+  - `nonce` has to correspond to the `contractID` of the `rootInvocation`. It is stored in the ledger entry with `CONTRACT_DATA` key with `contractID` from `rootInvocation` and `SCVal` `key` with the following value: `ScVal::LedgerKeyNonce(ScNonceKey{ nonce_address })` (when not present, nonce is equal to `0`).
 - `rootInvocation` structure corresponding to the authorized invocation tree
-- `signatureArgs` - signature (or multiple signatures) that sign the 32-byte
-payload that is a SHA-256 hash of `ENVELOPE_TYPE_CONTRACT_AUTH` preimage
-([XDR][envelope-xdr]). The signature structure is defined by the `Address` (see
-below for the Stellar account signatures). This should be empty if 
-`addressWithNonce` is not present (as transaction/operation signature is used
-instead).
+- `signatureArgs` - signature (or multiple signatures) that sign the 32-byte payload that is a SHA-256 hash of `ENVELOPE_TYPE_CONTRACT_AUTH` preimage ([XDR][envelope-xdr]). The signature structure is defined by the `Address` (see below for the Stellar account signatures). This should be empty if `addressWithNonce` is not present (as transaction/operation signature is used instead).
 
 `AuthorizedInvocation` defines a node in the authorized invocation tree:
 
@@ -165,22 +150,16 @@ struct AuthorizedInvocation
 };
 ```
 
-`AuthorizedInvocation` needs to include a contract, contract function, arguments
-of `require_auth`/`require_auth_for_args` call and all the authorized
-sub-contract invocations originating from the current node. Building 
-`AuthorizedInvocation` trees may be simplified by using the recording auth mode
-in Soroban preflight (see the [docs][preflight-doc] for more details).
+`AuthorizedInvocation` needs to include a contract, contract function, arguments of `require_auth`/`require_auth_for_args` call and all the authorized sub-contract invocations originating from the current node. Building `AuthorizedInvocation` trees may be simplified by using the recording auth mode in Soroban preflight (see the [docs][preflight-doc] for more details).
 
 [envelope-xdr]: https://github.com/stellar/stellar-xdr/blob/df18148747e807618acf4639db41c4fd6f0be9fc/Stellar-transaction.x#L681
 [preflight-doc]: ../learn/interacting-with-contracts.mdx#authorization
 
 #### Stellar Account Signatures
 
-`signatureArgs` format is user-defined for the [custom accounts], but it is
-protocol-defined for the Stellar accounts.
+`signatureArgs` format is user-defined for the [custom accounts], but it is protocol-defined for the Stellar accounts.
 
-The signatures for the Stellar account are a vector of the following Soroban
-[structures] in the Soroban SDK format:
+The signatures for the Stellar account are a vector of the following Soroban [structures] in the Soroban SDK format:
 
 ```rust
 #[contracttype]
@@ -195,9 +174,7 @@ pub struct AccountEd25519Signature {
 
 ## Transaction resources
 
-Every Soroban transaction has to have a `SorobanTransactionData` transaction 
-[extension] populated. This is needed to compute the
-[Soroban resource fee](../learn/fees-and-metering.mdx).
+Every Soroban transaction has to have a `SorobanTransactionData` transaction [extension] populated. This is needed to compute the [Soroban resource fee](../learn/fees-and-metering.mdx).
 
 [extension]: https://github.com/stellar/stellar-xdr/blob/c2e702c70951ff59a1eff257f08cf38d47210e5f/Stellar-transaction.x#L874
 
@@ -205,11 +182,11 @@ The Soroban transaction data is defined as follows:
 
 ```c++
 struct SorobanResources
-{   
+{
     // The ledger footprint of the transaction.
     LedgerFootprint footprint;
     // The maximum number of instructions this transaction can use
-    uint32 instructions; 
+    uint32 instructions;
 
     // The maximum number of bytes this transaction can read from ledger
     uint32 readBytes;
@@ -230,15 +207,8 @@ struct SorobanTransactionData
 };
 ```
 
-This data comprises two parts: Soroban resources and the refundableFee. The
-`refundableFee` is the portion of the transaction fee eligible for refund. It
-should currently be no less than the metadata fee of the transaction.
+This data comprises two parts: Soroban resources and the refundableFee. The `refundableFee` is the portion of the transaction fee eligible for refund. It should currently be no less than the metadata fee of the transaction.
 
-The `SorobanResources` structure includes the ledger footprint and the resource
-values, which together determine the resource consumption limit and the
-resource fee. The footprint must contain the `LedgerKey`s that will be read
-and/or written.
+The `SorobanResources` structure includes the ledger footprint and the resource values, which together determine the resource consumption limit and the resource fee. The footprint must contain the `LedgerKey`s that will be read and/or written.
 
-The simplest method to determine the values in `SorobanResources` is to use the
-transaction simulation with
-[preflight service](../learn/interacting-with-contracts.mdx#preflight).
+The simplest method to determine the values in `SorobanResources` is to use the transaction simulation with [preflight service](../learn/interacting-with-contracts.mdx#preflight).

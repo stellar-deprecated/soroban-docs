@@ -1,30 +1,23 @@
 ---
-sidebar_position: 20
+sidebar_position: 10
 title: Migrating Auth to SDK 0.6.0
 description: Migrating auth code for contracts written prior to SDK 0.6.0.
 ---
 
-This is a guide about migrating authorization code in contracts written before
-SDK 0.6.0 to the new version of auth (Soroban authorization framework).
+This is a guide about migrating authorization code in contracts written before SDK 0.6.0 to the new version of auth (Soroban authorization framework).
 
-For general information on authorization in Soroban see the 
-[authorization overview](../learn/authorization.mdx) and the [example](auth.mdx).
+For general information on authorization in Soroban see the [authorization overview](../learn/authorization.mdx) and the [example](auth.mdx).
 
 ## Migrating `env.invoker()`
 
-The simplest authorization approach previously was to use `env.invoker()`. This
-concept is no longer present in Soroban SDK or host (it is available at the
-transaction building time though, [details]).
+The simplest authorization approach previously was to use `env.invoker()`. This concept is no longer present in Soroban SDK or host (it is available at the transaction building time though, [details]).
 
 [details]: invoking-contracts-with-transactions.mdx#authorization-data
 
 In order to migrate a contract that uses `env.invoker()` do the following:
 
-1. Add an `Address` argument to the function signature, for example, 
-`addr: Address`. This is the authorized entity that we will use instead of
-invoker.
-1. Call `addr.require_auth()` at the top of the function code to ensure that
-the address has authorized the function call.
+1. Add an `Address` argument to the function signature, for example, `addr: Address`. This is the authorized entity that we will use instead of invoker.
+1. Call `addr.require_auth()` at the top of the function code to ensure that the address has authorized the function call.
 1. Replace all the instances of `env.invoker()` with `addr`.
 
 A small example of migration:
@@ -52,26 +45,19 @@ impl MyContract {
 }
 ```
 
-A more detailed example can be found in the Soroban timelock example migration
-[PR][timelock-pr].
+A more detailed example can be found in the Soroban timelock example migration [PR][timelock-pr].
 
 [timelock-pr]: https://github.com/stellar/soroban-examples/pull/204/files#diff-6884bc67aadaf666f4042b239666265a3bd57074d1ed58c7fc807120b9458025
 
 ## Migrating `soroban-auth`
 
-For more advanced auth use cases the `soroban-auth` library could be used.
-In order to migrate from this library to Soroban authorization framework do the
-following steps:
+For more advanced auth use cases the `soroban-auth` library could be used. In order to migrate from this library to Soroban authorization framework do the following steps:
 
 1. Change the type of all the `Identifier` variables to `Address`.
 1. Change the type of all the `Signature` types to `Address`.
-1. Replace signature verification code with a call of 
-`require_auth`/`require_auth_for_args` for the respective `Address` that has
-been represented by a `Signature` before.
-1. Remove nonces and nonce-related code as the replay protection is already
-ensured by the Soroban host.
+1. Replace signature verification code with a call of `require_auth`/`require_auth_for_args` for the respective `Address` that has been represented by a `Signature` before.
+1. Remove nonces and nonce-related code as the replay protection is already ensured by the Soroban host.
 
-An example of `soroban-auth` migration can be found in the Soroban token
-example migration [PR][token-pr].
+An example of `soroban-auth` migration can be found in the Soroban token example migration [PR][token-pr].
 
 [token-pr]: https://github.com/stellar/soroban-examples/pull/205/files

@@ -1,6 +1,6 @@
 {
-  "position": 5,
-  "label": "Migrating from EVM",
+  "position": 1,
+  "label": "Development Basics",
   "link": {
     "type": "generated-index"
   }

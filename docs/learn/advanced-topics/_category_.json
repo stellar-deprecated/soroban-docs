@@ -1,6 +1,6 @@
 {
-  "position": 5,
-  "label": "Migrating from EVM",
+  "position": 3,
+  "label": "Advanced Topics",
   "link": {
     "type": "generated-index"
   }

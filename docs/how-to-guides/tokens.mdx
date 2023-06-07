@@ -500,11 +500,11 @@ Ref: https://github.com/stellar/soroban-examples/tree/v0.8.4/token
 ## How it Works
 
 Tokens created on a smart contract platform can take many different forms,
-include a variety of different functionality, and meet very different needs or
+include a variety of different functionalities, and meet very different needs or
 use-cases. While each token can fulfill a unique niche, there are some "normal"
 features that almost all tokens will need to make use of (e.g., payments,
 transfers, balance queries, etc.). In an effort to minimize repetition and
-streamline token deployments, Soroban implements the [Stellar Asset Contract]
+streamline token deployments, Soroban implements the [Stellar Asset Contract],
 which provides a uniform, predictable interface for developers and users.
 
 This example contract demonstrates how a smart contract token might be
@@ -519,7 +519,7 @@ You have likely noticed that this example contract is broken into discrete
 modules, with each one responsible for a siloed set of functionality. This
 common practice helps to organize the code and make it more maintainable.
 
-For example, the bulk of the token logic exists in the `contract.rs` module.
+For example, most of the token logic exists in the `contract.rs` module.
 Functions like `mint`, `burn`, `transfer`, etc. are written and programmed in
 that file. The token interface describes how some of these functions should emit
 events when they occur. However, keeping all that event-emitting logic bundled
@@ -607,19 +607,19 @@ _require_ the right kind of behavior to take place.
 ### Compatibility with Classic Stellar Assets
 
 One of the key benefits of the Stellar network is that assets are first-class
-citizens. On a protocol-level, asset issuers have a robust set of tools to
+citizens. On a protocol level, asset issuers have a robust set of tools to
 manage the authorization and behavior of assets. Any asset that already exists
 on the Stellar network can also make use of the Stellar Asset Contract on the
 Soroban platform. All that is required is a simple, one-time action of wrapping
 the asset to be deployed for Soroban.
 
-At that point, the asset can make use of all the features of the Stellar Asset
+At that point, the asset can use all the features of the Stellar Asset
 Contract that are highlighted in this example (allowance, mint, burn, etc.),
-while still maintaing the high-quality asset issuer features included with
+while still maintaining the high-quality asset issuer features included with
 Classic Stellar.
 
 Additionally, all that comes with **no contract writing required**. Any asset
-can be easily wrapped, using the [Soroban-CLI]:
+can be easily wrapped using the [Soroban-CLI]:
 
 ```bash
 soroban lab token wrap \
@@ -917,9 +917,9 @@ fn decimal_is_over_max() {
 }
 ```
 
-The token example implements eight different tests, to cover a wide array of
-potential behavior and problems. However, all of the tests start with a few
-common pieces. In any test the first thing that is always required is an `Env`,
+The token example implements eight different tests to cover a wide array of
+potential behaviors and problems. However, all of the tests start with a few
+common pieces. In any test, the first thing that is always required is an `Env`,
 which is the Soroban environment that the contract will run in.
 
 ```rust
@@ -952,11 +952,11 @@ let token = create_token(&e, &admin);
 All public functions within an `impl` block that is annotated with the
 `#[contractimpl]` attribute have a corresponding function generated in a
 generated client type. The client type will be named the same as the contract
-type with `Client` appended. For example, in our contract the contract type is
+type with `Client` appended. For example, in our contract, the contract type is
 `Token`, and the client is named `TokenClient`.
 
 The eight tests created for this example contract test a range of possible
-conditions, and ensure the contract responds appropriately to each one:
+conditions and ensure the contract responds appropriately to each one:
 
 - **`test()`** - This function makes use of a variety of the built-in token
   functions to test the "predictable" way an asset might be interacted with by a

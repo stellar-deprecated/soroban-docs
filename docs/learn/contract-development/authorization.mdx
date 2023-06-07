@@ -8,7 +8,7 @@ description: An overview of the Soroban authorization framework.
 
 This is an overview of the Soroban authorization framework.
 If you need to just migrate the contract to the new SDK, see the
-[migration doc](../how-to-guides/sdk-management/auth-migration.mdx).
+[migration doc](../../how-to-guides/sdk-management/auth-migration.mdx).
 
 :::
 
@@ -67,7 +67,7 @@ more of the token by storing the administrator identity in its storage.
 Similarly, it can make sure that only an owner of the balance may transfer that
 balance.
 
-[storage]: ../getting-started/storing-data.mdx
+[storage]: ../../getting-started/storing-data.mdx
 
 
 #### `Address`
@@ -95,7 +95,7 @@ for this authorization are defined by the `Address` and are enforced by the
 Soroban host. Replay protection is also implemented in the host, i.e., there is
 normally no need for a contract to manage its own nonces.
 
-[auth example]: ../how-to-guides/auth.mdx
+[auth example]: ../../how-to-guides/development-basics/auth.mdx
 
 #### Authorizing Sub-contract Calls
 
@@ -109,7 +109,7 @@ Contracts don't need to do anything special to benefit from this feature. Just
 calling a sub-contract that calls `require_auth` will ensure that the
 sub-contract call has been properly authorized.
 
-[timelock example]: ../how-to-guides/timelock.mdx
+[timelock example]: ../../how-to-guides/financial-transactions/timelock.mdx
 
 #### When to `require_auth`
 
@@ -139,7 +139,7 @@ even have different authorization contexts (customized via arguments in
 `require_auth_for_args`). [Atomic swap] is an example that deals with
 authorization of two `Address`es.
 
-[Atomic swap]: ../how-to-guides/atomic-swap.mdx
+[Atomic swap]: ../../how-to-guides/financial-transactions/atomic-swap.mdx
 
 Note though, that contracts that deal with multiple authorized `Address`es need
 a bit more complex support on the client side (to collect and attach the proper
@@ -177,7 +177,7 @@ with the existing Stellar accounts, Soroban supports 4 different kinds of the
 account implementations.
 
 Below are the general descriptions of these implementations. See the transaction
-[guide](../how-to-guides/invoking-contracts-with-transactions.mdx) for the
+[guide](../../how-to-guides/stellar-interactions/invoking-contracts-with-transactions.mdx) for the
 concrete information of how different accounts are represented.
 
 ##### Stellar Account
@@ -242,7 +242,7 @@ called).
 
 For the exact interface and more details, see the [custom account example].
 
-[custom account example]: ../how-to-guides/custom-account.mdx
+[custom account example]: ../../how-to-guides/stellar-interactions/custom-account.mdx
 
 ### Advanced Concepts
 

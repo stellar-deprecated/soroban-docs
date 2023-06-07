@@ -526,6 +526,49 @@ satisfy the commonly used [token interface] to maximize interoperability.
 
 {/* TODO: Flesh out the following "main concept" sections a bit more */}
 
+### Separation of Functionality
+
+You have likely noticed that this example contract is broken into discrete
+modules, with each one responsible for a siloed set of functionality. This
+common practice helps to organize the code and make it more maintainable.
+
+For example, the bulk of the token logic exists in the `contract.rs` module.
+Functions like `mint`, `burn`, `transfer`, etc. are written and programmed in
+that file. The token interface describes how some of these functions should emit
+events when they occur. However, keeping all that event-emitting logic bundled
+in with the rest of the contract code could make it harder to track what is
+happening in the code, and that confusion could ultimately lead to errors.
+
+Instead, we have a separate `events.rs` module that takes away all the headache
+of emitting events when other functions run. Here is the function to emit an
+event whenever the token is minted:
+
+```rust
+pub(crate) fn mint(e: &Env, admin: Address, to: Address, amount: i128) {
+    let topics = (Symbol::short("mint"), admin, to);
+    e.events().publish(topics, amount);
+}
+```
+
+Admittedly, this is a simple example, but constructing the contract this way
+makes it very clear to the developer what is happening and where. This function
+is then used by the `contract.rs` module whenever the `mint` function is
+invoked:
+
+```rust
+fn mint(e: Env, to: Address, amount: i128) {
+    check_nonnegative_amount(amount);
+    let admin = read_administrator(&e);
+    admin.require_auth();
+    receive_balance(&e, to.clone(), amount);
+    // highlight-next-line
+    event::mint(&e, admin, to, amount);
+}
+```
+
+This same convention is used to separate from the "main" contract code the
+metadata for the token, the storage type definitions, etc.
+
 ### Standardized Interface, Customized Behavior
 
 We could discuss how this standardized interface is useful to let wallets,

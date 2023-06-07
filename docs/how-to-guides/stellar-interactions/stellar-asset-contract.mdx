@@ -20,7 +20,7 @@ The Stellar Asset Contract is in early development, has not been audited, and is
 
 Stellar has numerous assets on its classic network, and being able to use them in Soroban would give users much more flexibility with how they can use their assets. For this reason, we introduced the Stellar Asset Contract, or SAC for short, which allows users to use their Stellar account and trustline balances in Soroban.
 
-The SAC implements the [token interface](../reference/interfaces/token-interface), which is similar to the widely used ERC-20 token standard. This should make it easier for existing smart contract developers to get started on Stellar.
+The SAC implements the [token interface](../../reference/interfaces/token-interface), which is similar to the widely used ERC-20 token standard. This should make it easier for existing smart contract developers to get started on Stellar.
 
 ## Deployment
 
@@ -60,7 +60,7 @@ In the `Address::Contract` case, if the issuer has `AUTH_REQUIRED_FLAG` set, the
 
 See the [authorization overview](../../learn/contract-development/authorization.mdx) and [auth example](../development-basics/auth.mdx) for general information about authorization in Soroban.
 
-The token contract contains three kinds of operations that follow the token [interface](../reference/interfaces/token-interface#code):
+The token contract contains three kinds of operations that follow the token [interface](../../reference/interfaces/token-interface#code):
 
 - getters, such as `balance`, which do not change the state of the contract
 - unprivileged mutators, such as `incr_allow` and `xfer`, which change the state of the contract but do not require special privileges

@@ -10,14 +10,14 @@ This example is an extension of the [storing data example].
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp] [oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.8.4
 
-[storing data example]: ../getting-started/storing-data.mdx
+[storing data example]: ../../getting-started/storing-data.mdx
 [auth example]: https://github.com/stellar/soroban-examples/tree/v0.8.4/auth
 
 ## Run the Example
 
 First go through the [Setup] process to get your development environment configured, then clone the `v0.8.4` tag of `soroban-examples` repository:
 
-[Setup]: ../getting-started/setup.mdx
+[Setup]: ../../getting-started/setup.mdx
 
 ```
 git clone -b v0.8.4 https://github.com/stellar/soroban-examples
@@ -369,10 +369,10 @@ Contract auth: [{"address_with_nonce":null,"root_invocation":{"contract_id":"000
 
 ## Further reading
 
-[Authorization documentation](../learn/authorization.mdx) provides more details on how Soroban auth framework works.
+[Authorization documentation](../../learn/contract-development/authorization.mdx) provides more details on how Soroban auth framework works.
 
-[Timelock](timelock.mdx) and [Single Offer](single-offer-sale.mdx) examples demonstrate authorizing token operations on behalf of the user, which can be extended to any nested contract invocations.
+[Timelock](../financial-transactions/timelock.mdx) and [Single Offer](../financial-transactions/single-offer-sale.mdx) examples demonstrate authorizing token operations on behalf of the user, which can be extended to any nested contract invocations.
 
-[Atomic Swap](atomic-swap.mdx) example demonstrates multi-party authorization where multiple users sign their parts of the contract invocation.
+[Atomic Swap](../financial-transactions/atomic-swap.mdx) example demonstrates multi-party authorization where multiple users sign their parts of the contract invocation.
 
-[Custom Account](custom-account.mdx) example for demonstrates an account contract that defines a custom authentication scheme and user-defined authorization policies.
+[Custom Account](../stellar-interactions/custom-account.mdx) example for demonstrates an account contract that defines a custom authentication scheme and user-defined authorization policies.

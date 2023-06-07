@@ -58,7 +58,7 @@ In the `Address::Contract` case, if the issuer has `AUTH_REQUIRED_FLAG` set, the
 
 ## Authorization semantics
 
-See the [authorization overview](../learn/authorization.mdx) and [auth example](./auth.mdx) for general information about authorization in Soroban.
+See the [authorization overview](../../learn/contract-development/authorization.mdx) and [auth example](../development-basics/auth.mdx) for general information about authorization in Soroban.
 
 The token contract contains three kinds of operations that follow the token [interface](../reference/interfaces/token-interface#code):
 
@@ -98,8 +98,8 @@ impl MyContract {
 
 See the full examples that utilize the token contract in various ways for more details:
 
-- [Timelock](timelock.mdx) and [single offer](single-offer-sale.mdx) move token via `xfer` to and from the contract
-- [Atomic swap](atomic-swap.mdx) uses `incr_allow` to transfer token on behalf of the user
+- [Timelock](../financial-transactions/timelock.mdx) and [single offer](../financial-transactions/single-offer-sale.mdx) move token via `xfer` to and from the contract
+- [Atomic swap](../financial-transactions/atomic-swap.mdx) uses `incr_allow` to transfer token on behalf of the user
 
 Notice, that these examples don't do anything to support SAC specifically.
 
@@ -118,6 +118,6 @@ See the tests in the [examples](#examples) above for the full test implementatio
 
 ## Contract Interface
 
-This interface can be found in the [SDK]. It extends the common [token interface](tokens.mdx).
+This interface can be found in the [SDK]. It extends the common [token interface](../financial-transactions/tokens.mdx).
 
 [SDK]: https://github.com/stellar/rs-soroban-sdk/blob/v0.8.4/soroban-sdk/src/token.rs

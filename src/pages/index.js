@@ -426,7 +426,7 @@ const Footer = ({ title = "Get Connected" }) => (
         <SocialCard
           title="Youtube"
           src="./img/landing/youtube-1.svg"
-          href="https://www.youtube.com/@StellarDevelopmentFoundation"
+          href="https://youtube.com/@SorobanOfficial"
         />
 
         <SocialCard

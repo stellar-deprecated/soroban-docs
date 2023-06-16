@@ -948,11 +948,11 @@ fn create_token<'a>(e: &Env, admin: &Address) -> TokenClient<'a> {
 let token = create_token(&e, &admin);
 ```
 
-All public functions within an `impl` block that is annotated with the
-`#[contractimpl]` attribute have a corresponding function generated in a
+All public functions within an `impl` block that has been annotated with the
+`#[contractimpl]` attribute will have a corresponding function in the test's
 generated client type. The client type will be named the same as the contract
 type with `Client` appended. For example, in our contract, the contract type is
-`Token`, and the client is named `TokenClient`.
+named `Token`, and the client type is named `TokenClient`.
 
 The eight tests created for this example contract test a range of possible
 conditions and ensure the contract responds appropriately to each one:

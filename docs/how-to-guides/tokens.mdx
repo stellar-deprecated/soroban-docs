@@ -1,20 +1,20 @@
 ---
 sidebar_position: 16
 title: Tokens
-description: A token contract that implements the standard token interface.
+description: A token contract that implements the standard Token Interface.
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 The [token example] demonstrates how to write a token contract that implements
-the [token interface].
+the [Token Interface].
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
 
 [oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.8.4
 [token example]: https://github.com/stellar/soroban-examples/tree/v0.8.4/token
-[token interface]: ../reference/interfaces/token-interface.mdx
+[Token Interface]: ../reference/interfaces/token-interface.mdx
 
 ## Run the Example
 
@@ -504,14 +504,17 @@ include a variety of different functionalities, and meet very different needs or
 use-cases. While each token can fulfill a unique niche, there are some "normal"
 features that almost all tokens will need to make use of (e.g., payments,
 transfers, balance queries, etc.). In an effort to minimize repetition and
-streamline token deployments, Soroban implements the [Stellar Asset Contract],
+streamline token deployments, Soroban implements the [Token Interface],
 which provides a uniform, predictable interface for developers and users.
 
-This example contract demonstrates how a smart contract token might be
+Creating a Soroban token from an existing Stellar asset is very easy, and the
+wrapped token makes use of the [Stellar Asset Contract] (more on that [later]).
+This example contract, however, demonstrates how a smart contract token might be
 constructed that doesn't take advantage of the Stellar Asset Contract, but does
-satisfy the commonly used [token interface] to maximize interoperability.
+satisfy the commonly used [Token Interface] to maximize interoperability.
 
 [Stellar Asset Contract]: stellar-asset-contract.mdx
+[later]: #compatibility-with-stellar-assets
 
 ### Separation of Functionality
 
@@ -521,7 +524,7 @@ common practice helps to organize the code and make it more maintainable.
 
 For example, most of the token logic exists in the `contract.rs` module.
 Functions like `mint`, `burn`, `transfer`, etc. are written and programmed in
-that file. The token interface describes how some of these functions should emit
+that file. The Token Interface describes how some of these functions should emit
 events when they occur. However, keeping all that event-emitting logic bundled
 in with the rest of the contract code could make it harder to track what is
 happening in the code, and that confusion could ultimately lead to errors.
@@ -561,7 +564,7 @@ metadata for the token, the storage type definitions, etc.
 
 ### Standardized Interface, Customized Behavior
 
-This example contract follows the standardized token interface, implementing all
+This example contract follows the standardized Token Interface, implementing all
 of the same functions as the Stellar Asset Contract. This gives wallets, users,
 developers, etc. a predictable interface to interact with the token. Even though
 we are implementing the same _interface_ of functions, that doesn't mean we have
@@ -609,7 +612,7 @@ _require_ the right kind of behavior to take place.
 One of the key benefits of the Stellar network is that assets are first-class
 citizens. On a protocol level, asset issuers have a robust set of tools to
 manage the authorization and behavior of assets. Any asset that already exists
-on the Stellar network can also make use of the Stellar Asset Contract on the
+on the Stellar network can also make use of the [Stellar Asset Contract] on the
 Soroban platform. All that is required is a simple, one-time action of wrapping
 the asset to be deployed for Soroban.
 

@@ -504,14 +504,14 @@ include a variety of different functionalities, and meet very different needs or
 use-cases. While each token can fulfill a unique niche, there are some "normal"
 features that almost all tokens will need to make use of (e.g., payments,
 transfers, balance queries, etc.). In an effort to minimize repetition and
-streamline token deployments, Soroban implements the [Token Interface],
-which provides a uniform, predictable interface for developers and users.
+streamline token deployments, Soroban implements the [Token Interface], which
+provides a uniform, predictable interface for developers and users.
 
 Creating a Soroban token from an existing Stellar asset is very easy, and the
 wrapped token makes use of the [Stellar Asset Contract] (more on that [later]).
 This example contract, however, demonstrates how a smart contract token might be
 constructed that doesn't take advantage of the Stellar Asset Contract, but does
-satisfy the commonly used [Token Interface] to maximize interoperability.
+still satisfy the commonly used Token Interface to maximize interoperability.
 
 [Stellar Asset Contract]: stellar-asset-contract.mdx
 [later]: #compatibility-with-stellar-assets
@@ -564,13 +564,14 @@ metadata for the token, the storage type definitions, etc.
 
 ### Standardized Interface, Customized Behavior
 
-This example contract follows the standardized Token Interface, implementing all
-of the same functions as the Stellar Asset Contract. This gives wallets, users,
-developers, etc. a predictable interface to interact with the token. Even though
-we are implementing the same _interface_ of functions, that doesn't mean we have
-to implement the same _behavior_ inside those functions. While this example
-contract doesn't actually modify any of the functions, that possibility remains
-open to the contract developer.
+This example contract follows the standardized [Token Interface], implementing
+all of the same functions as the [Stellar Asset Contract]. This gives wallets,
+users, developers, etc. a predictable interface to interact with the token. Even
+though we are implementing the same _interface_ of functions, that doesn't mean
+we have to implement the same _behavior_ inside those functions. While this
+example contract doesn't actually modify any of the functions that would be
+present in a deployed instance of the Stellar Asset Contract, that possibility
+remains open to the contract developer.
 
 By way of example, perhaps you have an NFT project, and the artist wants to have
 a small royalty paid every time their token transfers hands:

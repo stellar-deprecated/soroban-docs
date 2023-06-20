@@ -111,7 +111,7 @@ const config = {
             to: '/user-dashboard',
             label: 'User Dashboard',
             position: 'right',
-            className: 'hide-unless-dapps',
+            // className: 'hide-unless-dapps',
           },
           {
             href: 'https://github.com/stellar/soroban-docs',

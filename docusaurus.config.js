@@ -162,12 +162,8 @@ const config = {
                 href: 'https://www.stellar.org/developers-blog',
               },
               {
-                label: 'Stellar Quest',
+                label: 'Soroban Quest',
                 href: 'https://quest.stellar.org/soroban',
-              },
-              {
-                label: 'Sorobanathon',
-                href: 'https://soroban.stellar.org/sorobanathon',
               },
             ],
           },

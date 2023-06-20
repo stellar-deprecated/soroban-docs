@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
+    "jsx": "react",
     "target": "ES6",
-    "baseUrl": "./src"
+    "baseUrl": "./src",
+    "module": "commonjs",
   },
   "exclude": ["node_modules", "**/node_modules/*"],
   "extends": "@stellar/tsconfig"

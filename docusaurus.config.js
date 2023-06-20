@@ -37,6 +37,15 @@ const config = {
         sidebarPath: require.resolve('./sidebarsApi.js'),
       },
     ],
+    [
+      '@docusaurus/plugin-content-docs',
+    {
+      id: 'dapps',
+      path: 'dapps',
+      routeBasePath: 'dapps',
+      sidebarPath: require.resolve('./sidebarsDapps.js'),
+    },
+  ],
     require('./src/dev-server-plugin'),
     require('./src/analytics-module')
   ],
@@ -92,11 +101,18 @@ const config = {
           //   className: 'nav-highlight',
           //   position: 'left',
           // },
-          // {
-          //   href: '/sorobanathon',
-          //   label: 'Sorobanathon',
-          //   position: 'left'
-          // },
+          {
+            to: '/dapps',
+            label: 'Dapps',
+            position: 'left',
+            docsPluginId: 'dapps'
+          },
+          {
+            to: '/user-dashboard',
+            label: 'User Dashboard',
+            position: 'right',
+            className: 'hide-unless-dapps',
+          },
           {
             href: 'https://github.com/stellar/soroban-docs',
             label: 'GitHub',

@@ -231,11 +231,11 @@ assert_eq!(sum, 12);
 
 ## Build the Contracts
 
-To build the contract into a `.wasm` file, use the `cargo rustc build --crate-type cdylib` command. Both
+To build the contract into a `.wasm` file, use the `cargo rustc` command. Both
 `contract_call/contract_a` and `contract_call/contract_b` must be built, with `contract_a` being built first.
 
 ```sh
-cargo rustc build --crate-type cdylib --target wasm32-unknown-unknown --release
+cargo rustc --crate-type cdylib --target wasm32-unknown-unknown --release
 ```
 
 Both `.wasm` files should be found in both contract `target` directories after building

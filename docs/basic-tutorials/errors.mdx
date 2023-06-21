@@ -302,10 +302,10 @@ client.increment();
 
 ## Build the Contract
 
-To build the contract, use the `cargo rustc build --crate-type cdylib` command.
+To build the contract, use the `cargo rustc` command.
 
 ```sh
-cargo rustc build --crate-type cdylib --target wasm32-unknown-unknown --release
+cargo rustc --crate-type cdylib --target wasm32-unknown-unknown --release
 ```
 
 A `.wasm` file should be outputted in the `target` directory:

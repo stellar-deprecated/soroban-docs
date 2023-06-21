@@ -7,16 +7,22 @@ interface CardProps {
 
 interface Course {
   publickey: string;
+  course_index: number;
   url: string;
-  completed: number[];
 }
 
 const fetchCourses = async (address: string): Promise<Course[]> => {
   try {
     const response = await fetch(
-      "https://dapp-wrangler.julian-martinez.workers.dev/"
+      "https://dapp-wrangler.julian-martinez.workers.dev/",
     );
-    const data: Course[] = await response.json();
+    const rawData = await response.json();
+    const data: Course[] = rawData.map(
+      ({ publickey, url }: { publickey: string; url: string }) => {
+        const [key, course_index] = publickey.split(":");
+        return { publickey: key, course_index: Number(course_index), url };
+      },
+    );
 
     return data.filter((course) => course.publickey === address);
   } catch (error) {
@@ -34,13 +40,6 @@ export function CompletedCoursesCard({ addressHex }: CardProps) {
     }
   }, [addressHex]);
 
-  const deployedCourses = courses.filter(
-    (course) => course.completed.length === 0
-  );
-  const completedCourses = courses.filter(
-    (course) => course.completed.length > 0
-  );
-
   const courseMapping: { [key: number]: string } = {
     0: "Crowdfund",
     1: "Payment",
@@ -53,15 +52,10 @@ export function CompletedCoursesCard({ addressHex }: CardProps) {
     <div className={styles.card}>
       <h3>Completed Challenges</h3>
       <ul>
-        {completedCourses.map((course, index) => (
+        {courses.map((course, index) => (
           <li key={index}>
-            <ul>
-              {course.completed.map((courseId, innerIndex) => (
-                <li key={innerIndex}>
-                  {courseMapping[courseId] || `Unknown Course (${courseId})`}
-                </li>
-              ))}
-            </ul>
+            {courseMapping[course.course_index] ||
+              `Unknown Course (${course.course_index})`}
           </li>
         ))}
       </ul>

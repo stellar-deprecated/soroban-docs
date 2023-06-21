@@ -7,21 +7,24 @@ interface CardProps {
 
 interface Course {
   publickey: string;
-  url: string[];
+  course_index: number;
+  url: string;
 }
 
-const fetchCourses = async (address: string): Promise<string[]> => {
+const fetchCourses = async (address: string): Promise<Course[]> => {
   try {
     const response = await fetch(
-      "https://dapp-wrangler.julian-martinez.workers.dev/"
+      "https://dapp-wrangler.julian-martinez.workers.dev/",
     );
-    const data: Course[] = await response.json();
-
-    const filteredCourses = data.filter(
-      (course) => course.publickey === address
+    const rawData = await response.json();
+    const data: Course[] = rawData.map(
+      ({ publickey, url }: { publickey: string; url: string }) => {
+        const [key, course_index] = publickey.split(":");
+        return { publickey: key, course_index: Number(course_index), url };
+      },
     );
 
-    return filteredCourses.flatMap((course) => course.url);
+    return data.filter((course) => course.publickey === address);
   } catch (error) {
     console.error(error);
     return [];
@@ -29,11 +32,11 @@ const fetchCourses = async (address: string): Promise<string[]> => {
 };
 
 export function DeployedProjectsCard({ addressHex }: CardProps) {
-  const [deployments, setDeployments] = useState<string[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
 
   useEffect(() => {
     if (addressHex) {
-      fetchCourses(addressHex).then((courses) => setDeployments(courses));
+      fetchCourses(addressHex).then(setCourses);
     }
   }, [addressHex]);
 
@@ -41,10 +44,10 @@ export function DeployedProjectsCard({ addressHex }: CardProps) {
     <div className={styles.card}>
       <h3>Dapp Deployments</h3>
       <ul>
-        {deployments.map((deployment, index) => (
+        {courses.map((course, index) => (
           <li key={index}>
-            <a href={deployment} target="_blank" rel="noopener noreferrer">
-              {deployment}
+            <a href={course.url} target="_blank" rel="noopener noreferrer">
+              {course.url}
             </a>
           </li>
         ))}

@@ -10,7 +10,7 @@ const chains: ChainMetadata[] = [sandbox, standalone, futurenet];
 const connectors: Connector[] = [freighter()];
 
 interface ChallengeFormProps {
-  courseId: number[];
+  courseId: number;
   address?: string;
 }
 
@@ -33,9 +33,9 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
           body: JSON.stringify({
             publickey: address,
             url: url,
-            completed: [courseIdState],
+            course_index: [courseIdState],
           }),
-        }
+        },
       );
 
       if (response.ok) {
@@ -83,7 +83,7 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
   );
 }
 
-export function ParentChallengeForm({ courseId }: { courseId: number[] }) {
+export function ParentChallengeForm({ courseId }: { courseId: number }) {
   return (
     <SorobanReactProvider
       chains={chains}
@@ -96,7 +96,7 @@ export function ParentChallengeForm({ courseId }: { courseId: number[] }) {
     </SorobanReactProvider>
   );
 }
-function InnerComponent({ courseId }: { courseId: number[] }) {
+function InnerComponent({ courseId }: { courseId: number }) {
   const { address, connect } = useSorobanReact();
 
   // if user is not logged in (address is undefined), render the Login button

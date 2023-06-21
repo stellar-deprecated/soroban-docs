@@ -292,10 +292,10 @@ assert_eq!(client.increment(&user_2, &4), 5);
 
 ## Build the Contract
 
-To build the contract into a `.wasm` file, use the `cargo build` command.
+To build the contract into a `.wasm` file, use the `cargo rustc build --crate-type cdylib` command.
 
 ```sh
-cargo build --target wasm32-unknown-unknown --release
+cargo rustc build --crate-type cdylib --target wasm32-unknown-unknown --release
 ```
 
 The `.wasm` file should be found in the `target` directory after building:

@@ -599,11 +599,11 @@ debug-assertions = true
 
 > _Note_: For a detailed explanation of the `Cargo.toml` configuration used in this tutorial, check out the [Hello World Example](../../getting-started/hello-world#import-soroban-sdk-and-features).
 
-Next, build the project using the `cargo build` command.
+Next, build the project using the `cargo rustc build --crate-type cdylib` command.
 
 ```bash
 cd increment
-cargo build --target wasm32-unknown-unknown --release
+cargo rustc build --crate-type cdylib --target wasm32-unknown-unknown --release
 ```
 
 The compiled contract will be located in the `target/wasm32-unknown-unknown/release` directory.

@@ -204,7 +204,7 @@ cd soroban-examples/token
 Next, build the Token contract using the following command:
 
 ```bash
-cargo build --target wasm32-unknown-unknown --release
+cargo rustc build --crate-type cdylib --target wasm32-unknown-unknown --release
 ```
 
 This will build the `soroban_token_contract.wasm` file which you will need to import into your project. The `soroban_token_contract.wasm` file is located in the `soroban-examples/target/wasm32-unknown-unknown/release` directory.
@@ -914,7 +914,7 @@ Below you will find a series of commands that will help you build, deploy and in
 <TabItem value="build" label="build.sh">
 
 ```bash
-cargo build --target wasm32-unknown-unknown --release
+cargo rustc build --crate-type cdylib --target wasm32-unknown-unknown --release
 ```
 
 </TabItem>
@@ -1090,7 +1090,7 @@ First, we need to build the vault contract. We can do this by running the `build
 
 ```bash
 ##cd vault
-cargo build --target wasm32-unknown-unknown --release
+cargo rustc build --crate-type cdylib --target wasm32-unknown-unknown --release
 ```
 
 Next, we need to deploy the token contract. We can do this by running the `deploy_token.sh` script.

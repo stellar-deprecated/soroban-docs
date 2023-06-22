@@ -28,6 +28,15 @@ version = "0.1.0"
 edition = "2021"
 ```
 
+### Configure the Library Type
+
+Add the `crate-type` configuration, required for building contracts.
+
+```toml
+[lib]
+crate-type = ["cdylib"]
+```
+
 ### Import `soroban-sdk` and Features
 
 Add the following sections to the `Cargo.toml` that will import the `soroban-sdk`, and configure a set of features explained below.
@@ -100,6 +109,9 @@ The steps below should produce a `Cargo.toml` that looks like so.
 name = "project-name"
 version = "0.1.0"
 edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
 
 [features]
 testutils = ["soroban-sdk/testutils"]

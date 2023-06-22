@@ -985,10 +985,10 @@ conditions and ensure the contract responds appropriately to each one:
 
 ## Build the Contract
 
-To build the contract, use the `cargo rustc` command.
+To build the contract, use the `soroban contract build` command.
 
 ```bash
-cargo rustc --crate-type cdylib --target wasm32-unknown-unknown --release
+soroban contract build
 ```
 
 A `.wasm` file should be outputted in the `target` directory:

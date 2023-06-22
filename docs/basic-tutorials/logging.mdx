@@ -224,14 +224,14 @@ std::println!("{}", logs.join("\n"));
 
 ## Build the Contract
 
-To build the contract, use the `cargo rustc` command.
+To build the contract, use the `soroban contract build` command.
 
 ### Without Logs
 
 To build the contract without logs, use the `--release` option.
 
 ```sh
-cargo rustc --crate-type cdylib --target wasm32-unknown-unknown --release
+soroban contract build
 ```
 
 A `.wasm` file should be outputted in the `target` directory, in the
@@ -246,7 +246,7 @@ target/wasm32-unknown-unknown/release/soroban_logging_contract.wasm
 To build the contract with logs, use the `--profile release-with-logs` option.
 
 ```sh
-cargo rustc --crate-type cdylib --target wasm32-unknown-unknown --profile release-with-logs
+soroban contract build --crate-type cdylib --target wasm32-unknown-unknown --profile release-with-logs
 ```
 
 A `.wasm` file should be outputted in the `target` directory, in the

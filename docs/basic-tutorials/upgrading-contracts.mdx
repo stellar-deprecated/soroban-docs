@@ -160,7 +160,7 @@ assert_eq!(2, client.version());
 
 ## Build the Contract
 
-To build the contract `.wasm` files, run `cargo rustc --crate-type cdylib --target wasm32-unknown-unknown --release` in both
+To build the contract `.wasm` files, run `soroban contract build` in both
 `upgradeable_contract/old_contract` and `upgradeable_contract/new_contract` in
 that order.
 

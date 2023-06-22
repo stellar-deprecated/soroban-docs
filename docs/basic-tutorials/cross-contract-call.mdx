@@ -231,11 +231,11 @@ assert_eq!(sum, 12);
 
 ## Build the Contracts
 
-To build the contract into a `.wasm` file, use the `cargo rustc` command. Both
+To build the contract into a `.wasm` file, use the `soroban contract build` command. Both
 `contract_call/contract_a` and `contract_call/contract_b` must be built, with `contract_a` being built first.
 
 ```sh
-cargo rustc --crate-type cdylib --target wasm32-unknown-unknown --release
+soroban contract build
 ```
 
 Both `.wasm` files should be found in both contract `target` directories after building

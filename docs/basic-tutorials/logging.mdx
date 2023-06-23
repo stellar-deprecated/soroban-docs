@@ -246,7 +246,7 @@ target/wasm32-unknown-unknown/release/soroban_logging_contract.wasm
 To build the contract with logs, use the `--profile release-with-logs` option.
 
 ```sh
-soroban contract build --crate-type cdylib --target wasm32-unknown-unknown --profile release-with-logs
+soroban contract build --profile release-with-logs
 ```
 
 A `.wasm` file should be outputted in the `target` directory, in the
@@ -259,10 +259,10 @@ target/wasm32-unknown-unknown/release-with-logs/soroban_logging_contract.wasm
 ## Run the Contract
 
 If you have [`soroban-cli`] installed, you can invoke contract functions in the
-using it.
+using it. Specify the `-v` option to enable verbose logs.
 
 ```sh
-soroban contract invoke \
+soroban -v contract invoke \
     --wasm target/wasm32-unknown-unknown/release-with-logs/soroban_logging_contract.wasm \
     --id 1 \
     -- \
@@ -270,11 +270,10 @@ soroban contract invoke \
     --value friend
 ```
 
-The following output should occur using the code above.
+The output should include the following line.
 
 ```
-null
-#0: debug: Hello Symbol(friend)
+soroban_cli::log::event::contract_log: log="Hello Symbol(me)"
 ```
 
 [`log!`]: https://docs.rs/soroban-sdk/latest/soroban_sdk/macro.log.html

@@ -16,15 +16,15 @@ In contrast, a new **guest environment** is established for each invocation of e
 
 ## WebAssembly
 
-The on-chain guest environment is isolated inside a WebAssembly (WASM) virtual machine ("VM"). This means that deployed contract code is compiled to WASM bytecode rather than native machine code. The host environment includes an interpreter for the VM, and a new short-lived VM is instantiated for each call to a contract, running the bytecode for the contract and then exiting.
+The on-chain guest environment is isolated inside a WebAssembly (Wasm) virtual machine ("VM"). This means that deployed contract code is compiled to Wasm bytecode rather than native machine code. The host environment includes an interpreter for the VM, and a new short-lived VM is instantiated for each call to a contract, running the bytecode for the contract and then exiting.
 
 The use of a VM helps provide security against any potential guest-code misbehavior, to both host and other guest environments, as well as ensuring portability of guest code between hosts running on different types of hardware.
 
-When developing and testing contract code off-chain, it is possible to compile contract code to native machine code rather than WASM bytecode, and to [run tests and debug contracts](debugging) against a local copy of the host environment by linking directly to it, rather than executing within a VM. This configuration runs much faster and provides much better debugging information, but is only possible locally, off-chain. On-chain deployed contracts are always WASM.
+When developing and testing contract code off-chain, it is possible to compile contract code to native machine code rather than Wasm bytecode, and to [run tests and debug contracts](debugging) against a local copy of the host environment by linking directly to it, rather than executing within a VM. This configuration runs much faster and provides much better debugging information, but is only possible locally, off-chain. On-chain deployed contracts are always Wasm.
 
 WebAssembly is a relatively low-level VM, which means that it does not provide a very rich set of standard or "built-in" operations. In contrast to VMs like the JVM, it has no garbage collector (not even a memory allocator), no IO facilities, no standard data structures like lists, arrays, maps or strings, no concepts of objects or types at all besides basic machine types like 32 and 64-bit integers.
 
-As a result, programs compiled to WASM bytecode often face a dilemma: if they want rich standard functionality, they must often include a copy of all the "support code" for that functionality within themselves. But if they do, they dramatically increase their code size, which incurs costs and limits performance. Moreover, including such support code limits their ability to interoperate with other programs that may include different, incompatible support code.
+As a result, programs compiled to Wasm bytecode often face a dilemma: if they want rich standard functionality, they must often include a copy of all the "support code" for that functionality within themselves. But if they do, they dramatically increase their code size, which incurs costs and limits performance. Moreover, including such support code limits their ability to interoperate with other programs that may include different, incompatible support code.
 
 The way out of this dilemma is for the environment itself to provide support code for rich standard functionality, in the form of host objects and functions that guest code can use by reference. Each contract refers to the same functionality implemented in the host, ensuring much smaller code size, higher performance, and greater interoperability between contracts. This is what Soroban does.
 
@@ -44,7 +44,7 @@ Host objects can be passed (by handle) directly to storage routines or between c
 
 ## Values and types
 
-All host functions can accept as arguments and return values from, at most, the limited WASM VM repertoire of machine-level types. To simplify matters, Soroban further limits all host functions to passing and returning values from within a single specialized form of 64-bit integers called "value" or "the value type". Through careful bit-packing, the value type can encode any of several separate types more meaningful to users than just "integers".
+All host functions can accept as arguments and return values from, at most, the limited Wasm VM repertoire of machine-level types. To simplify matters, Soroban further limits all host functions to passing and returning values from within a single specialized form of 64-bit integers called "value" or "the value type". Through careful bit-packing, the value type can encode any of several separate types more meaningful to users than just "integers".
 
 Specifically, the value type can directly encode 63-bit unsigned integers (equivalent to positive signed 64-bit numbers), but also boolean true and false, signed or unsigned 32-bit integers, typed host object handles, typed error codes, small symbols (up to 10 latin-alphanumeric characters), small bitsets (up to 60 bits), or a unique void value. Individual bits in a value are allocated to tagging and switching between these cases dynamically, and host functions or objects that require specific cases may reject values of other cases.
 

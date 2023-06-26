@@ -111,15 +111,15 @@ authorization.
 
 [auth-data]: ../getting-started/invoking-contracts-with-transactions.mdx#authorization-data
 
-Preflight mechanism can also be used to compute the `AuthorizedInvocation` trees
+Preflight mechanism can also be used to compute the `SorobanAuthorizedInvocation` trees
 that have to be authorized by the `Address`es in order for all the
 `require_auth` checks to pass.
 
 Soroban host provides a special 'recording' mode for auth. Whenever 
 `require_auth` is called host records its context (address, contract id,
-function, arguments), attributes it to an `AuthorizedInvocation` tree, and marks
+function, arguments), attributes it to an `SorobanAuthorizedInvocation` tree, and marks
 it as successful. Then after the invocation has finished, preflight can return
-all the recorded trees, as well as the required nonce values.
+all the recorded trees, as well as the generated random nonce values.
 
 Given this information from preflight, the client only needs to provide these
 trees and nonces to the respective `Address`es for signing and then build the
@@ -129,7 +129,7 @@ The recording auth mode is optional for preflight. For example, when dealing
 with the custom account contracts, it may be necessary to preflight the custom
 account's `__check_auth` code (that is simply omitted in the recording auth mode),
 for example, to get its ledger footprint. The non-recording mode is referred to
-as 'enforcing'. Enforcing mode is basically equivalent to running the 
+as 'enforcing'. Enforcing mode is basically equivalent to runnin g the 
 transaction on-chain (with possibly a slightly stale ledger state) and hence it
 requires all the signatures to be valid.
 

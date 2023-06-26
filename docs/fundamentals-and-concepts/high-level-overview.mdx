@@ -8,7 +8,7 @@ description: Descriptions of key Soroban concepts.
 
 Contracts are small programs written in the [Rust programming language](https://www.rust-lang.org). In order to write contracts, [install a Rust toolchain](https://www.rust-lang.org/tools/install), configure your [editor to support Rust programs](https://www.rust-lang.org/tools), and [learn at least some basic Rust concepts](https://www.rust-lang.org/learn).
 
-Contracts can be compiled to native code for local (off-chain) testing, but must be compiled as WebAssembly ("WASM") for deployment. The on-chain host environment only allows uploading WASM contracts, and runs them within a WASM "sandbox" virtual machine ("VM").
+Contracts can be compiled to native code for local (off-chain) testing, but must be compiled as WebAssembly ("Wasm") for deployment. The on-chain host environment only allows uploading Wasm contracts, and runs them within a Wasm "sandbox" virtual machine ("VM").
 
 In practice several special characteristics of the contract execution environment -- resource constraints, security considerations, nonstandard IO and invocation primitives, the requirement for strict determinism -- will mean that contracts can only use a very narrow subset of the full Rust language, and must use specialized libraries for most tasks. See the [rust dialect](rust-dialect.mdx) section for details.
 
@@ -30,6 +30,6 @@ The SDK also includes a _complete implementation of the contract host environmen
 
 ## Host Environment
 
-The host environment is a set of Rust crates that are compiled into both the SDK command-line tool and stellar-core, the transaction processor at the heart of the stellar network. It comprises a set of host objects and functions, an interface to on-chain storage and contract invocation, a resource-accounting and fee-charging system, and a WASM interpreter.
+The host environment is a set of Rust crates that are compiled into both the SDK command-line tool and stellar-core, the transaction processor at the heart of the stellar network. It comprises a set of host objects and functions, an interface to on-chain storage and contract invocation, a resource-accounting and fee-charging system, and a Wasm interpreter.
 
 Most contract developers will not frequently need to interact with the host environment directly -- SDK functions wrap most of its facilities and provide richer and more ergonomic types and functions -- but it is helpful to understand its structure in order to understand the conceptual model the SDK is presenting. It is also likely that some parts of the host environment will be visible when testing or debugging contracts compiled natively on a local workstation.

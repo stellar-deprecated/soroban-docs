@@ -32,7 +32,7 @@ case HOST_FUNCTION_TYPE_INVOKE_CONTRACT:
     SCVec invokeContract;
 case HOST_FUNCTION_TYPE_CREATE_CONTRACT:
     CreateContractArgs createContract;
-case HOST_FUNCTION_TYPE_UPLOAD_CONTRACT_WASM:
+case HOST_FUNCTION_TYPE_UPLOAD_CONTRACT_Wasm:
     opaque wasm<>;
 };
 
@@ -55,7 +55,7 @@ The `hostFunction` in `InvokeHostFunctionOp` will be executed by the Soroban hos
    - `invokeContract` arguments are expected to contain the contract id 
    `SCBytes`, contract function name `SCSymbol`, and the arguments of the 
    contract function being invoked.
-2. `HOST_FUNCTION_TYPE_UPLOAD_CONTRACT_WASM`
+2. `HOST_FUNCTION_TYPE_UPLOAD_CONTRACT_Wasm`
    - This will upload the contract Wasm using the provided `wasm` blob.
    - Uploaded Wasm can be identified by the SHA-256 hash of the uploaded Wasm.
 3. `HOST_FUNCTION_TYPE_CREATE_CONTRACT`
@@ -75,13 +75,13 @@ The `hostFunction` in `InvokeHostFunctionOp` will be executed by the Soroban hos
         ```c++
         enum ContractExecutableType
         {
-            CONTRACT_EXECUTABLE_WASM = 0,
+            CONTRACT_EXECUTABLE_Wasm = 0,
             CONTRACT_EXECUTABLE_TOKEN = 1 
         };
 
         union ContractExecutable switch (ContractExecutableType type)
         {
-        case CONTRACT_EXECUTABLE_WASM:
+        case CONTRACT_EXECUTABLE_Wasm:
             Hash wasm_hash;
         case CONTRACT_EXECUTABLE_TOKEN:
             void;

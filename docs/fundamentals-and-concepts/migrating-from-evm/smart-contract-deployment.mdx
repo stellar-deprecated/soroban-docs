@@ -384,7 +384,7 @@ fn transfer_token(e: &Env, to: Address, amount: i128) {
     transfer(e, get_token(e), to, amount);
 }
 
-// Metadata that is added on to the WASM custom section
+// Metadata that is added on to the Wasm custom section
 contractmeta!(
     key = "Description",
     val = "A Vault with a 1% return on investment per deposit."
@@ -503,7 +503,7 @@ fn create_vault_contract<'a>(
 
 fn install_token_wasm(e: &Env) -> BytesN<32> {
     soroban_sdk::contractimport!(file = "./soroban_token_contract.wasm");
-    e.install_contract_wasm(WASM)
+    e.install_contract_wasm(Wasm)
 }
 
 #[test]
@@ -1150,13 +1150,13 @@ We should receive an output with the vault contract ID. We will need this ID for
 07829f515df7d320101a8643b685c82d16e15d92bd11a49d2623a8b93b28bfd8
 ```
 
-Now we need to get the WASM hash of the token contract. We can do this by running the `get_token_wasm_hash.sh` script.
+Now we need to get the Wasm hash of the token contract. We can do this by running the `get_token_wasm_hash.sh` script.
 
 ```bash
 soroban contract install --wasm soroban_token_contract.wasm
 ```
 
-We should receive the WASM hash of the token contract.
+We should receive the Wasm hash of the token contract.
 
 ```bash
 68f5c739b568664e3c4f4b7787958ce4ba527cc310fb0de0fea707dc1d6bd3c3

@@ -79,7 +79,7 @@ docker exec soroban-preview ./initialize.sh standalone
 
 If the command ran successfully, it will return a Contract ID. Take note of this ID as you will need it in the next steps.
 
-## Checkpoint 4: 🤝 Connect the Frontend to the Backend
+## Checkpoint 3: 🤝 Connect the Frontend to the Backend
 
 First, start the development server:
 
@@ -104,7 +104,7 @@ Then, add some Standalone network lumens to your Freighter wallet by doing the f
 - Copy the address for your freighter wallet.
 - Visit `http://localhost:8000/friendbot?addr=<your_address>`
 
-## Checkpoint 6: 🏦 Mint Tokens for the Crowdfunding Campaign
+## Checkpoint 4: 🏦 Mint Tokens for the Crowdfunding Campaign
 
 Open the Dapp frontend and click on the "Mint 100 EXT" button.
 
@@ -118,7 +118,7 @@ You should see an updated balance in the pledge component.
 
 <img src={updatedBalance} width="40%" />
 
-## Checkpoint 7: 💰 Fund the Crowdfunding Campaign
+## Checkpoint 5: 💰 Fund the Crowdfunding Campaign
 
 Now that we have our wallet set up, let's fund the crowdfunding campaign.
 
@@ -136,7 +136,7 @@ You should see an updated balance in and amount you have pledged in the pledge c
 
 <img src={backedResult} width="40%" />
 
-## Checkpoint 8: 🚢 Ship it! 🚁
+## Checkpoint 6: 🚢 Ship it! 🚁
 
 Now that our Dapp is fully functional locally, let's prepare it for deployment on futurenet.
 
@@ -144,13 +144,6 @@ If you are running docker, now is a good time to stop the stellar and soroban pr
 
 ```sh
 docker stop stellar soroban-preview
-```
-
-First, edit the `SOROBAN_RPC_URL` value in the `initialize.sh` script to use the Soroban RPC endoint on futurenet:
-
-```sh
-# initialize.sh
-SOROBAN_RPC_URL="https://rpc-futurenet.stellar.org"
 ```
 
 Then, run the following command to initialize the contracts on futurenet:
@@ -230,13 +223,13 @@ You can now visit the preview link to see your deployed app! 🎉
 
 You will need to add some Futurenet network lumens to your Freighter wallet to interact with the deployed dApp. Visit [https://laboratory.stellar.org/#create-account](https://laboratory.stellar.org/#create-account), and follow the instructions to create your freighter account on Futurenet.
 
-## Checkpoint 9: ✅ Complete the Challenge!
+## Checkpoint 7: ✅ Complete the Challenge!
 
 Submit your public url to the challenge form.
 
 <ParentChallengeForm courseId={0} />
 
-## Checkpoint 10: 💪 Flex!
+## Checkpoint 8: 💪 Flex!
 
 Share your public url with a friend and ask them to contribute to the crowdfunding campaign
 

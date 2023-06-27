@@ -4,6 +4,7 @@
 const lightCodeTheme = require("prism-react-renderer/themes/nightOwl");
 const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "Soroban - Smart Contracts Platform for Developers",
@@ -111,7 +112,6 @@ const config = {
             to: '/user-dashboard',
             label: 'User Dashboard',
             position: 'right',
-            // className: 'hide-unless-dapps',
           },
           {
             href: 'https://github.com/stellar/soroban-docs',

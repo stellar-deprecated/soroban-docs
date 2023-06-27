@@ -4,6 +4,7 @@ import { CompletedCoursesCard } from "../../atoms/courses-completed";
 import { DeployedProjectsCard } from "../../atoms/courses-card";
 import { UserCard } from "../../atoms/user-card";
 import { ChallengeCard } from "../../atoms/start-challenge-card";
+import { CompletedCourses } from "../../atoms/courses-matched";
 
 interface CardProps {
   addressHex: string;
@@ -16,11 +17,14 @@ export function CardContainer({ addressHex }: CardProps) {
         <UserCard addressHex={addressHex} />
       </div>
       <div>
-        <DeployedProjectsCard addressHex={addressHex} />
-      </div>
-      <div>
         <CompletedCoursesCard addressHex={addressHex} />
       </div>
+      <div>
+        <DeployedProjectsCard addressHex={addressHex} />
+      </div>
+      {/* <div>
+        <CompletedCourses addressHex={addressHex} />
+      </div> */}
       <div>
         <ChallengeCard />
       </div>

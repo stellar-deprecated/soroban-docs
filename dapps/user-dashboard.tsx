@@ -1,7 +1,7 @@
 import React from "react";
-import Layout from "@theme/Layout";
+// import Layout from "@theme/Layout";
 
-import { CardContainer } from "../components/molecules/card-container";
+import { CardContainer } from "../src/components/molecules/card-container";
 import { useSorobanReact, SorobanReactProvider } from "@soroban-react/core";
 import { SorobanEventsProvider } from "@soroban-react/events";
 import { futurenet, sandbox, standalone } from "@soroban-react/chains";
@@ -20,9 +20,9 @@ export default function Login({ children }: { children: React.ReactNode }) {
     >
       <SorobanEventsProvider>
         {children}
-        <Layout>
+        {/* <Layout> */}
           <LoginComponent />
-        </Layout>
+        {/* </Layout> */}
       </SorobanEventsProvider>
     </SorobanReactProvider>
   );
@@ -34,7 +34,7 @@ function LoginComponent() {
   const addressString: string = address ? address.toString() : "No address";
 
   return (
-    <main className="login">
+    <main className="">
       <div
         className="hp--hero"
         style={{

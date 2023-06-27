@@ -108,11 +108,11 @@ const config = {
             position: 'left',
             docsPluginId: 'dapps'
           },
-          {
-            to: '/user-dashboard',
-            label: 'User Dashboard',
-            position: 'right',
-          },
+          // {
+          //   to: '/user-dashboard',
+          //   label: 'User Dashboard',
+          //   position: 'right',
+          // },
           {
             href: 'https://github.com/stellar/soroban-docs',
             label: 'GitHub',

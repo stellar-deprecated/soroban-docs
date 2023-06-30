@@ -30,7 +30,7 @@ expire before ledgersToExpire ledgers from now.
 
 Let's look at this example below.
 ```
-Ex. Last closed ledger (LCL) = 5 Current Ledger = 6 ledgersToExpire = 8
+Ex. Last closed ledger (LCL) = 5, Current Ledger = 6, ledgersToExpire = 8
 
 entry1.expirationLedger = 10 
 entry2.expirationLedger = 14
@@ -75,6 +75,14 @@ specified in the *read-write set of the footprint* and make them accessible
 again. The read-only set of the footprint must be empty. An expired entry is one
 where its expirationLedger is less than the current ledger number.
 
+The restored entry will have its expiration ledger bumped to the [minimums] the
+network allows for newly created entries, which is 4096 + current ledger for
+persistent entries, and 16 + current ledger for temporary entries (Note that
+both will be updated soon to use 4096 + current ledger - 1 and 16 + current
+ledger - 1). The minimums linked are what the settings will be on release, but
+they can be updated in the future through a validator vote.
+
+[minimums]: https://github.com/stellar/stellar-core/blob/2109a168a895349f87b502ae3d182380b378fa47/src/ledger/NetworkConfig.h#L77-L78
 ### Transaction resources
 
 `RestoreFootprintOp` is a Soroban operation, and therefore must be the only

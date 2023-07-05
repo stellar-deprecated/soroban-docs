@@ -221,14 +221,20 @@ fn verify_authorization_policy(
     context: &Context,
     curr_contract: &Address,
     all_signed: bool,
-    spend_left_per_token: &mut Map<BytesN<32>, i128>,
+    spend_left_per_token: &mut Map<Address, i128>,
 ) -> Result<(), AccError> {
     // For the account control every signer must sign the invocation.
-    if &context.contract() == curr_contract {
-        if !all_signed {
-            return Err(AccError::NotEnoughSigners);
+    let contract_context = match context {
+        Context::Contract(c) => {
+            if &c.contract == curr_contract {
+                if !all_signed {
+                    return Err(AccError::NotEnoughSigners);
+                }
+            }
+            c
         }
-    }
+        Context::CreateContractHostFn(_) => return Err(AccError::InvalidContext),
+    };
 ```
 
 We verify the policy per `Context`. i.e. Per one `require_auth` call. The policy
@@ -237,18 +243,21 @@ call.
 
 ```rust
 // Otherwise, we're only interested in functions that spend tokens.
-if context.fn_name != TRANSFER_FN && context.fn_name != Symbol::new(env, "increase_allowance") {
+if contract_context.fn_name != TRANSFER_FN
+    && contract_context.fn_name != Symbol::new(env, "approve")
+{
     return Ok(());
 }
 
 let spend_left: Option<i128> =
-    if let Some(spend_left) = spend_left_per_token.get(context.contract.clone()) {
-        Some(spend_left.unwrap())
+    if let Some(spend_left) = spend_left_per_token.get(contract_context.contract.clone()) {
+        Some(spend_left)
     } else if let Some(limit_left) = env
         .storage()
-        .get(&DataKey::SpendLimit(context.contract.clone()))
+        .instance()
+        .get::<_, i128>(&DataKey::SpendLimit(contract_context.contract.clone()))
     {
-        Some(limit_left.unwrap())
+        Some(limit_left)
     } else {
         None
     };
@@ -258,10 +267,9 @@ if let Some(spend_left) = spend_left {
     // 'amount' is the third argument in both `approve` and `transfer`.
     // If the contract has a different signature, it's safer to panic
     // here, as it's expected to have the standard interface.
-    let spent: i128 = context
+    let spent: i128 = contract_context
         .args
         .get(2)
-        .unwrap()
         .unwrap()
         .try_into_val(env)
         .unwrap();
@@ -271,7 +279,7 @@ if let Some(spend_left) = spend_left {
     if !all_signed && spent > spend_left {
         return Err(AccError::NotEnoughSigners);
     }
-    spend_left_per_token.set(context.contract.clone(), spend_left - spent);
+    spend_left_per_token.set(contract_context.contract.clone(), spend_left - spent);
 }
 Ok(())
 ```
@@ -331,11 +339,16 @@ account_contract.add_limit(&token, &1000);
 // Verify that this call needs to be authorized.
 assert_eq!(
     env.auths(),
-    [(
+    std::vec![(
         account_contract.address.clone(),
-        account_contract.address.clone(),
-        Symbol::short("add_limit"),
-        (token.clone(), 1000_i128).into_val(&env),
+        AuthorizedInvocation {
+            function: AuthorizedFunction::Contract((
+                account_contract.address.clone(),
+                symbol_short!("add_limit"),
+                (token.clone(), 1000_i128).into_val(&env),
+            )),
+            sub_invocations: std::vec![]
+        }
     )]
 );
 ```

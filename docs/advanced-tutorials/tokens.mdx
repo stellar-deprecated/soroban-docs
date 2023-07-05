@@ -199,17 +199,15 @@ use crate::balance::{is_authorized, write_authorization};
 use crate::balance::{read_balance, receive_balance, spend_balance};
 use crate::event;
 use crate::metadata::{read_decimal, read_name, read_symbol, write_metadata};
-use soroban_sdk::{contractimpl, Address, Bytes, Env};
+use soroban_sdk::{contractimpl, Address, String, Env};
 use soroban_token_sdk::TokenMetadata;
 
 pub trait TokenTrait {
-    fn initialize(e: Env, admin: Address, decimal: u32, name: Bytes, symbol: Bytes);
+    fn initialize(e: Env, admin: Address, decimal: u32, name: String, symbol: String);
 
     fn allowance(e: Env, from: Address, spender: Address) -> i128;
 
-    fn increase_allowance(e: Env, from: Address, spender: Address, amount: i128);
-
-    fn decrease_allowance(e: Env, from: Address, spender: Address, amount: i128);
+    fn approve(e: Env, from: Address, spender: Address, amount: i128, expiration_ledger: u32);
 
     fn balance(e: Env, id: Address) -> i128;
 
@@ -235,9 +233,9 @@ pub trait TokenTrait {
 
     fn decimals(e: Env) -> u32;
 
-    fn name(e: Env) -> Bytes;
+    fn name(e: Env) -> String;
 
-    fn symbol(e: Env) -> Bytes;
+    fn symbol(e: Env) -> String;
 }
 
 fn check_nonnegative_amount(amount: i128) {
@@ -250,7 +248,7 @@ pub struct Token;
 
 #[contractimpl]
 impl TokenTrait for Token {
-    fn initialize(e: Env, admin: Address, decimal: u32, name: Bytes, symbol: Bytes) {
+    fn initialize(e: Env, admin: Address, decimal: u32, name: String, symbol: String) {
         if has_administrator(&e) {
             panic!("already initialized")
         }
@@ -273,32 +271,13 @@ impl TokenTrait for Token {
         read_allowance(&e, from, spender)
     }
 
-    fn increase_allowance(e: Env, from: Address, spender: Address, amount: i128) {
+    fn approve(e: Env, from: Address, spender: Address, amount: i128, expiration_ledger: u32) {
         from.require_auth();
 
         check_nonnegative_amount(amount);
 
-        let allowance = read_allowance(&e, from.clone(), spender.clone());
-        let new_allowance = allowance
-            .checked_add(amount)
-            .expect("Updated allowance doesn't fit in an i128");
-
-        write_allowance(&e, from.clone(), spender.clone(), new_allowance);
-        event::increase_allowance(&e, from, spender, amount);
-    }
-
-    fn decrease_allowance(e: Env, from: Address, spender: Address, amount: i128) {
-        from.require_auth();
-
-        check_nonnegative_amount(amount);
-
-        let allowance = read_allowance(&e, from.clone(), spender.clone());
-        if amount >= allowance {
-            write_allowance(&e, from.clone(), spender.clone(), 0);
-        } else {
-            write_allowance(&e, from.clone(), spender.clone(), allowance - amount);
-        }
-        event::decrease_allowance(&e, from, spender, amount);
+        write_allowance(&e, from.clone(), spender.clone(), amount, expiration_ledger);
+        event::approve(&e, from, spender, amount, expiration_ledger);
     }
 
     fn balance(e: Env, id: Address) -> i128 {
@@ -399,14 +378,9 @@ impl TokenTrait for Token {
 ```rust title="token/src/event.rs"
 use soroban_sdk::{Address, Env, Symbol};
 
-pub(crate) fn increase_allowance(e: &Env, from: Address, to: Address, amount: i128) {
-    let topics = (Symbol::new(e, "increase_allowance"), from, to);
-    e.events().publish(topics, amount);
-}
-
-pub(crate) fn decrease_allowance(e: &Env, from: Address, to: Address, amount: i128) {
-    let topics = (Symbol::new(e, "decrease_allowance"), from, to);
-    e.events().publish(topics, amount);
+pub(crate) fn approve(e: &Env, from: Address, to: Address, amount: i128, expiration_ledger: u32) {
+    let topics = (Symbol::new(e, "approve"), from, to);
+    e.events().publish(topics, (amount, expiration_ledger));
 }
 
 pub(crate) fn transfer(e: &Env, from: Address, to: Address, amount: i128) {
@@ -672,23 +646,33 @@ fn test() {
     token.mint(&user1, &1000);
     assert_eq!(
         e.auths(),
-        [(
+        std::vec![(
             admin1.clone(),
-            token.address.clone(),
-            Symbol::short("mint"),
-            (&user1, 1000_i128).into_val(&e),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    token.address.clone(),
+                    symbol_short!("mint"),
+                    (&user1, 1000_i128).into_val(&e),
+                )),
+                sub_invocations: std::vec![]
+            }
         )]
     );
     assert_eq!(token.balance(&user1), 1000);
 
-    token.increase_allowance(&user2, &user3, &500);
+    token.approve(&user2, &user3, &500, &200);
     assert_eq!(
         e.auths(),
-        [(
+        std::vec![(
             user2.clone(),
-            token.address.clone(),
-            Symbol::new(&e, "increase_allowance"),
-            (&user2, &user3, 500_i128).into_val(&e),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    token.address.clone(),
+                    symbol_short!("approve"),
+                    (&user2, &user3, 500_i128, 200_u32).into_val(&e),
+                )),
+                sub_invocations: std::vec![]
+            }
         )]
     );
     assert_eq!(token.allowance(&user2, &user3), 500);
@@ -696,11 +680,16 @@ fn test() {
     token.transfer(&user1, &user2, &600);
     assert_eq!(
         e.auths(),
-        [(
+        std::vec![(
             user1.clone(),
-            token.address.clone(),
-            Symbol::short("transfer"),
-            (&user1, &user2, 600_i128).into_val(&e),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    token.address.clone(),
+                    symbol_short!("transfer"),
+                    (&user1, &user2, 600_i128).into_val(&e),
+                )),
+                sub_invocations: std::vec![]
+            }
         )]
     );
     assert_eq!(token.balance(&user1), 400);
@@ -709,11 +698,16 @@ fn test() {
     token.transfer_from(&user3, &user2, &user1, &400);
     assert_eq!(
         e.auths(),
-        [(
+        std::vec![(
             user3.clone(),
-            token.address.clone(),
-            Symbol::new(&e, "transfer_from"),
-            (&user3, &user2, &user1, 400_i128).into_val(&e),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    token.address.clone(),
+                    Symbol::new(&e, "transfer_from"),
+                    (&user3, &user2, &user1, 400_i128).into_val(&e),
+                )),
+                sub_invocations: std::vec![]
+            }
         )]
     );
     assert_eq!(token.balance(&user1), 800);
@@ -726,22 +720,32 @@ fn test() {
     token.set_admin(&admin2);
     assert_eq!(
         e.auths(),
-        [(
+        std::vec![(
             admin1.clone(),
-            token.address.clone(),
-            Symbol::short("set_admin"),
-            (&admin2,).into_val(&e),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    token.address.clone(),
+                    symbol_short!("set_admin"),
+                    (&admin2,).into_val(&e),
+                )),
+                sub_invocations: std::vec![]
+            }
         )]
     );
 
     token.set_authorized(&user2, &false);
     assert_eq!(
         e.auths(),
-        [(
+        std::vec![(
             admin2.clone(),
-            token.address.clone(),
-            Symbol::new(&e, "set_authorized"),
-            (&user2, false).into_val(&e),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    token.address.clone(),
+                    Symbol::new(&e, "set_authorized"),
+                    (&user2, false).into_val(&e),
+                )),
+                sub_invocations: std::vec![]
+            }
         )]
     );
     assert_eq!(token.authorized(&user2), false);
@@ -752,26 +756,36 @@ fn test() {
     token.clawback(&user3, &100);
     assert_eq!(
         e.auths(),
-        [(
+        std::vec![(
             admin2.clone(),
-            token.address.clone(),
-            Symbol::short("clawback"),
-            (&user3, 100_i128).into_val(&e),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    token.address.clone(),
+                    symbol_short!("clawback"),
+                    (&user3, 100_i128).into_val(&e),
+                )),
+                sub_invocations: std::vec![]
+            }
         )]
     );
     assert_eq!(token.balance(&user3), 200);
 
-    // Increase by 400, with an existing 100 = 500
-    token.increase_allowance(&user2, &user3, &400);
+    // Increase to 500
+    token.approve(&user2, &user3, &500, &200);
     assert_eq!(token.allowance(&user2, &user3), 500);
-    token.decrease_allowance(&user2, &user3, &501);
+    token.approve(&user2, &user3, &0, &200);
     assert_eq!(
         e.auths(),
-        [(
+        std::vec![(
             user2.clone(),
-            token.address.clone(),
-            Symbol::new(&e, "decrease_allowance"),
-            (&user2, &user3, 501_i128).into_val(&e),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    token.address.clone(),
+                    symbol_short!("approve"),
+                    (&user2, &user3, 0_i128, 200_u32).into_val(&e),
+                )),
+                sub_invocations: std::vec![]
+            }
         )]
     );
     assert_eq!(token.allowance(&user2, &user3), 0);

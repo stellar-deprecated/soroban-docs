@@ -19,7 +19,7 @@ We'll be exploring an example [Soroban Payment Dapp](https://github.com/stellar/
 
 ## Prerequisites
 
-The Payment Dapp relies on the following dependencies:
+The payment dapp relies on the following dependencies:
 
 - `Node` (>=16.14.0 < 17.0.0): [Download here](https://nodejs.org/en/download/)
 - `Yarn` (v1.22.5 or newer): [Download here](https://classic.yarnpkg.com/en/docs/install/)
@@ -27,10 +27,10 @@ The Payment Dapp relies on the following dependencies:
 
 ## Setup
 
-To set up the Soroban Payment Dapp, follow the steps below:
+To set up the Soroban payment dapp, follow the steps below:
 
 1. Install and set up the Freighter wallet.
-2. Clone the Payment Dapp repository and navigate into it:
+2. Clone the payment dapp repository and navigate into it:
 
 ```sh
 git clone https://github.com/stellar/soroban-react-payment.git
@@ -45,7 +45,7 @@ yarn
 
 ## Understanding the Frontend Code: SendPayment Component
 
-The `SendPayment` component is a part of a Soroban Payment Dapp and is responsible for handling the creation of a payment. Let's delve into the details of this component:
+The `SendPayment` component is part of the Soroban payment dapp and is responsible for handling the creation of a payment. Let's delve into the details of this component:
 
 ### Importing Dependencies
 
@@ -255,7 +255,7 @@ Here's the detailed breakdown:
 - It fetches the token decimals and updates the `tokenDecimals` state.
 - After fetching all the details, it sets the loading state to `false`.
 - If all the above steps are successful, it returns `true`.
-- If there is any error during these steps, it logs the error, sets the error message to "Unable to fetch token details."
+- If there is any error during these steps, it logs the error, and sets the error message to "Unable to fetch token details."
 - Even if there's an error, it sets the loading state to `false`.
 - In case of an error, it returns `false` to indicate failure.
 
@@ -458,7 +458,7 @@ Here's the breakdown of each step:
 
 ## Processing Transactions
 
-The `renderStep` function plays a crucial role in processing transactions in the payment flow. It contains the components necessary for the payment flow and handles the logic for each step. Lets take a look at the final 3 steps of the payment flow and examine how transaction processing is handled:
+The `renderStep` function plays a crucial role in processing transactions in the payment flow. It contains the components necessary for the payment flow and handles the logic for each step. Let's take a look at the final three steps of the payment flow and examine how transaction processing is handled:
 
 ### Step 6: Confirming Payment
 
@@ -489,7 +489,7 @@ case 6: {
 }
 ```
 
-Heres a breakdown of the `ConfirmPayment` component:
+Here's a breakdown of the `ConfirmPayment` component:
 
 ```tsx
 export const ConfirmPayment = (props: ConfirmPaymentProps) => {
@@ -736,7 +736,7 @@ The component is divided into three sections:
 
 ## Understanding Dapp Initialization
 
-To initialize the Soroban React Payment Dapp, we need to clone and deploy the Soroban token smart contract. The Soroban token is a custom token that will be used to facilitate payments within the Dapp. Follow the steps below to build and deploy the smart contracts:
+To initialize the Soroban React payment dapp, we need to clone and deploy the Soroban token smart contract. The Soroban token is a custom token that will be used to facilitate payments within the Dapp. Follow the steps below to build and deploy the smart contracts:
 
 Clone the Soroban examples repository by running the following command in a new terminal window:
 
@@ -828,4 +828,4 @@ Refer to [this section](./#checkpoint-4--add-the-token-to-freighter) of the chal
 
 ## Running the Example Dapp
 
-Now that we've dived into the Payment Dapp, lets take on the [Payment Dapp challenge](./challenge-1-payment.mdx)!
+Now that we've dived into the Payment Dapp, let's take on the [Payment Dapp challenge](./challenge-1-payment.mdx)!

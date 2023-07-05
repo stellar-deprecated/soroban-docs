@@ -804,19 +804,25 @@ fn test_burn() {
     token.mint(&user1, &1000);
     assert_eq!(token.balance(&user1), 1000);
 
-    token.increase_allowance(&user1, &user2, &500);
+    token.approve(&user1, &user2, &500, &200);
     assert_eq!(token.allowance(&user1, &user2), 500);
 
     token.burn_from(&user2, &user1, &500);
     assert_eq!(
         e.auths(),
-        [(
+        std::vec![(
             user2.clone(),
-            token.address.clone(),
-            Symbol::short("burn_from"),
-            (&user2, &user1, 500_i128).into_val(&e),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    token.address.clone(),
+                    symbol_short!("burn_from"),
+                    (&user2, &user1, 500_i128).into_val(&e),
+                )),
+                sub_invocations: std::vec![]
+            }
         )]
     );
+
     assert_eq!(token.allowance(&user1, &user2), 0);
     assert_eq!(token.balance(&user1), 500);
     assert_eq!(token.balance(&user2), 0);
@@ -824,13 +830,19 @@ fn test_burn() {
     token.burn(&user1, &500);
     assert_eq!(
         e.auths(),
-        [(
+        std::vec![(
             user1.clone(),
-            token.address.clone(),
-            Symbol::short("burn"),
-            (&user1, 500_i128).into_val(&e),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    token.address.clone(),
+                    symbol_short!("burn"),
+                    (&user1, 500_i128).into_val(&e),
+                )),
+                sub_invocations: std::vec![]
+            }
         )]
     );
+
     assert_eq!(token.balance(&user1), 0);
     assert_eq!(token.balance(&user2), 0);
 }
@@ -903,7 +915,7 @@ fn transfer_from_insufficient_allowance() {
     token.mint(&user1, &1000);
     assert_eq!(token.balance(&user1), 1000);
 
-    token.increase_allowance(&user1, &user3, &100);
+    token.approve(&user1, &user3, &100, &200);
     assert_eq!(token.allowance(&user1, &user3), 100);
 
     token.transfer_from(&user3, &user1, &user2, &101);

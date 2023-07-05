@@ -618,9 +618,7 @@ pub trait TokenTrait {
 
     fn allowance(e: Env, from: Address, spender: Address) -> i128;
 
-    fn increase_allowance(e: Env, from: Address, spender: Address, amount: i128);
-
-    fn decrease_allowance(e: Env, from: Address, spender: Address, amount: i128);
+    fn approve(e: Env, from: Address, spender: Address, amount: i128, expiration_ledger: u32);
 
     fn balance(e: Env, id: Address) -> i128;
 
@@ -684,32 +682,13 @@ impl TokenTrait for Token {
         read_allowance(&e, from, spender)
     }
 
-    fn increase_allowance(e: Env, from: Address, spender: Address, amount: i128) {
+    fn approve(e: Env, from: Address, spender: Address, amount: i128, expiration_ledger: u32) {
         from.require_auth();
 
         check_nonnegative_amount(amount);
 
-        let allowance = read_allowance(&e, from.clone(), spender.clone());
-        let new_allowance = allowance
-            .checked_add(amount)
-            .expect("Updated allowance doesn't fit in an i128");
-
-        write_allowance(&e, from.clone(), spender.clone(), new_allowance);
-        event::increase_allowance(&e, from, spender, amount);
-    }
-
-    fn decrease_allowance(e: Env, from: Address, spender: Address, amount: i128) {
-        from.require_auth();
-
-        check_nonnegative_amount(amount);
-
-        let allowance = read_allowance(&e, from.clone(), spender.clone());
-        if amount >= allowance {
-            write_allowance(&e, from.clone(), spender.clone(), 0);
-        } else {
-            write_allowance(&e, from.clone(), spender.clone(), allowance - amount);
-        }
-        event::decrease_allowance(&e, from, spender, amount);
+        write_allowance(&e, from.clone(), spender.clone(), amount, expiration_ledger);
+        event::approve(&e, from, spender, amount, expiration_ledger);
     }
 
     fn balance(e: Env, id: Address) -> i128 {

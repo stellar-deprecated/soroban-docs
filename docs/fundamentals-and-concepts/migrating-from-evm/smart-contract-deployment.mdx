@@ -316,19 +316,19 @@ impl TryFromVal<Env, DataKey> for RawVal {
 }
 
 fn get_token(e: &Env) -> Address {
-    e.storage().get_unchecked(&DataKey::Token).unwrap()
+    e.storage().instance().get(&DataKey::Token).unwrap()
 }
 
 fn get_token_share(e: &Env) -> Address {
-    e.storage().get_unchecked(&DataKey::TokenShare).unwrap()
+    e.storage().instance().get(&DataKey::TokenShare).unwrap()
 }
 
 fn get_total_shares(e: &Env) -> i128 {
-    e.storage().get_unchecked(&DataKey::TotalShares).unwrap()
+    e.storage().instance().get(&DataKey::TotalShares).unwrap()
 }
 
 fn get_reserve(e: &Env) -> i128 {
-    e.storage().get_unchecked(&DataKey::Reserve).unwrap()
+    e.storage().instance().get(&DataKey::Reserve).unwrap()
 }
 
 fn get_balance(e: &Env, contract: Address) -> i128 {
@@ -344,19 +344,19 @@ fn get_balance_shares(e: &Env) -> i128 {
 }
 
 fn put_token(e: &Env, contract: Address) {
-    e.storage().set(&DataKey::Token, &contract);
+    e.storage().instance().set(&DataKey::Token, &contract);
 }
 
 fn put_token_share(e: &Env, contract: Address) {
-    e.storage().set(&DataKey::TokenShare, &contract);
+    e.storage().instance().set(&DataKey::TokenShare, &contract);
 }
 
 fn put_total_shares(e: &Env, amount: i128) {
-    e.storage().set(&DataKey::TotalShares, &amount)
+    e.storage().instance().set(&DataKey::TotalShares, &amount)
 }
 
 fn put_reserve(e: &Env, amount: i128) {
-    e.storage().set(&DataKey::Reserve, &amount)
+    e.storage().instance().set(&DataKey::Reserve, &amount)
 }
 
 fn burn_shares(e: &Env, amount: i128) {

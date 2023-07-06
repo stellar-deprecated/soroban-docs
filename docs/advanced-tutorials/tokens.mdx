@@ -88,17 +88,17 @@ use soroban_sdk::{Address, Env};
 
 pub fn has_administrator(e: &Env) -> bool {
     let key = DataKey::Admin;
-    e.storage().has(&key)
+    e.storage().instance().has(&key)
 }
 
 pub fn read_administrator(e: &Env) -> Address {
     let key = DataKey::Admin;
-    e.storage().get_unchecked(&key).unwrap()
+    e.storage().instance().get(&key).unwrap()
 }
 
 pub fn write_administrator(e: &Env, id: &Address) {
     let key = DataKey::Admin;
-    e.storage().set(&key, id);
+    e.storage().instance().set(&key, id);
 }
 ```
 
@@ -106,29 +106,69 @@ pub fn write_administrator(e: &Env, id: &Address) {
 <TabItem value="allowance">
 
 ```rust title="token/src/allowance.rs"
-use crate::storage_types::{AllowanceDataKey, DataKey};
+use crate::storage_types::{AllowanceDataKey, AllowanceValue, DataKey};
 use soroban_sdk::{Address, Env};
 
-pub fn read_allowance(e: &Env, from: Address, spender: Address) -> i128 {
+pub fn read_allowance(e: &Env, from: Address, spender: Address) -> AllowanceValue {
     let key = DataKey::Allowance(AllowanceDataKey { from, spender });
-    if let Some(allowance) = e.storage().get(&key) {
-        allowance.unwrap()
+    if let Some(allowance) = e.storage().temporary().get::<_, AllowanceValue>(&key) {
+        if allowance.expiration_ledger < e.ledger().sequence() {
+            AllowanceValue {
+                amount: 0,
+                expiration_ledger: allowance.expiration_ledger,
+            }
+        } else {
+            allowance
+        }
     } else {
-        0
+        AllowanceValue {
+            amount: 0,
+            expiration_ledger: 0,
+        }
     }
 }
 
-pub fn write_allowance(e: &Env, from: Address, spender: Address, amount: i128) {
+pub fn write_allowance(
+    e: &Env,
+    from: Address,
+    spender: Address,
+    amount: i128,
+    expiration_ledger: u32,
+) {
+    let allowance = AllowanceValue {
+        amount,
+        expiration_ledger,
+    };
+
+    if amount > 0 && expiration_ledger < e.ledger().sequence() {
+        panic!("expiration_ledger is less than ledger seq when amount > 0")
+    }
+
     let key = DataKey::Allowance(AllowanceDataKey { from, spender });
-    e.storage().set(&key, &amount);
+    e.storage().temporary().set(&key.clone(), &allowance);
+
+    if amount > 0 {
+        e.storage().temporary().bump(
+            &key,
+            expiration_ledger
+                .checked_sub(e.ledger().sequence())
+                .unwrap(),
+        )
+    }
 }
 
 pub fn spend_allowance(e: &Env, from: Address, spender: Address, amount: i128) {
     let allowance = read_allowance(e, from.clone(), spender.clone());
-    if allowance < amount {
+    if allowance.amount < amount {
         panic!("insufficient allowance");
     }
-    write_allowance(e, from, spender, allowance - amount);
+    write_allowance(
+        e,
+        from,
+        spender,
+        allowance.amount - amount,
+        allowance.expiration_ledger,
+    );
 }
 ```
 
@@ -141,8 +181,8 @@ use soroban_sdk::{Address, Env};
 
 pub fn read_balance(e: &Env, addr: Address) -> i128 {
     let key = DataKey::Balance(addr);
-    if let Some(balance) = e.storage().get(&key) {
-        balance.unwrap()
+    if let Some(balance) = e.storage().persistent().get::<DataKey, i128>(&key) {
+        balance
     } else {
         0
     }
@@ -150,7 +190,7 @@ pub fn read_balance(e: &Env, addr: Address) -> i128 {
 
 fn write_balance(e: &Env, addr: Address, amount: i128) {
     let key = DataKey::Balance(addr);
-    e.storage().set(&key, &amount);
+    e.storage().persistent().set(&key, &amount);
 }
 
 pub fn receive_balance(e: &Env, addr: Address, amount: i128) {
@@ -174,8 +214,8 @@ pub fn spend_balance(e: &Env, addr: Address, amount: i128) {
 
 pub fn is_authorized(e: &Env, addr: Address) -> bool {
     let key = DataKey::State(addr);
-    if let Some(state) = e.storage().get(&key) {
-        state.unwrap()
+    if let Some(state) = e.storage().persistent().get::<DataKey, bool>(&key) {
+        state
     } else {
         true
     }
@@ -183,7 +223,7 @@ pub fn is_authorized(e: &Env, addr: Address) -> bool {
 
 pub fn write_authorization(e: &Env, addr: Address, is_authorized: bool) {
     let key = DataKey::State(addr);
-    e.storage().set(&key, &is_authorized);
+    e.storage().persistent().set(&key, &is_authorized);
 }
 ```
 
@@ -244,6 +284,7 @@ fn check_nonnegative_amount(amount: i128) {
     }
 }
 
+#[contract]
 pub struct Token;
 
 #[contractimpl]
@@ -453,6 +494,12 @@ use soroban_sdk::{contracttype, Address};
 pub struct AllowanceDataKey {
     pub from: Address,
     pub spender: Address,
+}
+
+#[contracttype]
+pub struct AllowanceValue {
+    pub amount: i128,
+    pub expiration_ledger: u32,
 }
 
 #[derive(Clone)]
@@ -770,7 +817,7 @@ fn test() {
     );
     assert_eq!(token.balance(&user3), 200);
 
-    // Increase to 500
+    // Set allowance to 500
     token.approve(&user2, &user3, &500, &200);
     assert_eq!(token.allowance(&user2, &user3), 500);
     token.approve(&user2, &user3, &0, &200);

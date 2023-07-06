@@ -431,21 +431,17 @@ pub struct IncrementContract;
 
 #[contractimpl]
 impl IncrementContract {
-    /// increment increments an internal counter, and returns the value.
+    /// Increment increments an internal counter, and returns the value.
     pub fn increment(env: Env) -> u32 {
         // Get the current count.
-        let mut count: u32 = env
-            .storage()
-            .get(&COUNTER)
-            .unwrap_or(Ok(0)) // If no value set, assume 0.
-            .unwrap(); // Extract the actual value from the `Ok` wrapper
+        let mut count: u32 = env.storage().instance().get(&COUNTER).unwrap_or(0); // If no value set, assume 0.
         log!(&env, "count: {}", count);
 
         // Increment the count.
         count += 1;
 
         // Save the count.
-        env.storage().set(&COUNTER, &count);
+        env.storage().instance().set(&COUNTER, &count);
 
         // Return the count to the caller.
         count
@@ -453,7 +449,7 @@ impl IncrementContract {
 
     /// get_count returns the current value of the counter.
     pub fn get_count(env: Env) -> u32 {
-        env.storage().get(&COUNTER).unwrap_or(Ok(0)).unwrap()
+        env.storage().instance().get(&COUNTER).unwrap_or(0)
     }
 }
 ```
@@ -481,6 +477,7 @@ const COUNTER: Symbol = Symbol::short("COUNTER");
 This creates a new `Symbol` value with the string "COUNTER". The constant `COUNTER` is then used as a key to identify the count value stored in the contract `storage`.
 
 ```rust
+#[contract]
 pub struct IncrementContract;
 ```
 
@@ -502,10 +499,10 @@ pub fn increment(env: Env) -> u32 {}
 This is a public function called `increment` that takes an `Env` struct as an argument and returns a `u32`. `Env` is the environment the contract is executing in, and `u32` is the type of value returned by the function.
 
 ```rust
-let mut count: u32 = env.storage().get(&COUNTER).unwrap_or(Ok(0)).unwrap(); // If no value set, assume 0.
+let mut count: u32 = env.storage().instance().get(&COUNTER).unwrap_or(0)); // If no value set, assume 0.
 ```
 
-In this line of code, a mutable variable named `count` of type unsigned 32-bit integer (`u32`) is being created. The storage environment is accessed using `env.storage()`, and the value associated with the key `COUNTER` is retrieved using the `get` method. If there is no value set for the key `COUNTER`, a default value of 0 is used. Finally, the `unwrap()` method is called to extract the actual value from the `Ok` wrapper, which is then assigned to the `count` variable.
+In this line of code, a mutable variable named `count` of type unsigned 32-bit integer (`u32`) is being created. The storage environment is accessed using `env.storage()`, and the value associated with the key `COUNTER` is retrieved using the `get` method. If there is no value set for the key `COUNTER`, a default value of 0 is used.
 
 ```rust
 log!(&env, "count: {}", count);
@@ -520,7 +517,7 @@ count += 1;
 This increments the count by 1.
 
 ```rust
-env.storage().set(&COUNTER, &count);
+env.storage().instance().set(&COUNTER, &count);
 ```
 
 This saves the updated count back to the contract storage using the `set` method on the storage object.
@@ -538,7 +535,7 @@ pub fn get_count(env: Env) -> u32 {}
 This is a public function called `get_count` that takes an `Env` struct as an argument and returns a `u32`. Once more we see the `Env` which is the environment the contract is executing in, and `u32` as the type of the value returned by the function.
 
 ```rust
-env.storage().get(&COUNTER).unwrap_or(Ok(0)).unwrap()
+env.storage().instance().get(&COUNTER).unwrap_or(0)
 ```
 
 This is a repeat of the code we saw earlier, which retrieves the value associated with the key `COUNTER` from the contract storage. If there is no value set for the key `COUNTER`, a default value of 0 is used. Finally, the `unwrap()` method is called to extract the actual value from the `Ok` wrapper, which is then returned to the caller of the function.

@@ -15,7 +15,7 @@ import { ParentChallengeForm } from "../../../src/components/atoms/challenge-for
 
 # Crowdfund Dapp Challenge
 
-This challenge will guide you through the process of building and shipping a crowdfunding Dapp on Stellar using Soroban. You will learn how to deploy smart contracts to futurenet, and how to interact with them through a web frontend. In this context, the term "ship" refers to finalizing the development process of your Dapp, ensuring that it functions as expected, and is accessible for user interaction and testing through a hosted frontend. However, it's crucial to clarify that despite its functionality, the Dapp is not promoted nor intended for deployment in a production-level setting on futurenet. The challenge is designed for educational purposes, helping you understand how a Dapp can be built and interacted with, with further customization and development, it has the potential to evolve into a full-fledged, ready-to-use crowdfunding solution.
+This challenge will guide you through the process of building and shipping a crowdfunding dapp on Stellar using Soroban. You will learn how to deploy smart contracts to futurenet, and how to interact with them through a web frontend. In this context, the term "ship" refers to finalizing the development process of your dapp, ensuring that it functions as expected, and is accessible for user interaction and testing through a hosted frontend. However, it's crucial to clarify that despite its functionality, the dapp is not promoted nor intended for deployment in a production-level setting on futurenet. The challenge is designed for educational purposes, helping you understand how a dapp can be built and interacted with, with further customization and development, it has the potential to evolve into a full-fledged, ready-to-use crowdfunding solution.
 
 ## Checkpoint 0: 📦 Install 📚
 
@@ -24,11 +24,11 @@ Start by installing the required dependencies.
 Required:
 
 - `soroban-cli v0.8.0`: [Download Soroban](https://soroban.stellar.org/docs/getting-started/setup#install-the-soroban-cli)
-- `docker` (both Standalone and futurenet backends require it): [Download Docker](https://www.docker.com/products/docker-desktop)
+- `docker` (both Standalone and Futurenet backends require it): [Download Docker](https://www.docker.com/products/docker-desktop)
 - `Node` v17: [Download Node](https://nodejs.org/en/download/)
 - `Freighter Wallet`: [Freighter Wallet](https://freighter.app/)
 
-Clone the soroban example Dapp repo:
+Clone the soroban example dapp repo:
 
 ```sh
 git clone https://github.com/stellar/soroban-example-dapp
@@ -61,7 +61,7 @@ and wait for it to start.
 
 ## Checkpoint 2: 🎬 Deploy Smart Contracts
 
-Now that the backend environment is set up, we need to deploy our smart contracts to Soroban in a sandbox environment.
+Now that the backend environment is set up, we need to deploy our smart contracts to in a sandbox environment.
 
 In another terminal, load the contracts and initialize them.
 
@@ -87,11 +87,11 @@ First, start the development server:
 yarn dev
 ```
 
-Now open your browser and visit http://localhost:3000. You should be able to see the frontend of your Dapp.
+Now open your browser and visit http://localhost:3000. You should be able to see the frontend of your dapp.
 
 Now that we have the frontend running, it's time to connect it with our smart contracts.
 
-Add the futurenet custom network in Freighter (Note, the out-of-the-box "Future Net" network in Freighter will not work with a local quickstart container, so we need to add our own):
+Add the Futurenet custom network in Freighter (Note, the out-of-the-box "Future Net" network in Freighter will not work with a local quickstart container, so we need to add our own):
 
 - Name: `Standalone`
 - URL: `http://localhost:8000/soroban/rpc`
@@ -106,7 +106,7 @@ Then, add some Standalone network lumens to your Freighter wallet by doing the f
 
 ## Checkpoint 4: 🏦 Mint Tokens for the Crowdfunding Campaign
 
-Open the Dapp frontend and click on the "Mint 100 EXT" button.
+Open the dapp frontend and click on the "Mint 100 EXT" button.
 
 <img src={mintToken} width="40%" />
 
@@ -119,7 +119,7 @@ You should see an updated balance in the pledge component.
 <img src={updatedBalance} width="40%" />
 
 > Note: These are test lumens for use with
-your local network and cannot be used on futurenet or Mainnet
+your local network and cannot be used on Futurenet or Mainnet
 
 ## Checkpoint 5: 💰 Fund the Crowdfunding Campaign
 
@@ -135,13 +135,13 @@ Once the transaction is confirmed, you should see a success message.
 
 <img src={success} width="40%" />
 
-You should see an updated balance and the amount you have pledged in the pledge component.
+You should see an updated balance in the amount you have pledged in the pledge component.
 
 <img src={backedResult} width="40%" />
 
 ## Checkpoint 6: 🚢 Ship it! 🚁
 
-Now that your Dapp is fully functional locally, next prepare it for deployment on futurenet.
+Now that your dapp is fully functional locally, next prepare it for deployment on Futurenet.
 
 If you are running docker, now is a good time to stop the stellar and soroban preview containers.
 
@@ -149,7 +149,7 @@ If you are running docker, now is a good time to stop the stellar and soroban pr
 docker stop stellar soroban-preview
 ```
 
-Then, run the following command to initialize the contracts on futurenet:
+Then, run the following command to initialize the contracts on Futurenet:
 
 ```sh
 ./initialize.sh futurenet
@@ -161,11 +161,11 @@ Then run the dev server again:
 yarn dev
 ```
 
-Now open your browser and visit http://localhost:3000. You should be able to see the frontend of your Dapp.
+Now open your browser and visit http://localhost:3000. You should be able to see the frontend of your dapp.
 
 Next, add the [Soroban RPC](https://soroban.stellar.org/docs/getting-started/run-rpc) network in Freighter:
 
-- Name: `Soroban futurenet`
+- Name: `Soroban Futurenet`
 - URL: `https://rpc-futurenet.stellar.org`
 - Passphrase: `Test SDF Future Network ; October 2022`
 - Allow HTTP connection: `Enabled`
@@ -224,7 +224,7 @@ You can now visit the preview link to see your deployed app! 🎉
 
 <img src={deployedDApp} width="90%" />
 
-You will need to add some futurenet network lumens to your Freighter wallet to interact with the deployed Dapp. Visit [https://laboratory.stellar.org/#create-account](https://laboratory.stellar.org/#create-account), and follow the instructions to create your freighter account on futurenet.
+You will need to add some Futurenet network lumens to your Freighter wallet to interact with the deployed dapp. Visit [https://laboratory.stellar.org/#create-account](https://laboratory.stellar.org/#create-account), and follow the instructions to create your freighter account on Futurenet.
 
 ## Checkpoint 7: ✅ Complete the Challenge!
 
@@ -234,11 +234,11 @@ Submit your public url to the challenge form.
 
 ## Checkpoint 8: 💪 Flex!
 
-Share your public url with a friend and ask them to contribute to the crowdfunding campaign
+Invite a friend to try out your dapp and ask them to provide feedback!
 
 ## ⚔️ Side Quests
 
-🌐 Explore [Stellar Laboratory] to inspect your account assets on futurenet.
+🌐 Explore [Stellar Laboratory] to inspect your account assets on Futurenet.
 
 You should see something like this:
 
@@ -261,9 +261,9 @@ You should see something like this:
 
 <br />
 
-🍴 [Fork the Crowdfund repo] and make your own changes to the Dapp.
+🍴 [Fork the Crowdfund repo] and make your own changes to the dapp.
 
-Customize the code and submit a pull request for the Crowdfunding Dapp challenge. You can experiment with new fundraising strategies, improve the user interface, or integrate additional payment options.
+Customize the code and submit a pull request for the Crowdfunding dapp challenge. You can experiment with new fundraising strategies, improve the user interface, or integrate additional payment options.
 
 Take this opportunity to showcase your skills and make your mark on the Crowdfunding Dapp. Good luck!
 
@@ -274,9 +274,9 @@ Take this opportunity to showcase your skills and make your mark on the Crowdfun
 
 During this exercise you should be able to:
 
-- Clone the example repo (Crowdfunding Dapp)
+- Clone the example repo (Crowdfund Dapp)
 - Choose your target amount and deadline
-- Deploy your contract to futurenet
+- Deploy your contract to Futurenet
 - Deploy the example web ui somewhere (e.g. netlify, vercel, surge, etc.)
 
 Then via the web UI, you should be able to:

@@ -4,9 +4,9 @@ title: Crowdfund Dapp Walkthrough
 description: Step through the code behind the Example Crowdfund Dapp.
 ---
 
-# Creating a Crowdfunding Dapp with Soroban
+# Creating a Crowdfund Dapp with Soroban
 
-We'll be exploring an existing [End-to-End Example Soroban Dapp](https://github.com/stellar/soroban-example-dapp), using tools like Docker, Typescript, React, Rust and Soroban. This project was created by the Soroban team and members of the community, and is a fully-functioning Crowdfunding Dapp. Developers can use this to easily build a crowdfunding Dapp for their fundraising campaigns, and others can donate directly on the website using Soroban Tokens.
+We'll be exploring an existing [End-to-End Example Soroban Dapp](https://github.com/stellar/soroban-example-dapp), using tools like Docker, Typescript, React, Rust and Soroban. This project was created by the Soroban team and members of the community, and is a fully-functioning Crowdfund dapp. Developers can use this to easily build a crowdfunding Dapp for their fundraising campaigns, and others can donate directly on the website using Soroban Tokens.
 
 1. [Introduction](#introduction)
 2. [Prerequisites](#prerequisites)
@@ -37,7 +37,7 @@ cd soroban-example-dapp
 
 Welcome to the world of Docker, an essential tool for software development. Docker packages software into units known as containers, ensuring consistency, isolation, portability, and scalability.
 
-Docker is particularly useful in Dapp development. It helps manage microservices, maintain consistent environments throughout development stages, and simulate a decentralized network during testing.
+Docker is particularly useful in dapp development. It helps manage microservices, maintain consistent environments throughout development stages, and simulate a decentralized network during testing.
 
 Understanding Docker begins with understanding Docker images and containers. A Docker image, created from a Dockerfile, is a package that contains everything needed to run the software. A Docker container is a running instance of this image.
 
@@ -45,7 +45,7 @@ Understanding Docker begins with understanding Docker images and containers. A D
 
 You can create a Docker image using the docker build command with a Dockerfile. Once the image is created, you can run a Docker container using the docker run command.
 
-In the context of the example Crowdfunding Dapp, understanding how to build Docker images is crucial. The Docker images serves as the basis for our container, which provide the environment for our Dapp to run.
+In the context of the example Crowdfunding dapp, understanding how to build Docker images is crucial. The Docker images serves as the basis for our container, which provide the environment for our dapp to run.
 
 To build our Docker image, we use a command encapsulated in our `Makefile`:
 
@@ -86,11 +86,11 @@ Ensures Docker removes any intermediate containers after the build process compl
 --rm
 ```
 
-Guarantees the removal of the intermediate container, even if the build fails. By using `make build-docker`, we're harnessing the power of Docker to create a consistent, reliable environment for our Dapp.
+Guarantees the removal of the intermediate container, even if the build fails. By using `make build-docker`, we're harnessing the power of Docker to create a consistent, reliable environment for our dapp.
 
 ## Soroban Example Crowdfunding Smart Contract
 
-The example crowdfunding smart contract, written in Rust and using the Soroban SDK, is a template for creating a crowdfunding Dapp. Users can deposit tokens into the contract until a target amount is reached or a deadline expires. If the target is met, the recipient can withdraw the tokens. If the deadline passes without the target being met, donors can reclaim their tokens.
+The example crowdfunding smart contract, written in Rust and using the Soroban SDK, is a template for creating a crowdfunding dapp. Users can deposit tokens into the contract until a target amount is reached or a deadline expires. If the target is met, the recipient can withdraw the tokens. If the deadline passes without the target being met, donors can reclaim their tokens.
 
 Here's a breakdown of the contract's key functions:
 
@@ -545,7 +545,7 @@ fn sale_successful_recipient_withdraws_only_once() {
 
 ## Understanding the Example Frontend: React
 
-This section elaborates on how the example frontend can interact with the example crowdfund contract, access chain data, and connect to a freighter wallet. This will be accomplished by utilizing libraries provided by [`@soroban-react`](https://soroban-react.gitbook.io/index/), a simple, powerful framework for building modern Soroban Dapps using React created by a member of the Soroban community.
+This section elaborates on how the example frontend can interact with the example crowdfund contract, access chain data, and connect to a freighter wallet. This will be accomplished  by utilizing libraries provided by [`@soroban-react`](https://soroban-react.gitbook.io/index/), a simple, powerful framework for building modern Soroban Dapps using React created by a member of the Soroban community.
 
 Below is a list of the libraries used throughout the frontend code and their respective imports:
 
@@ -589,8 +589,8 @@ const Home: NextPage = () => {
     <>
       <Head>
         <title>
-          Crowdfund Template - An example of how to code a crowdfund Dapp on
-          Soroban in a Sandbox environment.
+          Crowdfund Template - An example of how to code a crowdfund dapp on
+          Soroban in a sandbox environment.
         </title>
         <meta
           name="description"
@@ -661,7 +661,7 @@ export function Campaign() {
 
 ### Pledge Component
 
-The `Pledge` component is where users interact with the crowdfunding application, pledging tokens to the campaign of their choice. It serves as a data entry point, data fetcher and presenter.
+The `Pledge` component is where users interact with the Crowdfunding Dapp, pledging tokens to the campaign of their choice. It serves as a data entry point, data fetcher and presenter.
 
 It uses contract RPC calls to pull important info from the token and crowdfunding contracts. It's interested in things like token balance, decimals, name, symbol, along with the crowdfunding contract's deadline and target amount.
 
@@ -725,7 +725,7 @@ const getRemainingTime = (date?: Date): string => {
 
 #### Wallet Connector
 
-For users who haven't connected their wallet yet, the frontend code provides a conveniently placed button to do so.
+For users who haven't connected their wallet yet, the frontend code provides a conveniently placed button to do so. 
 
 ```tsx
 import React from "react";
@@ -894,7 +894,7 @@ The `Pledge` component also allows users to make contributions to the crowdfundi
 
 #### Form Pledge
 
-The `FormPledge` component plays a crucial role in facilitating user interaction with the application. It allows users with connected wallets to make pledges, therefore contributing to a crowdfunding campaign. To carry out its functions, `FormPledge` relies on several key aspects.
+The `FormPledge` component plays a crucial role in facilitating user interaction with the dapp. It allows users with connected wallets to make pledges, therefore contributing to a crowdfunding campaign. To carry out its functions, `FormPledge` relies on several key aspects.
 
 First, there's `IFormPledgeProps`, an interface that specifies the types of data required to make a pledge:
 
@@ -1084,7 +1084,7 @@ try {
           destination: walletSource.accountId(),
           asset: new SorobanClient.Asset(symbol, Constants.TokenAdmin),
           amount: amount.toString(),
-        }),
+        })
       )
       .build(),
     {
@@ -1092,7 +1092,7 @@ try {
       skipAddingFootprint: true,
       secretKey: Constants.TokenAdminSecretKey,
       sorobanContext,
-    },
+    }
   );
   console.debug(paymentResult);
   sorobanContext.connect();
@@ -1120,7 +1120,7 @@ Let's breakdown the steps involved:
 
 Freighter is a browser extension that allows users to securely store their Stellar accounts and sign transactions. It's a convenient way to manage your Stellar accounts and interact with the Stellar network.
 
-In the sample Crowdfunding Dapp our application, the `WalletData` component, located in `components/molecules/wallet-data/index.tsx`, plays a key role in wallet integration. Let's break down the code and understand its functionality:
+In the sample Crowdfund dapp, the `WalletData` component, located in `components/molecules/wallet-data/index.tsx`, plays a key role in wallet integration. Let's break down the code and understand its functionality:
 
 ```tsx
 import React from "react";
@@ -1184,9 +1184,9 @@ Here's a breakdown of the code:
 
 - If the component is not mounted or the account data is not available, a `ConnectButton` component is rendered, allowing the user to connect their wallet.
 
-## Understanding Dapp Initialization: Docker Scripts
+## Understanding dapp Initialization: Docker Scripts
 
-The Dapp initialization process involves using Docker scripts to set up the necessary environment for running the application. Let's explore the provided scripts:
+The dapp initialization process involves using Docker scripts to set up the necessary environment for running the application. Let's explore the provided scripts:
 
 #### quickstart.sh
 
@@ -1255,7 +1255,7 @@ docker run --rm -ti \
   "$@" # Pass through args from the CLI
 ```
 
-The `quickstart.sh` script sets up the Docker environment for running the Dapp. It allows you to choose between a standalone network or the Futurenet network. The script performs the following steps:
+The `quickstart.sh` script sets up the Docker environment for running the dapp. It allows you to choose between a standalone network or the Futurenet network. The script performs the following steps:
 
 - Determines the network based on the provided argument (`standalone` or `futurenet`).
 - Creates the Docker network named `soroban-network` if it doesn't exist.
@@ -1360,7 +1360,7 @@ soroban contract invoke \
 echo "Done"
 ```
 
-The `initialize.sh` script is responsible for initializing the Dapp's contracts and configurations. It performs the following tasks:
+The `initialize.sh` script is responsible for initializing the dapp's contracts and configurations. It performs the following tasks:
 
 - Sets the network based on the provided argument (standalone or futurenet).
 - Determines the Soroban RPC host URL based on whether the script is running inside the soroban-preview Docker container or locally.
@@ -1378,3 +1378,4 @@ The `initialize.sh` script is responsible for initializing the Dapp's contracts 
 ## Running the Example Dapp
 
 Now that we've explored the code for our Crowdfunding Dapp, lets take on the [Crowdfund Dapp Challenge!](../challenge-0-crowdfund)
+

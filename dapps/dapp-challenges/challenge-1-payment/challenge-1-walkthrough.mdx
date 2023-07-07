@@ -1,12 +1,12 @@
 ---
 sidebar_position: 1
-title: Payment Dapp Walkthrough
-description: Step through the code behind the Payment Dapp.
+title: Example Soroban Payment Dapp Walkthrough
+description: Step through the code behind the Example Soroban Payment Dapp.
 ---
 
 # Creating a Payment Dapp with Soroban
 
-We'll be exploring an example [Soroban Payment Dapp](https://github.com/stellar/soroban-react-payment) built by the Wallet Engineering team at SDF. The Dapp is built using [React](https://reactjs.org/) and [TypeScript](https://www.typescriptlang.org/). It uses the [Freighter](https://www.freighter.app/) wallet to connect to the Stellar network and sign transactions.
+We'll be exploring an example [Soroban Payment Dapp](https://github.com/stellar/soroban-react-payment) built by the Wallet Engineering team at SDF. The Dapp is built using [React](https://reactjs.org/) and [TypeScript](https://www.typescriptlang.org/). It uses the [Freighter](https://www.freighter.app/) wallet to connect to the Futurenet and sign transactions.
 
 1. [Introduction](#introduction)
 2. [Prerequisites](#prerequisites)
@@ -19,7 +19,7 @@ We'll be exploring an example [Soroban Payment Dapp](https://github.com/stellar/
 
 ## Prerequisites
 
-The payment Dapp relies on the following dependencies:
+The Example Soroban Payment Dapp relies on the following dependencies:
 
 - `Node` (>=16.14.0 < 17.0.0): [Download here](https://nodejs.org/en/download/)
 - `Yarn` (v1.22.5 or newer): [Download here](https://classic.yarnpkg.com/en/docs/install/)
@@ -27,10 +27,10 @@ The payment Dapp relies on the following dependencies:
 
 ## Setup
 
-To set up the Soroban payment Dapp, follow the steps below:
+To run the example contract and set up a Payments Dapp, follow the steps below:
 
 1. Install and set up the Freighter wallet.
-2. Clone the payment Dapp repository and navigate into it:
+2. Clone the Payment Dapp repository and navigate into it:
 
 ```sh
 git clone https://github.com/stellar/soroban-react-payment.git
@@ -45,7 +45,7 @@ yarn
 
 ## Understanding the Frontend Code: SendPayment Component
 
-The `SendPayment` component is part of the Soroban payment Dapp and is responsible for handling the creation of a payment. Let's delve into the details of this component:
+The `SendPayment` component is a part of a Soroban Payment Frontend and is responsible for handling the creation of a payment. Let's delve into the details of this component:
 
 ### Importing Dependencies
 
@@ -458,7 +458,7 @@ Here's the breakdown of each step:
 
 ## Processing Transactions
 
-The `renderStep` function plays a crucial role in processing transactions in the payment flow. It contains the components necessary for the payment flow and handles the logic for each step. Let's take a look at the final three steps of the payment flow and examine how transaction processing is handled:
+The `renderStep` function plays a crucial role in processing transactions in the payment flow. It contains the components necessary for the payment flow and handles the logic for each step. Lets take a look at the final 3 steps of the payment flow and examine how transaction processing is handled:
 
 ### Step 6: Confirming Payment
 
@@ -489,7 +489,7 @@ case 6: {
 }
 ```
 
-Here's a breakdown of the `ConfirmPayment` component:
+Heres a breakdown of the `ConfirmPayment` component:
 
 ```tsx
 export const ConfirmPayment = (props: ConfirmPaymentProps) => {
@@ -789,11 +789,11 @@ soroban contract invoke \
 In this step, we provide the following information:
 
 - `Administrator Account`: This refers to the public key of the administrator account, which holds control and authority over the token contract, enabling management of various contract functionalities. You can refer to the [Soroban Token Interface](https://soroban.stellar.org/docs/reference/interfaces/token-interface) to learn more about the administrator's role.
-- `Decimal Precision`: We specify a precision value of 7, indicating that our token supports transactions with up to 7 decimal places. This level of precision allows for fine-grained control and flexibility when transferring token amounts.
+- `Decimal Precision`: A precision value of 7 is specified, indicating that the token supports transactions with up to 7 decimal places. This level of precision allows for fine-grained control and flexibility when transferring token amounts.
 - `Token Name`: The token's name is represented as a hex-encoded string. In this case, the hex code '44656d6f20546f6b656e' corresponds to the plain text name "Demo Token," providing a clear and recognizable label for our token.
 - `Token Symbol`: Similarly, the token's symbol is encoded as a hex string. The hex code '4454' represents the plain text symbol "DT," serving as a concise and identifiable representation for our token.
 
-Lastly, we need to mint some tokens to the sender's account. Run the following command, replacing` <TOKEN_CONTRACT_ID>`, `<ADMIN_ACCOUNT_SECRET_KEY>`, and `<USER_PUBLIC_KEY> `with the corresponding values:
+Lastly, you need to mint some tokens to the sender's account. Run the following command, replacing` <TOKEN_CONTRACT_ID>`, `<ADMIN_ACCOUNT_SECRET_KEY>`, and `<USER_PUBLIC_KEY> `with the corresponding values:
 
 ```shell
 soroban contract invoke \

@@ -1,18 +1,18 @@
 ---
 sidebar_position: 1
 title: Crowdfund Dapp Walkthrough
-description: Step through the code behind the Crowdfund Dapp.
+description: Step through the code behind the Example Crowdfund Dapp.
 ---
 
 # Creating a Crowdfunding Dapp with Soroban
 
-We'll be exploring an existing [End-to-End Example Soroban Dapp](https://github.com/stellar/soroban-example-dapp), using tools like Docker, Typescript, React, Rust, and Soroban. This project was created by the Soroban team and members of the community and is a fully-functioning crowdfunding dapp. Users can start fundraising campaigns, and others can donate directly on the website using Soroban Tokens.
+We'll be exploring an existing [End-to-End Example Soroban Dapp](https://github.com/stellar/soroban-example-dapp), using tools like Docker, Typescript, React, Rust and Soroban. This project was created by the Soroban team and members of the community, and is a fully-functioning Crowdfunding Dapp. Developers can use this to easily build a crowdfunding Dapp for their fundraising campaigns, and others can donate directly on the website using Soroban Tokens.
 
 1. [Introduction](#introduction)
 2. [Prerequisites](#prerequisites)
 3. [Understanding the Environment: Docker](#understanding-the-environment-docker)
-4. [Our Crowdfunding Smart Contract](#our-crowdfunding-smart-contract)
-5. [Understanding the Frontend: React](#understanding-the-frontend-react)
+4. [Example Crowdfunding Smart Contract](#our-crowdfunding-smart-contract)
+5. [Understanding the Example Frontend: React](#understanding-the-frontend-react)
 6. [Understanding Wallet Integration: Freighter](#understanding-wallet-integration-freighter)
 7. [Understanding Dapp Initialization](#understanding-dapp-initialization-docker-scripts)
 8. [Running the Example Dapp](#running-the-example-dapp)
@@ -37,15 +37,15 @@ cd soroban-example-dapp
 
 Welcome to the world of Docker, an essential tool for software development. Docker packages software into units known as containers, ensuring consistency, isolation, portability, and scalability.
 
-Docker is particularly useful in dApp development. It helps manage microservices, maintain consistent environments throughout development stages, and simulate a decentralized network during testing.
+Docker is particularly useful in Dapp development. It helps manage microservices, maintain consistent environments throughout development stages, and simulate a decentralized network during testing.
 
 Understanding Docker begins with understanding Docker images and containers. A Docker image, created from a Dockerfile, is a package that contains everything needed to run the software. A Docker container is a running instance of this image.
 
 ### Building and Running the Crowdfunding Docker Image
 
-You can create a Docker image using the docker build command with a Dockerfile. Once the image is created, you can run a Docker container using the Docker run command.
+You can create a Docker image using the docker build command with a Dockerfile. Once the image is created, you can run a Docker container using the docker run command.
 
-In the context of our crowdfunding dapp, understanding how to build Docker images is crucial. The Docker images serve as the basis for our container, which provides the environment for our Dapp to run.
+In the context of the example Crowdfunding Dapp, understanding how to build Docker images is crucial. The Docker images serves as the basis for our container, which provide the environment for our Dapp to run.
 
 To build our Docker image, we use a command encapsulated in our `Makefile`:
 
@@ -68,7 +68,7 @@ docker build . \
 docker build .
 ```
 
-Instructs Docker to build an image using the Dockerfile in the current directory (denoted by the .).
+Instructs Docker to build an image using the Dockerfile in the current directory (denoted by the ".").
 
 ```bash
 --tag soroban-preview:9
@@ -86,22 +86,22 @@ Ensures Docker removes any intermediate containers after the build process compl
 --rm
 ```
 
-Guarantees the removal of the intermediate container, even if the build fails. By using `make build-docker`, we're harnessing the power of Docker to create a consistent, reliable environment for our dApp.
+Guarantees the removal of the intermediate container, even if the build fails. By using `make build-docker`, we're harnessing the power of Docker to create a consistent, reliable environment for our Dapp.
 
-## Our Crowdfunding Smart Contract
+## Soroban Example Crowdfunding Smart Contract
 
-Our smart contract, written in Rust and using the Soroban SDK, represents a simple crowdfunding campaign. Users can deposit tokens into the contract until a target amount is reached or a deadline expires. If the target is met, the recipient can withdraw the tokens. If the deadline passes without the target being met, donors can reclaim their tokens.
+The example crowdfunding smart contract, written in Rust and using the Soroban SDK, is a template for creating a crowdfunding Dapp. Users can deposit tokens into the contract until a target amount is reached or a deadline expires. If the target is met, the recipient can withdraw the tokens. If the deadline passes without the target being met, donors can reclaim their tokens.
 
 Here's a breakdown of the contract's key functions:
 
 ### Initialize Function
 
-The `initialize` function sets up the crowdfunding campaign. It takes in the following parameters:
+The `initialize` function sets up a crowdfunding campaign. It takes in the following parameters:
 
 - `recipient`: The address that will receive the funds if the campaign is successful.
 - `deadline`: The timestamp at which the campaign ends.
 - `target_amount`: The amount of tokens the campaign aims to raise.
-- `token`: The token contract ID.
+- `token`: The token contract id.
 
 This function can only be called once, as checked by the assert statement at the start of the function.
 
@@ -127,7 +127,7 @@ pub fn initialize(
 
 ### State Function
 
-The `state` function plays a crucial role as it keeps us updated about the current status of our crowdfunding campaign. This function uses an enumeration named `State`, which has three potential states:
+The `state` function plays a crucial role as it keeps us updated about the current status of the crowdfunding campaign. This function uses an enumeration named `State`, which has three potential states:
 
 - `Running`: Indicates that the campaign is still ongoing. This is the initial state as long as the present time hasn't exceeded the campaign deadline.
 - `Success`: Represents a scenario where the campaign has successfully hit or surpassed its target amount. This state is determined if the balance of tokens meets or exceeds the target amount.
@@ -244,11 +244,11 @@ pub fn withdraw(e: Env, to: Address) {
 }
 ```
 
-### Testing the Crowdfunding Contract
+### Testing the Crowdfunding Smart Contract
 
 This section serves as a description of the [unit tests](https://github.com/stellar/soroban-example-dapp/blob/main/contracts/crowdfund/src/test.rs) for the crowdfunding contract's functionality. The tests examine various states and events that could occur within a crowdfunding scenario, including situations of success, expiry, and ongoing campaigns.
 
-We can test our crowdfunding contract using the Cargo test command. This command runs all the tests in our project. To do this, we must navigate to the `soroban-example-dapp/contracts/crowdfund/src` directory.
+You can test your crowdfunding smart contract using the Cargo test command. This command runs all the tests in your project. To do this, you must navigate to the `soroban-example-dapp/contracts/crowdfund/src` directory
 
 ```bash
 cd contracts/crowdfund/src
@@ -260,7 +260,7 @@ and run the following command:
 cargo test
 ```
 
-This command runs all the tests in our project. The output should look like this:
+This command runs all the tests in your project. The output should look like this:
 
 ```bash
 running 9 tests
@@ -277,9 +277,9 @@ test test::sale_successful_recipient_withdraws_only_once - should panic ... ok
 test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
 ```
 
-Let's take a brief look at our test file:
+Let's take a brief look at your test file:
 
-`impl Setup`: This struct contains the setup for our tests. The function `new` within the `Setup` struct creates a new crowdfunding environment, preparing it for further tests. This is where all essential components for the crowdfunding scenario, such as the crowdfunding and token contracts, users, and relevant actions, are initialized. It's crucial for setting up the preconditions needed for each unit test scenario.
+`impl Setup`: This struct contains the setup for your tests. The function `new` within the `Setup` struct creates a new crowdfunding environment, preparing it for further tests. This is where all essential components for the crowdfunding scenario, such as the crowdfunding and token contracts, users, and relevant actions, are initialized. It's crucial for setting up the preconditions needed for each unit test scenario.
 
 ```rust
 /// Sets up a crowdfund with -
@@ -543,9 +543,9 @@ fn sale_successful_recipient_withdraws_only_once() {
 }
 ```
 
-## Understanding the Frontend: React
+## Understanding the Example Frontend: React
 
-This section elaborates on how our frontend can interact with our crowdfund contract, access chain data, and connect to our Freighter wallet. We will accomplish this by utilizing libraries provided by [`@soroban-react`](https://soroban-react.gitbook.io/index/), a simple, powerful framework for building modern Soroban Dapps using React created by a member of the Soroban community.
+This section elaborates on how the example frontend can interact with the example crowdfund contract, access chain data, and connect to a freighter wallet. This will be accomplished by utilizing libraries provided by [`@soroban-react`](https://soroban-react.gitbook.io/index/), a simple, powerful framework for building modern Soroban Dapps using React created by a member of the Soroban community.
 
 Below is a list of the libraries used throughout the frontend code and their respective imports:
 
@@ -564,17 +564,17 @@ import { useSorobanReact } from "@soroban-react/core";
 
 ### Understanding the Interaction
 
-The interaction between our frontend and smart contracts is facilitated by an RPC endpoint. This endpoint might reside on your local machine if you're operating a local network for development, or it could be hosted on a remote server if you're interfacing with the main or test networks.
+The interaction between the example frontend and smart contracts is facilitated by an RPC endpoint. This endpoint might reside on your local machine if you're operating a local network for development, or it could be hosted on a remote server if you're interfacing with the main or test networks.
 
-The frontend application communicates with this RPC endpoint, initiating requests that can pull data from the network, interacting with smart contracts, or executing transactions. In the context of our crowdfunding dapp, these transactions can vary from invoking functions within the existing crowdfunding smart contract such as minting tokens, contributing to a campaign, or withdrawing funds. Additionally, the frontend is used to connect to the user's [Freighter wallet](https://www.freighter.app), which is used to securely sign and submit transactions.
+The UI communicates with this RPC endpoint, initiating requests that can pull data from the network, interact with smart contracts, or execute transactions. In the context of the example Crowdfunding Dapp, these transactions can vary from invoking functions within the existing crowdfunding smart contract such as minting tokens, contributing to a campaign or withdrawing funds. Additionally, The frontend is used to connect to the users [Freighter wallet](https://www.freighter.app), which is used to securely sign and submit transactions.
 
 ### Understanding the Frontend Code
 
-The frontend code for our crowdfunding dapp is located in the `soroban-example-dapp/pages` and `soroban-example-dapp/components` directories. The frontend is built using React, a popular JavaScript library for building user interfaces. React is a component-based library, meaning that it allows developers to build encapsulated components that manage their own state. These components can then be composed to create complex user interfaces.
+The frontend code for the example Crowdfunding Dapp is located in the `soroban-example-dapp/pages` and `soroban-example-dapp/components` directories. The frontend is built using React, a popular JavaScript library for building user interfaces. React is a component-based library, meaning that it allows developers to build encapsulated components that manage their own state. These components can then be composed to create complex user interfaces.
 
 ### Index
 
-Let's take a look at the [`soroban-example-dapp/pages/index.tsx`](https://github.com/stellar/soroban-example-dapp/blob/main/pages/index.tsx) file:
+Lets take a look at the [`soroban-example-dapp/pages/index.tsx`](https://github.com/stellar/soroban-example-dapp/blob/main/pages/index.tsx) file:
 
 ```tsx
 import React from "react";
@@ -589,8 +589,8 @@ const Home: NextPage = () => {
     <>
       <Head>
         <title>
-          Crowdfund Template - An example of how to run a crowdfund campaign on
-          Soroban.
+          Crowdfund Template - An example of how to code a crowdfund Dapp on
+          Soroban in a Sandbox environment.
         </title>
         <meta
           name="description"
@@ -616,9 +616,9 @@ const Home: NextPage = () => {
 export default Home;
 ```
 
-The `Home` component is the main component of our application. It's composed of two subcomponents, `Campaign` and `Pledge`, which are located in the `soroban-example-dapp/components/organisms` directory. The `WalletData` component, located in the `soroban-example-dapp/components/molecules` directory, is used to display the user's wallet address and balance.
+The `Home` component is the main component of the web UI. It's composed of two subcomponents, `Campaign` and `Pledge`, which are located in the `soroban-example-dapp/components/organisms` directory. The `WalletData` component, located in the `soroban-example-dapp/components/molecules` directory, is used to display the user's wallet address and balance.
 
-These are the main components that make up our crowdfunding dapp that we'll be exploring in the next sections.
+These are the main components that make up the Crowdfunding Dapp that we'll be exploring in the next sections.
 
 ### Campaign Component
 
@@ -661,15 +661,15 @@ export function Campaign() {
 
 ### Pledge Component
 
-The `Pledge` component is where users interact with the crowdfunding application, pledging tokens to the campaign of their choice. It serves as a data entry point, data fetcher, and presenter.
+The `Pledge` component is where users interact with the crowdfunding application, pledging tokens to the campaign of their choice. It serves as a data entry point, data fetcher and presenter.
 
-It uses contract RPC calls to pull important info from the token and crowdfunding contracts. It's interested in things like token balance, decimals, name, and symbol, along with the crowdfunding contract's deadline and target amount.
+It uses contract RPC calls to pull important info from the token and crowdfunding contracts. It's interested in things like token balance, decimals, name, symbol, along with the crowdfunding contract's deadline and target amount.
 
-Let's breakdown the `Pledge` component into its constituent parts:
+Lets breakdown the `Pledge` component into its constituent parts:
 
 #### Progress Bar
 
-Data is presented in two ways. First, a progress bar displays the current contribution status relative to the target goal.
+Data is presented two ways. First, a progress bar displays the current contribution status relative to the target goal.
 
 `components/atoms/progress-bar/index.tsx`
 
@@ -725,7 +725,7 @@ const getRemainingTime = (date?: Date): string => {
 
 #### Wallet Connector
 
-For users who haven't connected their wallet yet, the application provides a conveniently placed button to do so.
+For users who haven't connected their wallet yet, the frontend code provides a conveniently placed button to do so.
 
 ```tsx
 import React from "react";
@@ -765,7 +765,7 @@ When the `ConnectButton` is clicked, the `openConnectModal` function is invoked.
 
 The `Pledge` component uses various hooks and methods to interact with Soroban smart contracts, extract data, update UI states, and handle events.
 
-Let's take a look at `components/organisms/pledge/index.tsx`
+Lets take a look at `components/organisms/pledge/index.tsx`
 
 #### Loading Contract Values
 
@@ -814,14 +814,14 @@ React.useEffect(() => {
 
 `useEffect` here accepts two arguments:
 
-- A function that contains side effects. Here, it's updating our state variables: `tokenBalance` and `targetReached`.
+- A function which contains side effects. Here, it's updating our state variables: `tokenBalance` and `targetReached`.
 - An array of dependencies. If any dependency changes, the function (first argument) re-executes.
 
 The dependencies are `token.balance` and `targetAmountXdr`, implying the function re-runs if the token balance or target amount change.
 
-Within the function, we convert `token.balance.result` and `targetAmountXdr`.result from `ScVal` format (Soroban's data type) to `BigNumber` using `convert.scvalToBigNumber. BigNumber`.
+Within the function, you convert `token.balance.result` and `targetAmountXdr`.result from `ScVal` format (Soroban's data type) to `BigNumber` using `convert.scvalToBigNumber. BigNumber`.
 
-After the conversion, we use `setTokenBalance` and `setTargetReached` to update our state variables. `setTargetReached` checks if the target amount is greater than zero and the token balance meets or exceeds this target.
+After the conversion, you use `setTokenBalance` and `setTargetReached` to update your state variables. `setTargetReached` checks if the target amount is greater than zero and the token balance meets or exceeds this target.
 
 The result? A UI that instantly reflects changes to the token balance or target amount.
 
@@ -875,10 +875,10 @@ const crowdfundTargetReachedSubscription = useRef({
 
 React.useEffect(() => {
   const pledgedSubId = sorobanEventsContext.subscribe(
-    crowdfundPledgedEventSubscription.current
+    crowdfundPledgedEventSubscription.current,
   );
   const reachedSubId = sorobanEventsContext.subscribe(
-    crowdfundTargetReachedSubscription.current
+    crowdfundTargetReachedSubscription.current,
   );
 
   return () => {
@@ -888,7 +888,7 @@ React.useEffect(() => {
 }, [sorobanEventsContext]);
 ```
 
-### Making Contributions
+### User Contributions
 
 The `Pledge` component also allows users to make contributions to the crowdfunding campaign. It does this by using the `FormPledge` component, which is located in the `soroban-example-dapp/components/molecules` directory.
 
@@ -942,7 +942,7 @@ try {
 }
 ```
 
-This snippet constructs a 'deposit' transaction with all the necessary details, like the network passphrase, source account, crowdfunding campaign ID, the 'deposit' operation, the user's account, and the pledge amount. Once created, the transaction is sent to the network via the `sendTransaction` function. The previously established `sorobanContext` is passed in as an argument to ensure the transaction is dispatched in the right context. This context carries crucial settings and state information, like the wallet's autoconnect status, available chains and connectors, active chain and connector, and a user's account address, among others.
+This snippet constructs a 'deposit' transaction with all the necessary details, like the network passphrase, source account, crowdfunding campaign ID, the 'deposit' operation, the user's account, and the pledge amount. Once created, the transaction is sent to the network via the `sendTransaction` function. The previously established `sorobanContext` is passed in as an argument to ensure the transaction is dispatched in the right context. This context carries crucial settings and state information, like wallet's autoconnect status, available chains and connectors, active chain and connector, and user's account address, among others.
 
 You can find more about the details of `sendTransaction` and `sorobanContext` in the `@soroban-react/core` node modules.
 
@@ -966,7 +966,7 @@ Throughout all these operations, the `Pledge` component also manages loading sta
 
 ### Minting
 
-Minting is the process of creating new tokens. Within our crowdfunding application, we've implemented a feature allowing users to mint new EXT tokens before they pledge them.
+Minting is the process of creating new tokens. Within the example crowdfunding frontend there is a feature allowing users to mint new EXT tokens before they pledge them.
 
 The `MintButton` function encapsulates this functionality. It takes in three properties: `account`, `decimals`, and `symbol`.
 
@@ -1034,14 +1034,14 @@ try {
       .addOperation(
         SorobanClient.Operation.changeTrust({
           asset: new SorobanClient.Asset(symbol, Constants.TokenAdmin),
-        })
+        }),
       )
       .build(),
     {
       timeout: 60 * 1000, // should be enough time to approve the tx
       skipAddingFootprint: true, // classic = no footprint
       sorobanContext, // to prompt Freighter for signing
-    }
+    },
   );
   console.debug(trustlineResult);
 } catch (err) {
@@ -1084,7 +1084,7 @@ try {
           destination: walletSource.accountId(),
           asset: new SorobanClient.Asset(symbol, Constants.TokenAdmin),
           amount: amount.toString(),
-        })
+        }),
       )
       .build(),
     {
@@ -1092,7 +1092,7 @@ try {
       skipAddingFootprint: true,
       secretKey: Constants.TokenAdminSecretKey,
       sorobanContext,
-    }
+    },
   );
   console.debug(paymentResult);
   sorobanContext.connect();
@@ -1120,7 +1120,7 @@ Let's breakdown the steps involved:
 
 Freighter is a browser extension that allows users to securely store their Stellar accounts and sign transactions. It's a convenient way to manage your Stellar accounts and interact with the Stellar network.
 
-In our application, the `WalletData` component, located in `components/molecules/wallet-data/index.tsx`, plays a key role in wallet integration. Let's break down the code and understand its functionality:
+In the sample Crowdfunding Dapp our application, the `WalletData` component, located in `components/molecules/wallet-data/index.tsx`, plays a key role in wallet integration. Let's break down the code and understand its functionality:
 
 ```tsx
 import React from "react";
@@ -1362,19 +1362,19 @@ echo "Done"
 
 The `initialize.sh` script is responsible for initializing the Dapp's contracts and configurations. It performs the following tasks:
 
-- Sets the network based on the provided argument (standalone or Futurenet).
+- Sets the network based on the provided argument (standalone or futurenet).
 - Determines the Soroban RPC host URL based on whether the script is running inside the soroban-preview Docker container or locally.
 - Sets the Soroban RPC URL using the determined host URL.
 - Sets the Soroban network passphrase and the Friendbot URL based on the chosen network.
-- Adds the specified network configuration using Soroban config network add.
-- Generates the token-admin identity using Soroban config identity generate.
+- Adds the specified network configuration using soroban config network add.
+- Generates the token-admin identity using soroban config identity generate.
 - Retrieves the TOKEN_ADMIN_SECRET and TOKEN_ADMIN_ADDRESS values from the generated identity.
 - Stores the TOKEN_ADMIN_SECRET and TOKEN_ADMIN_ADDRESS in the .soroban directory. Funds the token-admin account using the Friendbot service.
 - Wraps the Stellar asset using soroban lab token wrap and stores the TOKEN_ID.
-- Builds the crowdfund contract using make build. Deploys the crowdfund contract using Soroban contract deploy and stores the CROWDFUND_ID.
+- Builds the crowdfund contract using make build. Deploys the crowdfund contract using soroban contract deploy and stores the CROWDFUND_ID.
 - Initializes the crowdfund contract by invoking the initialize function with the required parameters.
 - Prints "Done" to indicate the completion of the initialization process.
 
 ## Running the Example Dapp
 
-Now that we've explored the code for our crowdfunding dapp, let's take on the [Crowdfund Dapp Challenge!](../challenge-0-crowdfund)
+Now that we've explored the code for our Crowdfunding Dapp, lets take on the [Crowdfund Dapp Challenge!](../challenge-0-crowdfund)

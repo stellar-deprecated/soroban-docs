@@ -155,7 +155,7 @@ const config = {
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/stellar',
+                href: 'https://soroban.stellar.org/docs',
               },
               {
                 label: 'Developer Blog',

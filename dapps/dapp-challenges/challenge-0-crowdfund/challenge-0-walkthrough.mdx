@@ -6,7 +6,7 @@ description: Step through the code behind the Example Crowdfund Dapp.
 
 # Creating a Crowdfund Dapp with Soroban
 
-We'll be exploring an existing [End-to-End Example Soroban Dapp](https://github.com/stellar/soroban-example-dapp), using tools like Docker, Typescript, React, Rust and Soroban. This project was created by the Soroban team and members of the community, and is a fully-functioning Crowdfund dapp. Developers can use this to easily build a crowdfunding Dapp for their fundraising campaigns, and others can donate directly on the website using Soroban Tokens.
+We'll be exploring an existing [End-to-End Example Soroban Dapp](https://github.com/stellar/soroban-example-dapp), using tools like Docker, Typescript, React, Rust and Soroban. This project was created by the Soroban team and members of the community, and is a fully-functioning Crowdfund dapp. Developers can use this to easily build a crowdfunding dapp for their fundraising campaigns, and others can donate directly on the website using Soroban Tokens.
 
 1. [Introduction](#introduction)
 2. [Prerequisites](#prerequisites)
@@ -45,7 +45,7 @@ Understanding Docker begins with understanding Docker images and containers. A D
 
 You can create a Docker image using the docker build command with a Dockerfile. Once the image is created, you can run a Docker container using the docker run command.
 
-In the context of the example Crowdfunding dapp, understanding how to build Docker images is crucial. The Docker images serves as the basis for our container, which provide the environment for our dapp to run.
+In the context of the example Crowdfund Dapp, understanding how to build Docker images is crucial. The Docker images serves as the basis for our container, which provide the environment for our dapp to run.
 
 To build our Docker image, we use a command encapsulated in our `Makefile`:
 
@@ -566,11 +566,11 @@ import { useSorobanReact } from "@soroban-react/core";
 
 The interaction between the example frontend and smart contracts is facilitated by an RPC endpoint. This endpoint might reside on your local machine if you're operating a local network for development, or it could be hosted on a remote server if you're interfacing with the main or test networks.
 
-The UI communicates with this RPC endpoint, initiating requests that can pull data from the network, interact with smart contracts, or execute transactions. In the context of the example Crowdfunding Dapp, these transactions can vary from invoking functions within the existing crowdfunding smart contract such as minting tokens, contributing to a campaign or withdrawing funds. Additionally, The frontend is used to connect to the users [Freighter wallet](https://www.freighter.app), which is used to securely sign and submit transactions.
+The UI communicates with this RPC endpoint, initiating requests that can pull data from the network, interact with smart contracts, or execute transactions. In the context of the example Crowdfund Dapp, these transactions can vary from invoking functions within the existing crowdfunding smart contract such as minting tokens, contributing to a campaign or withdrawing funds. Additionally, The frontend is used to connect to the users [Freighter wallet](https://www.freighter.app), which is used to securely sign and submit transactions.
 
 ### Understanding the Frontend Code
 
-The frontend code for the example Crowdfunding Dapp is located in the `soroban-example-dapp/pages` and `soroban-example-dapp/components` directories. The frontend is built using React, a popular JavaScript library for building user interfaces. React is a component-based library, meaning that it allows developers to build encapsulated components that manage their own state. These components can then be composed to create complex user interfaces.
+The frontend code for the example Crowdfund Dapp is located in the `soroban-example-dapp/pages` and `soroban-example-dapp/components` directories. The frontend is built using React, a popular JavaScript library for building user interfaces. React is a component-based library, meaning that it allows developers to build encapsulated components that manage their own state. These components can then be composed to create complex user interfaces.
 
 ### Index
 
@@ -618,7 +618,7 @@ export default Home;
 
 The `Home` component is the main component of the web UI. It's composed of two subcomponents, `Campaign` and `Pledge`, which are located in the `soroban-example-dapp/components/organisms` directory. The `WalletData` component, located in the `soroban-example-dapp/components/molecules` directory, is used to display the user's wallet address and balance.
 
-These are the main components that make up the Crowdfunding Dapp that we'll be exploring in the next sections.
+These are the main components that make up the Crowdfund Dapp that we'll be exploring in the next sections.
 
 ### Campaign Component
 
@@ -661,7 +661,7 @@ export function Campaign() {
 
 ### Pledge Component
 
-The `Pledge` component is where users interact with the Crowdfunding Dapp, pledging tokens to the campaign of their choice. It serves as a data entry point, data fetcher and presenter.
+The `Pledge` component is where users interact with the Crowdfund Dapp, pledging tokens to the campaign of their choice. It serves as a data entry point, data fetcher and presenter.
 
 It uses contract RPC calls to pull important info from the token and crowdfunding contracts. It's interested in things like token balance, decimals, name, symbol, along with the crowdfunding contract's deadline and target amount.
 
@@ -1377,5 +1377,5 @@ The `initialize.sh` script is responsible for initializing the dapp's contracts 
 
 ## Running the Example Dapp
 
-Now that we've explored the code for our Crowdfunding Dapp, lets take on the [Crowdfund Dapp Challenge!](../challenge-0-crowdfund)
+Now that we've explored the code for our Crowdfund Dapp, lets take on the [Crowdfund Dapp Challenge!](../challenge-0-crowdfund)
 

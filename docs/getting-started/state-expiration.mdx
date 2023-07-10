@@ -4,6 +4,35 @@ title: 8. State Expiration
 description: State Expiration Semantics
 ---
 
+# Terms and Semantics
+
+## Expiration Ledger
+
+Each `ContractData` and `ContractCode` entry has an `expirationLedger` field stored in its `LedgerEntry`.
+The entry is considered expired when `current_ledger > expirationLedger`.
+
+## Lifetime
+
+An entry's lifetime is defined as how many ledgers remain until the entry expires.
+For example, if the current ledger is 5 and an entry's expiration ledger is 15, then
+the entry's lifetime is 10 ledgers.
+
+## Minimum Lifetime
+
+For each entry type, there is a minimum lifetime that the entry must have when being created
+or updated. This lifetime minimum is enforced automatically at the protocol level. This minimum
+is a network parameter and defaults to 16 ledgers for `Temporary` entries and 4,096 ledgers for
+`Persistent` and `Instance` entries.
+
+## Maximum Lifetime
+
+On any given ledger, an entry's lifetime can be extended up to the maximum lifetime. This is a
+network parameter and defaults to 1 year worth of ledgers. This maximum lifetime is not enforced
+based on when an entry was created, but based on the current ledger. For example, if an entry is
+created on January 1st, 2024, its lifetime could initially be bumped up to January 1st, 2025.
+After this initial lifetime bump, if the entry received another lifetime bump later on January 10th, 2024,
+the lifetime could be extended up to January 10th, 2025.
+
 # Operations
 
 ## BumpFootprintExpirationOp

@@ -85,15 +85,25 @@ Short `Symbol`s up to 9 characters long can be pre-computed at compile time usin
 const COUNTER: Symbol = Symbol::short("COUNTER");
 ```
 
+### Types of Contract data
+
+Contract data is made up of three different types: `Persistent`, `Temporary`, and `Instance`. All contract data has a "lifetime" that must be periodically bumped. If an entry's
+lifetime is not periodically bumped, the entry will eventually reach the end of its lifetime and "expire". Each type of storage functions similarly, but have different fees and expiration behavior. Whenever a
+`Temporary` entry expires, it is deleted from the ledger and is permanently inaccessible. Whenever a `Persistent` or `Instance` entry expires, it is inaccessible, but can be
+"restored" and used again via the [`RestoreFootprintOp`]. As a general rule, `Temporary` storage should only be used for data that can be easily recreated or is only valid for a period
+of time, where `Persistent` or `Instance` storage should be used for data that can not be recreated and should kept permanently, such as a user's token balance. For more information
+about the different storage types, see [Contract Data Type Descriptions](#Contract-Data-Type-Descriptions).
+
 ### Contract Data Access
 
-The `Env` `data()` function is used to retrieve access and update a counter. The executing contract is the only contract that can query or modify contract data that it has stored. The data stored is viewable on ledger anywhere the ledger is viewable, but contracts executing within the Soroban environment are restricted to their own data.
+The `Env.storage()` function is used to retrieve access and update a counter. The executing contract is the only contract that can query or modify contract data that it has stored. The data stored is viewable on ledger anywhere the ledger is viewable, but contracts executing within the Soroban environment are restricted to their own data.
 
 The `get()` function gets the current value associated with the counter key.
 
 ```rust
 let mut count: u32 = env
     .storage()
+    .instance()
     .get(COUNTER)
     .unwrap_or(Ok(0)) // If no value set, assume 0.
     .unwrap(); // Panic if the value of COUNTER is not u32.
@@ -106,8 +116,35 @@ Values stored as contract data and retrieved are transmitted from the environmen
 The `set()` function stores the new count value against the key, replacing the existing value.
 
 ```rust
-env.storage().set(COUNTER, count);
+env.storage().instance().set(COUNTER, count);
 ```
+
+To access a given type of storage, use `Env.storage().persistent()`, `Env.storage().temporary()`, and `Env.storage().instance()`.
+Each storage type is in a separate key space. To demonstrate this, see the code snippet below:
+
+```rust
+const EXAMPLE_KEY: Symbol = Symbol::short("KEY");
+env.storage().persistent().set(EXAMPLE_KEY, 1);
+env.storage().temporary().set(EXAMPLE_KEY, 2);
+
+env.storage().persistent().get(EXAMPLE_KEY); // Returns Ok(1)
+env.storage().temporary().get(EXAMPLE_KEY); // Returns Ok(2)
+```
+
+
+### Managing Contract Data Lifetimes
+
+The `Env.storage().storage_type().bump()` function is used to extend a contract data entry's lifetime inside a smart contract function. The `bump()` function is a conditional lifetime bump which
+extends an entry's lifetime up to a given length of time, measured in ledgers.
+
+```rust
+env.storage().instance().bump(COUNTER, 100);
+```
+
+This call to `bump()` ensures that the current lifetime of the `COUNTER` `Instance` entry is at least 100 ledgers. If this is called and the `COUNTER` `Instance` entry has a current lifetime of 50 ledgers,
+the lifetime will be extended up to 100 ledgers. If this is called and the `COUNTER` `Instance` entry has a current lifetime of 150 ledgers, the lifetime will not be extended and the `bump()` call is a no-op.
+
+In addition to contract defined lifetime extensions using the `bump()` function, a contract data entry's lifetime can be extended via the [`BumpFootprintExpirationOp`] operation.
 
 ## Tests
 
@@ -197,6 +234,32 @@ soroban contract invoke \
 Footprint: {"readOnly":[{"contractData":{"contractId":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],"key":{"static":"ledgerKeyContractCode"}}}],"readWrite":[{"contractData":{"contractId":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],"key":{"symbol":[67,79,85,78,84,69,82]}}}]}
 ```
 
+### Contract Data Type Descriptions
+
+The general usage and interface is identical for all storage types. They differ only in fees and expiration behavior as follows:
+
+- `Temporary`
+    - Cheapest fees.
+    - Permanently deleted on expiration, cannot be restored.
+    - Suitable for time bounded data (i.e. price oracles, signatures, etc.) and easily recreateable data.
+    - Unlimited amount of storage.
+- `Instance`
+    - Most expensive fees (same price as `Persistent` storage).
+    - Recoverable after expiration, can be restored using the [`RestoreFootprintOp`] operation.
+    - Shares the same lifetime as the contract instance. If the contract instance has not expired, instance data is guaranteed to be accessible and not expired.
+    - Limited amount of storage available.
+    - Suitable for "shared" contract state that cannot be `Temporary` (i.e. admin accounts, contract metadata, etc.).
+- `Persistent`
+    - Most expensive fees (same price as `Instance` storage).
+    - Recoverable after expiration, can be restored using the [`RestoreFootprintOp`] operation.
+    - Does not share the same lifetime as the contract instance. If the contract instance is not expired, `Persistent` data may be expired and need to be restored before invoking the contract.
+    - Unlimited amount of storage.
+    - Suitable for user data that cannot be `Temporary` (i.e. balances).
+
+For more detailed guidelines on how to use contract data, see [`Contract Data Best Practices`].
+
+### Contract Data Best Practices
+
 :::info
 
 Soroban is a pre-release and at this time outputs footprints in an unstable JSON format.
@@ -214,3 +277,6 @@ soroban contract read --id 1 --key COUNTER
 ```
 
 [`soroban-cli`]: ../getting-started/setup#install-the-soroban-cli
+[`BumpFootprintExpirationOp`]: ../getting-started/state-expiration#BumpFootprintExpirationOp
+[`RestoreFootprintOp`]: ../getting-started/state-expiration#RestoreFootprintOp
+[`Contract Data Best Practices`]: ../fundamentals-and-concepts/persisting-data.mdx#contract-data-best-practices

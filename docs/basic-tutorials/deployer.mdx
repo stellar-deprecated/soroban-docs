@@ -188,6 +188,7 @@ functions that sets a value in the initialization function and allows the value
 to be retrieved from another function.
 
 ```rust title="deployer/contract/src/lib.rs"
+#[contract]
 pub struct Contract;
 
 const KEY: Symbol = Symbol::short("value");
@@ -195,10 +196,10 @@ const KEY: Symbol = Symbol::short("value");
 #[contractimpl]
 impl Contract {
     pub fn init(env: Env, value: u32) {
-        env.storage().set(&KEY, &value);
+        env.storage().instance().set(&KEY, &value);
     }
     pub fn value(env: Env) -> u32 {
-        env.storage().get_unchecked(&KEY).unwrap()
+        env.storage().instance().get(&KEY).unwrap()
     }
 }
 ```
@@ -246,9 +247,16 @@ pass in a single `5u32` argument.
 ```rust
 // Deploy contract using deployer, and include an init function to call.
 let salt = BytesN::from_array(&env, &[0; 32]);
-let init_fn = Symbol::short("init");
-let init_fn_args = (5u32,).into_val(&env);
-let (contract_id, init_result) = client.deploy(&salt, &wasm_hash, &init_fn, &init_fn_args);
+let init_fn = symbol_short!("init");
+let init_fn_args: Vec<Val> = (5u32,).into_val(&env);
+env.mock_all_auths();
+let (contract_id, init_result) = deployer_client.deploy(
+    &deployer_client.address,
+    &wasm_hash,
+    &salt,
+    &init_fn,
+    &init_fn_args,
+);
 assert!(init_result.is_void());
 ```
 

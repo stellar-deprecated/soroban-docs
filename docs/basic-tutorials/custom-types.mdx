@@ -50,6 +50,7 @@ pub struct State {
 
 const STATE: Symbol = Symbol::short("STATE");
 
+#[contract]
 pub struct IncrementContract;
 
 #[contractimpl]
@@ -64,20 +65,17 @@ impl IncrementContract {
         state.last_incr = incr;
 
         // Save the count.
-        env.storage().set(&STATE, &state);
+        env.storage().instance().set(&STATE, &state);
 
         // Return the count to the caller.
         state.count
     }
     /// Return the current state.
     pub fn get_state(env: Env) -> State {
-        env.storage()
-            .get(&STATE)
-            .unwrap_or(Ok(State {
-                count: 0,
-                last_incr: 0,
-            })) // If no value set, assume 0.
-            .unwrap() // Panic if the value of COUNTER is not a State.
+        env.storage().instance().get(&STATE).unwrap_or(State {
+            count: 0,
+            last_incr: 0,
+        }) // If no value set, assume 0.
     }
 }
 ```
@@ -142,21 +140,18 @@ Types can also be used as inputs and outputs on contract functions.
 
 ```rust
 pub fn increment(env: Env, incr: u32) -> u32 {
-    let mut state = Self::get_state(env.clone());
-    state.count += incr;
-    state.last_incr = incr;
-    env.storage().set(&STATE, &state);
-    state.count
+        let mut state = Self::get_state(env.clone());
+        state.count += incr;
+        state.last_incr = incr;
+        env.storage().instance().set(&STATE, &state);
+        state.count
 }
 
 pub fn get_state(env: Env) -> State {
-    env.storage()
-        .get(&STATE)
-        .unwrap_or(Ok(State {
-            count: 0,
-            last_incr: 0,
-        })) // If no value set, assume 0.
-        .unwrap() // Panic if the value of COUNTER is not a State.
+    env.storage().instance().get(&STATE).unwrap_or(State {
+        count: 0,
+        last_incr: 0,
+    }) // If no value set, assume 0.
 }
 ```
 

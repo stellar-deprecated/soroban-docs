@@ -538,15 +538,15 @@ In contrast to Solidity's global variables, Soroban relies on passing an [`Env`]
 
 The `Env` provides access to information about the currently executing contract, who invoked it, contract data, functions for signing, hashing, etc.
 
-For instance, you would use `env.storage().get(key)` to access a target value from the contract's [storage](https://docs.rs/soroban-sdk/latest/soroban_sdk/struct.Env.html).
+For instance, you would use `env.storage().persistent().get(key)` to access a `persistent` target value from the contract's [storage](https://docs.rs/soroban-sdk/latest/soroban_sdk/struct.Env.html). Read more about the different storage types [here](../persisting-data.mdx).
 
 - `env.storage()` is used to get a struct for accessing and updating contract data that has been stored.
-- Used as `env.storage().get()` or `env.storage().set()`.
+- Used as `env.storage().persistent().get()` or `env.persistent().storage().set()`.
 - Additionally, we utilize the `clone()` method, a prevalent trait in Rust that allows for the explicit duplication of an object.
 
 See the example below for implementations of `env.storage()` and `clone()`
 
-- `env.storage().set()`
+- `env.storage().persistent().set()`
 
 ```rust
 use soroban_sdk::{Env, Symbol};
@@ -554,17 +554,17 @@ use soroban_sdk::{Env, Symbol};
     pub fn set_storage(env: Env) {
         let key = Symbol::short("key");
         let value = Symbol::short("value");
-        env.storage().set(&key, &value);
+        env.storage().persistent().set(&key, &value);
 }
 ```
 
-- `env.storage().get()`
+- `env.storage().persistent().get()`
 
 ```rust
 use soroban_sdk::{Env};
 
     pub fn get_storage(env: Env) -> value {
-        env.storage().get(&key);
+        env.storage().persistent().get(&key);
 }
 ```
 

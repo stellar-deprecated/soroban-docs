@@ -94,9 +94,11 @@ pub fn init(env: Env, signers: Vec<BytesN<32>>) {
     // In reality this would need some additional validation on signers
     // (deduplication etc.).
     for signer in signers.iter() {
-        env.storage().set(&DataKey::Signer(signer.unwrap()), &());
+        env.storage().instance().set(&DataKey::Signer(signer), &());
     }
-    env.storage().set(&DataKey::SignerCnt, &signers.len());
+    env.storage()
+        .instance()
+        .set(&DataKey::SignerCnt, &signers.len());
 }
 ```
 
@@ -115,7 +117,9 @@ pub fn add_limit(env: Env, token: BytesN<32>, limit: i128) {
     // authorize the call on its own behalf and that wouldn't require any
     // user-side verification.
     env.current_contract_address().require_auth();
-    env.storage().set(&DataKey::SpendLimit(token), &limit);
+    env.storage()
+            .instance()
+            .set(&DataKey::SpendLimit(token), &limit);
 }
 ```
 
@@ -137,7 +141,11 @@ pub fn __check_auth(
     // Perform authentication.
     authenticate(&env, &signature_payload, &signatures)?;
 
-    let tot_signers: u32 = env.storage().get(&DataKey::SignerCnt).unwrap().unwrap();
+    let tot_signers: u32 = env
+        .storage()
+        .instance()
+        .get::<_, u32>(&DataKey::SignerCnt)
+        .unwrap();
     let all_signed = tot_signers == signatures.len();
 
     let curr_contract = env.current_contract_address();
@@ -146,12 +154,12 @@ pub fn __check_auth(
     // makes sure that if e.g. multiple `transfer` calls are being authorized
     // for the same token we still respect the limit for the total
     // transferred amount (and not the 'per-call' limits).
-    let mut spend_left_per_token = Map::<BytesN<32>, i128>::new(&env);
+    let mut spend_left_per_token = Map::<Address, i128>::new(&env);
     // Verify the authorization policy.
     for context in auth_context.iter() {
         verify_authorization_policy(
             &env,
-            &context.unwrap(),
+            &context,
             &curr_contract,
             all_signed,
             &mut spend_left_per_token,
@@ -187,15 +195,16 @@ fn authenticate(
     signatures: &Vec<Signature>,
 ) -> Result<(), AccError> {
     for i in 0..signatures.len() {
-        let signature = signatures.get_unchecked(i).unwrap();
+        let signature = signatures.get_unchecked(i);
         if i > 0 {
-            let prev_signature = signatures.get_unchecked(i - 1).unwrap();
+            let prev_signature = signatures.get_unchecked(i - 1);
             if prev_signature.public_key >= signature.public_key {
                 return Err(AccError::BadSignatureOrder);
             }
         }
         if !env
             .storage()
+            .instance()
             .has(&DataKey::Signer(signature.public_key.clone()))
         {
             return Err(AccError::UnknownSigner);
@@ -317,13 +326,13 @@ payloads.
 ```rust
 let payload = BytesN::random(&env);
 let token = BytesN::random(&env);
-env.invoke_account_contract_check_auth::<AccError>(
-    &account_contract.contract_id,
+env.try_invoke_contract_check_auth::<AccError>(
+    &account_contract.address.contract_id(),
     &payload,
     &vec![&env, sign(&env, &signers[0], &payload)],
     &vec![
         &env,
-        token_auth_context(&env, &token, Symbol::new(&env, "xfer"), 1000),
+        token_auth_context(&env, &token, Symbol::new(&env, "transfer"), 1000),
     ],
 )
 .unwrap();

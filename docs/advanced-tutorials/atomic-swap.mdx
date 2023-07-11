@@ -158,16 +158,24 @@ fn move_token(
     token: &Address,
     from: &Address,
     to: &Address,
-    approve_amount: i128,
-    xfer_amount: i128,
+    max_spend_amount: i128,
+    transfer_amount: i128,
 ) {
     let token = token::Client::new(env, token);
     let contract_address = env.current_contract_address();
-    // This call needs to be authorized by `from` address. Since it increases
-    // the allowance on behalf of the contract, `from` doesn't need to know `to`
-    // at the signature time.
-    token.incr_allow(from, &contract_address, &approve_amount);
-    token.xfer_from(&contract_address, from, to, &xfer_amount);
+    // This call needs to be authorized by `from` address. It transfers the
+    // maximum spend amount to the swap contract's address in order to decouple
+    // the signature from `to` address (so that parties don't need to know each
+    // other).
+    token.transfer(from, &contract_address, &max_spend_amount);
+    // Transfer the necessary amount to `to`.
+    token.transfer(&contract_address, to, &transfer_amount);
+    // Refund the remaining balance to `from`.
+    token.transfer(
+        &contract_address,
+        from,
+        &(&max_spend_amount - &transfer_amount),
+    );
 }
 ```
 
@@ -193,8 +201,8 @@ The interesting part for this example is verification of `swap` authorization:
 contract.swap(
     &a,
     &b,
-    &token_a.contract_id,
-    &token_b.contract_id,
+    &token_a.address,
+    &token_b.address,
     &1000,
     &4500,
     &5000,
@@ -206,39 +214,51 @@ assert_eq!(
     std::vec![
         (
             a.clone(),
-            contract.address.clone(),
-            Symbol::short("swap"),
-            (
-                token_a.address.clone(),
-                token_b.address.clone(),
-                1000_i128,
-                4500_i128
-            )
-                .into_val(&env),
-        ),
-        (
-            a.clone(),
-            token_a.address.clone(),
-            Symbol::new(&env, "increase_allowance"),
-            (a.clone(), &contract.address, 1000_i128).into_val(&env),
-        ),
-        (
-            b.clone(),
-            contract.address.clone(),
-            Symbol::short("swap"),
-            (
-                token_b.address.clone(),
-                token_a.address.clone(),
-                5000_i128,
-                950_i128
-            )
-                .into_val(&env),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    contract.address.clone(),
+                    symbol_short!("swap"),
+                    (
+                        token_a.address.clone(),
+                        token_b.address.clone(),
+                        1000_i128,
+                        4500_i128
+                    )
+                        .into_val(&env),
+                )),
+                sub_invocations: std::vec![AuthorizedInvocation {
+                    function: AuthorizedFunction::Contract((
+                        token_a.address.clone(),
+                        symbol_short!("transfer"),
+                        (a.clone(), contract.address.clone(), 1000_i128,).into_val(&env),
+                    )),
+                    sub_invocations: std::vec![]
+                }]
+            }
         ),
         (
             b.clone(),
-            token_b.address.clone(),
-            Symbol::new(&env, "increase_allowance"),
-            (b.clone(), &contract.address, 5000_i128).into_val(&env),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    contract.address.clone(),
+                    symbol_short!("swap"),
+                    (
+                        token_b.address.clone(),
+                        token_a.address.clone(),
+                        5000_i128,
+                        950_i128
+                    )
+                        .into_val(&env),
+                )),
+                sub_invocations: std::vec![AuthorizedInvocation {
+                    function: AuthorizedFunction::Contract((
+                        token_b.address.clone(),
+                        symbol_short!("transfer"),
+                        (b.clone(), contract.address.clone(), 5000_i128,).into_val(&env),
+                    )),
+                    sub_invocations: std::vec![]
+                }]
+            }
         ),
     ]
 );
@@ -246,5 +266,5 @@ assert_eq!(
 
 `env.auths()` returns all the authorizations. In the case of `swap` four
 authorizations are expected. Two for each address authorizing, because each
-address authorizes not only the swap, but the `increase_allowance` all on the
+address authorizes not only the swap, but the `approve` all on the
 token being sent.

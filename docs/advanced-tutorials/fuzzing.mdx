@@ -12,14 +12,14 @@ how to adapt fuzz tests into reusable property tests with the
 It builds on the [timelock example].
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.8.4
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.9.2
 
-[fuzzing example]: https://github.com/stellar/soroban-examples/tree/v0.8.4/fuzzing
+[fuzzing example]: https://github.com/stellar/soroban-examples/tree/v0.9.2/fuzzing
 [`cargo-fuzz`]: https://docs.rs/cargo-fuzz
 [`arbitrary`]: https://docs.rs/arbitrary
 [`proptest`]: https://docs.rs/proptest
 [`proptest-arbitrary-interop`]: https://docs.rs/proptest-arbitrary-interop
-[timelock example]: https://github.com/stellar/soroban-examples/tree/v0.8.4/timelock
+[timelock example]: https://github.com/stellar/soroban-examples/tree/v0.9.2/timelock
 
 
 
@@ -27,12 +27,12 @@ It builds on the [timelock example].
 ## Run the example
 
 First go through the [setup] process to get your development environment
-configured, then clone the `v0.8.4` tag of `soroban-examples` repository:
+configured, then clone the `v0.9.2` tag of `soroban-examples` repository:
 
 [setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.8.4 https://github.com/stellar/soroban-examples
+git clone -b v0.9.2 https://github.com/stellar/soroban-examples
 ```
 
 You will also need the `cargo-fuzz` tool,
@@ -143,7 +143,7 @@ which also maintains a "trophy case" of Rust bugs found through fuzzing.
 The example used for this tutorial is based on the [`timelock`]
 example program, with some changes to demonstrate fuzzing.
 
-[`timelock`]: https://github.com/stellar/soroban-examples/tree/v0.8.4/timelock
+[`timelock`]: https://github.com/stellar/soroban-examples/tree/v0.9.2/timelock
 
 The contract, `ClaimableBalanceContract`,
 allows one party to deposit
@@ -238,8 +238,8 @@ There are special considerations to note
 in the configuration of both the [contract's manifest]
 and the [fuzzing crate's manifest].
 
-[contract's manifest]: https://github.com/stellar/soroban-examples/tree/v0.8.4/fuzzing/Cargo.toml
-[fuzzing crate's manifest]: https://github.com/stellar/soroban-examples/tree/v0.8.4/fuzzing/fuzz/Cargo.toml
+[contract's manifest]: https://github.com/stellar/soroban-examples/tree/v0.9.2/fuzzing/Cargo.toml
+[fuzzing crate's manifest]: https://github.com/stellar/soroban-examples/tree/v0.9.2/fuzzing/fuzz/Cargo.toml
 
 Within the contract's manifest one must
 specificy the crate type as both "cdylib" and "rlib":
@@ -312,7 +312,7 @@ This fuzz test does two things:
 it first deposits an arbitrary amount,
 then it claims an arbitrary amount.
 
-[`fuzz_target_1.rs`]: https://github.com/stellar/soroban-examples/tree/v0.8.4/fuzzing/fuzz/fuzz_targets/fuzz_target_1.rs
+[`fuzz_target_1.rs`]: https://github.com/stellar/soroban-examples/tree/v0.9.2/fuzzing/fuzz/fuzz_targets/fuzz_target_1.rs
 
 Again, you can run this fuzzer from the `soroban-examples/fuzzing`
 directory with the following command:
@@ -818,7 +818,7 @@ must turn that feature on.
 The [`fuzz_target_2.rs`] example, demonstrates the use of `SorobanArbitrary`,
 the advancement of time, and more advanced fuzzing techniques.
 
-[`fuzz_target_2.rs`]: https://github.com/stellar/soroban-examples/tree/v0.8.4/fuzzing/fuzz/fuzz_targets/fuzz_target_2.rs
+[`fuzz_target_2.rs`]: https://github.com/stellar/soroban-examples/tree/v0.9.2/fuzzing/fuzz/fuzz_targets/fuzz_target_2.rs
 
 This fuzz test takes a much more complex input,
 where some of the values are user-defined types exported
@@ -996,7 +996,7 @@ convert fuzz tests to property tests to help prevent regressions.
 The [`proptest.rs`] file is a translation of `fuzz_target_1.rs`
 to a property test.
 
-[`proptest.rs`]: https://github.com/stellar/soroban-examples/tree/v0.8.4/fuzzing/src/proptest.rs
+[`proptest.rs`]: https://github.com/stellar/soroban-examples/tree/v0.9.2/fuzzing/src/proptest.rs
 
 
 

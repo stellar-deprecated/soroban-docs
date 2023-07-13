@@ -251,10 +251,10 @@ call trees and/or multiple `Address`es.
 #### `require_auth` implementation details
 
 When a Soroban transaction is executed on-chain, the host collects a list of
-`ContractAuth` entries from the transaction ([XDR][contract-auth]). These
-entries contain authorized invocation trees, a nonce and the corresponding
-signatures. The host uses these entries to verify authorization during the
-contract execution.
+`SorobanAuthorizationEntry` entries from the transaction ([XDR][soroban-auth-entry]).
+These entries contain signed authorizer credentials and authorized invocation
+trees. The host uses these entries to verify authorization during the contract
+execution.
 
 Every time `require_auth`/`require_auth_for_args` host function is called for
 non-contract-invoker account, the following steps happen:
@@ -262,8 +262,9 @@ non-contract-invoker account, the following steps happen:
 - Find an authorized invocation tree that matches the `require_auth` call. The
   matching process is pretty involved and is described in the section below.
 - If authentication hasn't happened for this tree yet, then perform it:
-  - Verify and consume nonce. Nonce is implemented as autoincrement counter per
-    contract ID and `Address`.
+  - Verify signature expiration. Expired signatures are not vlaid.
+  - Verify and consume nonce. Nonce is an arbitrary number, that has to be 
+  unique among all the non-expired signatures of the address.
   - Build the expected [signature payload preimage] and compute its SHA-256 hash
     to get the final signature payload
   - Call `__check_auth` of the account contract corresponding to the `Address`
@@ -279,14 +280,14 @@ unsuccessful.
 Notice, that authentication happens just once per tree, as the whole tree needs
 to be signed.
 
-[contract-auth]: https://github.com/stellar/stellar-xdr/blob/df18148747e807618acf4639db41c4fd6f0be9fc/Stellar-transaction.x#L547
-[signature payload preimage]: https://github.com/stellar/stellar-xdr/blob/df18148747e807618acf4639db41c4fd6f0be9fc/Stellar-transaction.x#L681
+[soroban-auth-entry]: https://github.com/stellar/stellar-xdr/blob/e372df9f677961aac04c5a4cc80a3667f310b29f/Stellar-transaction.x#L570
+[signature payload preimage]: https://github.com/stellar/stellar-xdr/blob/e372df9f677961aac04c5a4cc80a3667f310b29f/Stellar-transaction.x#L703
 
 #### Matching Authorized Invocation Trees
 
 In order for authorizations to succeed, all the
 `require_auth`/`require_auth_for_args` calls have to be covered by the
-corresponding `AuthorizedInvocation` trees in a transaction (defined in
+corresponding `SorobanAuthorizedInvocation` trees in a transaction (defined in
 transaction [XDR][invocation-xdr]).
 
 Formally, this correspondence is defined as follows.
@@ -302,20 +303,20 @@ Let's say authorization is required from addresses `A_1..A_N`. Then for every
 address `A_i` there are two kinds of nodes in the invocation tree `T`:
 `R`-nodes that had a `require_auth` call for `A_i` and `N`-nodes that didn't
 have such call. Then we remove all the `N`-nodes and all the edges from `T`
-from the tree and add the directed edges connecting the remaining `R`-nodes
+and add the directed edges connecting the remaining `R`-nodes
 such that the edge goes from `R_j` to `R_k` if there was a path between `R_j`
 and `R_k` in `T` that doesn't contain any other `R`-nodes. As a result we get a
-forest `AuthorizedInvocation` trees for `A_i`. Notice, that these trees don't
+forest of `SorobanAuthorizedInvocation` trees for `A_i`. Notice, that these trees don't
 have to have their root be `I` node (i.e. the top-level contract call), so it's
 possible to e.g. batch the authorized call together without requiring signing
 the batching function.
 
-In simpler terms, `AuthorizedInvocation` trees for an `Address` are subsets of
+In simpler terms, `SorobanAuthorizedInvocation` trees for an `Address` are subsets of
 the full invocation tree that are 'condensed' to only contain invocations that
 have `require_auth` call for that `Address`.
 
 During the matching process that happens for every `require_auth` host tries
-to match the current path in `T` to an `AuthorizedInvocation` tree for the
+to match the current path in `T` to a `SorobanAuthorizedInvocation` tree for the
 corresponding `Address`. The path is considered to be matched only when there is
 a corresponding path of *exhausted* `R` nodes leading to the current call. This
 means that if the `Address` signs a sequence of calls `A.foo->B.bar->C.baz`,
@@ -327,7 +328,7 @@ because `C.baz` strictly has to be called from `B.bar`.
 In case if the same contract function calls `require_auth` for the same
 `Address` multiple times (e.g. when multiple operations from the same user are
 being batched), every `require_auth` call still has to have a corresponding node
-in the `AuthorizedInvocation` tree. Due to that, there might be multiple valid
+in the `SorobanAuthorizedInvocation` tree. Due to that, there might be multiple valid
 trees that make all the authorization checks pass. There is nothing wrong about
 that - the address still must have authorized all the invocations. The only
 requirement for such cases to be handled correctly is to ensure that the 
@@ -335,5 +336,5 @@ requirement for such cases to be handled correctly is to ensure that the
 sub-contract calls.
 
 [invocation-xdr]:
-https://github.com/stellar/stellar-xdr/blob/df18148747e807618acf4639db41c4fd6f0be9fc/Stellar-transaction.x#L533
+https://github.com/stellar/stellar-xdr/blob/e372df9f677961aac04c5a4cc80a3667f310b29f/Stellar-transaction.x#L537
 

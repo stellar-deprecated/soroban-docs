@@ -117,9 +117,9 @@ of 64 KB.
 Metering is a crucial mechanism within the host environment that accounts for the resource costs, such as CPU instructions and RAM usage, incurred during the execution of a smart contract. The outcomes of metering act as the canonical truth of a smart contract's execution cost and serve as an input for fee computations.
 
 ## Why Metering
-The Soroban smart contract execution environment comprises a host and a guest. The host encapsulates shared functionalities for all contracts, including host objects, functions, and a WASM interpreter (VM). The guest environment is where the compiled WASM contract is interpreted and executed. Detailed discussion about these environments can be found in [Environment Concepts](environment-concepts.mdx).
+The Soroban smart contract execution environment comprises a host and a guest. The host encapsulates shared functionalities for all contracts, including host objects, functions, and a Wasm interpreter (VM). The guest environment is where the compiled Wasm contract is interpreted and executed. Detailed discussion about these environments can be found in [Environment Concepts](environment-concepts.mdx).
 
-The division between the host and guest environments, and the shared functionalities between them, necessitates a unique approach to resource accounting. In particular, the resources required for executing WASM instructions and running host functions must be accounted for uniformly, with costs denoted in terms of CPU instructions and memory bytes. Consider two contracts, A and B, both comprising the same number of WASM instructions. If Contract A repeatedly calls host functions for complex computations while Contract B executes pure arithmetic operations within the VM, Contract A should be more costly. This difference should be accurately represented in the metering process.
+The division between the host and guest environments, and the shared functionalities between them, necessitates a unique approach to resource accounting. In particular, the resources required for executing Wasm instructions and running host functions must be accounted for uniformly, with costs denoted in terms of CPU instructions and memory bytes. Consider two contracts, A and B, both comprising the same number of Wasm instructions. If Contract A repeatedly calls host functions for complex computations while Contract B executes pure arithmetic operations within the VM, Contract A should be more costly. This difference should be accurately represented in the metering process.
 
 In essence, metering ensures fairness, thwarts resource manipulation and attacks, and generates a deterministic and reproducible measure of runtime resource costs.
 
@@ -131,7 +131,7 @@ Metering is segmented into host components, referred to as cost types. Each cost
 
 :::info
 
-Execution of WASM instructions is accounted for as a host cost type `WasmInsnExec`, which has a constant CPU cost per WASM instruction. This methodology treats guest instructions and host executions equivalently.
+Execution of Wasm instructions is accounted for as a host cost type `WasmInsnExec`, which has a constant CPU cost per Wasm instruction. This methodology treats guest instructions and host executions equivalently.
 
 :::
 

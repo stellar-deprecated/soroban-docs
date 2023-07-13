@@ -189,10 +189,10 @@ If you haven't already setup up the dev environment for Soroban, you can get sta
 
 This project requires using the `soroban_token_contract.wasm` file which you will need to import manually.
 
-First, you will need to clone the `v0.8.4` tag of `soroban-examples` repository:
+First, you will need to clone the `v0.9.2` tag of `soroban-examples` repository:
 
 ```bash
-git clone -b v0.8.4 https://github.com/stellar/soroban-examples
+git clone -b v0.9.2 https://github.com/stellar/soroban-examples
 ```
 
 Then, navigate to the `soroban-examples/token` directory
@@ -204,7 +204,7 @@ cd soroban-examples/token
 Next, build the Token contract using the following command:
 
 ```bash
-cargo build --target wasm32-unknown-unknown --release
+soroban contract build
 ```
 
 This will build the `soroban_token_contract.wasm` file which you will need to import into your project. The `soroban_token_contract.wasm` file is located in the `soroban-examples/target/wasm32-unknown-unknown/release` directory.
@@ -316,19 +316,19 @@ impl TryFromVal<Env, DataKey> for RawVal {
 }
 
 fn get_token(e: &Env) -> Address {
-    e.storage().get_unchecked(&DataKey::Token).unwrap()
+    e.storage().instance().get(&DataKey::Token).unwrap()
 }
 
 fn get_token_share(e: &Env) -> Address {
-    e.storage().get_unchecked(&DataKey::TokenShare).unwrap()
+    e.storage().instance().get(&DataKey::TokenShare).unwrap()
 }
 
 fn get_total_shares(e: &Env) -> i128 {
-    e.storage().get_unchecked(&DataKey::TotalShares).unwrap()
+    e.storage().instance().get(&DataKey::TotalShares).unwrap()
 }
 
 fn get_reserve(e: &Env) -> i128 {
-    e.storage().get_unchecked(&DataKey::Reserve).unwrap()
+    e.storage().instance().get(&DataKey::Reserve).unwrap()
 }
 
 fn get_balance(e: &Env, contract: Address) -> i128 {
@@ -344,19 +344,19 @@ fn get_balance_shares(e: &Env) -> i128 {
 }
 
 fn put_token(e: &Env, contract: Address) {
-    e.storage().set(&DataKey::Token, &contract);
+    e.storage().instance().set(&DataKey::Token, &contract);
 }
 
 fn put_token_share(e: &Env, contract: Address) {
-    e.storage().set(&DataKey::TokenShare, &contract);
+    e.storage().instance().set(&DataKey::TokenShare, &contract);
 }
 
 fn put_total_shares(e: &Env, amount: i128) {
-    e.storage().set(&DataKey::TotalShares, &amount)
+    e.storage().instance().set(&DataKey::TotalShares, &amount)
 }
 
 fn put_reserve(e: &Env, amount: i128) {
-    e.storage().set(&DataKey::Reserve, &amount)
+    e.storage().instance().set(&DataKey::Reserve, &amount)
 }
 
 fn burn_shares(e: &Env, amount: i128) {
@@ -384,7 +384,7 @@ fn transfer_token(e: &Env, to: Address, amount: i128) {
     transfer(e, get_token(e), to, amount);
 }
 
-// Metadata that is added on to the WASM custom section
+// Metadata that is added on to the Wasm custom section
 contractmeta!(
     key = "Description",
     val = "A Vault with a 1% return on investment per deposit."
@@ -503,7 +503,7 @@ fn create_vault_contract<'a>(
 
 fn install_token_wasm(e: &Env) -> BytesN<32> {
     soroban_sdk::contractimport!(file = "./soroban_token_contract.wasm");
-    e.install_contract_wasm(WASM)
+    e.install_contract_wasm(Wasm)
 }
 
 #[test]
@@ -618,9 +618,7 @@ pub trait TokenTrait {
 
     fn allowance(e: Env, from: Address, spender: Address) -> i128;
 
-    fn increase_allowance(e: Env, from: Address, spender: Address, amount: i128);
-
-    fn decrease_allowance(e: Env, from: Address, spender: Address, amount: i128);
+    fn approve(e: Env, from: Address, spender: Address, amount: i128, expiration_ledger: u32);
 
     fn balance(e: Env, id: Address) -> i128;
 
@@ -684,32 +682,13 @@ impl TokenTrait for Token {
         read_allowance(&e, from, spender)
     }
 
-    fn increase_allowance(e: Env, from: Address, spender: Address, amount: i128) {
+    fn approve(e: Env, from: Address, spender: Address, amount: i128, expiration_ledger: u32) {
         from.require_auth();
 
         check_nonnegative_amount(amount);
 
-        let allowance = read_allowance(&e, from.clone(), spender.clone());
-        let new_allowance = allowance
-            .checked_add(amount)
-            .expect("Updated allowance doesn't fit in an i128");
-
-        write_allowance(&e, from.clone(), spender.clone(), new_allowance);
-        event::increase_allowance(&e, from, spender, amount);
-    }
-
-    fn decrease_allowance(e: Env, from: Address, spender: Address, amount: i128) {
-        from.require_auth();
-
-        check_nonnegative_amount(amount);
-
-        let allowance = read_allowance(&e, from.clone(), spender.clone());
-        if amount >= allowance {
-            write_allowance(&e, from.clone(), spender.clone(), 0);
-        } else {
-            write_allowance(&e, from.clone(), spender.clone(), allowance - amount);
-        }
-        event::decrease_allowance(&e, from, spender, amount);
+        write_allowance(&e, from.clone(), spender.clone(), amount, expiration_ledger);
+        event::approve(&e, from, spender, amount, expiration_ledger);
     }
 
     fn balance(e: Env, id: Address) -> i128 {
@@ -914,7 +893,7 @@ Below you will find a series of commands that will help you build, deploy and in
 <TabItem value="build" label="build.sh">
 
 ```bash
-cargo build --target wasm32-unknown-unknown --release
+soroban contract build
 ```
 
 </TabItem>
@@ -1090,7 +1069,7 @@ First, we need to build the vault contract. We can do this by running the `build
 
 ```bash
 ##cd vault
-cargo build --target wasm32-unknown-unknown --release
+soroban contract build
 ```
 
 Next, we need to deploy the token contract. We can do this by running the `deploy_token.sh` script.
@@ -1150,13 +1129,13 @@ We should receive an output with the vault contract ID. We will need this ID for
 07829f515df7d320101a8643b685c82d16e15d92bd11a49d2623a8b93b28bfd8
 ```
 
-Now we need to get the WASM hash of the token contract. We can do this by running the `get_token_wasm_hash.sh` script.
+Now we need to get the Wasm hash of the token contract. We can do this by running the `get_token_wasm_hash.sh` script.
 
 ```bash
 soroban contract install --wasm soroban_token_contract.wasm
 ```
 
-We should receive the WASM hash of the token contract.
+We should receive the Wasm hash of the token contract.
 
 ```bash
 68f5c739b568664e3c4f4b7787958ce4ba527cc310fb0de0fea707dc1d6bd3c3

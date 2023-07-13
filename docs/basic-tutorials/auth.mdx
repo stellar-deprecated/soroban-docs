@@ -10,21 +10,21 @@ authorization using the Soroban Host-managed auth framework.
 This example is an extension of the [storing data example].
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.8.4
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.9.2
 
 [storing data example]: ../getting-started/storing-data.mdx
 
-[auth example]: https://github.com/stellar/soroban-examples/tree/v0.8.4/auth
+[auth example]: https://github.com/stellar/soroban-examples/tree/v0.9.2/auth
 
 ## Run the Example
 
 First go through the [Setup] process to get your development environment
-configured, then clone the `v0.8.4` tag of `soroban-examples` repository:
+configured, then clone the `v0.9.2` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.8.4 https://github.com/stellar/soroban-examples
+git clone -b v0.9.2 https://github.com/stellar/soroban-examples
 ```
 
 Or, skip the development environment setup and open this example in [Gitpod][oigp].
@@ -52,6 +52,7 @@ pub enum DataKey {
     Counter(Address),
 }
 
+#[contract]
 pub struct IncrementContract;
 
 #[contractimpl]
@@ -82,17 +83,13 @@ impl IncrementContract {
         let key = DataKey::Counter(user.clone());
 
         // Get the current count for the invoker.
-        let mut count: u32 = env
-            .storage()
-            .get(&key)
-            .unwrap_or(Ok(0)) // If no value set, assume 0.
-            .unwrap(); // Panic if the value of COUNTER is not u32.
+        let mut count: u32 = env.storage().persistent().get(&key).unwrap_or_default();
 
         // Increment the count.
         count += value;
 
         // Save the count.
-        env.storage().set(&key, &count);
+        env.storage().persistent().set(&key, &count);
 
         // Return the count to the caller.
         count
@@ -100,7 +97,7 @@ impl IncrementContract {
 }
 ```
 
-Ref: https://github.com/stellar/soroban-examples/tree/v0.8.4/auth
+Ref: https://github.com/stellar/soroban-examples/tree/v0.9.2/auth
 
 ## How it Works
 
@@ -175,7 +172,7 @@ user.require_auth_for_args((value,).into_val(&env));
 
 Open the [`auth/src/test.rs`] file to follow along.
 
-[`auth/src/test.rs`]: https://github.com/stellar/soroban-examples/tree/v0.8.4/auth/src/test.rs
+[`auth/src/test.rs`]: https://github.com/stellar/soroban-examples/tree/v0.9.2/auth/src/test.rs
 
 ```rust title="auth/src/test.rs"
 fn test() {
@@ -292,10 +289,10 @@ assert_eq!(client.increment(&user_2, &4), 5);
 
 ## Build the Contract
 
-To build the contract into a `.wasm` file, use the `cargo build` command.
+To build the contract into a `.wasm` file, use the `soroban contract build` command.
 
 ```sh
-cargo build --target wasm32-unknown-unknown --release
+soroban contract build
 ```
 
 The `.wasm` file should be found in the `target` directory after building:

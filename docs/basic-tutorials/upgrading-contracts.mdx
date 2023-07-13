@@ -1,15 +1,15 @@
 ---
 sidebar_position: 9
 title: Upgrading Contracts
-description: Upgrading the WASM bytecode of a deployed contract.
+description: Upgrading the Wasm bytecode of a deployed contract.
 ---
 
-The [upgradeable contract example] demonstrates how to upgrade a WASM contract.
+The [upgradeable contract example] demonstrates how to upgrade a Wasm contract.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.8.4
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.9.2
 
-[upgradeable contract example]: https://github.com/stellar/soroban-examples/tree/v0.8.4/upgradeable_contract
+[upgradeable contract example]: https://github.com/stellar/soroban-examples/tree/v0.9.2/upgradeable_contract
 
 ## Code
 The example contains both an "old" and "new" contract, where we upgrade from "old" to "new". The code below is for the "old" contract.
@@ -25,12 +25,13 @@ enum DataKey {
     Admin,
 }
 
+#[contract]
 pub struct UpgradeableContract;
 
 #[contractimpl]
 impl UpgradeableContract {
     pub fn init(e: Env, admin: Address) {
-        e.storage().set(&DataKey::Admin, &admin);
+        e.storage().instance().set(&DataKey::Admin, &admin);
     }
 
     pub fn version() -> u32 {
@@ -38,10 +39,10 @@ impl UpgradeableContract {
     }
 
     pub fn upgrade(e: Env, new_wasm_hash: BytesN<32>) {
-        let admin: Address = e.storage().get_unchecked(&DataKey::Admin).unwrap();
+        let admin: Address = e.storage().instance().get(&DataKey::Admin).unwrap();
         admin.require_auth();
 
-        e.update_current_contract_wasm(&new_wasm_hash);
+        e.deployer().update_current_contract_wasm(new_wasm_hash);
     }
 }
 
@@ -53,10 +54,10 @@ The upgrade is only possible because the contract calls `e.update_current_contra
 
 ```rust
 pub fn upgrade(e: Env, new_wasm_hash: BytesN<32>) {
-    let admin: Address = e.storage().get_unchecked(&DataKey::Admin).unwrap();
+    let admin: Address = e.storage().instance().get(&DataKey::Admin).unwrap();
     admin.require_auth();
 
-    e.update_current_contract_wasm(&new_wasm_hash);
+    e.deployer().update_current_contract_wasm(new_wasm_hash);
 }
 ```
 
@@ -87,7 +88,7 @@ mod new_contract {
 }
 
 fn install_new_wasm(e: &Env) -> BytesN<32> {
-    e.install_contract_wasm(new_contract::WASM)
+    e.install_contract_wasm(new_contract::Wasm)
 }
 
 #[test]
@@ -96,8 +97,8 @@ fn test() {
     env.mock_all_auths();
 
     // Note that we use register_contract_wasm instead of register_contract
-    // because the old contracts WASM is expected to exist in storage.
-    let contract_id = env.register_contract_wasm(None, old_contract::WASM);
+    // because the old contracts Wasm is expected to exist in storage.
+    let contract_id = env.register_contract_wasm(None, old_contract::Wasm);
 
     let client = old_contract::Client::new(&env, &contract_id);
     let admin = Address::random(&env);
@@ -137,8 +138,8 @@ We register the old contract, intialize it with an admin, and verify the version
 it reutrns. The note in the code below is important-
 ```rust
 // Note that we use register_contract_wasm instead of register_contract
-// because the old contracts WASM is expected to exist in storage.
-let contract_id = env.register_contract_wasm(None, old_contract::WASM);
+// because the old contracts Wasm is expected to exist in storage.
+let contract_id = env.register_contract_wasm(None, old_contract::Wasm);
 
 let client = old_contract::Client::new(&env, &contract_id);
 let admin = Address::random(&env);
@@ -147,7 +148,7 @@ client.init(&admin);
 assert_eq!(1, client.version());
 ```
 
-We install the new contract's WASM 
+We install the new contract's Wasm 
 ```rust
 let new_wasm_hash = install_new_wasm(&env); 
 ```
@@ -160,7 +161,7 @@ assert_eq!(2, client.version());
 
 ## Build the Contract
 
-To build the contract `.wasm` files, run `cargo build --target wasm32-unknown-unknown --release` in both
+To build the contract `.wasm` files, run `soroban contract build` in both
 `upgradeable_contract/old_contract` and `upgradeable_contract/new_contract` in
 that order.
 
@@ -190,7 +191,7 @@ soroban contract install \
     --wasm target/wasm32-unknown-unknown/release/soroban_upgradeable_contract_new_contract.wasm
 ```
 
-You should see this WASM hash from the install command:
+You should see this Wasm hash from the install command:
 ```
 c30c71a382438ed7e56669ba172aa862cc813d093b8d2f45e85b47ba38a89ddc
 ```

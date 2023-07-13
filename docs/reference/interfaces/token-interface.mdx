@@ -85,23 +85,18 @@ pub trait Contract {
     // (usually named `from` here) using all the input arguments, i.e. they have
     // to call `from.require_auth()`.
 
-    /// Increase the allowance by "amount" for "spender" to transfer/burn from "from".
-    /// Emit event with topics = ["increase_allowance", from: Address, spender: Address], data = [amount: i128]
-    fn increase_allowance(
+    /// Set the allowance by "amount" for "spender" to transfer/burn from "from".
+    /// "expiration_ledger" is the ledger number where this allowance expires. It cannot
+    /// be less than the current ledger number unless the amount is being set to 0.
+    /// An expired entry (where "expiration_ledger" < the current ledger number)
+    /// should be treated as a 0 amount allowance.
+    /// Emit event with topics = ["approve", from: Address, spender: Address], data = [amount: i128, expiration_ledger: u32]
+    fn approve(
         env: soroban_sdk::Env,
         from: Address,
         spender: Address,
         amount: i128,
-    );
-
-    /// Decrease the allowance by "amount" for "spender" to transfer/burn from "from".
-    /// If "amount" is greater than the current allowance, set the allowance to 0.
-    /// Emit event with topics = ["decrease_allowance", from: Address, spender: Address], data = [amount: i128]
-    fn decrease_allowance(
-        env: soroban_sdk::Env,
-        from: Address,
-        spender: Address,
-        amount: i128,
+        expiration_ledger: u32,
     );
 
     /// Transfer "amount" from "from" to "to".
@@ -181,12 +176,25 @@ pub trait Contract {
 }
 ```
 
+:::caution CAUTION WHEN MODIFYING ALLOWANCES
+
+The `approve` function overwrites the previous value with `amount`, so it is
+possible for the previous allowance to be spent in an earlier transaction before
+`amount` is written in a later transaction. The result of this is that `spender`
+can spend more than intended. This issue can be avoided by first setting the
+allowance to 0, verifying that the spender didn't spend any portion of the
+previous allowance, and then setting the allowance to the new desired amount.
+You can read more about this issue here -
+https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729.
+
+:::
+
 ### Metadata
 
 Another requirement for complying with the token interface is to write the
 standard metadata (`decimal`, `name`, and `symbol`) for the token in a specific
 format. This format allows users to directly read constant data from the ledger
-instead of invoking a WASM function. The [token
+instead of invoking a Wasm function. The [token
 example](https://github.com/stellar/soroban-examples/blob/main/token/src/metadata.rs)
 demonstrates how to use the Rust
 [soroban-token-sdk](https://github.com/stellar/rs-soroban-sdk/blob/main/soroban-token-sdk/src/lib.rs)

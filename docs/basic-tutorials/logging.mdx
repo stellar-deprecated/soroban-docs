@@ -7,13 +7,13 @@ description: How to log for the purpose of debugging.
 The [logging example] demonstrates how to log for the purpose of debugging.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.8.4
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.9.2
 
 Logs in contracts are only visible in tests, or when executing contracts using
 [`soroban-cli`]. Logs are only compiled into the contract if the
 `debug-assertions` Rust compiler option is enabled.
 
-[logging example]: https://github.com/stellar/soroban-examples/tree/v0.8.4/hello_world
+[logging example]: https://github.com/stellar/soroban-examples/tree/v0.9.2/hello_world
 
 :::tip
 
@@ -36,12 +36,12 @@ example] for how to produce structured events.
 ## Run the Example
 
 First go through the [Setup] process to get your development environment
-configured, then clone the `v0.8.4` tag of `soroban-examples` repository:
+configured, then clone the `v0.9.2` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.8.4 https://github.com/stellar/soroban-examples
+git clone -b v0.9.2 https://github.com/stellar/soroban-examples
 ```
 
 Or, skip the development environment setup and open this example in [Gitpod][oigp].
@@ -84,7 +84,7 @@ impl Contract {
 }
 ```
 
-Ref: https://github.com/stellar/soroban-examples/tree/v0.8.4/logging
+Ref: https://github.com/stellar/soroban-examples/tree/v0.9.2/logging
 
 ## How it Works
 
@@ -224,14 +224,14 @@ std::println!("{}", logs.join("\n"));
 
 ## Build the Contract
 
-To build the contract, use the `cargo build` command.
+To build the contract, use the `soroban contract build` command.
 
 ### Without Logs
 
 To build the contract without logs, use the `--release` option.
 
 ```sh
-cargo build --target wasm32-unknown-unknown --release
+soroban contract build
 ```
 
 A `.wasm` file should be outputted in the `target` directory, in the
@@ -246,7 +246,7 @@ target/wasm32-unknown-unknown/release/soroban_logging_contract.wasm
 To build the contract with logs, use the `--profile release-with-logs` option.
 
 ```sh
-cargo build --target wasm32-unknown-unknown --profile release-with-logs
+soroban contract build --profile release-with-logs
 ```
 
 A `.wasm` file should be outputted in the `target` directory, in the
@@ -259,10 +259,10 @@ target/wasm32-unknown-unknown/release-with-logs/soroban_logging_contract.wasm
 ## Run the Contract
 
 If you have [`soroban-cli`] installed, you can invoke contract functions in the
-using it.
+using it. Specify the `-v` option to enable verbose logs.
 
 ```sh
-soroban contract invoke \
+soroban -v contract invoke \
     --wasm target/wasm32-unknown-unknown/release-with-logs/soroban_logging_contract.wasm \
     --id 1 \
     -- \
@@ -270,11 +270,10 @@ soroban contract invoke \
     --value friend
 ```
 
-The following output should occur using the code above.
+The output should include the following line.
 
 ```
-null
-#0: debug: Hello Symbol(friend)
+soroban_cli::log::event::contract_log: log="Hello Symbol(me)"
 ```
 
 [`log!`]: https://docs.rs/soroban-sdk/latest/soroban_sdk/macro.log.html

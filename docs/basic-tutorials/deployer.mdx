@@ -7,7 +7,7 @@ description: Deploying a contract from another contract.
 The [deployer example] demonstrates how to deploy contracts using a contract.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.8.4
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.9.2
 
 :::info
 
@@ -16,17 +16,17 @@ tests deploy one with the other.
 
 :::
 
-[deployer example]: https://github.com/stellar/soroban-examples/tree/v0.8.4/deployer
+[deployer example]: https://github.com/stellar/soroban-examples/tree/v0.9.2/deployer
 
 ## Run the Example
 
 First go through the [Setup] process to get your development environment
-configured, then clone the `v0.8.4` tag of `soroban-examples` repository:
+configured, then clone the `v0.9.2` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.8.4 https://github.com/stellar/soroban-examples
+git clone -b v0.9.2 https://github.com/stellar/soroban-examples
 ```
 
 Or, skip the development environment setup and open this example in [Gitpod][oigp].
@@ -63,7 +63,7 @@ impl Deployer {
         init_fn: Symbol,
         init_args: Vec<RawVal>,
     ) -> (Address, RawVal) {
-        // Deploy the contract using the installed WASM code with given hash.
+        // Deploy the contract using the installed Wasm code with given hash.
         let id = env
             .deployer()
             .with_current_contract(&salt)
@@ -77,7 +77,7 @@ impl Deployer {
 }
 ```
 
-Ref: https://github.com/stellar/soroban-examples/tree/v0.8.4/deployer
+Ref: https://github.com/stellar/soroban-examples/tree/v0.9.2/deployer
 
 ## How it Works
 
@@ -90,7 +90,7 @@ Open the `deployer/deployer/src/lib.rs` file to follow along.
 
 ### Contract Code Installation
 
-Before deploying the new contract instances, the WASM code needs to be installed
+Before deploying the new contract instances, the Wasm code needs to be installed
 on-chain. Then it can be used to deploy an arbitrary number of contract
 instances. The installation should typically happen outside of the deployer
 contract, as it needs to happen just once.
@@ -103,13 +103,13 @@ For the actual on-chain installation see the general deployment
 ### Deployer
 
 The `Deployer` contract deploys other contracts. It accepts a salt that will be
-used to derive a contract ID and a hash-based identifier of the installed WASM
-(note, that this is not just the hash of the WASM file).
+used to derive a contract ID and a hash-based identifier of the installed Wasm
+(note, that this is not just the hash of the Wasm file).
 It also accepts an initialization function and arguments to pass to that function.
 
 The contract first gets a deployer using the salt, then calls deploy with the
-WASM hash. The contract ID for the new contract is returned. The implementation
-of the new contract is defined by the WASM file installed under `wasm_hash` (
+Wasm hash. The contract ID for the new contract is returned. The implementation
+of the new contract is defined by the Wasm file installed under `wasm_hash` (
 only the `wasm_hash` itself is stored per contract ID thus saving the ledger
 space and fees).
 
@@ -155,8 +155,8 @@ fn test() {
     let env = Env::default();
     let client = DeployerClient::new(&env, &env.register_contract(None, Deployer));
 
-    // Install the WASM code to be deployed from the deployer contract.
-    let wasm_hash = env.install_contract_wasm(contract::WASM);
+    // Install the Wasm code to be deployed from the deployer contract.
+    let wasm_hash = env.install_contract_wasm(contract::Wasm);
 
     // Deploy contract using deployer, and include an init function to call.
     let salt = BytesN::from_array(&env, &[0; 32]);
@@ -188,6 +188,7 @@ functions that sets a value in the initialization function and allows the value
 to be retrieved from another function.
 
 ```rust title="deployer/contract/src/lib.rs"
+#[contract]
 pub struct Contract;
 
 const KEY: Symbol = Symbol::short("value");
@@ -195,10 +196,10 @@ const KEY: Symbol = Symbol::short("value");
 #[contractimpl]
 impl Contract {
     pub fn init(env: Env, value: u32) {
-        env.storage().set(&KEY, &value);
+        env.storage().instance().set(&KEY, &value);
     }
     pub fn value(env: Env) -> u32 {
-        env.storage().get_unchecked(&KEY).unwrap()
+        env.storage().instance().get(&KEY).unwrap()
     }
 }
 ```
@@ -214,11 +215,11 @@ let env = Env::default();
 ```
 
 Install the code of the test contract that we have imported above via
-`contractimport!` and get the hash of the installed WASM code:
+`contractimport!` and get the hash of the installed Wasm code:
 
 ```rust
-// Install the WASM that will be deployed by the deployer contract.
-let wasm_hash = env.install_contract_wasm(contract::WASM);
+// Install the Wasm that will be deployed by the deployer contract.
+let wasm_hash = env.install_contract_wasm(contract::Wasm);
 ```
 
 Register the deployer contract with the environment.
@@ -240,15 +241,22 @@ type with `Client` appended. For example, in our contract the contract type is
 `Deployer`, and the client is named `DeployerClient`.
 
 The client is used to invoke the `deploy` function. The contract will deploy the
-test contract using the hash of its WASM code, call the `"init"` function, and
+test contract using the hash of its Wasm code, call the `"init"` function, and
 pass in a single `5u32` argument.
 
 ```rust
 // Deploy contract using deployer, and include an init function to call.
 let salt = BytesN::from_array(&env, &[0; 32]);
-let init_fn = Symbol::short("init");
-let init_fn_args = (5u32,).into_val(&env);
-let (contract_id, init_result) = client.deploy(&salt, &wasm_hash, &init_fn, &init_fn_args);
+let init_fn = symbol_short!("init");
+let init_fn_args: Vec<Val> = (5u32,).into_val(&env);
+env.mock_all_auths();
+let (contract_id, init_result) = deployer_client.deploy(
+    &deployer_client.address,
+    &wasm_hash,
+    &salt,
+    &init_fn,
+    &init_fn_args,
+);
 assert!(init_result.is_void());
 ```
 
@@ -263,11 +271,11 @@ assert_eq!(sum, 5);
 
 ## Build the Contracts
 
-To build the contract into a `.wasm` file, use the `cargo build` command. Build
+To build the contract into a `.wasm` file, use the `soroban contract build` command. Build
 both the deployer contract and the test contract.
 
 ```sh
-cargo build --target wasm32-unknown-unknown --release
+soroban contract build
 ```
 
 Both `.wasm` files should be found in both contract `target` directories after building
@@ -287,8 +295,8 @@ If you have [`soroban-cli`] installed, you can invoke the contract function to
 deploy the test contract.
 
 Before deploying the test contract with the deployer, install the test contract
-WASM using the `install` command. The `install` command will print out the
-hash derived from the WASM file (it's not just the hash of the WASM file itself
+Wasm using the `install` command. The `install` command will print out the
+hash derived from the Wasm file (it's not just the hash of the Wasm file itself
 though) which should be used by the deployer.
 
 ```sh
@@ -297,7 +305,7 @@ soroban contract install --wasm target/wasm32-unknown-unknown/release/soroban_de
 
 The command prints out the hash as hex. It will look something like `edce149b183ea03dfd896a263d2e17c1f08229da52afa6f822d9cbc67c103806`.
 
-Then the deployer contract may be invoked with the WASM hash value above.
+Then the deployer contract may be invoked with the Wasm hash value above.
 
 ```sh
 soroban contract invoke \

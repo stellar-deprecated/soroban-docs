@@ -6,21 +6,21 @@ description: Using the allocator feature of the SDK.
 
 The [allocator example] demonstrates how to utilize the allocator feature when writing a contract.
 
-[allocator example]: https://github.com/stellar/soroban-examples/tree/v0.8.4/alloc
+[allocator example]: https://github.com/stellar/soroban-examples/tree/v0.9.2/alloc
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.8.4
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.9.2
 
-The `soroban-sdk` crate provides a lightweight bump-pointer allocator which can be used to emulate heap memory allocation in a WASM smart contract.
+The `soroban-sdk` crate provides a lightweight bump-pointer allocator which can be used to emulate heap memory allocation in a Wasm smart contract.
 
 ## Run the Example
 
-First go through the [Setup] process to get your development environment configured, then clone the `v0.8.4` tag of `soroban-examples` repository:
+First go through the [Setup] process to get your development environment configured, then clone the `v0.9.2` tag of `soroban-examples` repository:
 
 [setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.8.4 https://github.com/stellar/soroban-examples
+git clone -b v0.9.2 https://github.com/stellar/soroban-examples
 ```
 
 Or, skip the development environment setup and open this example in [Gitpod][oigp].
@@ -78,7 +78,7 @@ impl AllocContract {
 }
 ```
 
-Ref: https://github.com/stellar/soroban-examples/tree/v0.8.4/alloc
+Ref: https://github.com/stellar/soroban-examples/tree/v0.9.2/alloc
 
 ## How it Works
 
@@ -98,7 +98,7 @@ Creates a contiguous growable array `v1` with contents allocated on the heap mem
 
 :::info
 
-The heap memory in the context of a smart contract actually refers to the WASM linear memory. The `alloc` will use the global allocator provided by the soroban sdk to interact with the linear memory.
+The heap memory in the context of a smart contract actually refers to the Wasm linear memory. The `alloc` will use the global allocator provided by the soroban sdk to interact with the linear memory.
 
 :::
 

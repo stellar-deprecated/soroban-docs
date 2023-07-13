@@ -8,7 +8,7 @@ The [cross contract call example] demonstrates how to call a contract from
 another contract.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.8.4
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.9.2
 
 :::info
 
@@ -20,17 +20,17 @@ appreciated [here](https://github.com/stellar/rs-soroban-sdk/issues/new/choose).
 
 :::
 
-[cross contract call example]: https://github.com/stellar/soroban-examples/tree/v0.8.4/cross_contract_calls
+[cross contract call example]: https://github.com/stellar/soroban-examples/tree/v0.9.2/cross_contract_calls
 
 ## Run the Example
 
 First go through the [Setup] process to get your development environment
-configured, then clone the `v0.8.4` tag of `soroban-examples` repository:
+configured, then clone the `v0.9.2` tag of `soroban-examples` repository:
 
 [Setup]: ../getting-started/setup.mdx
 
 ```
-git clone -b v0.8.4 https://github.com/stellar/soroban-examples
+git clone -b v0.9.2 https://github.com/stellar/soroban-examples
 ```
 
 Or, skip the development environment setup and open this example in [Gitpod][oigp].
@@ -81,7 +81,7 @@ impl ContractB {
 }
 ```
 
-Ref: https://github.com/stellar/soroban-examples/tree/v0.8.4/cross_contract
+Ref: https://github.com/stellar/soroban-examples/tree/v0.9.2/cross_contract
 
 ## How it Works
 
@@ -170,8 +170,8 @@ Open the `cross_contract/contract_b/src/test.rs` file to follow along.
 fn test() {
     let env = Env::default();
 
-    // Register contract A using the imported WASM.
-    let contract_a_id = env.register_contract_wasm(None, contract_a::WASM);
+    // Register contract A using the imported Wasm.
+    let contract_a_id = env.register_contract_wasm(None, contract_a::Wasm);
 
     // Register contract B defined in this crate.
     let contract_b_id = env.register_contract(None, ContractB);
@@ -192,10 +192,10 @@ Soroban environment that the contract will run in.
 let env = Env::default();
 ```
 
-Contract A is registered with the environment using the imported WASM.
+Contract A is registered with the environment using the imported Wasm.
 
 ```rust
-let contract_a_id = env.register_contract_wasm(None, contract_a::WASM);
+let contract_a_id = env.register_contract_wasm(None, contract_a::Wasm);
 ```
 
 Contract B is registered with the environment using the contract type.
@@ -231,11 +231,11 @@ assert_eq!(sum, 12);
 
 ## Build the Contracts
 
-To build the contract into a `.wasm` file, use the `cargo build` command. Both
+To build the contract into a `.wasm` file, use the `soroban contract build` command. Both
 `contract_call/contract_a` and `contract_call/contract_b` must be built, with `contract_a` being built first.
 
 ```sh
-cargo build --target wasm32-unknown-unknown --release
+soroban contract build
 ```
 
 Both `.wasm` files should be found in both contract `target` directories after building

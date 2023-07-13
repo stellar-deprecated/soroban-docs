@@ -61,6 +61,12 @@ impl IncrementContract {
         // Save the count.
         env.storage().instance().set(&COUNTER, &count);
 
+        // The contract instance will be bumped to have a lifetime of at least 100 ledgers.
+        // If the lifetime is already more than 100 ledgers, this is a no-op. Otherwise,
+        // the lifetime is extended to 100 ledgers. This lifetime bump includes the contract
+        // instance itself and all entries in storage().instance(), i.e, COUNTER.
+        env.storage().instance().bump(100);
+
         // Return the count to the caller.
         count
     }
@@ -108,9 +114,8 @@ The `get()` function gets the current value associated with the counter key.
 let mut count: u32 = env
     .storage()
     .instance()
-    .get(COUNTER)
-    .unwrap_or(Ok(0)) // If no value set, assume 0.
-    .unwrap(); // Panic if the value of COUNTER is not u32.
+    .get(&COUNTER)
+    .unwrap_or(0); // If no value set, assume 0.
 ```
 
 If no value is currently stored, the value given to `unwrap_or(...)` is returned instead.
@@ -120,7 +125,7 @@ Values stored as contract data and retrieved are transmitted from the environmen
 The `set()` function stores the new count value against the key, replacing the existing value.
 
 ```rust
-env.storage().instance().set(COUNTER, count);
+env.storage().instance().set(&COUNTER, count);
 ```
 
 To access a given type of storage, use `Env.storage().persistent()`, `Env.storage().temporary()`, and `Env.storage().instance()`.
@@ -128,11 +133,11 @@ Each storage type is in a separate key space. To demonstrate this, see the code 
 
 ```rust
 const EXAMPLE_KEY: Symbol = Symbol::short("KEY");
-env.storage().persistent().set(EXAMPLE_KEY, 1);
-env.storage().temporary().set(EXAMPLE_KEY, 2);
+env.storage().persistent().set(&EXAMPLE_KEY, 1);
+env.storage().temporary().set(&EXAMPLE_KEY, 2);
 
-env.storage().persistent().get(EXAMPLE_KEY); // Returns Ok(1)
-env.storage().temporary().get(EXAMPLE_KEY); // Returns Ok(2)
+env.storage().persistent().get(&EXAMPLE_KEY); // Returns Ok(1)
+env.storage().temporary().get(&EXAMPLE_KEY); // Returns Ok(2)
 ```
 
 
@@ -142,11 +147,15 @@ The `Env.storage().storage_type().bump()` function is used to extend a contract 
 extends an entry's lifetime up to a given length of time, measured in ledgers.
 
 ```rust
-env.storage().instance().bump(COUNTER, 100);
+env.storage().instance().bump(100);
 ```
 
-This call to `bump()` ensures that the current lifetime of the `COUNTER` `Instance` entry is at least 100 ledgers. If this is called and the `COUNTER` `Instance` entry has a current lifetime of 50 ledgers,
-the lifetime will be extended up to 100 ledgers. If this is called and the `COUNTER` `Instance` entry has a current lifetime of 150 ledgers, the lifetime will not be extended and the `bump()` call is a no-op.
+This call to `bump()` ensures that the current lifetime of the contract instance entry is at least 100 ledgers. If this is called and the contract instance entry has a current lifetime of 50 ledgers,
+the lifetime will be extended up to 100 ledgers. If this is called and the contract instance entry has a current lifetime of 150 ledgers, the lifetime will not be extended and the `bump()` call is a no-op.
+
+All `Instance` storage is stored in a single contract instance `LedgerEntry` and shares a single lifetime. This means that one call to `Env.storage().instance().bump()` will extend the lifetime of all `Instance`
+entries, as well as the contract instance itself. For `Temporary` and `Persistent` storage, each entry has its own lifetime and must be bumped individually. The interface is slightly different and takes the key
+of the entry being bumped as well as the new lifetime.
 
 In addition to contract defined lifetime extensions using the `bump()` function, a contract data entry's lifetime can be extended via the [`BumpFootprintExpirationOp`] operation.
 

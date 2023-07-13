@@ -99,16 +99,16 @@ validator consensus.
 
 The current (Futurenet) limits are as follows:
 
-| Resource            | Limit      |
-|---------------------|------------|
-| CPU Instructions    | 40,000,000 |
-| RAM                 | 50 MB      |
-| Ledger Entry Reads  | 40         |
-| Ledger Entry Writes | 20         |
-| Ledger Read Bytes   | 200 KB     |
-| Ledger Write Bytes  | 100 KB     |
-| Transaction Size    | 100 KB     |
-| Metadata Size       | 200 KB     |
+| Resource            | Limit       |
+|---------------------|-------------|
+| CPU Instructions    | 100,000,000 |
+| RAM                 | 100 MB      |
+| Ledger Entry Reads  | 40          |
+| Ledger Entry Writes | 20          |
+| Ledger Read Bytes   | 200 KB      |
+| Ledger Write Bytes  | 100 KB      |
+| Transaction Size    | 100 KB      |
+| Metadata Size       | 200 KB      |
 
 Apart from these resource limits, there is also a maximum contract size limit 
 of 64 KB.
@@ -135,7 +135,7 @@ Execution of Wasm instructions is accounted for as a host cost type `WasmInsnExe
 
 :::
 
-For a complete list of host cost types and their definitions, please refer to [`ContractCostType`](https://github.com/stellar/stellar-xdr/blob/404c42e5fee3c2dd552ba4ed91bf02cfa86bb0d3/Stellar-contract-config-setting.x#L83-L129).
+For a complete list of host cost types and their definitions, please refer to [`ContractCostType`](https://github.com/stellar/stellar-xdr/blob/e372df9f677961aac04c5a4cc80a3667f310b29f/Stellar-contract-config-setting.x#L92-L155).
 
 ### Cost Parameters
 
@@ -145,7 +145,7 @@ The cost types are carefully selected to:
 
 Each cost type has a separate model for both resource types (CPU and memory).
 
-The parameters for each model, `a` and `b`, are calibrated and fitted offline against inputs of various sizes. The collection of all model cost parameters form the network configurable entries (see [ConfigSettingsEntry](https://github.com/stellar/stellar-xdr/blob/404c42e5fee3c2dd552ba4ed91bf02cfa86bb0d3/Stellar-contract-config-setting.x#L172C31-L175)), which can be updated through network consensus.
+The parameters for each model, `a` and `b`, are calibrated and fitted offline against inputs of various sizes. The collection of all model cost parameters form the network configurable entries (see [ConfigSettingsEntry](https://github.com/stellar/stellar-xdr/blob/e372df9f677961aac04c5a4cc80a3667f310b29f/Stellar-contract-config-setting.x#L223-L226)), which can be updated through network consensus.
 
 ### Metering Process
 Before contract execution, the host environment is prepared with the cost parameters and a budget defining the resource limits. Metering is then implemented to measure the cumulative resource consumption during host execution.

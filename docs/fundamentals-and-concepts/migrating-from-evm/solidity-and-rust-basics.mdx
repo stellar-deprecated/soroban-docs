@@ -138,7 +138,7 @@ The [Soroban Rust SDK](https://docs.rs/soroban-sdk/latest/soroban_sdk/index.html
 
   - (`Symbol::new`): small efficient strings up to 32 characters in length and requires an env to be passed in
 
-  - (`Symbol::short`) small efficient strings up to 9 characters in length
+  - (`symbol_short!`) small efficient strings up to 9 characters in length
 
   Both are limited to the characters `a-zA-Z0-9_` and are encoded into 64-bit integers.
 
@@ -168,7 +168,7 @@ let msg: &str = "Hello";
 String::from_slice(&env, msg)
 
 // Symbols (short and new)
-let symbol_short = Symbol::short("Sample"); // up to 9 chars
+let symbol_short = symbol_short!("Sample"); // up to 9 chars
 // env is &Env
 let symbol_new = Symbol::new(env, "SampleSymbolExpression");
 
@@ -304,7 +304,7 @@ Functions that are publicly accessible in the implementation are invocable by ot
 #[contractimpl]
 impl HelloContract {
     pub fn hello(env: Env, to: Symbol) -> Vec<Symbol> {
-        vec![&env, Symbol::short("Hello"), to]
+        vec![&env, symbol_short!("Hello"), to]
     }
 }
 ```
@@ -425,27 +425,24 @@ In this section, we'll create a Rust program that simulates the functionality of
 #![no_std]
 use soroban_sdk::{contractimpl, log, Env, Symbol};
 
-const COUNTER: Symbol = Symbol::short("COUNTER");
+const COUNTER: Symbol = symbol_short!("COUNTER");
 
+#[contract]
 pub struct IncrementContract;
 
 #[contractimpl]
 impl IncrementContract {
-    /// increment increments an internal counter, and returns the value.
+    /// Increment increments an internal counter, and returns the value.
     pub fn increment(env: Env) -> u32 {
         // Get the current count.
-        let mut count: u32 = env
-            .storage()
-            .get(&COUNTER)
-            .unwrap_or(Ok(0)) // If no value set, assume 0.
-            .unwrap(); // Extract the actual value from the `Ok` wrapper
+        let mut count: u32 = env.storage().instance().get(&COUNTER).unwrap_or(0); // If no value set, assume 0.
         log!(&env, "count: {}", count);
 
         // Increment the count.
         count += 1;
 
         // Save the count.
-        env.storage().set(&COUNTER, &count);
+        env.storage().instance().set(&COUNTER, &count);
 
         // Return the count to the caller.
         count
@@ -453,7 +450,7 @@ impl IncrementContract {
 
     /// get_count returns the current value of the counter.
     pub fn get_count(env: Env) -> u32 {
-        env.storage().get(&COUNTER).unwrap_or(Ok(0)).unwrap()
+        env.storage().instance().get(&COUNTER).unwrap_or(0)
     }
 }
 ```
@@ -475,12 +472,13 @@ use soroban_sdk::{contractimpl, log, Env, Symbol};
 This code imports necessary items from the Soroban Rust SDK for writing a smart contract. The `contractimpl` [macro](https://doc.rust-lang.org/book/ch19-06-macros.html) is used to implement the smart contract, while the `log` macro is used for logging messages. The `Env` struct represents the environment the contract is executing in, and the `Symbol` type is a small, efficient string type.
 
 ```rust
-const COUNTER: Symbol = Symbol::short("COUNTER");
+const COUNTER: Symbol = symbol_short!("COUNTER");
 ```
 
 This creates a new `Symbol` value with the string "COUNTER". The constant `COUNTER` is then used as a key to identify the count value stored in the contract `storage`.
 
 ```rust
+#[contract]
 pub struct IncrementContract;
 ```
 
@@ -502,10 +500,10 @@ pub fn increment(env: Env) -> u32 {}
 This is a public function called `increment` that takes an `Env` struct as an argument and returns a `u32`. `Env` is the environment the contract is executing in, and `u32` is the type of value returned by the function.
 
 ```rust
-let mut count: u32 = env.storage().get(&COUNTER).unwrap_or(Ok(0)).unwrap(); // If no value set, assume 0.
+let mut count: u32 = env.storage().instance().get(&COUNTER).unwrap_or(0)); // If no value set, assume 0.
 ```
 
-In this line of code, a mutable variable named `count` of type unsigned 32-bit integer (`u32`) is being created. The storage environment is accessed using `env.storage()`, and the value associated with the key `COUNTER` is retrieved using the `get` method. If there is no value set for the key `COUNTER`, a default value of 0 is used. Finally, the `unwrap()` method is called to extract the actual value from the `Ok` wrapper, which is then assigned to the `count` variable.
+In this line of code, a mutable variable named `count` of type unsigned 32-bit integer (`u32`) is being created. The storage environment is accessed using `env.storage()`, and the value associated with the key `COUNTER` is retrieved using the `get` method. If there is no value set for the key `COUNTER`, a default value of 0 is used.
 
 ```rust
 log!(&env, "count: {}", count);
@@ -520,7 +518,7 @@ count += 1;
 This increments the count by 1.
 
 ```rust
-env.storage().set(&COUNTER, &count);
+env.storage().instance().set(&COUNTER, &count);
 ```
 
 This saves the updated count back to the contract storage using the `set` method on the storage object.
@@ -538,7 +536,7 @@ pub fn get_count(env: Env) -> u32 {}
 This is a public function called `get_count` that takes an `Env` struct as an argument and returns a `u32`. Once more we see the `Env` which is the environment the contract is executing in, and `u32` as the type of the value returned by the function.
 
 ```rust
-env.storage().get(&COUNTER).unwrap_or(Ok(0)).unwrap()
+env.storage().instance().get(&COUNTER).unwrap_or(0)
 ```
 
 This is a repeat of the code we saw earlier, which retrieves the value associated with the key `COUNTER` from the contract storage. If there is no value set for the key `COUNTER`, a default value of 0 is used. Finally, the `unwrap()` method is called to extract the actual value from the `Ok` wrapper, which is then returned to the caller of the function.
@@ -577,10 +575,10 @@ crate-type = ["cdylib"]
 testutils = ["soroban-sdk/testutils"]
 
 [dependencies]
-soroban-sdk = "0.8.4"
+soroban-sdk = "0.9.2"
 
 [dev_dependencies]
-soroban-sdk = { version = "0.8.4", features = ["testutils"] }
+soroban-sdk = { version = "0.9.2", features = ["testutils"] }
 
 [profile.release]
 opt-level = "z"
@@ -599,11 +597,11 @@ debug-assertions = true
 
 > _Note_: For a detailed explanation of the `Cargo.toml` configuration used in this tutorial, check out the [Hello World Example](../../getting-started/hello-world#import-soroban-sdk-and-features).
 
-Next, build the project using the `cargo build` command.
+Next, build the project using the `soroban contract build` command.
 
 ```bash
 cd increment
-cargo build --target wasm32-unknown-unknown --release
+soroban contract build
 ```
 
 The compiled contract will be located in the `target/wasm32-unknown-unknown/release` directory.

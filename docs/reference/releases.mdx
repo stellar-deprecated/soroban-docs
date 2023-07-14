@@ -16,6 +16,119 @@ Preview releases are software releases that are also released to the [Futurenet]
 
 [Futurenet]: futurenet
 
+## Preview 10 (July 13, 2023)
+
+### Software
+
+| Software | Version |
+| --- | --- |
+| XDR | [e372df9f677961aac04c5a4cc80a3667f310b29f](https://github.com/stellar/stellar-xdr/commit/e372df9f677961aac04c5a4cc80a3667f310b29f) |
+| Soroban Environment | `v0.0.17` |
+| Soroban Interface Version | `51` |
+| Stellar Core | `19.11.1-1373.875f47e24.focal~soroban` |
+| Soroban Rust SDK | `v0.9.2` |
+| Soroban CLI | `v0.9.1` |
+| Soroban RPC | `v0.9.1` |
+| Stellar Horizon | `stellar-horizon:2.26.0~soroban-370` |
+| Stellar Friendbot | `soroban-v0.0.2-alpha` |
+| Stellar Quickstart | `stellar/quickstart:soroban-dev@sha256:ed57f7a7683e3568ae401f5c6e93341a9f77d8ad41191bf752944d7898981e0c` |
+| Stellar JS Stellar Base | `10.0.0-soroban.3` |
+| Stellar JS Soroban Client | `0.9.1` |
+| Freighter | `5.0.1` |
+| Laboratory | `2.10.0` |
+| Futurenet Network Passphrase | `Test SDF Future Network ; October 2022` |
+
+### Changelog
+
+#### XDR
+
+- Remove TransactionResultV2 
+- Regenerate for overhaul of error codes 
+- Bump xdr 
+- Bump XDR 
+- Update for state-expiration XDR changes 
+- Update rust-version 
+- Bump XDR 
+- Regenerate for new crypto cost types 
+- Bump XDR 
+- Bump op 
+- Generate for storage type removal 
+- Drop ContractCostType::VerifyEcdsaSecp256k1Sig 
+- Update next to pickup int256 cost types 
+- Regenerate rename 
+- Regenerate for typo 
+- Bump xdr with contract instance storage changes 
+- Regenerate for removal of ScVal::StorageType 
+- Regenerate for RestoreFootprintOp 
+- Generate rename 
+- Update crate-git-revision 
+
+#### Soroban Environment
+
+- Move a bunch of code out of host, reorg modules slightly.
+- Remove temp storage, fixes #758
+- Bump xdr
+- Anti features
+- Err reform
+- Some further cleanups to diagnostic events
+- Bump xdr
+- Enforce AUTH_REVOCABLE on contract balances
+- Implement PRNG subsystem (round 2)
+- Remove incorrect debug_assert from ed25519_pub_key_from_bytes
+- Support Auth Next for host fns
+- Bump xdr
+- Update rust-version
+- Switch to wasmi native fuel metering
+- Fix get_authenticated_authorizations test utility.
+- Change authentication contract errors to be auth errors.
+- Improve VmInstantiation calibration
+- Update storage interface for state expiration
+- Update README.md
+- Implement contract expiration bumps
+- Calibrate wasmi fuel and tiered wasm instructions
+- Bump env XDR
+- Implement `TryFrom<&Error>` for ScVal
+- Provide host function for authorizing deep contract calls from current contract
+- Switch auth from autoincrement nonces to temporary random values.
+- Fix metering for internal events
+- Return strings for name/symbol and use strkey for issuer.
+- Remove Mergeable and rename Exclusive to Persistent
+- Add secp256k1 and keccak256 host functions
+- Add host functions for returning contract ids
+- Fix comparisons
+- Rename rawval to val
+- Enforce readonly footprint on bump
+- Add host functions for {u,i}256 arithmetics
+- More raw to val
+- Support Timepoint, Duration
+- Bump xdr
+- Check map order when rebuilding from exact iter
+- Updates for contract instance related XDR changes.
+- Change StorageType to Just Be An Enum
+- Bump xdr for RestoreFootprintOp
+- Bump xdr for rename
+- Add host function for bumping contract instance
+- Implement contract instance storage in Soroban host.
+- Change [IU]256 arithmetic host functions to take *Val not *Object.
+- Replace increase and decrease functions with approve
+- Expose bumps
+- Fix calibration tests
+- Change [IU]256 [from,to]_bytes functions to work with Val
+- Bump wasmi version
+
+#### Soroban Rust SDK
+
+- Fix storage comment
+- Noop in instance bump for tests
+
+#### Soroban RPC
+
+- Update js-soroban-client dependency from 0.9.0 to 0.9.1
+
+#### Soroban CLI
+
+- Update js-soroban-client dependency from 0.9.0 to 0.9.1
+
 ## Preview 9 (May 24th, 2023)
 
 ### Software

@@ -27,9 +27,9 @@ The Soroban environment is under active development and no API compatibility gua
 
 ### Host Functions
 
-The host functions defined in [env.json] are functions callable from within the WASM Guest environment. These need to be available to contracts to call, in some form, ideally wrapped so that contracts have a nicer interface.
+The host functions defined in [env.json] are functions callable from within the Wasm Guest environment. These need to be available to contracts to call, in some form, ideally wrapped so that contracts have a nicer interface.
 
-Host functions have friendly names in the file above, such as `get_ledger_version`, however in the WASM they are only importable via short names, such as `x.4`. The letter proceeding the dot is the module, and the value after the dot is the function name. The mappins are available in env.rs.
+Host functions have friendly names in the file above, such as `get_ledger_version`, however in the Wasm they are only importable via short names, such as `x.4`. The letter proceeding the dot is the module, and the value after the dot is the function name. The mappins are available in env.rs.
 
 ### SDK Types
 
@@ -65,15 +65,15 @@ Errors are `u32` values that are translated into a [Status].
 
 ### Environment Meta Generation
 
-Contracts must contain a WASM custom section with name `contractenvmetav0` and containing a serialized [`SCEnvMetaEntry`]. The interface version stored within should match the version of the host functions supported.
+Contracts must contain a Wasm custom section with name `contractenvmetav0` and containing a serialized [`SCEnvMetaEntry`]. The interface version stored within should match the version of the host functions supported.
 
 ### Contract Spec Generation
 
-Contracts should contain a WASM custom section with name `contractspecv0` and containing a serialized stream of [`SCSpecEntry`]. There should be a `SCSpecEntry` for every function, struct, and union exported by the contract.
+Contracts should contain a Wasm custom section with name `contractspecv0` and containing a serialized stream of [`SCSpecEntry`]. There should be a `SCSpecEntry` for every function, struct, and union exported by the contract.
 
 ### Contract Meta Generation
 
-Contracts may optionally contain a WASM custom section with name `contractmetav0` and containing a serialized [`SCMetaEntry`]. Contracts may store any metadata in the entries that can be used by applications and tooling off-network.
+Contracts may optionally contain a Wasm custom section with name `contractmetav0` and containing a serialized [`SCMetaEntry`]. Contracts may store any metadata in the entries that can be used by applications and tooling off-network.
 
 ## Testing
 

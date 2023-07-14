@@ -114,7 +114,7 @@ const config = {
           //   position: 'right',
           // },
           {
-            href: 'https://github.com/stellar/soroban-docs',
+            href: 'https://github.com/stellar/rs-soroban-sdk',
             label: 'GitHub',
             position: 'right',
           },
@@ -171,7 +171,7 @@ const config = {
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/stellar',
+                href: 'https://github.com/stellar/soroban-docs',
               },
               {
                 label: 'Developer Blog',

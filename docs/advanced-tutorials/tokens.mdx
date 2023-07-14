@@ -12,17 +12,17 @@ the [Token Interface].
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
 
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.8.4
-[token example]: https://github.com/stellar/soroban-examples/tree/v0.8.4/token
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.9.2
+[token example]: https://github.com/stellar/soroban-examples/tree/v0.9.2/token
 [Token Interface]: ../reference/interfaces/token-interface.mdx
 
 ## Run the Example
 
 First go through the [Setup] process to get your development environment
-configured, then clone the `v0.8.4` tag of `soroban-examples` repository:
+configured, then clone the `v0.9.2` tag of `soroban-examples` repository:
 
 ```bash
-git clone -b v0.8.4 https://github.com/stellar/soroban-examples
+git clone -b v0.9.2 https://github.com/stellar/soroban-examples
 ```
 
 Or, skip the development environment setup and open this example in
@@ -84,21 +84,21 @@ pub use crate::contract::TokenClient;
 
 ```rust title="token/src/admin.rs"
 use crate::storage_types::DataKey;
-use soroban_sdk::{Address, Env};
+use soroban_sdk::{Address, Env, symbol_short};
 
 pub fn has_administrator(e: &Env) -> bool {
     let key = DataKey::Admin;
-    e.storage().has(&key)
+    e.storage().instance().has(&key)
 }
 
 pub fn read_administrator(e: &Env) -> Address {
     let key = DataKey::Admin;
-    e.storage().get_unchecked(&key).unwrap()
+    e.storage().instance().get(&key).unwrap()
 }
 
 pub fn write_administrator(e: &Env, id: &Address) {
     let key = DataKey::Admin;
-    e.storage().set(&key, id);
+    e.storage().instance().set(&key, id);
 }
 ```
 
@@ -106,29 +106,69 @@ pub fn write_administrator(e: &Env, id: &Address) {
 <TabItem value="allowance">
 
 ```rust title="token/src/allowance.rs"
-use crate::storage_types::{AllowanceDataKey, DataKey};
+use crate::storage_types::{AllowanceDataKey, AllowanceValue, DataKey};
 use soroban_sdk::{Address, Env};
 
-pub fn read_allowance(e: &Env, from: Address, spender: Address) -> i128 {
+pub fn read_allowance(e: &Env, from: Address, spender: Address) -> AllowanceValue {
     let key = DataKey::Allowance(AllowanceDataKey { from, spender });
-    if let Some(allowance) = e.storage().get(&key) {
-        allowance.unwrap()
+    if let Some(allowance) = e.storage().temporary().get::<_, AllowanceValue>(&key) {
+        if allowance.expiration_ledger < e.ledger().sequence() {
+            AllowanceValue {
+                amount: 0,
+                expiration_ledger: allowance.expiration_ledger,
+            }
+        } else {
+            allowance
+        }
     } else {
-        0
+        AllowanceValue {
+            amount: 0,
+            expiration_ledger: 0,
+        }
     }
 }
 
-pub fn write_allowance(e: &Env, from: Address, spender: Address, amount: i128) {
+pub fn write_allowance(
+    e: &Env,
+    from: Address,
+    spender: Address,
+    amount: i128,
+    expiration_ledger: u32,
+) {
+    let allowance = AllowanceValue {
+        amount,
+        expiration_ledger,
+    };
+
+    if amount > 0 && expiration_ledger < e.ledger().sequence() {
+        panic!("expiration_ledger is less than ledger seq when amount > 0")
+    }
+
     let key = DataKey::Allowance(AllowanceDataKey { from, spender });
-    e.storage().set(&key, &amount);
+    e.storage().temporary().set(&key.clone(), &allowance);
+
+    if amount > 0 {
+        e.storage().temporary().bump(
+            &key,
+            expiration_ledger
+                .checked_sub(e.ledger().sequence())
+                .unwrap(),
+        )
+    }
 }
 
 pub fn spend_allowance(e: &Env, from: Address, spender: Address, amount: i128) {
     let allowance = read_allowance(e, from.clone(), spender.clone());
-    if allowance < amount {
+    if allowance.amount < amount {
         panic!("insufficient allowance");
     }
-    write_allowance(e, from, spender, allowance - amount);
+    write_allowance(
+        e,
+        from,
+        spender,
+        allowance.amount - amount,
+        allowance.expiration_ledger,
+    );
 }
 ```
 
@@ -141,8 +181,8 @@ use soroban_sdk::{Address, Env};
 
 pub fn read_balance(e: &Env, addr: Address) -> i128 {
     let key = DataKey::Balance(addr);
-    if let Some(balance) = e.storage().get(&key) {
-        balance.unwrap()
+    if let Some(balance) = e.storage().persistent().get::<DataKey, i128>(&key) {
+        balance
     } else {
         0
     }
@@ -150,7 +190,7 @@ pub fn read_balance(e: &Env, addr: Address) -> i128 {
 
 fn write_balance(e: &Env, addr: Address, amount: i128) {
     let key = DataKey::Balance(addr);
-    e.storage().set(&key, &amount);
+    e.storage().persistent().set(&key, &amount);
 }
 
 pub fn receive_balance(e: &Env, addr: Address, amount: i128) {
@@ -174,8 +214,8 @@ pub fn spend_balance(e: &Env, addr: Address, amount: i128) {
 
 pub fn is_authorized(e: &Env, addr: Address) -> bool {
     let key = DataKey::State(addr);
-    if let Some(state) = e.storage().get(&key) {
-        state.unwrap()
+    if let Some(state) = e.storage().persistent().get::<DataKey, bool>(&key) {
+        state
     } else {
         true
     }
@@ -183,7 +223,7 @@ pub fn is_authorized(e: &Env, addr: Address) -> bool {
 
 pub fn write_authorization(e: &Env, addr: Address, is_authorized: bool) {
     let key = DataKey::State(addr);
-    e.storage().set(&key, &is_authorized);
+    e.storage().persistent().set(&key, &is_authorized);
 }
 ```
 
@@ -199,17 +239,15 @@ use crate::balance::{is_authorized, write_authorization};
 use crate::balance::{read_balance, receive_balance, spend_balance};
 use crate::event;
 use crate::metadata::{read_decimal, read_name, read_symbol, write_metadata};
-use soroban_sdk::{contractimpl, Address, Bytes, Env};
+use soroban_sdk::{contractimpl, Address, String, Env};
 use soroban_token_sdk::TokenMetadata;
 
 pub trait TokenTrait {
-    fn initialize(e: Env, admin: Address, decimal: u32, name: Bytes, symbol: Bytes);
+    fn initialize(e: Env, admin: Address, decimal: u32, name: String, symbol: String);
 
     fn allowance(e: Env, from: Address, spender: Address) -> i128;
 
-    fn increase_allowance(e: Env, from: Address, spender: Address, amount: i128);
-
-    fn decrease_allowance(e: Env, from: Address, spender: Address, amount: i128);
+    fn approve(e: Env, from: Address, spender: Address, amount: i128, expiration_ledger: u32);
 
     fn balance(e: Env, id: Address) -> i128;
 
@@ -235,9 +273,9 @@ pub trait TokenTrait {
 
     fn decimals(e: Env) -> u32;
 
-    fn name(e: Env) -> Bytes;
+    fn name(e: Env) -> String;
 
-    fn symbol(e: Env) -> Bytes;
+    fn symbol(e: Env) -> String;
 }
 
 fn check_nonnegative_amount(amount: i128) {
@@ -246,11 +284,12 @@ fn check_nonnegative_amount(amount: i128) {
     }
 }
 
+#[contract]
 pub struct Token;
 
 #[contractimpl]
 impl TokenTrait for Token {
-    fn initialize(e: Env, admin: Address, decimal: u32, name: Bytes, symbol: Bytes) {
+    fn initialize(e: Env, admin: Address, decimal: u32, name: String, symbol: String) {
         if has_administrator(&e) {
             panic!("already initialized")
         }
@@ -273,32 +312,13 @@ impl TokenTrait for Token {
         read_allowance(&e, from, spender)
     }
 
-    fn increase_allowance(e: Env, from: Address, spender: Address, amount: i128) {
+    fn approve(e: Env, from: Address, spender: Address, amount: i128, expiration_ledger: u32) {
         from.require_auth();
 
         check_nonnegative_amount(amount);
 
-        let allowance = read_allowance(&e, from.clone(), spender.clone());
-        let new_allowance = allowance
-            .checked_add(amount)
-            .expect("Updated allowance doesn't fit in an i128");
-
-        write_allowance(&e, from.clone(), spender.clone(), new_allowance);
-        event::increase_allowance(&e, from, spender, amount);
-    }
-
-    fn decrease_allowance(e: Env, from: Address, spender: Address, amount: i128) {
-        from.require_auth();
-
-        check_nonnegative_amount(amount);
-
-        let allowance = read_allowance(&e, from.clone(), spender.clone());
-        if amount >= allowance {
-            write_allowance(&e, from.clone(), spender.clone(), 0);
-        } else {
-            write_allowance(&e, from.clone(), spender.clone(), allowance - amount);
-        }
-        event::decrease_allowance(&e, from, spender, amount);
+        write_allowance(&e, from.clone(), spender.clone(), amount, expiration_ledger);
+        event::approve(&e, from, spender, amount, expiration_ledger);
     }
 
     fn balance(e: Env, id: Address) -> i128 {
@@ -397,30 +417,25 @@ impl TokenTrait for Token {
 <TabItem value="event">
 
 ```rust title="token/src/event.rs"
-use soroban_sdk::{Address, Env, Symbol};
+use soroban_sdk::{Address, Env, Symbol, symbol_short};
 
-pub(crate) fn increase_allowance(e: &Env, from: Address, to: Address, amount: i128) {
-    let topics = (Symbol::new(e, "increase_allowance"), from, to);
-    e.events().publish(topics, amount);
-}
-
-pub(crate) fn decrease_allowance(e: &Env, from: Address, to: Address, amount: i128) {
-    let topics = (Symbol::new(e, "decrease_allowance"), from, to);
-    e.events().publish(topics, amount);
+pub(crate) fn approve(e: &Env, from: Address, to: Address, amount: i128, expiration_ledger: u32) {
+    let topics = (Symbol::new(e, "approve"), from, to);
+    e.events().publish(topics, (amount, expiration_ledger));
 }
 
 pub(crate) fn transfer(e: &Env, from: Address, to: Address, amount: i128) {
-    let topics = (Symbol::short("transfer"), from, to);
+    let topics = (symbol_short!("transfer"), from, to);
     e.events().publish(topics, amount);
 }
 
 pub(crate) fn mint(e: &Env, admin: Address, to: Address, amount: i128) {
-    let topics = (Symbol::short("mint"), admin, to);
+    let topics = (symbol_short!("mint"), admin, to);
     e.events().publish(topics, amount);
 }
 
 pub(crate) fn clawback(e: &Env, admin: Address, from: Address, amount: i128) {
-    let topics = (Symbol::short("clawback"), admin, from);
+    let topics = (symbol_short!("clawback"), admin, from);
     e.events().publish(topics, amount);
 }
 
@@ -430,12 +445,12 @@ pub(crate) fn set_authorized(e: &Env, admin: Address, id: Address, authorize: bo
 }
 
 pub(crate) fn set_admin(e: &Env, admin: Address, new_admin: Address) {
-    let topics = (Symbol::short("set_admin"), admin);
+    let topics = (symbol_short!("set_admin"), admin);
     e.events().publish(topics, new_admin);
 }
 
 pub(crate) fn burn(e: &Env, from: Address, amount: i128) {
-    let topics = (Symbol::short("burn"), from);
+    let topics = (symbol_short!("burn"), from);
     e.events().publish(topics, amount);
 }
 ```
@@ -481,6 +496,12 @@ pub struct AllowanceDataKey {
     pub spender: Address,
 }
 
+#[contracttype]
+pub struct AllowanceValue {
+    pub amount: i128,
+    pub expiration_ledger: u32,
+}
+
 #[derive(Clone)]
 #[contracttype]
 pub enum DataKey {
@@ -495,7 +516,7 @@ pub enum DataKey {
 </TabItem>
 </Tabs>
 
-Ref: https://github.com/stellar/soroban-examples/tree/v0.8.4/token
+Ref: https://github.com/stellar/soroban-examples/tree/v0.9.2/token
 
 ## How it Works
 
@@ -535,7 +556,7 @@ event whenever the token is minted:
 
 ```rust
 pub(crate) fn mint(e: &Env, admin: Address, to: Address, amount: i128) {
-    let topics = (Symbol::short("mint"), admin, to);
+    let topics = (symbol_short!("mint"), admin, to);
     e.events().publish(topics, amount);
 }
 ```
@@ -672,23 +693,33 @@ fn test() {
     token.mint(&user1, &1000);
     assert_eq!(
         e.auths(),
-        [(
+        std::vec![(
             admin1.clone(),
-            token.address.clone(),
-            Symbol::short("mint"),
-            (&user1, 1000_i128).into_val(&e),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    token.address.clone(),
+                    symbol_short!("mint"),
+                    (&user1, 1000_i128).into_val(&e),
+                )),
+                sub_invocations: std::vec![]
+            }
         )]
     );
     assert_eq!(token.balance(&user1), 1000);
 
-    token.increase_allowance(&user2, &user3, &500);
+    token.approve(&user2, &user3, &500, &200);
     assert_eq!(
         e.auths(),
-        [(
+        std::vec![(
             user2.clone(),
-            token.address.clone(),
-            Symbol::new(&e, "increase_allowance"),
-            (&user2, &user3, 500_i128).into_val(&e),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    token.address.clone(),
+                    symbol_short!("approve"),
+                    (&user2, &user3, 500_i128, 200_u32).into_val(&e),
+                )),
+                sub_invocations: std::vec![]
+            }
         )]
     );
     assert_eq!(token.allowance(&user2, &user3), 500);
@@ -696,11 +727,16 @@ fn test() {
     token.transfer(&user1, &user2, &600);
     assert_eq!(
         e.auths(),
-        [(
+        std::vec![(
             user1.clone(),
-            token.address.clone(),
-            Symbol::short("transfer"),
-            (&user1, &user2, 600_i128).into_val(&e),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    token.address.clone(),
+                    symbol_short!("transfer"),
+                    (&user1, &user2, 600_i128).into_val(&e),
+                )),
+                sub_invocations: std::vec![]
+            }
         )]
     );
     assert_eq!(token.balance(&user1), 400);
@@ -709,11 +745,16 @@ fn test() {
     token.transfer_from(&user3, &user2, &user1, &400);
     assert_eq!(
         e.auths(),
-        [(
+        std::vec![(
             user3.clone(),
-            token.address.clone(),
-            Symbol::new(&e, "transfer_from"),
-            (&user3, &user2, &user1, 400_i128).into_val(&e),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    token.address.clone(),
+                    Symbol::new(&e, "transfer_from"),
+                    (&user3, &user2, &user1, 400_i128).into_val(&e),
+                )),
+                sub_invocations: std::vec![]
+            }
         )]
     );
     assert_eq!(token.balance(&user1), 800);
@@ -726,22 +767,32 @@ fn test() {
     token.set_admin(&admin2);
     assert_eq!(
         e.auths(),
-        [(
+        std::vec![(
             admin1.clone(),
-            token.address.clone(),
-            Symbol::short("set_admin"),
-            (&admin2,).into_val(&e),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    token.address.clone(),
+                    symbol_short!("set_admin"),
+                    (&admin2,).into_val(&e),
+                )),
+                sub_invocations: std::vec![]
+            }
         )]
     );
 
     token.set_authorized(&user2, &false);
     assert_eq!(
         e.auths(),
-        [(
+        std::vec![(
             admin2.clone(),
-            token.address.clone(),
-            Symbol::new(&e, "set_authorized"),
-            (&user2, false).into_val(&e),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    token.address.clone(),
+                    Symbol::new(&e, "set_authorized"),
+                    (&user2, false).into_val(&e),
+                )),
+                sub_invocations: std::vec![]
+            }
         )]
     );
     assert_eq!(token.authorized(&user2), false);
@@ -752,26 +803,36 @@ fn test() {
     token.clawback(&user3, &100);
     assert_eq!(
         e.auths(),
-        [(
+        std::vec![(
             admin2.clone(),
-            token.address.clone(),
-            Symbol::short("clawback"),
-            (&user3, 100_i128).into_val(&e),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    token.address.clone(),
+                    symbol_short!("clawback"),
+                    (&user3, 100_i128).into_val(&e),
+                )),
+                sub_invocations: std::vec![]
+            }
         )]
     );
     assert_eq!(token.balance(&user3), 200);
 
-    // Increase by 400, with an existing 100 = 500
-    token.increase_allowance(&user2, &user3, &400);
+    // Set allowance to 500
+    token.approve(&user2, &user3, &500, &200);
     assert_eq!(token.allowance(&user2, &user3), 500);
-    token.decrease_allowance(&user2, &user3, &501);
+    token.approve(&user2, &user3, &0, &200);
     assert_eq!(
         e.auths(),
-        [(
+        std::vec![(
             user2.clone(),
-            token.address.clone(),
-            Symbol::new(&e, "decrease_allowance"),
-            (&user2, &user3, 501_i128).into_val(&e),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    token.address.clone(),
+                    symbol_short!("approve"),
+                    (&user2, &user3, 0_i128, 200_u32).into_val(&e),
+                )),
+                sub_invocations: std::vec![]
+            }
         )]
     );
     assert_eq!(token.allowance(&user2, &user3), 0);
@@ -790,19 +851,25 @@ fn test_burn() {
     token.mint(&user1, &1000);
     assert_eq!(token.balance(&user1), 1000);
 
-    token.increase_allowance(&user1, &user2, &500);
+    token.approve(&user1, &user2, &500, &200);
     assert_eq!(token.allowance(&user1, &user2), 500);
 
     token.burn_from(&user2, &user1, &500);
     assert_eq!(
         e.auths(),
-        [(
+        std::vec![(
             user2.clone(),
-            token.address.clone(),
-            Symbol::short("burn_from"),
-            (&user2, &user1, 500_i128).into_val(&e),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    token.address.clone(),
+                    symbol_short!("burn_from"),
+                    (&user2, &user1, 500_i128).into_val(&e),
+                )),
+                sub_invocations: std::vec![]
+            }
         )]
     );
+
     assert_eq!(token.allowance(&user1, &user2), 0);
     assert_eq!(token.balance(&user1), 500);
     assert_eq!(token.balance(&user2), 0);
@@ -810,13 +877,19 @@ fn test_burn() {
     token.burn(&user1, &500);
     assert_eq!(
         e.auths(),
-        [(
+        std::vec![(
             user1.clone(),
-            token.address.clone(),
-            Symbol::short("burn"),
-            (&user1, 500_i128).into_val(&e),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    token.address.clone(),
+                    symbol_short!("burn"),
+                    (&user1, 500_i128).into_val(&e),
+                )),
+                sub_invocations: std::vec![]
+            }
         )]
     );
+
     assert_eq!(token.balance(&user1), 0);
     assert_eq!(token.balance(&user2), 0);
 }
@@ -889,7 +962,7 @@ fn transfer_from_insufficient_allowance() {
     token.mint(&user1, &1000);
     assert_eq!(token.balance(&user1), 1000);
 
-    token.increase_allowance(&user1, &user3, &100);
+    token.approve(&user1, &user3, &100, &200);
     assert_eq!(token.allowance(&user1, &user3), 100);
 
     token.transfer_from(&user3, &user1, &user2, &101);
@@ -985,10 +1058,10 @@ conditions and ensure the contract responds appropriately to each one:
 
 ## Build the Contract
 
-To build the contract, use the `cargo build` command.
+To build the contract, use the `soroban contract build` command.
 
 ```bash
-cargo build --target wasm32-unknown-unknown --release
+soroban contract build
 ```
 
 A `.wasm` file should be outputted in the `target` directory:

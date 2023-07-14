@@ -10,7 +10,7 @@ When setting up an example Soroban Dapp, correct initialization is crucial. This
 
 ## Building and Deploying the Soroban Token Smart Contract
 
-In dapps like the Soroban Payment Dapp, the Soroban Token smart contracts are used to represent the tokenized asset that users can send and receive. Here is an example of how to build and deploy the Soroban Token smart contracts:
+In dapps like the [Example Payment Dapp](https://github.com/stellar/soroban-react-payment/), the [Soroban Token smart contracts](https://github.com/stellar/soroban-examples/tree/main/token) are used to represent the tokenized asset that users can send and receive. Here is an example of how to build and deploy the Soroban Token smart contracts:
 
 Start by cloning the Soroban examples repository:
 
@@ -18,10 +18,10 @@ Start by cloning the Soroban examples repository:
 git clone https://github.com/stellar/soroban-examples.git
 ```
 
-Then, navigate to the `soroban-token` directory:
+Then, navigate to the `token` directory:
 
 ```shell
-cd soroban-examples/soroban-token
+cd soroban-examples/token
 ```
 
 At this point you can build the smart contract:
@@ -90,11 +90,11 @@ This command will mint 100 tokens to the designated user's account.
 
 By following these steps, you ensure that the Soroban token smart contracts are correctly deployed and initialized, setting the stage for the Dapp to effectively interact with the token.
 
-For a deeper dive into Soroban CLI commands, check out the Soroban CLI repo.
+For a deeper dive into Soroban CLI commands, check out the [Soroban CLI repo](https://github.com/stellar/soroban-tools/tree/main/cmd/soroban-cli/src/commands).
 
 ## Automating Initialization with
 
-To streamline the initialization process, the example Soroban dapps use an `initialize.sh` script. This script automates various tasks such as setting up the network, wrapping Stellar assets, generating token-admin identities, funding the token-admin account, building and deploying the contracts, and initializing them with necessary parameters.
+To streamline the initialization process, you can use a script. This script should automate various tasks such as setting up the network, wrapping Stellar assets, generating token-admin identities, funding the token-admin account, building and deploying the contracts, and initializing them with necessary parameters.
 
 Here's an example initializer script:
 

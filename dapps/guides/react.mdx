@@ -4,9 +4,7 @@ title: React
 description: Learn about the frontend for the example Crowdfund Dapp.
 ---
 
-## Example Frontend Overview
-
-This section elaborates on how the frontends from our example dapps can interact with the example contracts and access chain data, and connect to a freighter. This will be accomplished by utilizing libraries provided by [`@soroban-react`](https://soroban-react.gitbook.io/index/), a simple, powerful framework for building modern Soroban Dapps using React created by a member of the Soroban community.
+This section elaborates on how the frontends from our example dapps can interact with the example contracts and access chain data, and connect to a freighter. This will be il;lustrated by utilizing libraries provided by [`@soroban-react`](https://soroban-react.gitbook.io/index/), a simple, powerful framework for building modern Soroban Dapps using React created by a member of the Soroban community.
 
 Below is a list of the libraries used throughout the frontend code and their respective imports:
 
@@ -92,6 +90,7 @@ function MintButton({
 `useNetwork` provides the active chain and the server, and `useSendTransaction` gives us the `sendTransaction` method, which we'll later use to mint tokens. This way, we can keep the component focused on rendering and event handling logic, making it easier to test and maintain.
 
 ## Asynchronous Processing and Robust Error Handling
+
 When dealing with operations that might take an unpredictable amount of time, like network requests or, in our case, minting tokens on the blockchain, React's support for asynchronous operations is crucial. This allows the execution of the rest of the code without being blocked by these operations.
 
 Let's dive into the code snippet that handles the asynchronous minting process:
@@ -110,7 +109,7 @@ try {
           destination: walletSource.accountId(),
           asset: new SorobanClient.Asset(symbol, Constants.TokenAdmin),
           amount: amount.toString(),
-        })
+        }),
       )
       .build(),
     {
@@ -118,7 +117,7 @@ try {
       skipAddingFootprint: true,
       secretKey: Constants.TokenAdminSecretKey,
       sorobanContext,
-    }
+    },
   );
   console.debug(paymentResult);
   sorobanContext.connect();
@@ -136,10 +135,9 @@ The `sendTransaction` method accepts two arguments: a `TransactionBuilder` insta
 
 If the transaction is successful, `paymentResult` contains the result, which we log for debugging purposes. If an error occurs during the transaction, the function throws an error, which we catch and log.
 
-
 ## Wallet Integration: Freighter
 
-Freighter is a browser extension that allows users to securely store their Stellar accounts and sign transactions. It's a convenient way to manage your Stellar accounts and interact with the Stellar network.
+[Freighter](https://www.freighter.app/) is a browser extension that allows users to securely store their Stellar accounts and sign transactions. It's a convenient way to manage your Stellar accounts and interact with the Stellar network.
 
 In the sample Crowdfund dapp, the `WalletData` component, located in `components/molecules/wallet-data/index.tsx`, plays a key role in wallet integration. Let's break down the code and understand its functionality:
 

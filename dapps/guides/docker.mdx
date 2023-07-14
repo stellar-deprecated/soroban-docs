@@ -6,7 +6,7 @@ description: Explore how to use Docker to build and run Soroban Dapps.
 
 # What is Docker?
 
-Welcome to the world of Docker, an essential tool for software development. Docker packages software into units known as containers, ensuring consistency, isolation, portability, and scalability.
+Welcome to the world of [Docker](https://www.docker.com/), an essential tool for software development. Docker packages software into units known as containers, ensuring consistency, isolation, portability, and scalability.
 
 Docker is particularly useful in dapp development. It helps manage microservices, maintain consistent environments throughout development stages, and simulate a decentralized network during testing.
 
@@ -16,9 +16,11 @@ Understanding Docker begins with understanding Docker images and containers. A D
 
 You can create a Docker image using the docker build command with a Dockerfile. Once the image is created, you can run a Docker container using the docker run command.
 
-In the context of the example Crowdfund Dapp, understanding how to build Docker images is crucial. The Docker images serves as the basis for our container, which provide the environment for our dapp to run.
+In the context of the example Soroban dapps, understanding how to build Docker images is crucial. The Docker images serves as the basis for our container, which provide the environment for our dapp to run.
 
-To build our Docker image, we use a command encapsulated in our `Makefile`:
+Heres an example from our example
+
+To illustrate the process, let's take an example from our [Example Crowdfund Dapp](https://github.com/stellar/soroban-example-dapp/tree/main). In order to build the Docker image, we utilize a command that is encapsulated within our Makefile:
 
 ```bash
 make build-docker
@@ -61,7 +63,7 @@ Guarantees the removal of the intermediate container, even if the build fails. B
 
 ## Container Deployment
 
-To streamline the deployment process, we use a `quickstart.sh` script. This script is a wrapper for the `stellar/quickstart` Docker image, which provides a quick way to run a Stellar network. You can find an example of the `quickstart.sh` script located in the root directory of the Crowdfund Dapp.
+You can streamline the deployment process by using a script to run the Docker container. The following is script is a wrapper for the `stellar/quickstart` Docker image, which provides a quick way to run a Stellar network. You can find an example of the `quickstart.sh` script located in the root directory of the Example Crowdfund Dapp.
 
 #### quickstart.sh
 

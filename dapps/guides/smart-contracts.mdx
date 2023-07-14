@@ -6,7 +6,7 @@ description: Learn about the smart contracts from the Soroban Dapps Challenge.
 
 ## Crowdfund Example
 
-The example crowdfunding smart contract, written in Rust and using the Soroban SDK, is a template for creating a crowdfunding dapp. Users can deposit tokens into the contract until a target amount is reached or a deadline expires. If the target is met, the recipient can withdraw the tokens. If the deadline passes without the target being met, donors can reclaim their tokens.
+The [example crowdfunding smart contract](https://github.com/stellar/soroban-example-dapp/blob/main/contracts/crowdfund/src/lib.rs), written in Rust and using the Soroban SDK, is a template for creating a crowdfunding dapp. Users can deposit tokens into the contract until a target amount is reached or a deadline expires. If the target is met, the recipient can withdraw the tokens. If the deadline passes without the target being met, donors can reclaim their tokens.
 
 Here's a breakdown of the contract's key functions:
 
@@ -458,6 +458,7 @@ fn sale_successful_recipient_withdraws_only_once() {
         .withdraw(&setup.recipient);
 }
 ```
+
 ## Conclusion
 
 Congratulations! You've successfully learned how to create a crowdfunding smart contract using the Soroban SDK. You can now use this knowledge to create your own crowdfunding dapp. If you have any questions, feel free to reach out to us on [Discord](https://discord.com/channels/897514728459468821/900373252420030465)!

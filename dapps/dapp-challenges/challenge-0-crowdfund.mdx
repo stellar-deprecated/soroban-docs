@@ -23,25 +23,25 @@ Start by installing the required dependencies.
 
 Required:
 
-- `soroban-cli v0.8.0`: [Download Soroban](https://soroban.stellar.org/docs/getting-started/setup#install-the-soroban-cli)
+- `soroban-cli alias`: [Download Soroban Alias](https://github.com/stellar/soroban-example-dapp#install-dependencies)
 - `docker` (both Standalone and Futurenet backends require it): [Download Docker](https://www.docker.com/products/docker-desktop)
-- `Node` v17: [Download Node](https://nodejs.org/en/download/)
+- `Node` v18: [Download Node](https://nodejs.org/en/download/)
 - `Freighter Wallet`: [Freighter Wallet](https://freighter.app/)
 
-Clone the soroban example dapp repo:
+Ensure that you have the Soroban-cli alias installed by running the following command:
+
+```sh
+cargo install_soroban
+```
+
+Then, Clone the soroban example dapp repo:
 
 ```sh
 git clone https://github.com/stellar/soroban-example-dapp
 cd soroban-example-dapp
 ```
 
-Install the project dependencies:
-
-```sh
-npm install
-```
-
-Then, build the soroban-preview docker image:
+Next, build the soroban-preview docker image:
 
 ```sh
 make build-docker
@@ -68,7 +68,7 @@ In another terminal, load the contracts and initialize them.
 Use your own local soroban-cli:
 
 ```sh
-./initialize.sh standalone
+NETWORK=standalone npm run setup
 ```
 
 Or run it inside the soroban-preview docker container:
@@ -84,7 +84,7 @@ If the command ran successfully, it will return a Contract ID. Take note of this
 First, start the development server:
 
 ```sh
-yarn dev
+npm run dev
 ```
 
 Now open your browser and visit http://localhost:3000. You should be able to see the frontend of your dapp.

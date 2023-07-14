@@ -148,6 +148,7 @@ use soroban_sdk::{contractimpl, Env};
 
 extern crate alloc;
 
+#[contract]
 pub struct AllocContract;
 
 #[contractimpl]
@@ -181,7 +182,7 @@ Below is a function from the [`event.rs`](https://github.com/stellar/soroban-exa
 use soroban_sdk::{Address, Env, Symbol};
 ...
 pub(crate) fn mint(e: &Env, admin: Address, to: Address, amount: i128) {
-    let topics = (Symbol::short("mint"), admin, to);
+    let topics = (symbol_short!("mint"), admin, to);
     e.events().publish(topics, amount);
 }
 ```
@@ -235,6 +236,7 @@ fn mint(e: Env, to: Address, amount: i128);
 }
 
 // struct logic
+#[contract]
 pub struct Token;
 
 // impl logic
@@ -321,6 +323,7 @@ pub trait MathContract {
     fn add(&self, env: Env, a: u32, b: u32) -> u32;
 }
 
+#[contract]
 pub struct Adder;
 
 impl MathContract for Adder {
@@ -552,8 +555,8 @@ See the example below for implementations of `env.storage()` and `clone()`
 use soroban_sdk::{Env, Symbol};
 
     pub fn set_storage(env: Env) {
-        let key = Symbol::short("key");
-        let value = Symbol::short("value");
+        let key = symbol_short!("key");
+        let value = symbol_short!("value");
         env.storage().persistent().set(&key, &value);
 }
 ```
@@ -647,6 +650,7 @@ Here is an example of a smart contract that illustrates how contracts can be ret
 #![no_std]
 use soroban_sdk::{contractimpl, log, Address, Env, Symbol};
 
+#[contract]
 pub struct SimpleContract;
 
 #[contractimpl]
@@ -736,6 +740,7 @@ mod outer {
     }
 }
 
+#[contract]
 pub struct NewContract;
  trait OuterTrait {
     fn get_all_fields() -> u32;
@@ -793,6 +798,7 @@ Here is an example of a smart contract that illustrates how time-based variables
 #![no_std]
 use soroban_sdk::{contractimpl, Address, Env};
 
+#[contract]
 pub struct SimpleContract;
 
 #[contractimpl]
@@ -868,6 +874,7 @@ Here is an example of a smart contract that illustrates how authorization is han
 #![no_std]
 use soroban_sdk::{contractimpl, testutils::Address as _, Address, Symbol, Env, IntoVal};
 
+#[contract]
 pub struct Contract;
 
 #[contractimpl]

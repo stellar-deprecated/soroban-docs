@@ -99,7 +99,7 @@ Topics are conveniently defined using a tuple. In the sample code two topics of
 `Symbol` type are used.
 
 ```rust
-env.events().publish((COUNTER, Symbol::short("increment")), ...);
+env.events().publish((COUNTER, symbol_short!("increment")), ...);
 ```
 
 :::tip
@@ -128,7 +128,7 @@ limit) and running over the resource budget (TBD). Once successfully published,
 the new event will be available to applications consuming the events.
 
 ```rust
-env.events().publish((COUNTER, Symbol::short("increment")), count);
+env.events().publish((COUNTER, symbol_short!("increment")), count);
 ```
 
 :::caution
@@ -159,17 +159,17 @@ fn test() {
             &env,
             (
                 contract_id.clone(),
-                (Symbol::short("COUNTER"), Symbol::short("increment")).into_val(&env),
+                (symbol_short!("COUNTER"), symbol_short!("increment")).into_val(&env),
                 1u32.into_val(&env)
             ),
             (
                 contract_id.clone(),
-                (Symbol::short("COUNTER"), Symbol::short("increment")).into_val(&env),
+                (symbol_short!("COUNTER"), symbol_short!("increment")).into_val(&env),
                 2u32.into_val(&env)
             ),
             (
                 contract_id,
-                (Symbol::short("COUNTER"), Symbol::short("increment")).into_val(&env),
+                (symbol_short!("COUNTER"), symbol_short!("increment")).into_val(&env),
                 3u32.into_val(&env)
             ),
         ]
@@ -215,7 +215,7 @@ assert_eq!(
         &env,
         (
             contract_id.clone(),
-            (Symbol::short("COUNTER"), Symbol::short("increment")).into_val(&env),
+            (symbol_short!("COUNTER"), symbol_short!("increment")).into_val(&env),
             1u32.into_val(&env)
         ),
         // ...

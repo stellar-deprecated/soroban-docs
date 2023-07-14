@@ -53,6 +53,7 @@ test test::test ... ok
 ## Code
 
 ```rust title="cross_contract/contract_a/src/lib.rs"
+#[contract]
 pub struct ContractA;
 
 #[contractimpl]
@@ -70,6 +71,7 @@ mod contract_a {
     );
 }
 
+#[contract]
 pub struct ContractB;
 
 #[contractimpl]
@@ -110,6 +112,7 @@ The contract to be called is Contract A. It is a simple contract that accepts
 `x` and `y` parameters, adds them together and returns the result.
 
 ```rust title="cross_contract/contract_a/src/lib.rs"
+#[contract]
 pub struct ContractA;
 
 #[contractimpl]
@@ -150,6 +153,7 @@ mod contract_a {
     );
 }
 
+#[contract]
 pub struct ContractB;
 
 #[contractimpl]

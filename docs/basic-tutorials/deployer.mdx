@@ -49,6 +49,7 @@ test test::test ... ok
 ## Code
 
 ```rust title="deployer/deployer/src/lib.rs"
+#[contract]
 pub struct Deployer;
 
 #[contractimpl]
@@ -160,7 +161,7 @@ fn test() {
 
     // Deploy contract using deployer, and include an init function to call.
     let salt = BytesN::from_array(&env, &[0; 32]);
-    let init_fn = Symbol::short("init");
+    let init_fn = symbol_short!("init");
     let init_fn_args = (5u32,).into_val(&env);
     let (contract_id, init_result) = client.deploy(&salt, &wasm_hash, &init_fn, &init_fn_args);
     assert!(init_result.is_void());
@@ -191,7 +192,7 @@ to be retrieved from another function.
 #[contract]
 pub struct Contract;
 
-const KEY: Symbol = Symbol::short("value");
+const KEY: Symbol = symbol_short!("value");
 
 #[contractimpl]
 impl Contract {

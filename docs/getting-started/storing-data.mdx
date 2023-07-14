@@ -135,7 +135,7 @@ To access a given type of storage, use `Env.storage().persistent()`, `Env.storag
 Each storage type is in a separate key space. To demonstrate this, see the code snippet below:
 
 ```rust
-const EXAMPLE_KEY: Symbol = Symbol::short("KEY");
+const EXAMPLE_KEY: Symbol = symbol_short!("KEY");
 env.storage().persistent().set(&EXAMPLE_KEY, 1);
 env.storage().temporary().set(&EXAMPLE_KEY, 2);
 

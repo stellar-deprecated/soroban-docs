@@ -7,7 +7,7 @@ interface CardProps {
 
 export function ChallengeCard() {
   const redirectToChallenges = () => {
-    window.location.href = "/dapps/category/dapp-challenges";
+    window.location.href = "/dapps/category/challenges";
   };
   return (
     <div className={styles.card}>

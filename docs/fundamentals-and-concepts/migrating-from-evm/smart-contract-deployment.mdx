@@ -294,7 +294,8 @@ mod test;
 mod token;
 
 use soroban_sdk::{
-    contractimpl, contractmeta, Address, Bytes, BytesN, ConversionError, Env, RawVal, TryFromVal,
+    contract, contractimpl, contractmeta, Address, BytesN, ConversionError, Env, IntoVal,
+    TryFromVal, Val,
 };
 use token::create_contract;
 
@@ -307,7 +308,7 @@ pub enum DataKey {
     Reserve = 3,
 }
 
-impl TryFromVal<Env, DataKey> for RawVal {
+impl TryFromVal<Env, DataKey> for Val {
     type Error = ConversionError;
 
     fn try_from_val(_env: &Env, v: &DataKey) -> Result<Self, Self::Error> {
@@ -376,14 +377,6 @@ fn mint_shares(e: &Env, to: Address, amount: i128) {
     put_total_shares(e, total + amount);
 }
 
-fn transfer(e: &Env, token: Address, to: Address, amount: i128) {
-    token::Client::new(e, &token).transfer(&e.current_contract_address(), &to, &amount);
-}
-
-fn transfer_token(e: &Env, to: Address, amount: i128) {
-    transfer(e, get_token(e), to, amount);
-}
-
 // Metadata that is added on to the Wasm custom section
 contractmeta!(
     key = "Description",
@@ -409,18 +402,18 @@ pub trait VaultTrait {
 
     fn get_rsrvs(e: Env) -> i128;
 }
-
+#[contract]
 struct Vault;
 
 #[contractimpl]
 impl VaultTrait for Vault {
     fn initialize(e: Env, token_wasm_hash: BytesN<32>, token: Address) {
-        let share_contract_id = create_contract(&e, &token_wasm_hash, &token);
+        let share_contract_id = create_contract(&e, token_wasm_hash, &token);
         token::Client::new(&e, &share_contract_id).initialize(
             &e.current_contract_address(),
             &7u32,
-            &Bytes::from_slice(&e, b"Vault Share Token"),
-            &Bytes::from_slice(&e, b"Vault"),
+            &"Vault Share Token".into_val(&e),
+            &"VST".into_val(&e),
         );
 
         put_token(&e, token);
@@ -485,7 +478,11 @@ extern crate std;
 
 use crate::{token, VaultClient};
 
-use soroban_sdk::{testutils::Address as _, Address, BytesN, Env, IntoVal, Symbol};
+use soroban_sdk::{
+    symbol_short,
+    testutils::{Address as _, AuthorizedFunction, AuthorizedInvocation},
+    Address, BytesN, Env, IntoVal,
+};
 
 fn create_token_contract<'a>(e: &Env, admin: &Address) -> token::Client<'a> {
     token::Client::new(e, &e.register_stellar_asset_contract(admin.clone()))
@@ -503,7 +500,7 @@ fn create_vault_contract<'a>(
 
 fn install_token_wasm(e: &Env) -> BytesN<32> {
     soroban_sdk::contractimport!(file = "./soroban_token_contract.wasm");
-    e.install_contract_wasm(Wasm)
+    e.deployer().upload_contract_wasm(WASM)
 }
 
 #[test]
@@ -516,12 +513,12 @@ fn test() {
     let token = create_token_contract(&e, &admin1);
 
     let user1 = Address::random(&e);
-    
+
     let vault = create_vault_contract(&e, &install_token_wasm(&e), &token.address);
 
-    let contract_share: &Address = &vault.share_id();
+    let contract_share = token::Client::new(&e, &vault.share_id());
 
-    let token_share = token::Client::new(&e, &contract_share);
+    let token_share = token::Client::new(&e, &contract_share.address);
 
     token.mint(&user1, &200);
     assert_eq!(token.balance(&user1), 200);
@@ -531,20 +528,24 @@ fn test() {
     vault.deposit(&user1, &100);
     assert_eq!(
         e.auths(),
-        [
-            (
-                user1.clone(),
-                vault.address.clone(),
-                symbol_short!("deposit"),
-                (&user1, 100_i128).into_val(&e)
-            ),
-            (
-                user1.clone(),
-                token.address.clone(),
-                symbol_short!("transfer"),
-                (&user1, &vault.address, 100_i128).into_val(&e)
-            ),
-        ]
+        std::vec![(
+            user1.clone(),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    vault.address.clone(),
+                    symbol_short!("deposit"),
+                    (&user1, 100_i128).into_val(&e)
+                )),
+                sub_invocations: std::vec![AuthorizedInvocation {
+                    function: AuthorizedFunction::Contract((
+                        token.address.clone(),
+                        symbol_short!("transfer"),
+                        (&user1, &vault.address, 100_i128).into_val(&e)
+                    )),
+                    sub_invocations: std::vec![]
+                }]
+            }
+        )]
     );
 
     assert_eq!(token_share.balance(&user1), 100);
@@ -552,34 +553,38 @@ fn test() {
     assert_eq!(token.balance(&user1), 100);
     assert_eq!(token.balance(&vault.address), 200);
 
+    e.budget().reset_unlimited();
     vault.withdraw(&user1, &100);
     assert_eq!(
         e.auths(),
-        [
-            (
-                user1.clone(),
-                vault.address.clone(),
-                symbol_short!("withdraw"),
-                (&user1, 100_i128).into_val(&e)
-            ),
-            (
-                user1.clone(),
-                token_share.address.clone(),
-                symbol_short!("transfer"),
-                (&user1, &vault.address, 100_i128).into_val(&e)
-            ),
-        ]
+        std::vec![(
+            user1.clone(),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    vault.address.clone(),
+                    symbol_short!("withdraw"),
+                    (&user1, 100_i128).into_val(&e)
+                )),
+                sub_invocations: std::vec![AuthorizedInvocation {
+                    function: AuthorizedFunction::Contract((
+                        token_share.address.clone(),
+                        symbol_short!("transfer"),
+                        (&user1, &vault.address, 100_i128).into_val(&e)
+                    )),
+                    sub_invocations: std::vec![]
+                }]
+            }
+        )]
     );
-
     assert_eq!(token.balance(&user1), 201);
     assert_eq!(token_share.balance(&user1), 0);
     assert_eq!(token.balance(&vault.address), 99);
     assert_eq!(token_share.balance(&vault.address), 0);
 }
 ```
-
 </TabItem>
-<TabItem value="token.rs" label="src/token.rs" default>
+
+<TabItem value="token.rs" label="src/token.rs">
 
 ```rust
 #![allow(unused)]
@@ -587,12 +592,12 @@ use soroban_sdk::{xdr::ToXdr, Address, Bytes, BytesN, Env};
 
 soroban_sdk::contractimport!(file = "./soroban_token_contract.wasm");
 
-pub fn create_contract(e: &Env, token_wasm_hash: &BytesN<32>, token: &Address) -> Address {
+pub fn create_contract(e: &Env, token_wasm_hash: BytesN<32>, token: &Address) -> Address {
     let mut salt = Bytes::new(e);
     salt.append(&token.to_xdr(e));
     let salt = e.crypto().sha256(&salt);
     e.deployer()
-        .with_current_contract(&salt)
+        .with_current_contract(salt)
         .deploy(token_wasm_hash)
 }
 ```
@@ -610,11 +615,12 @@ use crate::balance::{is_authorized, write_authorization};
 use crate::balance::{read_balance, receive_balance, spend_balance};
 use crate::event;
 use crate::metadata::{read_decimal, read_name, read_symbol, write_metadata};
-use soroban_sdk::{contractimpl, Address, Bytes, Env};
+use crate::storage_types::INSTANCE_BUMP_AMOUNT;
+use soroban_sdk::{contract, contractimpl, Address, Env, String};
 use soroban_token_sdk::TokenMetadata;
 
 pub trait TokenTrait {
-    fn initialize(e: Env, admin: Address, decimal: u32, name: Bytes, symbol: Bytes);
+    fn initialize(e: Env, admin: Address, decimal: u32, name: String, symbol: String);
 
     fn allowance(e: Env, from: Address, spender: Address) -> i128;
 
@@ -644,9 +650,9 @@ pub trait TokenTrait {
 
     fn decimals(e: Env) -> u32;
 
-    fn name(e: Env) -> Bytes;
+    fn name(e: Env) -> String;
 
-    fn symbol(e: Env) -> Bytes;
+    fn symbol(e: Env) -> String;
 }
 
 fn check_nonnegative_amount(amount: i128) {
@@ -660,7 +666,7 @@ pub struct Token;
 
 #[contractimpl]
 impl TokenTrait for Token {
-    fn initialize(e: Env, admin: Address, decimal: u32, name: Bytes, symbol: Bytes) {
+    fn initialize(e: Env, admin: Address, decimal: u32, name: String, symbol: String) {
         if has_administrator(&e) {
             panic!("already initialized")
         }
@@ -680,7 +686,8 @@ impl TokenTrait for Token {
     }
 
     fn allowance(e: Env, from: Address, spender: Address) -> i128 {
-        read_allowance(&e, from, spender)
+        e.storage().instance().bump(INSTANCE_BUMP_AMOUNT);
+        read_allowance(&e, from, spender).amount
     }
 
     fn approve(e: Env, from: Address, spender: Address, amount: i128, expiration_ledger: u32) {
@@ -688,19 +695,24 @@ impl TokenTrait for Token {
 
         check_nonnegative_amount(amount);
 
+        e.storage().instance().bump(INSTANCE_BUMP_AMOUNT);
+
         write_allowance(&e, from.clone(), spender.clone(), amount, expiration_ledger);
         event::approve(&e, from, spender, amount, expiration_ledger);
     }
 
     fn balance(e: Env, id: Address) -> i128 {
+        e.storage().instance().bump(INSTANCE_BUMP_AMOUNT);
         read_balance(&e, id)
     }
 
     fn spendable_balance(e: Env, id: Address) -> i128 {
+        e.storage().instance().bump(INSTANCE_BUMP_AMOUNT);
         read_balance(&e, id)
     }
 
     fn authorized(e: Env, id: Address) -> bool {
+        e.storage().instance().bump(INSTANCE_BUMP_AMOUNT);
         is_authorized(&e, id)
     }
 
@@ -708,6 +720,9 @@ impl TokenTrait for Token {
         from.require_auth();
 
         check_nonnegative_amount(amount);
+
+        e.storage().instance().bump(INSTANCE_BUMP_AMOUNT);
+
         spend_balance(&e, from.clone(), amount);
         receive_balance(&e, to.clone(), amount);
         event::transfer(&e, from, to, amount);
@@ -717,6 +732,9 @@ impl TokenTrait for Token {
         spender.require_auth();
 
         check_nonnegative_amount(amount);
+
+        e.storage().instance().bump(INSTANCE_BUMP_AMOUNT);
+
         spend_allowance(&e, from.clone(), spender, amount);
         spend_balance(&e, from.clone(), amount);
         receive_balance(&e, to.clone(), amount);
@@ -727,6 +745,9 @@ impl TokenTrait for Token {
         from.require_auth();
 
         check_nonnegative_amount(amount);
+
+        e.storage().instance().bump(INSTANCE_BUMP_AMOUNT);
+
         spend_balance(&e, from.clone(), amount);
         event::burn(&e, from, amount);
     }
@@ -735,6 +756,9 @@ impl TokenTrait for Token {
         spender.require_auth();
 
         check_nonnegative_amount(amount);
+
+        e.storage().instance().bump(INSTANCE_BUMP_AMOUNT);
+
         spend_allowance(&e, from.clone(), spender, amount);
         spend_balance(&e, from.clone(), amount);
         event::burn(&e, from, amount)
@@ -744,6 +768,9 @@ impl TokenTrait for Token {
         check_nonnegative_amount(amount);
         let admin = read_administrator(&e);
         admin.require_auth();
+
+        e.storage().instance().bump(INSTANCE_BUMP_AMOUNT);
+
         spend_balance(&e, from.clone(), amount);
         event::clawback(&e, admin, from, amount);
     }
@@ -751,6 +778,9 @@ impl TokenTrait for Token {
     fn set_authorized(e: Env, id: Address, authorize: bool) {
         let admin = read_administrator(&e);
         admin.require_auth();
+
+        e.storage().instance().bump(INSTANCE_BUMP_AMOUNT);
+
         write_authorization(&e, id.clone(), authorize);
         event::set_authorized(&e, admin, id, authorize);
     }
@@ -759,6 +789,9 @@ impl TokenTrait for Token {
         check_nonnegative_amount(amount);
         let admin = read_administrator(&e);
         admin.require_auth();
+
+        e.storage().instance().bump(INSTANCE_BUMP_AMOUNT);
+
         receive_balance(&e, to.clone(), amount);
         event::mint(&e, admin, to, amount);
     }
@@ -766,6 +799,9 @@ impl TokenTrait for Token {
     fn set_admin(e: Env, new_admin: Address) {
         let admin = read_administrator(&e);
         admin.require_auth();
+
+        e.storage().instance().bump(INSTANCE_BUMP_AMOUNT);
+
         write_administrator(&e, &new_admin);
         event::set_admin(&e, admin, new_admin);
     }
@@ -774,11 +810,11 @@ impl TokenTrait for Token {
         read_decimal(&e)
     }
 
-    fn name(e: Env) -> Bytes {
+    fn name(e: Env) -> String {
         read_name(&e)
     }
 
-    fn symbol(e: Env) -> Bytes {
+    fn symbol(e: Env) -> String {
         read_symbol(&e)
     }
 }

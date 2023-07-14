@@ -157,7 +157,7 @@ use soroban_sdk::{contract, contractimpl, symbol_short, vec, Env, Symbol, Vec};
 
 The contract will need to import the types and macros that it needs from the `soroban-sdk` crate. Take a look at [Create a Project](#create-new-project) to see how to setup a project.
 
-Many of the types available in typical Rust programs, such as `std::vec::Vec`, are not available, as there is no allocator and no heap memory in Soroban contracts. The `soroban-sdk` provides a variety of types like `Vec`, `Map`, `Bytes`, `BytesN`, `Symbol`, that all utilize the Soroban environment's memory and native capabilities. Primitive values like `u128`, `i128`, `u64`, `i64`, `u32`, `i32`, and `bool` can also be used. Floats and floating point math are not supported.  
+Many of the types available in typical Rust programs, such as `std::vec::Vec`, are not available, as there is no allocator and no heap memory in Soroban contracts. The `soroban-sdk` provides a variety of types like `Vec`, `Map`, `Bytes`, `BytesN`, `Symbol`, that all utilize the Soroban environment's memory and native capabilities. Primitive values like `u128`, `i128`, `u64`, `i64`, `u32`, `i32`, and `bool` can also be used. Floats and floating point math are not supported.
 
 Contract inputs must not be references.
 
@@ -171,6 +171,7 @@ impl Contract {
     }
 }
 ```
+
 The `#[contract]` attribute designates the Contract struct as the type to which contract functions are associated. This implies that the struct will have contract functions implemented for it. Contract functions are defined within an `impl` block for the struct, which is annotated with `#[contractimpl]`. It is important to note that contract functions should have names with a maximum length of 32 characters. Additionally, if a function is intended to be invoked from outside the contract, it should be marked with the `pub` visibility modifier. It is common for the first argument of a contract function to be of type `Env`, allowing access to a copy of the Soroban environment, which is typically necessary for various operations within the contract.
 
 Putting those pieces together a simple contract will look like this.

@@ -293,7 +293,6 @@ To interact with the token contract, we'll use a built in interface that you can
 mod test;
 mod token;
 
-use num_integer::Roots;
 use soroban_sdk::{
     contract, contractimpl, contractmeta, Address, BytesN, ConversionError, Env, IntoVal,
     TryFromVal, Val,
@@ -376,14 +375,6 @@ fn mint_shares(e: &Env, to: Address, amount: i128) {
     token::Client::new(e, &share_contract_id).mint(&to, &amount);
 
     put_total_shares(e, total + amount);
-}
-
-fn transfer(e: &Env, token: Address, to: Address, amount: i128) {
-    token::Client::new(e, &token).transfer(&e.current_contract_address(), &to, &amount);
-}
-
-fn transfer_token(e: &Env, to: Address, amount: i128) {
-    transfer(e, get_token(e), to, amount);
 }
 
 // Metadata that is added on to the Wasm custom section

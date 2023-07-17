@@ -19,7 +19,7 @@ interface Course {
 
 const fetchCourses = async (address: string): Promise<Course[]> => {
   try {
-    const response = await fetch("https://dapp-wrangler.julian-martinez.workers.dev/");
+    const response = await fetch("https://dapp-wrangler.sdf-ecosystem.workers.dev");
     const rawData = await response.json();
     const data: Course[] = rawData.map(({ publickey, url }: { publickey: string, url: string }) => {
       const [key, index] = publickey.split(':');

@@ -24,7 +24,7 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
 
     try {
       const response = await fetch(
-        "https://dapp-wrangler.julian-martinez.workers.dev/",
+        "https://dapp-wrangler.sdf-ecosystem.workers.dev",
         {
           method: "POST",
           headers: {

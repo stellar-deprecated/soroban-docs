@@ -4,7 +4,7 @@ title: React
 description: Learn about the frontend for the example Crowdfund Dapp.
 ---
 
-This section elaborates on how the frontends from our example dapps can interact with the example contracts and access chain data, and connect to a freighter. This will be il;lustrated by utilizing libraries provided by [`@soroban-react`](https://soroban-react.gitbook.io/index/), a simple, powerful framework for building modern Soroban Dapps using React created by a member of the Soroban community.
+This section elaborates on how the frontends from your dapp can interact with the example contracts and access chain data, and connect to a freighter wallet. This will be illustrated by utilizing libraries provided by [`@soroban-react`](https://soroban-react.gitbook.io/index/), a simple, powerful framework for building modern Soroban Dapps using React created by a member of the Soroban community.
 
 Below is a list of the libraries used throughout the frontend code and their respective imports:
 
@@ -21,7 +21,7 @@ import type {
 import { useSorobanReact } from "@soroban-react/core";
 ```
 
-These imports include `SorobanReactProvider` from `@soroban-react/core`, which is a context provider used to pass the SorobanReact instance to other components. We also import several types such as `WalletChain`, `ChainMetadata`, and `ChainName`, which help to maintain type safety within our application.
+These imports include `SorobanReactProvider` from `@soroban-react/core`, which is a context provider used to pass the SorobanReact instance to other components. You also import several types such as `WalletChain`, `ChainMetadata`, and `ChainName`, which help to maintain type safety within our application.
 
 ## React Components and Prop Passing
 
@@ -67,7 +67,7 @@ React hooks are functions that let you “hook into” React state and lifecycle
 
 The `useNetwork` hook is utilized to interact with the blockchain network, and the `useSendTransaction` hook is used to dispatch transactions. These hooks abstract away complex logic, making it easier to read and understand the main component code.
 
-Here's how we use these hooks in the `MintButton` component:
+Here's how you use these hooks in the `MintButton` component:
 
 ```tsx
 function MintButton({
@@ -87,7 +87,7 @@ function MintButton({
 }
 ```
 
-`useNetwork` provides the active chain and the server, and `useSendTransaction` gives us the `sendTransaction` method, which we'll later use to mint tokens. This way, we can keep the component focused on rendering and event handling logic, making it easier to test and maintain.
+`useNetwork` provides the active chain and the server, and `useSendTransaction` gives us the `sendTransaction` method, which you'll later use to mint tokens. This way, you can keep the component focused on rendering and event handling logic, making it easier to test and maintain.
 
 ## Asynchronous Processing and Robust Error Handling
 
@@ -127,13 +127,13 @@ try {
 }
 ```
 
-This block is where the actual token minting occurs. It's wrapped in a `try-catch` block, ensuring that any errors during the minting process are caught and handled appropriately, preventing the application from crashing and giving us a chance to provide feedback to the user.
+This block is where the actual token minting occurs. It's wrapped in a `try-catch` block, ensuring that any errors during the minting process are caught and handled appropriately, preventing the application from crashing and giving you a chance to provide feedback to the user.
 
 The `await` keyword pauses the execution of the function until the promise returned by `sendTransaction` resolves. `sendTransaction` is a function obtained from our `useSendTransaction` hook, and it builds and sends a payment operation to the Stellar network.
 
 The `sendTransaction` method accepts two arguments: a `TransactionBuilder` instance and an options object. The `TransactionBuilder` sets up the details of the transaction, such as the source account, network passphrase, transaction fee, and operations to be performed—in this case, a payment operation.
 
-If the transaction is successful, `paymentResult` contains the result, which we log for debugging purposes. If an error occurs during the transaction, the function throws an error, which we catch and log.
+If the transaction is successful, `paymentResult` contains the result, which you log for debugging purposes. If an error occurs during the transaction, the function throws an error, which you catch and log.
 
 ## Wallet Integration: Freighter
 
@@ -205,6 +205,6 @@ Here's a breakdown of the code:
 
 ## Conclusion
 
-React offers a host of concepts that can drastically improve your web development process. By understanding and utilizing these concepts—such as components, prop passing, state management, asynchronous operations, and error handling—you can create scalable, maintainable, and efficient applications.
+React offers a host of high-level concepts that can drastically improve your web development process. By understanding and utilizing these concepts—such as components, prop passing, state management, asynchronous operations, and error handling—you can create scalable, maintainable, and efficient applications.
 
 Remember, the key to mastering React is practice. So, keep building and experimenting!

@@ -25,7 +25,7 @@ The XDR of `HostFunction` and `InvokeHostFunctionOp` below can be found
 
 [XDR]: https://github.com/stellar/stellar-xdr/blob/e372df9f677961aac04c5a4cc80a3667f310b29f/Stellar-transaction.x#L581
 
-```c++
+```cpp
 union HostFunction switch (HostFunctionType type)
 {
 case HOST_FUNCTION_TYPE_INVOKE_CONTRACT:
@@ -63,33 +63,33 @@ The `hostFunction` in `InvokeHostFunctionOp` will be executed by the Soroban hos
    `executable`. The 32-byte contract identifer is based on `contractIDPreimage`
    value and the network identifier (so every network has a separate contract
    identifier namespace).
-        ```c++
-        struct CreateContractArgs
-        {
-            ContractIDPreimage contractIDPreimage;
-            ContractExecutable executable;
-        };
-        ```
+    ```cpp
+    struct CreateContractArgs
+    {
+        ContractIDPreimage contractIDPreimage;
+        ContractExecutable executable;
+    };
+    ```
    - `executable` can be either a SHA-256 hash of the previously uploaded Wasm
    or it can specify that a built-in contract has to be used:
-        ```c++
-        enum ContractExecutableType
-        {
-            CONTRACT_EXECUTABLE_WASM = 0,
-            CONTRACT_EXECUTABLE_TOKEN = 1 
-        };
+    ```cpp
+    enum ContractExecutableType
+    {
+        CONTRACT_EXECUTABLE_WASM = 0,
+        CONTRACT_EXECUTABLE_TOKEN = 1 
+    };
 
-        union ContractExecutable switch (ContractExecutableType type)
-        {
-        case CONTRACT_EXECUTABLE_WASM:
-            Hash wasm_hash;
-        case CONTRACT_EXECUTABLE_TOKEN:
-            void;
-        };
-        ```
+    union ContractExecutable switch (ContractExecutableType type)
+    {
+    case CONTRACT_EXECUTABLE_WASM:
+        Hash wasm_hash;
+    case CONTRACT_EXECUTABLE_TOKEN:
+        void;
+    };
+    ```
 
     - `contractIDPreimage` is defined as following:
-        ```c++
+        ```cpp
         union ContractIDPreimage switch (ContractIDPreimageType type)
         {
         case CONTRACT_ID_PREIMAGE_FROM_ADDRESS:
@@ -107,7 +107,7 @@ The `hostFunction` in `InvokeHostFunctionOp` will be executed by the Soroban hos
 
         [`HashIDPreimage`]: https://github.com/stellar/stellar-xdr/blob/e372df9f677961aac04c5a4cc80a3667f310b29f/Stellar-transaction.x#L697
 
-        ```c++
+        ```cpp
         union HashIDPreimage switch (EnvelopeType type)
         {
         ...
@@ -133,7 +133,7 @@ Soroban [authorization framework](../fundamentals-and-concepts/authorization.mdx
 provides a standardized way for passing authorization data to the contract 
 invocations via `SorobanAuthorizationEntry` structures.
 
-```c++
+```cpp
 struct SorobanAuthorizationEntry
 {
     SorobanCredentials credentials;
@@ -159,7 +159,7 @@ transaction (or operation, if any) source account and hence doesn't require any
 additional payload.
 - `SOROBAN_CREDENTIALS_ADDRESS` - contains `SorobanAddressCredentials` with the
   following structure:
-  ```c++
+  ```cpp
   struct SorobanAddressCredentials
   {
       SCAddress address;
@@ -186,7 +186,7 @@ additional payload.
 
 `SorobanAuthorizedInvocation` defines a node in the authorized invocation tree:
 
-```c++
+```cpp
 struct SorobanAuthorizedInvocation
 {
     SorobanAuthorizedFunction function;
@@ -261,7 +261,7 @@ Every Soroban transaction has to have a `SorobanTransactionData` transaction
 
 The Soroban transaction data is defined as follows:
 
-```c++
+```cpp
 struct SorobanResources
 {   
     // The ledger footprint of the transaction.

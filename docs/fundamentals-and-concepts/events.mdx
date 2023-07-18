@@ -18,7 +18,7 @@ in your contract.
 [TransactionMetaV3]: #transactionmetav3
 
 ### ContractEvent
-```c++
+```cpp
 struct ContractEvent
 {
     // We can use this to add more fields, or because it
@@ -41,14 +41,14 @@ struct ContractEvent
 };
 ```
 ### OperationEvents
-```c++
+```cpp
 struct OperationEvents
 {
     ContractEvent events<>;
 };
 ```
 ### TransactionMetaV3
-```c++
+```cpp
 struct TransactionMetaV3
 {
     LedgerEntryChanges txChangesBefore; // tx level changes before operations

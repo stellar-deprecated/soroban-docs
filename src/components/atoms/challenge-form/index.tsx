@@ -16,13 +16,18 @@ interface ChallengeFormProps {
 
 function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
   const [url, setUrl] = useState("");
-  const [courseIdState, setCourseId] = useState(courseId);
+  const [courseIdState] = useState(courseId);
   const [isSubmittedSuccessfully, setIsSubmittedSuccessfully] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
+      // if (!url.includes('.vercel.app')) {
+      //   alert('URL must contain ".vercel.app" to complete the checkpoint.');
+      //   return;
+      // }
+      
       const response = await fetch(
         "https://soroban-dapps-challenge-wrangler.sdf-ecosystem.workers.dev",
         {
@@ -97,17 +102,21 @@ export function ParentChallengeForm({ courseId }: { courseId: number }) {
   );
 }
 function InnerComponent({ courseId }: { courseId: number }) {
-  const { address, connect } = useSorobanReact();
+  const { address, activeChain, connect } = useSorobanReact();
 
   // if user is not logged in (address is undefined), render the Login button
   if (!address) {
     return (
+      <div style={{fontWeight: 'bold'}}>
+      Please connect to Futurenet and click the Login button to continue.
+      <br />
+      <br />
       <button onClick={() => connect()} className={styles.button}>
         Login
       </button>
+      </div>
     );
   }
-
-  // if user is logged in, render the ChallengeForm
+  // if user is logged in and connected to the right network, render the ChallengeForm
   return <ChallengeForm2 address={address} courseId={courseId} />;
 }

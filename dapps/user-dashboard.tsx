@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 // import Layout from "@theme/Layout";
 
 import { CardContainer } from "../src/components/molecules/card-container";
@@ -8,7 +8,7 @@ import { futurenet, sandbox, standalone } from "@soroban-react/chains";
 import { freighter } from "@soroban-react/freighter";
 import { ChainMetadata, Connector } from "@soroban-react/types";
 
-const chains: ChainMetadata[] = [sandbox, standalone, futurenet];
+const chains: ChainMetadata[] = [sandbox, futurenet];
 const connectors: Connector[] = [freighter()];
 
 export default function Login({ children }: { children: React.ReactNode }) {
@@ -20,9 +20,7 @@ export default function Login({ children }: { children: React.ReactNode }) {
     >
       <SorobanEventsProvider>
         {children}
-        {/* <Layout> */}
-          <LoginComponent />
-        {/* </Layout> */}
+        <LoginComponent />
       </SorobanEventsProvider>
     </SorobanReactProvider>
   );
@@ -30,8 +28,23 @@ export default function Login({ children }: { children: React.ReactNode }) {
 
 function LoginComponent() {
   // Here you can use your hook
-  const { address } = useSorobanReact();
+  const { address, activeChain } = useSorobanReact();
   const addressString: string = address ? address.toString() : "No address";
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (activeChain) {
+      setLoading(false);
+      if (activeChain.name?.toString() !== "Futurenet" ) {
+        alert("Please ensure that you are connected to Futurenet");
+      }
+    }
+  }, [activeChain]);
+
+  if (loading) {
+    return <div style={{fontWeight: 'bold', fontSize: '18px'}}>
+    Unsupported network detected. Please connect to Futurenet and refresh the page. </div>;
+  }
 
   return (
     <main className="">

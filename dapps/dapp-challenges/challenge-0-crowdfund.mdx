@@ -91,9 +91,9 @@ Now open your browser and visit [http://localhost:3000](http://localhost:3000). 
 
 Now that we have the frontend running, it's time to connect it with our smart contracts.
 
-Be sure that you have properly configured Freighter Wallet by following the instructions [here](../guides/wallets#connect-a-wallet-freighter).
+First, be sure that you have properly configured Freighter Wallet by following the instructions [here](../guides/wallets#connect-a-wallet-freighter).
 
-Add the Futurenet custom network in Freighter (Note, the out-of-the-box "Future Net" network in Freighter will not work with a local quickstart container, so we need to add our own):
+Then, add the Standalone network in Freighter:
 
 - Name: `Standalone`
 - URL: `http://localhost:8000/soroban/rpc`
@@ -101,14 +101,16 @@ Add the Futurenet custom network in Freighter (Note, the out-of-the-box "Future 
 - Allow HTTP connection: `Enabled`
 - Switch to this network: `Enabled`
 
-Then, add some Standalone network lumens to your Freighter wallet by doing the following:
+Next, add some Standalone network lumens to your Freighter wallet by doing the following:
 
 - Copy the address for your freighter wallet.
 - Visit `http://localhost:8000/friendbot?addr=<your_address>`
 
+> Note: These are test lumens for use with your local network and cannot be used on Futurenet or Mainnet
+
 ## Checkpoint 4: 🏦 Mint Tokens for the Crowdfunding Campaign
 
-Open the dapp frontend and click on the "Mint 100 EXT" button.
+Open the dapp frontend and click on the "Mint 100 ABND" button.
 
 <img src={mintToken} width="40%" />
 
@@ -120,8 +122,7 @@ You should see an updated balance in the pledge component.
 
 <img src={updatedBalance} width="40%" />
 
-> Note: These are test lumens for use with
-your local network and cannot be used on Futurenet or Mainnet
+> Note: These are test tokens for use with your local network and cannot be used on Futurenet or Mainnet
 
 ## Checkpoint 5: 💰 Fund the Crowdfunding Campaign
 
@@ -151,10 +152,11 @@ If you are running docker, now is a good time to stop the stellar and soroban pr
 docker stop stellar soroban-preview
 ```
 
-Then, run the following command to initialize the contracts on Futurenet:
+Then, run the following commands to initialize the contracts on Futurenet:
 
 ```sh
-./initialize.sh futurenet
+npm run clean
+npm run setup
 ```
 
 Then run the dev server again:
@@ -163,39 +165,11 @@ Then run the dev server again:
 yarn dev
 ```
 
-Now open your browser and visit [http://localhost:3000](http://localhost:3000). You should be able to see the frontend of your dapp.
+Now, open your browser and visit [http://localhost:3000](http://localhost:3000). 
 
-Next, add the [Soroban RPC](https://soroban.stellar.org/docs/getting-started/run-rpc) network in Freighter:
+Ensure that you are connected to Futurenet and you should be able to see the frontend of your dapp!
 
-- Name: `Soroban Futurenet`
-- URL: `https://rpc-futurenet.stellar.org`
-- Passphrase: `Test SDF Future Network ; October 2022`
-- Allow HTTP connection: `Enabled`
-- Switch to this network: `Enabled`
-
-Reload the page and you should see your pledge amount and balance updated.
-
-Now, you can upload your app to a hosting platform of your choice. You could use platforms like Netlify, Vercel, or even an AWS S3 bucket.
-
-For this example, you will need to edit the `package.json` file to edit the following lines:
-
-```js
-  "engines": {
-    "node": "17",
-    "npm": "8"
-  }
-```
-
-And update your node engine, and npm version to 18 and 9 respectively:
-
-```js
-  "engines": {
-    "node": "18",
-    "npm": "9"
-  }
-```
-
-Next you will use the Vercel cli to complete our deployment
+Next, you will use the Vercel cli to complete our deployment.
 
 > Note: If you don’t already have a [Vercel account], you will need to create one and link it to your github account.
 
@@ -207,13 +181,13 @@ First install the Vercel cli:
 npm i global vercel
 ```
 
-Then run the following command to deploy your app:
+Then, run the following command to deploy your dapp:
 
 ```sh
 npx vercel
 ```
 
-Then continue through the prompts(you will not need to modify any settings) until you reach the completion prompt similar to the following:
+Then, continue through the prompts(you will not need to modify any settings) until you reach the completion prompt similar to the following:
 
 ```sh
 Vercel CLI 30.1.1
@@ -222,7 +196,7 @@ Vercel CLI 30.1.1
 ✅  Production: https://soroban-example-dapp-rho.vercel.app [42s]
 ```
 
-You can now visit the preview link to see your deployed app! 🎉
+You can now visit the preview link to see your deployed dapp! 🎉
 
 <img src={deployedDApp} width="90%" />
 
@@ -255,7 +229,7 @@ You should see something like this:
       "is_authorized": true,
       "is_authorized_to_maintain_liabilities": true,
       "asset_type": "credit_alphanum4",
-      "asset_code": "EXT",
+      "asset_code": "ABND",
       "asset_issuer": "GBUGENT4FK4Y6FZNZEEGVZJLCHKNES23FRVOPPOI62RUF4WRSNOTSZV4"
     },
   ]

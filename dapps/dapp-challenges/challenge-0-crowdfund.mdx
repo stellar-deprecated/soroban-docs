@@ -41,7 +41,9 @@ Then, install Soroban-cli alias installed by running the following command:
 cargo install_soroban
 ```
 
-Next, build the soroban-preview docker image:
+Next, make sure that your Docker daemon is running by either opening [Docker Desktop](https://www.docker.com/products/docker-desktop)(recommended) or following the instructions provided  [here](https://docs.docker.com/config/daemon/start/).
+
+Then, and build the soroban-preview docker image:
 
 ```sh
 make build-docker
@@ -63,21 +65,28 @@ and wait for it to start.
 
 Now that the backend environment is set up, we need to deploy our smart contracts to in a sandbox environment.
 
-In another terminal, load the contracts and initialize them.
-
-Use your own local soroban-cli:
+In another terminal, load the contracts and initialize them on the Standalone network by running the following commands:
 
 ```sh
+npm run clean
 NETWORK=standalone npm run setup
 ```
-
-Or run it inside the soroban-preview docker container:
+If the command runs successfully, your terminal will return a series of messages notifying you about the successful initialization of the contracts and the post-installation sequence.
 
 ```sh
-docker exec soroban-preview ./initialize.sh standalone
+Contract deployed succesfully with ID: CBXHU5BWWTOCZRYX3DMSSKCFG7B3K2YG2I5F75ALPQ6GCY6ZES2XKLTI
+Deploy the crowdfund contract
+Contract deployed succesfully with ID: CBKY7UN5VGD4LIQFOBOTSUSQWK67BZZTA23NIEVWSWRR5SAT26JQN2BN
+Initialize the abundance token contract
+
+Initialize the crowdfund contract
+
+Done
+
+> soroban-example-dapp@0.1.0 postinstall
+...
 ```
 
-If the command ran successfully, it will return a Contract ID. Take note of this ID as you will need it in the next steps.
 
 ## Checkpoint 3: 🤝 Connect the Frontend to the Backend
 
@@ -88,6 +97,8 @@ npm run dev
 ```
 
 Now open your browser and visit [http://localhost:3000](http://localhost:3000). You should be able to see the frontend of your dapp.
+
+> Note: Follow the instructions below and ensure that you have funded your wallet address that you intend to use from browser, otherwise the dapp display will be blank and a 'Account not found' will be printed on browser's console only.
 
 Now that we have the frontend running, it's time to connect it with our smart contracts.
 

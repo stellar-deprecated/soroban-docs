@@ -23,10 +23,10 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
     e.preventDefault();
 
     try {
-      // if (!url.includes('.vercel.app')) {
-      //   alert('URL must contain ".vercel.app" to complete the checkpoint.');
-      //   return;
-      // }
+      if (!url.includes('.vercel.app')) {
+        alert('URL must contain ".vercel.app" to complete the checkpoint.');
+        return;
+      }
       
       const response = await fetch(
         "https://soroban-dapps-challenge-wrangler.sdf-ecosystem.workers.dev",
@@ -88,21 +88,8 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
   );
 }
 
-export function ParentChallengeForm({ courseId }: { courseId: number }) {
-  return (
-    <SorobanReactProvider
-      chains={chains}
-      connectors={connectors}
-      appName={"course completion"}
-    >
-      <SorobanEventsProvider>
-        <InnerComponent courseId={courseId} />
-      </SorobanEventsProvider>
-    </SorobanReactProvider>
-  );
-}
 function InnerComponent({ courseId }: { courseId: number }) {
-  const { address, activeChain, connect } = useSorobanReact();
+  const { address, connect } = useSorobanReact();
 
   // if user is not logged in (address is undefined), render the Login button
   if (!address) {
@@ -119,4 +106,18 @@ function InnerComponent({ courseId }: { courseId: number }) {
   }
   // if user is logged in and connected to the right network, render the ChallengeForm
   return <ChallengeForm2 address={address} courseId={courseId} />;
+}
+
+export function ParentChallengeForm({ courseId }: { courseId: number }) {
+  return (
+    <SorobanReactProvider
+      chains={chains}
+      connectors={connectors}
+      appName={"course completion"}
+    >
+      <SorobanEventsProvider>
+        <InnerComponent courseId={courseId} />
+      </SorobanEventsProvider>
+    </SorobanReactProvider>
+  );
 }

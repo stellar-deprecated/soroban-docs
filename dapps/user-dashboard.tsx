@@ -11,20 +11,7 @@ import { ChainMetadata, Connector } from "@soroban-react/types";
 const chains: ChainMetadata[] = [sandbox, futurenet];
 const connectors: Connector[] = [freighter()];
 
-export default function Login({ children }: { children: React.ReactNode }) {
-  return (
-    <SorobanReactProvider
-      chains={chains}
-      connectors={connectors}
-      appName={"Login"}
-    >
-      <SorobanEventsProvider>
-        {children}
-        <LoginComponent />
-      </SorobanEventsProvider>
-    </SorobanReactProvider>
-  );
-}
+
 
 function LoginComponent() {
   // Here you can use your hook
@@ -60,5 +47,20 @@ function LoginComponent() {
         <CardContainer addressHex={addressString} />
       </div>
     </main>
+  );
+}
+
+export default function Login({ children }: { children: React.ReactNode }) {
+  return (
+    <SorobanReactProvider
+      chains={chains}
+      connectors={connectors}
+      appName={"Login"}
+    >
+      <SorobanEventsProvider>
+        {children}
+        <LoginComponent />
+      </SorobanEventsProvider>
+    </SorobanReactProvider>
   );
 }

@@ -13,7 +13,6 @@ This example is an extension of the [storing data example].
 [oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.9.2
 
 [storing data example]: ../getting-started/storing-data.mdx
-
 [auth example]: https://github.com/stellar/soroban-examples/tree/v0.9.2/auth
 
 ## Run the Example
@@ -115,10 +114,10 @@ pub enum DataKey {
 }
 ```
 
-`Address` is a universal Soroban identifier that may represent a Stellar 
+`Address` is a universal Soroban identifier that may represent a Stellar
 account, a contract or an 'account contract' (a contract that defines a custom
 authentication scheme and authorization policies). Contracts don't need to
-distinguish between these internal representations though.  `Address` can be
+distinguish between these internal representations though. `Address` can be
 used any time some network identity needs to be represented, like to
 distinguish between counters for different users in this example.
 
@@ -126,7 +125,7 @@ distinguish between counters for different users in this example.
 
 Different enum values create different key 'namespaces'.
 
-In the example the counter for each address is stored against 
+In the example the counter for each address is stored against
 `DataKey::Counter(Address)`. If the contract needs to start storing other types
 of data, it can do so by adding additional variants to the enum.
 :::
@@ -220,7 +219,7 @@ Soroban environment that the contract will run in.
 let env = Env::default();
 ```
 
-The test instructs the environment to mock all auths.  All calls to
+The test instructs the environment to mock all auths. All calls to
 `require_auth` or `require_auth_for_args` will succeed.
 
 ```rust
@@ -305,7 +304,7 @@ target/wasm32-unknown-unknown/release/soroban_auth_contract.wasm
 
 If you have [`soroban-cli`] installed, you can invoke functions on the contract.
 
-But since we are dealing with authorization and signatures, we need to set up 
+But since we are dealing with authorization and signatures, we need to set up
 some identities to use for testing and get their public keys:
 
 ```sh
@@ -377,6 +376,7 @@ View the data that has been stored against each user with `soroban contract read
 ```sh
 soroban contract read --id 1
 ```
+
 ```
 "[""Counter"",""GA6S566FD3EQDUNQ4IGSLXKW3TGVSTQW3TPHPGS7NWMCEIPBOKTNCSRU""]",5
 "[""Counter"",""GAJGHZ44IJXYFNOVRZGBCVKC2V62DB2KHZB7BEMYOWOLFQH4XP2TAM6B""]",15
@@ -396,12 +396,12 @@ soroban contract invoke \
     --user GAJGHZ44IJXYFNOVRZGBCVKC2V62DB2KHZB7BEMYOWOLFQH4XP2TAM6B \
     --value 123
 ```
+
 ```json
 Contract auth: [{"address_with_nonce":null,"root_invocation":{"contract_id":"0000000000000000000000000000000000000000000000000000000000000001","function_name":"increment","args":[{"object":{"address":{"account":{"public_key_type_ed25519":"c7bab0288753d58d3e21cc3fa68cd2546b5f78ae6635a6f1b3fe07e03ee846e9"}}}},{"u32":123}],"sub_invocations":[]},"signature_args":[]}]
 ```
 
 [`soroban-cli`]: ../getting-started/setup#install-the-soroban-cli
-
 
 ## Further reading
 

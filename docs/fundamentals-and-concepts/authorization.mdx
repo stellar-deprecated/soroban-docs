@@ -10,7 +10,6 @@ This is an overview of the Soroban authorization framework.
 
 :::
 
-
 # Authorization
 
 Authorization is the process of judging which operations "should" or "should
@@ -30,12 +29,12 @@ that allows contracts to implement arbitrarily complex authorization rules,
 while providing built-in implementation for some common tasks (such as replay
 prevention). The framework consists of the following components:
 
-* Contract-specific authorization - custom authorization rules implemented by
+- Contract-specific authorization - custom authorization rules implemented by
   contracts using the private contract storage and abstract accounts.
-* Account abstraction - allows users to customize their authentication rules and
+- Account abstraction - allows users to customize their authentication rules and
   define universal authorization policies via custom account contracts
   (this includes the built-in support for the Stellar accounts).
-* Host-based authorization library - ensures integrity between the custom
+- Host-based authorization library - ensures integrity between the custom
   accounts and regular contracts. Also defines the structured signature payload
   format, ensures replay prevention and takes care of providing the correct
   signature contexts.
@@ -46,7 +45,7 @@ hashing) which may be useful for the custom account implementation.
 Contracts that use Soroban authorization framework are interoperable with each
 other. Also it is easier for the client applications to write generic code for
 interaction with Soroban authorization framework. For example, wallets can
-implement a generalized way to present and sign Soroban payloads. 
+implement a generalized way to present and sign Soroban payloads.
 
 We realize that it's not possible to cover each and every case, but we hope that
 the vast majority of the contracts can operate within the framework and thus
@@ -67,7 +66,6 @@ balance.
 
 [storage]: ../getting-started/storing-data.mdx
 
-
 #### `Address`
 
 The storage-based approach described in the previous section requires a way to
@@ -82,7 +80,7 @@ more details).
 `Address` type has two similar methods in Soroban SDK: `require_auth` and
 `require_auth_for_args` (these methods call the respective Soroban host
 function). The only difference between the functions is the ability to
-customize the invocation arguments. See [auth example] that demonstrates 
+customize the invocation arguments. See [auth example] that demonstrates
 how to use these functions.
 
 Both functions ensure that the `Address` has authorized the call of the current
@@ -188,8 +186,7 @@ accounts. It is not a real contract and doesn't need to be deployed.
 This supports the Stellar multisig with medium threshold. See Stellar
 [documentation] for more details on multisig and thresholds.
 
-[documentation]:
-https://developers.stellar.org/docs/encyclopedia/signatures-multisig
+[documentation]: https://developers.stellar.org/docs/encyclopedia/signatures-multisig
 
 ##### Transaction Invoker
 
@@ -263,16 +260,16 @@ non-contract-invoker account, the following steps happen:
   matching process is pretty involved and is described in the section below.
 - If authentication hasn't happened for this tree yet, then perform it:
   - Verify signature expiration. Expired signatures are not vlaid.
-  - Verify and consume nonce. Nonce is an arbitrary number, that has to be 
-  unique among all the non-expired signatures of the address.
+  - Verify and consume nonce. Nonce is an arbitrary number, that has to be
+    unique among all the non-expired signatures of the address.
   - Build the expected [signature payload preimage] and compute its SHA-256 hash
     to get the final signature payload
   - Call `__check_auth` of the account contract corresponding to the `Address`
     using the signature payload and the invocations from the authorization
     tree
 - Mark the invocation as 'exhausted' in its authorized invocation tree.
-'Exhausted' invocations will be skipped when matching the future `require_auth`
- calls.
+  'Exhausted' invocations will be skipped when matching the future `require_auth`
+  calls.
 
 If any of the steps above fails, then the authorization is considered
 unsuccessful.
@@ -318,7 +315,7 @@ have `require_auth` call for that `Address`.
 During the matching process that happens for every `require_auth` host tries
 to match the current path in `T` to a `SorobanAuthorizedInvocation` tree for the
 corresponding `Address`. The path is considered to be matched only when there is
-a corresponding path of *exhausted* `R` nodes leading to the current call. This
+a corresponding path of _exhausted_ `R` nodes leading to the current call. This
 means that if the `Address` signs a sequence of calls `A.foo->B.bar->C.baz`,
 then its authorization check will fail in case if `A.foo` directly calls `C.baz`
 because `C.baz` strictly has to be called from `B.bar`.
@@ -331,10 +328,8 @@ being batched), every `require_auth` call still has to have a corresponding node
 in the `SorobanAuthorizedInvocation` tree. Due to that, there might be multiple valid
 trees that make all the authorization checks pass. There is nothing wrong about
 that - the address still must have authorized all the invocations. The only
-requirement for such cases to be handled correctly is to ensure that the 
+requirement for such cases to be handled correctly is to ensure that the
 `require_auth` calls for an `Address` happen before the corresponding
 sub-contract calls.
 
-[invocation-xdr]:
-https://github.com/stellar/stellar-xdr/blob/e372df9f677961aac04c5a4cc80a3667f310b29f/Stellar-transaction.x#L537
-
+[invocation-xdr]: https://github.com/stellar/stellar-xdr/blob/e372df9f677961aac04c5a4cc80a3667f310b29f/Stellar-transaction.x#L537

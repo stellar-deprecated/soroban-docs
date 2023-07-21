@@ -23,11 +23,11 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
     e.preventDefault();
 
     try {
-      if (!url.includes('.vercel.app')) {
+      if (!url.includes(".vercel.app")) {
         alert('URL must contain ".vercel.app" to complete the checkpoint.');
         return;
       }
-      
+
       const response = await fetch(
         "https://soroban-dapps-challenge-wrangler.sdf-ecosystem.workers.dev",
         {
@@ -92,18 +92,18 @@ function InnerComponent({ courseId }: { courseId: number }) {
   const { address, connect, activeChain } = useSorobanReact();
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const checkConnection = async () => {
-      try {
-        await connect();
-        setLoading(false);
-      } catch (error) {
-        console.error("Error during connection:", error);
-        setLoading(true);
-      }
-    };
-    checkConnection();
-  }, [connect]);
+  // useEffect(() => {
+  //   const checkConnection = async () => {
+  //     try {
+  //       await connect();
+  //       setLoading(false);
+  //     } catch (error) {
+  //       console.error("Error during connection:", error);
+  //       setLoading(true);
+  //     }
+  //   };
+  //   checkConnection();
+  // }, [connect]);
 
   useEffect(() => {
     if (activeChain) {
@@ -125,13 +125,13 @@ function InnerComponent({ courseId }: { courseId: number }) {
   // if user is not logged in (address is undefined), render the Login button
   if (loading) {
     return (
-      <div style={{fontWeight: 'bold'}}>
-      Please connect to Futurenet and click the Connect button to continue.
-      <br />
-      <br />
-      <button onClick={() => connect()} className={styles.button}>
-        Login
-      </button>
+      <div style={{ fontWeight: "bold" }}>
+        Please connect to Futurenet and click the Connect button to continue.
+        <br />
+        <br />
+        <button onClick={() => connect()} className={styles.button}>
+          Login
+        </button>
       </div>
     );
   }
@@ -142,6 +142,7 @@ function InnerComponent({ courseId }: { courseId: number }) {
 export function ParentChallengeForm({ courseId }: { courseId: number }) {
   return (
     <SorobanReactProvider
+      autoconnect={false}
       chains={chains}
       connectors={connectors}
       appName={"course completion"}

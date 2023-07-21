@@ -15,18 +15,18 @@ function LoginComponent() {
   const addressString = address ? address.toString() : "No address";
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const checkConnection = async () => {
-      try {
-        await connect();
-        setLoading(false);
-      } catch (error) {
-        console.error("Error during connection:", error);
-        setLoading(true);
-      }
-    };
-    checkConnection();
-  }, [connect]);
+  // useEffect(() => {
+  //   const checkConnection = async () => {
+  //     try {
+  //       await connect();
+  //       setLoading(false);
+  //     } catch (error) {
+  //       console.error("Error during connection:", error);
+  //       setLoading(true);
+  //     }
+  //   };
+  //   checkConnection();
+  // }, [connect]);
 
   useEffect(() => {
     if (activeChain) {

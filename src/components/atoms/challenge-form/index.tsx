@@ -130,7 +130,7 @@ function InnerComponent({ courseId }: { courseId: number }) {
         <br />
         <br />
         <button onClick={() => connect()} className={styles.button}>
-          Login
+          Connect
         </button>
       </div>
     );

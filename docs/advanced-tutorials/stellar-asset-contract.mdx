@@ -9,8 +9,7 @@ description: An implementation of CAP-46-6 smart contract standardized assets.
 The Stellar Asset Contract is an implementation of [CAP-46-6 Smart Contract
 Standardized Asset].
 
-[CAP-46-6 Smart Contract Standardized Asset]:
-https://stellar.org/protocol/cap-46-06
+[CAP-46-6 Smart Contract Standardized Asset]: https://stellar.org/protocol/cap-46-06
 
 :::caution
 
@@ -93,14 +92,14 @@ Stellar classic, which you can learn more about [here](https://developers.stella
   - `AUTH_REVOCABLE_FLAG` is not required to be set on the issuer to deauthorize a
     balance.
   - Balances are stored in a 128-bit signed integer.
-  - A balance can only be clawed back if the issuer account had the 
+  - A balance can only be clawed back if the issuer account had the
     `AUTH_CLAWBACK_ENABLED_FLAG` set when the balance was created. A balance is
     created when either an `Address::Contract` is on the receiving end of a successful
     transfer, or if the admin sets the authorization state. Read more
     about `AUTH_CLAWBACK_ENABLED_FLAG` [here](https://developers.stellar.org/docs/issuing-assets/control-asset-access#clawback-enabled-0x8).
-    
 
 ### Balance Authorization Required
+
 In the `Address::Contract` case, if the issuer has `AUTH_REQUIRED_FLAG` set, then the
 specified `Address::Contract` will need to be explicitly authorized with
 `set_auth` before it can receive a balance. This logic lines up with how
@@ -127,7 +126,7 @@ Getters require no authorization because they do not change the state of the
 contract and all contract data is public. For example, `balance` simply returns
 the balance of the specified `Address` without changing it.
 
-Unprivileged mutators require authorization from the `Address` that spends or 
+Unprivileged mutators require authorization from the `Address` that spends or
 allows spending their balance. The exceptions are `xfer_from` and `burn_from`
 operations where the `Address` that require authorization from the 'spender'
 entity that has got an allowance from another `Address` beforehand.
@@ -163,8 +162,9 @@ impl MyContract {
 
 ### Examples
 
-See the full examples that utilize the token contract in various ways for more 
+See the full examples that utilize the token contract in various ways for more
 details:
+
 - [Timelock](timelock.mdx) and [single offer](single-offer-sale.mdx) move token
   via `xfer` to and from the contract
 - [Atomic swap](atomic-swap.mdx) uses `incr_allow` to transfer token on behalf
@@ -174,7 +174,7 @@ Notice, that these examples don't do anything to support SAC specifically.
 
 ### Testing
 
-Soroban Rust SDK provides an easy way to instantiate a Stellar Asset Contract 
+Soroban Rust SDK provides an easy way to instantiate a Stellar Asset Contract
 tokens using `register_stellar_asset_contract`. For example:
 
 ```rust
@@ -189,7 +189,7 @@ implementation.
 
 ## Contract Interface
 
-This interface can be found in the [SDK]. It extends the common 
+This interface can be found in the [SDK]. It extends the common
 [token interface](tokens.mdx).
 
 [SDK]: https://github.com/stellar/rs-soroban-sdk/blob/v0.9.2/soroban-sdk/src/token.rs

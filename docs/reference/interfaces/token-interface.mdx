@@ -23,14 +23,14 @@ For any given contract function, there are 3 requirements that should be
 consistent with the interface described here:
 
 - Function interface (name and arguments) - if not consistent, then the users
-simply won't be able to use the function at all. This is the hard requirement.
+  simply won't be able to use the function at all. This is the hard requirement.
 - Authorization - the users have to authorize the token function calls with all
-the arguments of the invocation (see the interface comments). If this is
-inconsistent, then the custom token may have issues with getting the correct
-signatures from the users and may also confuse the wallet software.
+  the arguments of the invocation (see the interface comments). If this is
+  inconsistent, then the custom token may have issues with getting the correct
+  signatures from the users and may also confuse the wallet software.
 - Events - the token has to emit the events in the specified format. If
-inconsistent, then the token may not be handled correctly by the downstream
-systems such as block explorers.
+  inconsistent, then the token may not be handled correctly by the downstream
+  systems such as block explorers.
 
 ### Code
 
@@ -81,7 +81,7 @@ pub trait Contract {
     // Token interface
     // --------------------------------------------------------------------------------
     //
-    // All the functions here have to be authorized by the token spender 
+    // All the functions here have to be authorized by the token spender
     // (usually named `from` here) using all the input arguments, i.e. they have
     // to call `from.require_auth()`.
 
@@ -139,7 +139,7 @@ pub trait Contract {
     // --------------------------------------------------------------------------------
     // Read-only Token interface
     // --------------------------------------------------------------------------------
-    // 
+    //
     // The functions here don't need any authorization and don't emit any
     // events.
 
@@ -202,17 +202,19 @@ to write the metadata, and we strongly encourage token implementations to follow
 this approach.
 
 ### Handling Failure Conditions
+
 In the token interface, there are several instances where function calls can fail due to various reasons such as lack of proper authorization, insufficient allowance or balance, etc. To handle these failure conditions, it is important to specify the expected behavior when such situations arise.
 
-Its important to note the that the token interface not only incorporates the authorization concept for matching asset authorization in Stellar Classic, but it also utilizes the Soroban authorization mechanism. So, if you try to make a token call and it fails, it could be because of either token authorization processes. 
+Its important to note the that the token interface not only incorporates the authorization concept for matching asset authorization in Stellar Classic, but it also utilizes the Soroban authorization mechanism. So, if you try to make a token call and it fails, it could be because of either token authorization processes.
 
-To provide more context, when you use the token interface, there is a function called `authorized` that returns "true" if an address has token authorization. 
+To provide more context, when you use the token interface, there is a function called `authorized` that returns "true" if an address has token authorization.
 
 More details on Authorization can be found [here](../../fundamentals-and-concepts/authorization).
 
 For the functions in the token interface, [trapping](https://doc.rust-lang.org/book/ch09-00-error-handling.html) should be used as the standard way to handle failure conditions since the interface is not designed to return error codes. This means that when a function encounters an error, it will halt execution and revert any state changes that occurred during the function call.
 
 ### Failure Conditions
+
 Here is a list of basic failure conditions and their expected behavior for functions in the token interface:
 
 #### Admin functions:

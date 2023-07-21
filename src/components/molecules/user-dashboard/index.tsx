@@ -18,14 +18,13 @@ function LoginComponent() {
 
   useEffect(() => {
     if (activeChain) {
-      setLoading(false);
       if (activeChain.name?.toString() !== "Futurenet") {
-        alert("Please ensure that you are connected to Futurenet");
         setLoading(true);
+        alert("Please ensure that you are connected to Futurenet");
       }
       if (activeChain.name?.toString() === undefined) {
-        alert("Please ensure that you are connected to Futurenet");
         setLoading(true);
+        alert("Please ensure that you are connected to Futurenet");
       }
       if (activeChain.name?.toString() === "Futurenet") {
         setLoading(false);

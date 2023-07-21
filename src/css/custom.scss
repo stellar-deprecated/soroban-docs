@@ -109,3 +109,7 @@ p > code {
   font-family: var(--ifm-font-family-mono);
   font-weight: 700;
 }
+
+[data-theme='dark'] .DocSearch-Hit[aria-selected=true] a {
+  background-color: #4daaa9;
+}

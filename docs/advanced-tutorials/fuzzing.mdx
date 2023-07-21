@@ -21,9 +21,6 @@ It builds on the [timelock example].
 [`proptest-arbitrary-interop`]: https://docs.rs/proptest-arbitrary-interop
 [timelock example]: https://github.com/stellar/soroban-examples/tree/v0.9.2/timelock
 
-
-
-
 ## Run the example
 
 First go through the [setup] process to get your development environment
@@ -76,9 +73,6 @@ INFO: seed corpus: files: 105 min: 32b max: 61b total: 3558b rss: 86Mb
 The rest of this tutorial will explain how to set up this fuzz test,
 interpret this output,
 and remedy fuzzing failures.
-
-
-
 
 ## Background: fuzz testing and Rust
 
@@ -135,9 +129,6 @@ which also maintains a "trophy case" of Rust bugs found through fuzzing.
 
 [`rust-fuzz`]: https://github.com/rust-fuzz
 
-
-
-
 ## About the example
 
 The example used for this tutorial is based on the [`timelock`]
@@ -174,7 +165,6 @@ pub enum TimeBoundKind {
 `ClaimableBalanceContract` has two methods,
 `deposit` and `claim`:
 
-
 ```rust
     pub fn deposit(
         env: Env,
@@ -197,9 +187,6 @@ after which `claim` may be called multiple times
 until the balance is completely drained,
 at which point the contract becomes dormant
 and may no longer be used.
-
-
-
 
 ## Fuzz testing setup
 
@@ -267,10 +254,10 @@ For fuzzing though, the fuzzing crate needs to be able to link
 to the contract crate as a Rust library, an "rlib".
 
 > Note that cargo has a [feature/bug that inhibits LTO][lto] of cdylibs when
-a crate is both a "cdylib" and "rlib".
-This can be worked around by building the contract with either
-`soroban contract build` or `cargo rustc --crate-type cdylib`
-instead of the typical `cargo build`.
+> a crate is both a "cdylib" and "rlib".
+> This can be worked around by building the contract with either
+> `soroban contract build` or `cargo rustc --crate-type cdylib`
+> instead of the typical `cargo build`.
 
 [lto]: https://github.com/stellar/soroban-docs/pull/476
 
@@ -301,9 +288,6 @@ soroban-sdk = { version = "0.9.1", features = ["testutils"] }
 path = ".."
 features = ["testutils"]
 ```
-
-
-
 
 ## A simple fuzz test
 
@@ -502,9 +486,6 @@ fn assert_invariants(
     });
 }
 ```
-
-
-
 
 ## Interpreting `cargo-fuzz` output
 
@@ -750,9 +731,6 @@ See the [`libfuzzer` documentation] for more.
 
 [`libfuzzer` documentation]: https://llvm.org/docs/LibFuzzer.html#output
 
-
-
-
 ## Accepting Soroban types as input with the `SorobanArbitrary` trait
 
 Inputs to the `fuzz_target!` macro must implement the [`Arbitrary`] trait,
@@ -809,9 +787,6 @@ must define a "testutils" Cargo feature, that feature should turn on the
 must turn that feature on.
 
 [`contracttype`]: https://docs.rs/soroban-sdk/latest/soroban_sdk/macro.contracttype.html
-
-
-
 
 ## A more complex fuzz test
 
@@ -971,8 +946,6 @@ for step in &config.input.steps {
 }
 ```
 
-
-
 ## Converting a fuzz test to a property test
 
 In addition to fuzz testing,
@@ -997,6 +970,3 @@ The [`proptest.rs`] file is a translation of `fuzz_target_1.rs`
 to a property test.
 
 [`proptest.rs`]: https://github.com/stellar/soroban-examples/tree/v0.9.2/fuzzing/src/proptest.rs
-
-
-

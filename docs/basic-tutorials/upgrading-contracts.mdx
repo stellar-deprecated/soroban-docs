@@ -12,6 +12,7 @@ The [upgradeable contract example] demonstrates how to upgrade a Wasm contract.
 [upgradeable contract example]: https://github.com/stellar/soroban-examples/tree/v0.9.2/upgradeable_contract
 
 ## Code
+
 The example contains both an "old" and "new" contract, where we upgrade from "old" to "new". The code below is for the "old" contract.
 
 ```rust title="upgradeable_contract/old_contract/src/lib.rs"
@@ -61,9 +62,7 @@ pub fn upgrade(e: Env, new_wasm_hash: BytesN<32>) {
 }
 ```
 
-
 [here]: https://docs.rs/soroban-sdk/0.9.2/soroban_sdk/struct.Env.html#method.update_current_contract_wasm
-
 
 ## Tests
 
@@ -118,7 +117,9 @@ fn test() {
 }
 
 ```
+
 We first import wasm files for both contracts -
+
 ```rust
 mod old_contract {
     soroban_sdk::contractimport!(
@@ -132,10 +133,11 @@ mod new_contract {
         file = "../new_contract/target/wasm32-unknown-unknown/release/soroban_upgradeable_contract_new_contract.wasm"
     );
 }
-``` 
+```
 
 We register the old contract, intialize it with an admin, and verify the version
 it reutrns. The note in the code below is important-
+
 ```rust
 // Note that we use register_contract_wasm instead of register_contract
 // because the old contracts Wasm is expected to exist in storage.
@@ -148,12 +150,14 @@ client.init(&admin);
 assert_eq!(1, client.version());
 ```
 
-We install the new contract's Wasm 
+We install the new contract's Wasm
+
 ```rust
-let new_wasm_hash = install_new_wasm(&env); 
+let new_wasm_hash = install_new_wasm(&env);
 ```
 
 Then we run the upgrade, and verify that the upgrade worked.
+
 ```rust
 client.upgrade(&new_wasm_hash);
 assert_eq!(2, client.version());
@@ -192,6 +196,7 @@ soroban contract install \
 ```
 
 You should see this Wasm hash from the install command:
+
 ```
 c30c71a382438ed7e56669ba172aa862cc813d093b8d2f45e85b47ba38a89ddc
 ```
@@ -220,7 +225,7 @@ soroban contract invoke \
     --admin GAJGHZ44IJXYFNOVRZGBCVKC2V62DB2KHZB7BEMYOWOLFQH4XP2TAM6B
 ```
 
-Invoke the `version` function. 
+Invoke the `version` function.
 
 ```sh
 soroban contract invoke \
@@ -236,7 +241,7 @@ The following output should occur using the code above.
 ```
 
 Now upgrade the contract. Notice the `--source` must be the
-identity name matching the address passed to the `init` function. 
+identity name matching the address passed to the `init` function.
 
 ```sh
 soroban contract invoke \
@@ -247,7 +252,7 @@ soroban contract invoke \
     --new_wasm_hash c30c71a382438ed7e56669ba172aa862cc813d093b8d2f45e85b47ba38a89ddc
 ```
 
-Invoke the `version` function again. 
+Invoke the `version` function again.
 
 ```sh
 soroban contract invoke \

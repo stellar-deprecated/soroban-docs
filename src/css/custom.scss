@@ -59,6 +59,9 @@
   // --ifm-color-primary-light: #29d5b0;
   // --ifm-color-primary-lighter: #32d8b4;
   // --ifm-color-primary-lightest: #4fddbf;
+
+  // Customization for Algolia search colors
+  --docsearch-primary-color: #4daaa9 !important;
 }
 
 // .docusaurus-highlight-code-line {
@@ -108,8 +111,4 @@ p > code {
   border-radius: 0.5rem;
   font-family: var(--ifm-font-family-mono);
   font-weight: 700;
-}
-
-[data-theme='dark'] .DocSearch-Hit[aria-selected=true] a {
-  background-color: #4daaa9;
 }

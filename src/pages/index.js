@@ -349,6 +349,13 @@ const MediaSection = () => (
 
       <div className="MediaSection__cards">
         <MediaSectionCard
+          title="Build and Deploy a Crowdfunding Dapp in Rust"
+          tag="Youtube"
+          link="https://youtu.be/slm58GGDWQc"
+          imgSrc="https://img.youtube.com/vi/slm58GGDWQc/maxresdefault.jpg"
+        />
+
+        <MediaSectionCard
           title="Workshop: Write Your First Smart Contract In Rust Pt. 2"
           tag="Youtube"
           link="https://youtu.be/6FPXYuesH_0"
@@ -381,13 +388,6 @@ const MediaSection = () => (
           tag="Youtube"
           link="https://www.youtube.com/watch?v=3in3EvVumiw"
           imgSrc="https://img.youtube.com/vi/3in3EvVumiw/maxresdefault.jpg"
-        />
-
-        <MediaSectionCard
-          title="Building Soroban’s Minimum Viable Ecosystem"
-          tag="Guide"
-          link="https://stellar.org/developers-blog/building-sorobans-minimum-viable-ecosystem"
-          imgSrc="https://assets-global.website-files.com/5dee83171c0040227763490c/63f66c99c2b589d7e4177fec_soroban%20minimum%20viable%20ecosystem.png"
         />
       </div>
     </div>

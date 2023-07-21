@@ -7,6 +7,7 @@ description: The mechanism that off-chain applications use to monitor contract c
 Events are the mechanism that applications off-chain can use to monitor changes and events in contracts on-chain.
 
 ## How are events emitted?
+
 `ContractEvents` are emitted in Stellar Core's `TransactionMeta`. You can see in
 the [TransactionMetaV3] XDR below that there is a list of `OperationEvents`
 called `events`. Each `OperationEvent` corresponds to an operation in a
@@ -18,6 +19,7 @@ in your contract.
 [TransactionMetaV3]: #transactionmetav3
 
 ### ContractEvent
+
 ```cpp
 struct ContractEvent
 {
@@ -40,14 +42,18 @@ struct ContractEvent
     body;
 };
 ```
+
 ### OperationEvents
+
 ```cpp
 struct OperationEvents
 {
     ContractEvent events<>;
 };
 ```
+
 ### TransactionMetaV3
+
 ```cpp
 struct TransactionMetaV3
 {
@@ -69,6 +75,7 @@ struct TransactionMetaV3
     OperationDiagnosticEvents diagnosticEvents<>;
 };
 ```
+
 [Link](https://github.com/stellar/stellar-xdr/blob/eab1622f18b8101aa0cea76361c08beaeaa8d715/Stellar-ledger.x#L444) to the XDR above.
 
 ## What are diagnosticEvents?
@@ -79,23 +86,26 @@ stellar-core instance has `ENABLE_SOROBAN_DIAGNOSTIC_EVENTS=true` in its config
 file. If diagnostic events are enabled, this list will not only include all ContractEvents in `events`, but will also include events from failed contract calls, and additional diagnostic events emitted by the host. These events can be identified by `type == DIAGNOSTIC`, and they're defined below.
 
 ### fn_call
+
 The `fn_call` diagnostic event is emitted when a contract is called
 and contains -
-* Topics
-   1. The symbol "fn_call".
-   2. The contract id of the contract about to be called.
-   3. A symbol containing the name of the function being called.
-* Data
-  1. A vector of the arguments passed to the function being called. 
+
+- Topics
+  1.  The symbol "fn_call".
+  2.  The contract id of the contract about to be called.
+  3.  A symbol containing the name of the function being called.
+- Data
+  1. A vector of the arguments passed to the function being called.
 
 ### fn_return
-The `fn_return` diagnostic event is emitted when a contract call completes and contains -
-* Topics
-   1. The symbol "fn_return".
-   2. A symbol containing the name of the function that is about to return.
-* Data
-  1. The value returned by the contract function. 
 
+The `fn_return` diagnostic event is emitted when a contract call completes and contains -
+
+- Topics
+  1.  The symbol "fn_return".
+  2.  A symbol containing the name of the function that is about to return.
+- Data
+  1. The value returned by the contract function.
 
 ### When should diagnostic events be enabled?
 

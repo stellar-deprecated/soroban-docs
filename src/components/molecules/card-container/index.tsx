@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styles from "./style.module.css";
 import { CompletedCoursesCard } from "../../atoms/courses-completed";
 import { DeployedProjectsCard } from "../../atoms/courses-card";

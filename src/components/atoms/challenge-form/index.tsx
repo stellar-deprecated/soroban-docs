@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./style.module.css";
 import { useSorobanReact, SorobanReactProvider } from "@soroban-react/core";
 import { SorobanEventsProvider } from "@soroban-react/events";
-import { futurenet, sandbox, standalone } from "@soroban-react/chains";
+import { futurenet, sandbox, standalone, testnet } from "@soroban-react/chains";
 import { freighter } from "@soroban-react/freighter";
 import { ChainMetadata, Connector } from "@soroban-react/types";
 
-const chains: ChainMetadata[] = [sandbox, standalone, futurenet];
+const chains: ChainMetadata[] = [sandbox, futurenet, testnet, standalone];
 const connectors: Connector[] = [freighter()];
 
 interface ChallengeFormProps {
@@ -89,13 +89,44 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
 }
 
 function InnerComponent({ courseId }: { courseId: number }) {
-  const { address, connect } = useSorobanReact();
+  const { address, connect, activeChain } = useSorobanReact();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkConnection = async () => {
+      try {
+        await connect();
+        setLoading(false);
+      } catch (error) {
+        console.error("Error during connection:", error);
+        setLoading(true);
+      }
+    };
+    checkConnection();
+  }, [connect]);
+
+  useEffect(() => {
+    if (activeChain) {
+      setLoading(false);
+      if (activeChain.name?.toString() !== "Futurenet") {
+        alert("Please ensure that you are connected to Futurenet");
+        setLoading(true);
+      }
+      if (activeChain.name?.toString() === undefined) {
+        alert("Please ensure that you are connected to Futurenet");
+        setLoading(true);
+      }
+      if (activeChain.name?.toString() === "Futurenet") {
+        setLoading(false);
+      }
+    }
+  }, [activeChain]);
 
   // if user is not logged in (address is undefined), render the Login button
-  if (!address) {
+  if (loading) {
     return (
       <div style={{fontWeight: 'bold'}}>
-      Please connect to Futurenet and click the Login button to continue.
+      Please connect to Futurenet and click the Connect button to continue.
       <br />
       <br />
       <button onClick={() => connect()} className={styles.button}>

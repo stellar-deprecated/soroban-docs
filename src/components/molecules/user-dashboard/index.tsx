@@ -26,7 +26,7 @@ function LoginComponent() {
         setLoading(true);
         alert("Please ensure that you are connected to Futurenet");
       }
-      if (activeChain.name?.toString() === "Futurenet") {
+      if (activeChain.name?.toString() === "Futurenet") { 
         setLoading(false);
       }
     }

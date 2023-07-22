@@ -28,11 +28,12 @@ Required:
 - `Node` v18: [Download Node](https://nodejs.org/en/download/)
 - `Freighter Wallet`: [Freighter Wallet](https://freighter.app/)
 
-First, Clone the soroban example dapp repo:
+First, Clone the soroban example dapp repo and checkout the `challenge` branch:
 
 ```sh
 git clone https://github.com/stellar/soroban-example-dapp
 cd soroban-example-dapp
+git checkout challenge
 ```
 
 Then, install Soroban-cli alias installed by running the following command:
@@ -83,7 +84,7 @@ Initialize the crowdfund contract
 
 Done
 
-> soroban-example-dapp@0.1.0 postinstall
+> soroban-example-dapp@0.1.0 build-contracts
 ...
 ```
 
@@ -157,6 +158,8 @@ You should see an updated balance in the amount you have pledged in the pledge c
 
 Now that your dapp is fully functional locally, next prepare it for deployment on Futurenet.
 
+Stop the development server by pressing `ctrl+c` in the terminal where it is running.
+
 If you are running docker, now is a good time to stop the stellar and soroban preview containers.
 
 ```sh
@@ -173,7 +176,7 @@ npm run setup
 Then run the dev server again:
 
 ```sh
-yarn dev
+npm run dev
 ```
 
 Now, open your browser and visit [http://localhost:3000](http://localhost:3000). 

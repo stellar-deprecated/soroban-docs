@@ -236,16 +236,17 @@ print(
 
 ```javascript
 const { xdr } = require("soroban-client")
-
 function getLedgerKeyContractCode(contractId) {
   let ledgerKey = xdr.LedgerKey.contractData(
     new xdr.LedgerKeyContractData({
-      contractId: Buffer.from(contractId, "hex"),
-      key: new xdr.ScVal.scvLedgerKeyContractExecutable(),
+      contract: xdr.ScAddress.scAddressTypeContract(contractId),
+      key: new xdr.ScVal.scvLedgerKeyContractInstance(),
+      durability: xdr.ContractDataDurability.persistent(),
+      bodyType: xdr.ContractEntryBodyType.dataEntry(),
     })
-  )
+  );
 
-  return ledgerKey.toXDR("base64")
+  return ledgerKey.toXDR('base64');
 }
 
 console.log(
@@ -327,22 +328,31 @@ print(
 const { xdr } = require("soroban-client")
 
 function getLedgerKeyWasmId(contractCodeLedgerEntryData) {
-  let contractCodeWasmHash = xdr.LedgerEntryData.fromXDR(
+
+  let entry = xdr.LedgerEntryData.fromXDR(
     contractCodeLedgerEntryData,
     "base64"
-  )
-    .contractData()
-    .val()
-    .exec()
-    .wasmId()
+  );
+
+  let instance = new xdr.ScContractInstance({
+    executable: entry.contractData()
+      .body()
+      .value()
+      .val()
+  });
 
   let ledgerKey = xdr.LedgerKey.contractCode(
     new xdr.LedgerKeyContractCode({
-      hash: contractCodeWasmHash,
+      hash: xdr.ContractExecutable.contractExecutableWasm(instance.executable())
+        .wasmHash()
+        .instance()
+        .executable()
+        .wasmHash(),
+      bodyType: xdr.ContractEntryBodyType.dataEntry()
     })
-  )
+  );
 
-  return ledgerKey.toXDR("base64");
+  return ledgerKey.toXDR('base64');
 }
 
 console.log(

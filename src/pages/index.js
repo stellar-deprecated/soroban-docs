@@ -101,8 +101,8 @@ const Designed = () => (
         </DesignedCard>
 
         <DesignedCard title="Scale">
-          Soroban is designed with scalability in mind. Boost performance with multi-core scaling, 
-          an optimized fee model, and without pesky serialization loops. Soroban also tackles the 
+          Soroban is designed with scalability in mind. Boost performance with multi-core scaling,
+          an optimized fee model, and without pesky serialization loops. Soroban also tackles the
           elephant in the room head-on by addressing the problem of state bloat.
         </DesignedCard>
 
@@ -151,12 +151,13 @@ const Learn = () => (
           {`#![no_std]
 use soroban_sdk::{contractimpl, vec, Env, Symbol, Vec};
 
+#[contract]
 pub struct HelloContract;
 
 #[contractimpl]
 impl HelloContract {
     pub fn hello(env: Env, to: Symbol) -> Vec<Symbol> {
-        vec![&env, Symbol::short("Hello"), to]
+        vec![&env, symbol_short!("Hello"), to]
     }
 }`}
         </pre>
@@ -301,10 +302,10 @@ const SCF = () => (
         </h2>
 
         <p className="SCF__subtitle">
-          Submit your Soroban project to the Stellar Community Fund and request 
+          Submit your Soroban project to the Stellar Community Fund and request
           up to $150K worth of XLM in awards to cover 2-3 months of development costs.
-          This is your chance to play a fundamental role in bootstrapping the Soroban 
-          ecosystem by creating the tools, protocols, dApps, and resources necessary 
+          This is your chance to play a fundamental role in bootstrapping the Soroban
+          ecosystem by creating the tools, protocols, dApps, and resources necessary
           for it to thrive.
         </p>
 
@@ -348,6 +349,27 @@ const MediaSection = () => (
 
       <div className="MediaSection__cards">
         <MediaSectionCard
+          title="Build and Deploy a Crowdfunding Dapp in Rust"
+          tag="Youtube"
+          link="https://youtu.be/slm58GGDWQc"
+          imgSrc="https://img.youtube.com/vi/slm58GGDWQc/maxresdefault.jpg"
+        />
+
+        <MediaSectionCard
+          title="Workshop: Write Your First Smart Contract In Rust Pt. 2"
+          tag="Youtube"
+          link="https://youtu.be/6FPXYuesH_0"
+          imgSrc="https://img.youtube.com/vi/6FPXYuesH_0/maxresdefault.jpg"
+        />
+
+        <MediaSectionCard
+          title="Workshop: Write Your First Smart Contract In Rust Pt. 1"
+          tag="Youtube"
+          link="https://youtu.be/jSLJEHVEMQA"
+          imgSrc="https://img.youtube.com/vi/jSLJEHVEMQA/maxresdefault.jpg"
+        />
+
+        <MediaSectionCard
           title="Soroban: A New Smart Contracts Platform"
           tag="Youtube"
           link="https://www.youtube.com/watch?v=Qwy0P1klpis"
@@ -366,27 +388,6 @@ const MediaSection = () => (
           tag="Youtube"
           link="https://www.youtube.com/watch?v=3in3EvVumiw"
           imgSrc="https://img.youtube.com/vi/3in3EvVumiw/maxresdefault.jpg"
-        />
-
-        <MediaSectionCard
-          title="Building Soroban’s Minimum Viable Ecosystem"
-          tag="Guide"
-          link="https://stellar.org/developers-blog/building-sorobans-minimum-viable-ecosystem"
-          imgSrc="https://assets-global.website-files.com/5dee83171c0040227763490c/63f66c99c2b589d7e4177fec_soroban%20minimum%20viable%20ecosystem.png"
-        />
-
-        <MediaSectionCard
-          title="Soroban: First Impressions"
-          tag="Youtube"
-          link="https://www.youtube.com/watch?v=dN4TKnYr5nQ"
-          imgSrc="https://img.youtube.com/vi/dN4TKnYr5nQ/maxresdefault.jpg"
-        />
-
-        <MediaSectionCard
-          title="Building on Soroban: Three Teams' Journeys with Smart Contracts"
-          tag="Guide"
-          link="https://stellar.org/developers-blog/building-on-soroban-three-teams-journeys-smart-contracts"
-          imgSrc="https://assets-global.website-files.com/5dee83171c0040227763490c/641c9c3c8f93d7c7d1604909_Building%20on%20Soroban.png"
         />
       </div>
     </div>
@@ -426,7 +427,7 @@ const Footer = ({ title = "Get Connected" }) => (
         <SocialCard
           title="Youtube"
           src="./img/landing/youtube-1.svg"
-          href="https://www.youtube.com/@StellarDevelopmentFoundation"
+          href="https://youtube.com/@SorobanOfficial"
         />
 
         <SocialCard

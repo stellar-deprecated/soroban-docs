@@ -98,7 +98,7 @@ const config = {
           //   position: 'left'
           // },
           {
-            href: 'https://github.com/stellar/soroban-docs',
+            href: 'https://github.com/stellar/rs-soroban-sdk',
             label: 'GitHub',
             position: 'right',
           },
@@ -155,19 +155,15 @@ const config = {
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/stellar',
+                href: 'https://github.com/stellar/soroban-docs',
               },
               {
                 label: 'Developer Blog',
                 href: 'https://www.stellar.org/developers-blog',
               },
               {
-                label: 'Stellar Quest',
+                label: 'Soroban Quest',
                 href: 'https://quest.stellar.org/soroban',
-              },
-              {
-                label: 'Sorobanathon',
-                href: 'https://soroban.stellar.org/sorobanathon',
               },
             ],
           },
@@ -176,7 +172,7 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
-        additionalLanguages: ["rust", "toml", "solidity"],
+        additionalLanguages: ["rust", "toml", "solidity", "cpp"],
       },
     }),
 };

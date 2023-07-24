@@ -58,32 +58,38 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
     }
   };
 
+  // Show the form if it's not submitted successfully
+  if (!isSubmittedSuccessfully) {
+    return (
+      <div>
+        <form onSubmit={handleSubmit} className={styles.challengeform}>
+          <label>
+            Public URL:
+            <input
+              className={styles.input}
+              type="url"
+              value={url}
+              onChange={(e) => {
+                const url = e.target.value;
+                setUrl(url);
+                console.log("URL:", url);
+                console.log("Public Key:", address);
+              }}
+              required
+            />
+          </label>
+          <button type="submit" className={styles.button}>
+            Submit
+          </button>
+        </form>
+      </div>
+    );
+  }
+
+  // Show the clickable entry if the form is submitted successfully
   return (
     <div>
-      <form onSubmit={handleSubmit} className={styles.challengeform}>
-        <label>
-          Public URL:
-          <input
-            className={styles.input}
-            type="url"
-            value={url}
-            onChange={(e) => {
-              const url = e.target.value;
-              setUrl(url);
-              console.log("URL:", url);
-              console.log("Public Key:", address);
-            }}
-            required
-          />
-        </label>
-        <button type="submit" className={styles.button}>
-          Submit
-        </button>
-      </form>
-      <br />
-      {isSubmittedSuccessfully && (
-        <p className={styles.success}>Challenge Complete!</p>
-      )}
+      <p className={styles.success}>Challenge Complete! Dapp deployed to: <a href={url}>{url}</a></p>
     </div>
   );
 }
@@ -91,19 +97,6 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
 function InnerComponent({ courseId }: { courseId: number }) {
   const { address, connect, activeChain } = useSorobanReact();
   const [loading, setLoading] = useState(true);
-
-  // useEffect(() => {
-  //   const checkConnection = async () => {
-  //     try {
-  //       await connect();
-  //       setLoading(false);
-  //     } catch (error) {
-  //       console.error("Error during connection:", error);
-  //       setLoading(true);
-  //     }
-  //   };
-  //   checkConnection();
-  // }, [connect]);
 
   useEffect(() => {
     if (activeChain) {

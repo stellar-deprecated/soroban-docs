@@ -97,6 +97,17 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
 function InnerComponent({ courseId }: { courseId: number }) {
   const { address, connect, activeChain } = useSorobanReact();
   const [loading, setLoading] = useState(true);
+  const isConnected = localStorage.getItem("isConnected");
+
+  // Check if the user is connected and stored the status in local storage
+  useEffect(() => {
+    if (isConnected === "true") {
+      setLoading(false);
+      connect(); // Call connect() to establish a connection if not already connected
+    } else {
+      setLoading(true);
+    }
+  }, [connect]);
 
   useEffect(() => {
     if (activeChain) {
@@ -110,6 +121,7 @@ function InnerComponent({ courseId }: { courseId: number }) {
         setLoading(true);
       }
       if (activeChain.name?.toString() === "Futurenet") {
+        localStorage.setItem("isConnected", "true");
         setLoading(false);
       }
     }

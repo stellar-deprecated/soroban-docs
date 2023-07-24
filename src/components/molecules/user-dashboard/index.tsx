@@ -14,7 +14,17 @@ function LoginComponent() {
   const { address, activeChain, connect } = useSorobanReact();
   const addressString = address ? address.toString() : "No address";
   const [loading, setLoading] = useState(true);
+  const isConnected = localStorage.getItem("isConnected");
 
+  // Check if the user is connected and stored the status in local storage
+  useEffect(() => {
+    if (isConnected === "true") {
+      setLoading(false);
+      connect(); // Call connect() to establish a connection if not already connected
+    } else {
+      setLoading(true);
+    }
+  }, [connect]);
 
   useEffect(() => {
     if (activeChain) {
@@ -26,31 +36,23 @@ function LoginComponent() {
         setLoading(true);
         alert("Please ensure that you are connected to Futurenet");
       }
-      if (activeChain.name?.toString() === "Futurenet") { 
+      if (activeChain.name?.toString() === "Futurenet") {
         setLoading(false);
+        // Store the connection status in local storage
+        localStorage.setItem("isConnected", "true");
       }
     }
   }, [activeChain]);
 
-    // useEffect(() => {
-  //   const checkConnection = async () => {
-  //     try {
-  //       await connect();
-  //       setLoading(false);
-  //     } catch (error) {
-  //       console.error("Error during connection:", error);
-  //       setLoading(true);
-  //     }
-  //   };
-  //   checkConnection();
-  // }, [connect]);
-
-
   const handleConnect = async () => {
-    try {
-      await connect();
-    } catch (error) {
-      console.error("Error during connection:", error);
+    if (!address) {
+      // If the user is not already connected, call connect()
+      try {
+        await connect();
+        localStorage.setItem("isConnected", "true");
+      } catch (error) {
+        console.error("Error during connection:", error);
+      }
     }
   };
 
@@ -58,7 +60,6 @@ function LoginComponent() {
     return (
       <div>
         <p style={{ fontWeight: "bold" }}>
-          {" "}
           Please connect to Futurenet and click the Connect button to continue.
         </p>
         <button className={styles.button} onClick={handleConnect}>

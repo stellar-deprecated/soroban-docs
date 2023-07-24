@@ -6,57 +6,67 @@ import { futurenet, sandbox, standalone, testnet } from "@soroban-react/chains";
 import { freighter } from "@soroban-react/freighter";
 import { ChainMetadata, Connector } from "@soroban-react/types";
 import styles from "./style.module.css";
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import BrowserOnly from "@docusaurus/BrowserOnly";
 
 const chains: ChainMetadata[] = [sandbox, futurenet, testnet, standalone];
 const connectors: Connector[] = [freighter()];
 
 function LoginComponent() {
-  const { address, activeChain, connect } = useSorobanReact();
+  const { address, activeChain, connect, disconnect } = useSorobanReact();
   const addressString = address ? address.toString() : "No address";
   const [loading, setLoading] = useState(true);
-  const isConnected = localStorage.getItem("isConnected");
 
   // Check if the user is connected and stored the status in local storage
   useEffect(() => {
+    let isConnected = localStorage.getItem("isConnected");
     if (isConnected === "true") {
       setLoading(false);
       connect(); // Call connect() to establish a connection if not already connected
     } else {
       setLoading(true);
-      localStorage.setItem("isConnected", "false");
     }
   }, [connect]);
 
   useEffect(() => {
     if (activeChain) {
       if (activeChain.name?.toString() !== "Futurenet") {
-        setLoading(true);
         alert("Please ensure that you are connected to Futurenet");
+        setLoading(true);
       }
       if (activeChain.name?.toString() === undefined) {
-        setLoading(true);
         alert("Please ensure that you are connected to Futurenet");
+        setLoading(true);
       }
       if (activeChain.name?.toString() === "Futurenet") {
         setLoading(false);
-        // Store the connection status in local storage
-        localStorage.setItem("isConnected", "true");
       }
     }
   }, [activeChain]);
 
   const handleConnect = async () => {
-    if (!address) {
-      // If the user is not already connected, call connect()
-      try {
-        await connect();
-        localStorage.setItem("isConnected", "true");
-      } catch (error) {
-        console.error("Error during connection:", error);
-      }
+    try {
+      await connect();
+      setLoading(false);
+      localStorage.setItem("isConnected", "true");
+      let isConnected = localStorage.getItem("isConnected");
+      console.log("isConnected:", isConnected);
+    } catch (error) {
+      console.error("Error during connection:", error);
     }
   };
+
+  // const handleDisconnect = async () => {
+  //   try {
+  //     await disconnect();
+  //     setLoading(true);
+  //     localStorage.setItem("isConnected", "false");
+  //     console.log("Disconnected!");
+  //     let isConnected = localStorage.getItem("isConnected");
+  //     console.log("isConnected:", isConnected);
+  //   } catch (error) {
+  //     console.error("Error during disconnection:", error);
+  //   }
+  // };
 
   if (loading) {
     return (
@@ -83,6 +93,9 @@ function LoginComponent() {
         }}
       >
         <CardContainer addressHex={addressString} />
+        {/* <button className={styles.button} onClick={handleDisconnect}>
+          Disconnect
+        </button> */}
       </div>
     </main>
   );
@@ -98,9 +111,15 @@ export default function Login({ children }: { children: React.ReactNode }) {
     >
       <SorobanEventsProvider>
         {children}
-        <BrowserOnly fallback={<div>Please connect to Futurenet and refresh the page to continue.</div>}>
+        <BrowserOnly
+          fallback={
+            <div>
+              Please connect to Futurenet and refresh the page to continue.
+            </div>
+          }
+        >
           {() => <LoginComponent />}
-          </BrowserOnly>
+        </BrowserOnly>
       </SorobanEventsProvider>
     </SorobanReactProvider>
   );

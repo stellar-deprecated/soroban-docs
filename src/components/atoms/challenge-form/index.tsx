@@ -100,10 +100,10 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
 function InnerComponent({ courseId }: { courseId: number }) {
   const { address, connect, activeChain } = useSorobanReact();
   const [loading, setLoading] = useState(true);
-  const isConnected = localStorage.getItem("isConnected");
 
   // Check if the user is connected and stored the status in local storage
   useEffect(() => {
+    let isConnected = localStorage.getItem("isConnected");
     if (isConnected === "true") {
       setLoading(false);
       connect(); // Call connect() to establish a connection if not already connected
@@ -114,7 +114,6 @@ function InnerComponent({ courseId }: { courseId: number }) {
 
   useEffect(() => {
     if (activeChain) {
-      setLoading(false);
       if (activeChain.name?.toString() !== "Futurenet") {
         alert("Please ensure that you are connected to Futurenet");
         setLoading(true);
@@ -123,12 +122,23 @@ function InnerComponent({ courseId }: { courseId: number }) {
         alert("Please ensure that you are connected to Futurenet");
         setLoading(true);
       }
-      if (activeChain.name?.toString() === "Futurenet") {
-        localStorage.setItem("isConnected", "true");
+      if (activeChain.name?.toString() === "Futurenet" && address) {
         setLoading(false);
       }
     }
   }, [activeChain]);
+
+  const handleConnect = async () => {
+    try {
+      await connect();
+      setLoading(false);
+      localStorage.setItem("isConnected", "true");
+      let isConnected = localStorage.getItem("isConnected");
+      console.log("isConnected:", isConnected);
+    } catch (error) {
+      console.error("Error during connection:", error);
+    }
+  };
 
   // if user is not logged in (address is undefined), render the Login button
   if (loading) {
@@ -137,7 +147,7 @@ function InnerComponent({ courseId }: { courseId: number }) {
         Please connect to Futurenet and click the Connect button to continue.
         <br />
         <br />
-        <button onClick={() => connect()} className={styles.button}>
+        <button className={styles.button} onClick={handleConnect}>
           Connect
         </button>
       </div>
@@ -156,7 +166,13 @@ export function ParentChallengeForm({ courseId }: { courseId: number }) {
       appName={"course completion"}
     >
       <SorobanEventsProvider>
-        <BrowserOnly fallback={<div>Please connect to Futurenet and refresh the page to continue.</div>}>
+        <BrowserOnly
+          fallback={
+            <div>
+              Please connect to Futurenet and refresh the page to continue.
+            </div>
+          }
+        >
           {() => <InnerComponent courseId={courseId} />}
         </BrowserOnly>
       </SorobanEventsProvider>

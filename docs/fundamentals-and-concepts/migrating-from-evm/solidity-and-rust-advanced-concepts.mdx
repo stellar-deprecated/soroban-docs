@@ -295,6 +295,7 @@ impl LiquidityPoolTrait for LiquidityPool {
 In the above example, we use `contractimport` to interact with the token file via a `Client` that was generated for the `token` module. This `Client` was created using a Contract trait that matches the interface of the contract, a ContractClient struct that contains functions for each function in the contract, and types for all contract types defined in the contract.
 
 #### A Note on Inheritance and Composability
+
 While we've been using the term "inheritance" to help make the transition from Solidity smoother, let's clarify an important aspect of Rust: it does not support inheritance as we traditionally understand it. Instead, Rust practices "composability", meaning it uses functions from different crates, which are akin to packages, in a modular fashion. So, when we discuss `contractimport!`, we're actually observing composability in action, not "inheritance". Rust does not foster the "is a" relationship inherent in OOP languages. Instead, it enables us to reuse and assemble code effectively across different scopes. This is a technical truth that is important to understand; however, it's worth noting that this fact doesn't impact the practical usage of Soroban throughout this guide.
 
 ### Modules
@@ -671,7 +672,7 @@ One significant difference is the use of the `Env` object in Soroban. The `Env` 
 
 To further explain, the `Env` type offers a gateway to the environment where the contract operates. It provides information about the ongoing contract, the entity invoking it, contract data, and functions for signing, hashing, and so forth. Most types demand access to an `Env` for their construction or conversion.
 
-Meanwhile, the  `Address` object serves as a potent tool for authentication and [authorization](#authorization). For instance, it can be used to authorize token transfers, acting as a security gatekeeper within the system. This feature amplifies the functionality of addresses in Soroban, making them not just a means of identification or storage, but also a key player in verifying and authorizing transactions.
+Meanwhile, the `Address` object serves as a potent tool for authentication and [authorization](#authorization). For instance, it can be used to authorize token transfers, acting as a security gatekeeper within the system. This feature amplifies the functionality of addresses in Soroban, making them not just a means of identification or storage, but also a key player in verifying and authorizing transactions.
 
 ### Function Visibility Specifiers
 
@@ -703,7 +704,7 @@ contract SimpleContract {
 - `pub(crate)`: The item is accessible only within the current crate.
 - `pub(super)`: The item is accessible only within its parent module.
 - `pub(in path::to::module)`: The item is accessible only within the specified module path.
--  `private`: The item is not marked as pub and is therefore private to its own module, meaning it can only be accessed within the same module and is not accessible from outside the module.
+- `private`: The item is not marked as pub and is therefore private to its own module, meaning it can only be accessed within the same module and is not accessible from outside the module.
 
 Here is an example of a module that illustrates how function visibility is used in Soroban:
 
@@ -814,7 +815,6 @@ impl SimpleContract {
 
 Soroban differs from Solidity in its approach to authorization and modifiers. While Solidity has a built-in modifier system, Sorotban does not. Instead, Soroban leverages traits, their implementations, and core features to achieve similar functionality.
 
-
 #### Solidity
 
 In Solidity, the ERC20 token standard includes the `approve` function, which allows a token holder to authorize another address to spend a certain amount of tokens on their behalf. This function is commonly used in decentralized exchanges and other token transfer scenarios. Furthermore, we're ensuring that the spender is authorized to spend the amount of tokens requested by the token holder.
@@ -830,7 +830,7 @@ contract ERC20Token {
         address owner = msg.sender;
         ownerAddress = owner;
     }
-    
+
     mapping(address => uint256) public balances;
     mapping(address => mapping(address => uint256)) public allowances;
     mapping(address => bool) public isAuthorized;
@@ -862,11 +862,11 @@ The approve function allows the token holder to authorize spender to spend amoun
 
 These Solidity examples illustrate some common authorization patterns used in Ethereum smart contracts. Soroban provides alternative approaches to achieve similar functionality, leveraging core functionality derived right from the soroban SDK.
 
-#### Soroban 
+#### Soroban
 
 Soroban's design principles prioritize flexibility, security, and testability, which have led to differences in how authorization is handled compared to Solidity.
 
-Soroban provides built-in functions such as `require_auth` and `require_auth_for_args` through the `Address` struct. These functions help enforce authorization rules within contracts. During on-chain execution, the Soroban host performs the necessary authentication, including verifying signatures and **ensuring replay prevention**. This alleviates the burden of authentication from the contracts themselves, promoting security and reducing potential vulnerabilities. 
+Soroban provides built-in functions such as `require_auth` and `require_auth_for_args` through the `Address` struct. These functions help enforce authorization rules within contracts. During on-chain execution, the Soroban host performs the necessary authentication, including verifying signatures and **ensuring replay prevention**. This alleviates the burden of authentication from the contracts themselves, promoting security and reducing potential vulnerabilities.
 
 Here is an example of a smart contract that illustrates how authorization is handled in Soroban:
 

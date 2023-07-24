@@ -25,7 +25,7 @@ The XDR of `HostFunction` and `InvokeHostFunctionOp` below can be found
 
 [XDR]: https://github.com/stellar/stellar-xdr/blob/e372df9f677961aac04c5a4cc80a3667f310b29f/Stellar-transaction.x#L581
 
-```c++
+```cpp
 union HostFunction switch (HostFunctionType type)
 {
 case HOST_FUNCTION_TYPE_INVOKE_CONTRACT:
@@ -50,90 +50,96 @@ struct InvokeHostFunctionOp
 The `hostFunction` in `InvokeHostFunctionOp` will be executed by the Soroban host environment. The supported functions are:
 
 1. `HOST_FUNCTION_TYPE_INVOKE_CONTRACT`
-   - This will invoke a function of the deployed contract with arguments 
-   specified in `invokeContract` vector.
-   - `invokeContract` arguments are expected to contain the contract id 
-   `SCBytes`, contract function name `SCSymbol`, and the arguments of the 
-   contract function being invoked.
+   - This will invoke a function of the deployed contract with arguments
+     specified in `invokeContract` vector.
+   - `invokeContract` arguments are expected to contain the contract id
+     `SCBytes`, contract function name `SCSymbol`, and the arguments of the
+     contract function being invoked.
 2. `HOST_FUNCTION_TYPE_UPLOAD_CONTRACT_WASM`
    - This will upload the contract Wasm using the provided `wasm` blob.
    - Uploaded Wasm can be identified by the SHA-256 hash of the uploaded Wasm.
 3. `HOST_FUNCTION_TYPE_CREATE_CONTRACT`
-   - This will deploy a contract instance to the network using the specified 
-   `executable`. The 32-byte contract identifer is based on `contractIDPreimage`
-   value and the network identifier (so every network has a separate contract
-   identifier namespace).
-        ```c++
-        struct CreateContractArgs
-        {
-            ContractIDPreimage contractIDPreimage;
-            ContractExecutable executable;
-        };
-        ```
+
+   - This will deploy a contract instance to the network using the specified
+     `executable`. The 32-byte contract identifer is based on `contractIDPreimage`
+     value and the network identifier (so every network has a separate contract
+     identifier namespace).
+
+   ```cpp
+   struct CreateContractArgs
+   {
+       ContractIDPreimage contractIDPreimage;
+       ContractExecutable executable;
+   };
+   ```
+
    - `executable` can be either a SHA-256 hash of the previously uploaded Wasm
-   or it can specify that a built-in contract has to be used:
-        ```c++
-        enum ContractExecutableType
-        {
-            CONTRACT_EXECUTABLE_WASM = 0,
-            CONTRACT_EXECUTABLE_TOKEN = 1 
-        };
+     or it can specify that a built-in contract has to be used:
 
-        union ContractExecutable switch (ContractExecutableType type)
-        {
-        case CONTRACT_EXECUTABLE_WASM:
-            Hash wasm_hash;
-        case CONTRACT_EXECUTABLE_TOKEN:
-            void;
-        };
-        ```
+   ```cpp
+   enum ContractExecutableType
+   {
+       CONTRACT_EXECUTABLE_WASM = 0,
+       CONTRACT_EXECUTABLE_TOKEN = 1
+   };
 
-    - `contractIDPreimage` is defined as following:
-        ```c++
-        union ContractIDPreimage switch (ContractIDPreimageType type)
-        {
-        case CONTRACT_ID_PREIMAGE_FROM_ADDRESS:
-            struct
-            {
-                SCAddress address;
-                uint256 salt;
-            } fromAddress;
-        case CONTRACT_ID_PREIMAGE_FROM_ASSET:
-            Asset fromAsset;
-        };
-        ```
-        - The final contract identifier is created by computing SHA-256 of this
-        together with the network identifier as a part of [`HashIDPreimage`]:
+   union ContractExecutable switch (ContractExecutableType type)
+   {
+   case CONTRACT_EXECUTABLE_WASM:
+       Hash wasm_hash;
+   case CONTRACT_EXECUTABLE_TOKEN:
+       void;
+   };
+   ```
 
-        [`HashIDPreimage`]: https://github.com/stellar/stellar-xdr/blob/e372df9f677961aac04c5a4cc80a3667f310b29f/Stellar-transaction.x#L697
+   - `contractIDPreimage` is defined as following:
 
-        ```c++
-        union HashIDPreimage switch (EnvelopeType type)
-        {
-        ...
-        case ENVELOPE_TYPE_CONTRACT_ID:
-            struct
-            {
-                Hash networkID;
-                ContractIDPreimage contractIDPreimage;
-            } contractID;
-        ...
-        ```
-        - `CONTRACT_ID_PREIMAGE_FROM_ADDRESS` specifies that the contract will be created
-        using the provided address and salt. This operation has to be authorized by
-        `address` (see the following section for details).
-        - `CONTRACT_ID_FROM_ASSET` specifies that the contract will be created using the
-        Stellar asset. This is only supported when `executable == CONTRACT_EXECUTABLE_TOKEN`.
-        Note, that the asset doesn't need to exist when this is applied, however the issuer of the asset will be the initial token administrator. Anyone can deploy asset contracts.
+     ```cpp
+     union ContractIDPreimage switch (ContractIDPreimageType type)
+     {
+     case CONTRACT_ID_PREIMAGE_FROM_ADDRESS:
+         struct
+         {
+             SCAddress address;
+             uint256 salt;
+         } fromAddress;
+     case CONTRACT_ID_PREIMAGE_FROM_ASSET:
+         Asset fromAsset;
+     };
+     ```
 
+     - The final contract identifier is created by computing SHA-256 of this
+       together with the network identifier as a part of [`HashIDPreimage`]:
+
+     [`HashIDPreimage`]: https://github.com/stellar/stellar-xdr/blob/e372df9f677961aac04c5a4cc80a3667f310b29f/Stellar-transaction.x#L697
+
+     ```cpp
+     union HashIDPreimage switch (EnvelopeType type)
+     {
+     ...
+     case ENVELOPE_TYPE_CONTRACT_ID:
+         struct
+         {
+             Hash networkID;
+             ContractIDPreimage contractIDPreimage;
+         } contractID;
+     ...
+     ```
+
+     - `CONTRACT_ID_PREIMAGE_FROM_ADDRESS` specifies that the contract will be created
+       using the provided address and salt. This operation has to be authorized by
+       `address` (see the following section for details).
+     - `CONTRACT_ID_FROM_ASSET` specifies that the contract will be created using the
+       Stellar asset. This is only supported when `executable == CONTRACT_EXECUTABLE_TOKEN`.
+       Note, that the asset doesn't need to exist when this is applied, however the issuer of the asset will be the initial token administrator. Anyone can deploy asset contracts.
 
 ### Authorization Data
 
 Soroban [authorization framework](../fundamentals-and-concepts/authorization.mdx)
-provides a standardized way for passing authorization data to the contract 
+provides a standardized way for passing authorization data to the contract
 invocations via `SorobanAuthorizationEntry` structures.
 
-```c++
+```cpp
 struct SorobanAuthorizationEntry
 {
     SorobanCredentials credentials;
@@ -155,30 +161,30 @@ as a root. This tree is authorized by a user specified in `credentials`.
 `SorobanAddressCredentials` have 2 options:
 
 - `SOROBAN_CREDENTIALS_SOURCE_ACCOUNT` - this simply uses the signature of the
-transaction (or operation, if any) source account and hence doesn't require any
-additional payload.
+  transaction (or operation, if any) source account and hence doesn't require any
+  additional payload.
 - `SOROBAN_CREDENTIALS_ADDRESS` - contains `SorobanAddressCredentials` with the
   following structure:
-  ```c++
+  ```cpp
   struct SorobanAddressCredentials
   {
       SCAddress address;
       int64 nonce;
-      uint32 signatureExpirationLedger;    
+      uint32 signatureExpirationLedger;
       SCVec signatureArgs;
   };
   ```
   The fields of this structure have the following semantics:
-    - When `address` is the address that authorizes invocation.
-    - `signatureExpirationLedger` the ledger sequence number on which the 
-    signature expires. Signature is still considered valid on 
-    `signatureExpirationLedger`, but it is no longer valid on 
+  - When `address` is the address that authorizes invocation.
+  - `signatureExpirationLedger` the ledger sequence number on which the
+    signature expires. Signature is still considered valid on
+    `signatureExpirationLedger`, but it is no longer valid on
     `signatureExpirationLedger + 1`. It is recommended to keep this as small as
     viable, as it makes the transaction cheaper.
-    - `nonce` is an arbitrary value that is unique for all the signatures of
+  - `nonce` is an arbitrary value that is unique for all the signatures of
     performed by `address` until `signatureExpirationLedger`. A good approach to
     generating this is to just use a random value.
-    - `signatureArgs` - signature (or multiple signatures) that sign the 32-byte
+  - `signatureArgs` - signature (or multiple signatures) that sign the 32-byte
     SHA-256 hash of `ENVELOPE_TYPE_SOROBAN_AUTHORIZATION` preimage
     ([XDR][envelope-xdr]). The signature structure is defined by the account
     contract corresponding to the `Address` (see below for the Stellar account
@@ -186,7 +192,7 @@ additional payload.
 
 `SorobanAuthorizedInvocation` defines a node in the authorized invocation tree:
 
-```c++
+```cpp
 struct SorobanAuthorizedInvocation
 {
     SorobanAuthorizedFunction function;
@@ -201,7 +207,7 @@ case SOROBAN_AUTHORIZED_FUNCTION_TYPE_CREATE_CONTRACT_HOST_FN:
     CreateContractArgs createContractHostFn;
 };
 
-struct SorobanAuthorizedContractFunction 
+struct SorobanAuthorizedContractFunction
 {
     SCAddress contractAddress;
     SCSymbol functionName;
@@ -214,16 +220,16 @@ struct SorobanAuthorizedContractFunction
 that `function` performs (if any).
 
 `SorobanAuthorizedFunction` has two variants:
-- `SOROBAN_AUTHORIZED_FUNCTION_TYPE_CONTRACT_FN` is a contract function that
-includes the address of the contract, name of the function being invoked and
-arguments of `require_auth`/`require_auth_for_args` call performed on behalf
-of the address. Note, that if `require_auth[_for_args]` wasn't called, there
-shouldn't be a `SorobanAuthorizedInvocation` entry in the transaction.
-- `SOROBAN_AUTHORIZED_FUNCTION_TYPE_CREATE_CONTRACT_HOST_FN` is authorization
-for `HOST_FUNCTION_TYPE_CREATE_CONTRACT` or for `create_contract` host function
-called from a contract. It only contains the `CreateContractArgs` XDR structure
-corresponding to the created contract.
 
+- `SOROBAN_AUTHORIZED_FUNCTION_TYPE_CONTRACT_FN` is a contract function that
+  includes the address of the contract, name of the function being invoked and
+  arguments of `require_auth`/`require_auth_for_args` call performed on behalf
+  of the address. Note, that if `require_auth[_for_args]` wasn't called, there
+  shouldn't be a `SorobanAuthorizedInvocation` entry in the transaction.
+- `SOROBAN_AUTHORIZED_FUNCTION_TYPE_CREATE_CONTRACT_HOST_FN` is authorization
+  for `HOST_FUNCTION_TYPE_CREATE_CONTRACT` or for `create_contract` host function
+  called from a contract. It only contains the `CreateContractArgs` XDR structure
+  corresponding to the created contract.
 
 Building `SorobanAuthorizedInvocation` trees may be simplified by using the
 recording auth mode in Soroban preflight (see the [docs][preflight-doc] for more
@@ -253,7 +259,7 @@ pub struct AccountEd25519Signature {
 
 ## Transaction resources
 
-Every Soroban transaction has to have a `SorobanTransactionData` transaction 
+Every Soroban transaction has to have a `SorobanTransactionData` transaction
 [extension] populated. This is needed to compute the
 [Soroban resource fee](../fundamentals-and-concepts/fees-and-metering.mdx).
 
@@ -261,13 +267,13 @@ Every Soroban transaction has to have a `SorobanTransactionData` transaction
 
 The Soroban transaction data is defined as follows:
 
-```c++
+```cpp
 struct SorobanResources
-{   
+{
     // The ledger footprint of the transaction.
     LedgerFootprint footprint;
     // The maximum number of instructions this transaction can use
-    uint32 instructions; 
+    uint32 instructions;
 
     // The maximum number of bytes this transaction can read from ledger
     uint32 readBytes;

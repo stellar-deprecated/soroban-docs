@@ -17,7 +17,7 @@ Stellar operations.
 
 Implementing a custom account contract requires a very good understanding of
 authentication and authorization and requires rigorous testing and review. The
-example here is *not* a full-fledged account contract - use it as an API
+example here is _not_ a full-fledged account contract - use it as an API
 reference only.
 
 :::
@@ -124,7 +124,7 @@ pub fn add_limit(env: Env, token: BytesN<32>, limit: i128) {
 ```
 
 This function allows users to set and modify the per-token spend limit described
-above. The neat trick here is that `require_auth` can be used for the 
+above. The neat trick here is that `require_auth` can be used for the
 `current_contract_address()`, i.e. the account contract may be used to verify
 authorization for its own administrative functions. This way there is no need
 to write duplicate authorization and authentication logic.

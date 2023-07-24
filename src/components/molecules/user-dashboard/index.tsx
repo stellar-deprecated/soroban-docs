@@ -98,7 +98,7 @@ export default function Login({ children }: { children: React.ReactNode }) {
     >
       <SorobanEventsProvider>
         {children}
-        <BrowserOnly fallback={<div>Please connect to Futurenet and click the refresh the page to continue.</div>}>
+        <BrowserOnly fallback={<div>Please connect to Futurenet and refresh the page to continue.</div>}>
           {() => <LoginComponent />}
           </BrowserOnly>
       </SorobanEventsProvider>

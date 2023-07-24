@@ -6,6 +6,7 @@ import { futurenet, sandbox, standalone, testnet } from "@soroban-react/chains";
 import { freighter } from "@soroban-react/freighter";
 import { ChainMetadata, Connector } from "@soroban-react/types";
 import styles from "./style.module.css";
+import BrowserOnly from '@docusaurus/BrowserOnly';
 
 const chains: ChainMetadata[] = [sandbox, futurenet, testnet, standalone];
 const connectors: Connector[] = [freighter()];
@@ -23,6 +24,7 @@ function LoginComponent() {
       connect(); // Call connect() to establish a connection if not already connected
     } else {
       setLoading(true);
+      localStorage.setItem("isConnected", "false");
     }
   }, [connect]);
 
@@ -96,7 +98,9 @@ export default function Login({ children }: { children: React.ReactNode }) {
     >
       <SorobanEventsProvider>
         {children}
-        <LoginComponent />
+        <BrowserOnly fallback={<div>Please connect to Futurenet and click the refresh the page to continue.</div>}>
+          {() => <LoginComponent />}
+          </BrowserOnly>
       </SorobanEventsProvider>
     </SorobanReactProvider>
   );

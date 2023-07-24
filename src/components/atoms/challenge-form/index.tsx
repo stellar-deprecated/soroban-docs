@@ -5,6 +5,7 @@ import { SorobanEventsProvider } from "@soroban-react/events";
 import { futurenet, sandbox, standalone, testnet } from "@soroban-react/chains";
 import { freighter } from "@soroban-react/freighter";
 import { ChainMetadata, Connector } from "@soroban-react/types";
+import BrowserOnly from "@docusaurus/BrowserOnly";
 
 const chains: ChainMetadata[] = [sandbox, futurenet, testnet, standalone];
 const connectors: Connector[] = [freighter()];
@@ -89,7 +90,9 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
   // Show the clickable entry if the form is submitted successfully
   return (
     <div>
-      <p className={styles.success}>Challenge Complete! Dapp deployed to: <a href={url}>{url}</a></p>
+      <p className={styles.success}>
+        Challenge Complete! Dapp deployed to: <a href={url}>{url}</a>
+      </p>
     </div>
   );
 }
@@ -153,7 +156,9 @@ export function ParentChallengeForm({ courseId }: { courseId: number }) {
       appName={"course completion"}
     >
       <SorobanEventsProvider>
-        <InnerComponent courseId={courseId} />
+        <BrowserOnly fallback={<div>Please connect to Futurenet and refresh the page to continue.</div>}>
+          {() => <InnerComponent courseId={courseId} />}
+        </BrowserOnly>
       </SorobanEventsProvider>
     </SorobanReactProvider>
   );

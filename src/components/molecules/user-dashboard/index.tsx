@@ -18,7 +18,7 @@ function LoginComponent() {
 
   // Check if the user is connected and stored the status in local storage
   useEffect(() => {
-    let isConnected = localStorage.getItem("isConnected");
+    let isConnected = localStorage.getItem(`isConnected:${addressString}`);
     if (isConnected === "true") {
       setLoading(false);
       connect(); // Call connect() to establish a connection if not already connected
@@ -47,8 +47,8 @@ function LoginComponent() {
     try {
       await connect();
       setLoading(false);
-      localStorage.setItem("isConnected", "true");
-      let isConnected = localStorage.getItem("isConnected");
+      localStorage.setItem(`isConnected:${addressString}`, "true");
+      let isConnected = localStorage.getItem(`isConnected:${addressString}`);
       console.log("isConnected:", isConnected);
     } catch (error) {
       console.error("Error during connection:", error);
@@ -59,9 +59,9 @@ function LoginComponent() {
   //   try {
   //     await disconnect();
   //     setLoading(true);
-  //     localStorage.setItem("isConnected", "false");
+  //     localStorage.setItem(`isConnected:${addressString}`, "true");
   //     console.log("Disconnected!");
-  //     let isConnected = localStorage.getItem("isConnected");
+  //     let isConnected = localStorage.getItem(`isConnected:${addressString}`);
   //     console.log("isConnected:", isConnected);
   //   } catch (error) {
   //     console.error("Error during disconnection:", error);

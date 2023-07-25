@@ -26,9 +26,11 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
     course_index: number;
     url: string;
   }
-  
 
-  const fetchCourseUrl = async (address: string, courseId: number): Promise<string> => {
+  const fetchCourseUrl = async (
+    address: string,
+    courseId: number,
+  ): Promise<string> => {
     try {
       const response = await fetch(
         "https://soroban-dapps-challenge-wrangler.sdf-ecosystem.workers.dev",
@@ -40,11 +42,13 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
           return { publickey: key, course_index: Number(course_index), url };
         },
       );
-  
+
       // Get the first course that matches the public key and course id
-      const course = data.find((course) => course.publickey === address && course.course_index === courseId);
+      const course = data.find(
+        (course) =>
+          course.publickey === address && course.course_index === courseId,
+      );
       return course ? course.url : "";
-  
     } catch (error) {
       console.error(error);
       return "";
@@ -57,8 +61,7 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
       fetchCourseUrl(address, courseId).then(setSavedUrl);
     }
   }, [address, courseId]);
-  
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -138,11 +141,12 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
 
 function InnerComponent({ courseId }: { courseId: number }) {
   const { address, connect, activeChain } = useSorobanReact();
+  const addressString = address ? address.toString() : "No address";
   const [loading, setLoading] = useState(true);
 
   // Check if the user is connected and stored the status in local storage
   useEffect(() => {
-    let isConnected = localStorage.getItem("isConnected");
+    let isConnected = localStorage.getItem(`isConnected:${addressString}`);
     if (isConnected === "true") {
       setLoading(false);
       connect(); // Call connect() to establish a connection if not already connected
@@ -171,8 +175,8 @@ function InnerComponent({ courseId }: { courseId: number }) {
     try {
       await connect();
       setLoading(false);
-      localStorage.setItem("isConnected", "true");
-      let isConnected = localStorage.getItem("isConnected");
+      localStorage.setItem(`isConnected:${addressString}`, "true");
+      let isConnected = localStorage.getItem(`isConnected:${addressString}`);
       console.log("isConnected:", isConnected);
     } catch (error) {
       console.error("Error during connection:", error);

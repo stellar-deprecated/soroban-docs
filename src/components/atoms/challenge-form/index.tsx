@@ -16,7 +16,7 @@ interface ChallengeFormProps {
 }
 
 function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState(localStorage.getItem("url") || "");
   const [courseIdState] = useState(courseId);
   const [isSubmittedSuccessfully, setIsSubmittedSuccessfully] = useState(false);
 
@@ -49,6 +49,7 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
         const data = response;
         console.log(data);
         setIsSubmittedSuccessfully(true);
+        localStorage.setItem("url", url); // save the URL to local storage only when successfully submitted.
       } else {
         // Request failed, handle the error
         console.error("Request failed with status:", response.status);
@@ -80,7 +81,7 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
             />
           </label>
           <button type="submit" className={styles.button}>
-            Submit
+            {url ? "Resubmit" : "Submit"}
           </button>
         </form>
       </div>

@@ -1,0 +1,142 @@
+---
+sidebar_position: 4
+title: 3. Deploy to Futurenet
+description: Deploy your contract to Soroban's Futurenet network and interact with it.
+---
+
+You've built two simple contracts and run them locally in Sandbox. Now you can deploy them to a network.
+
+Soroban has a test network called Futurenet that you can use to deploy and test your contracts. Soon Soroban will also have a test network called Testnet, which will have stronger guarantees around data persistence, but you'll still be able to use Futurenet for testing the latest Soroban features.
+
+## Configure Futurenet in your CLI
+
+The first step toward deploying to Futurenet is to configure your CLI to use it. You can do this by running the following command:
+
+    soroban config network add --global futurenet \
+      --rpc-url https://rpc-futurenet.stellar.org:443 \
+      --network-passphrase "Test SDF Future Network ; October 2022"
+
+Note the `--global`. This creates a file in your home folder's `/.config/soroban/network/futurenet.toml` with the settings you specified. This
+means that you can use the `--network futurenet` flag in any Soroban CLI command to use this network.
+
+If you want project-specific network configurations, you can omit the `--global` flag, and the networks will be added to your working directory's `.soroban/network` folder instead.
+
+## Configure an Identity
+
+So far when using Sandbox, you haven't needed to consider _who_ is sending the transactions. But when you deploy to a network, you need to specify an identity that will be used to sign the transactions.
+
+Let's configure an identity called `alice`. You can use any name you want, but it might be nice to have some named identities that you can use for testing, such as [`alice`, `bob`, and `carol`](https://en.wikipedia.org/wiki/Alice_and_Bob).
+
+    soroban config identity generate --global alice
+
+You can see the public key of `alice` with:
+
+    soroban config identity address alice
+
+Like the Network configs, the `--global` means that the identity gets stored in `~/.config/soroban/identity/alice.toml`. You can omit the `--global` flag to store the identity in your project's `.soroban/identity` folder instead.
+
+All this did so far is generate a public/private keypair on your local machine. No network requests were made, and `alice` has no funds on Futurenet. This means that you can't make any transactions with `alice` yet.
+
+To get `alice` some Futurenet tokens, you'll need to use [Friendbot](https://developers.stellar.org/docs/fundamentals-and-concepts/testnet-and-pubnet#friendbot). All Stellar and Soroban test networks have a Friendbot that you can use to get some test tokens. The public Friendbot instance for Futurenet lives at `friendbot-futurenet.stellar.org`. Use it:
+
+     curl "https://friendbot-futurenet.stellar.org/?addr=$(soroban config identity address alice)"
+
+:::tip Command Expansion `$(…)`
+This uses [command expansion](https://www.gnu.org/software/bash/manual/html_node/Command-Substitution.html), which only works with bash-compatible shells. If you are using Windows or some other shell, you will need to copy the output of `soroban config…` and paste it into the `curl` command, or figure out how command expansion works in your shell.
+:::
+
+## Deploy
+
+Now you can deploy your Hello World contract:
+
+    soroban contract deploy \
+      --wasm target/wasm32-unknown-unknown/release/hello_soroban.wasm \
+      --source alice \
+      --network futurenet
+
+This returns the ID of the contract, starting with a `C`. If you're using a bash-compatible shell, you can set this as a variable in your current shell:
+
+```bash
+export HELLO_CONTRACT=C…
+```
+
+If using a different shell, go ahead and take a minute to figure out how to use variables, and replace all the uses of `$HELLO_CONTRACT` in the following commands with the variable syntax for your situation.
+
+If you want to use the contract ID often, you could add this `export` line to one of your shell startup dotfiles.
+
+## Interact
+
+This should look a lot like interacting with the contract in the Sandbox, as you did in [1. Hello World](./hello-world.mdx). Only now the contract lives on the Futurenet network, and the CLI is making [RPC](../reference/rpc.mdx) calls in the background. Let's try it:
+
+```bash
+soroban contract invoke \
+  --id $HELLO_CONTRACT \
+  --source alice \
+  --network futurenet \
+  -- \
+  --help
+```
+
+Rather than using a `--wasm` flag to point to a local wasm file, you now specify the `--network` and the `--source`. That's it! You can try calling `hello` as before:
+
+```bash
+soroban contract invoke \
+  --id $HELLO_CONTRACT \
+  --source alice \
+  --network futurenet \
+  -- \
+  hello \
+  --to RPC
+```
+
+## Two-step deployment
+
+It's worth knowing that `deploy` is actually a two-step process.
+
+1. Upload the contract bytes to the network. Soroban currently refers to this as _installing_ the contract—from the perspective of the blockchain itself, this is a reasonable metaphor. This uploads the bytes of the contract to the network, indexing it by its hash. This contract code can now be referenced by multiple contracts, which means they would have the exact same _behavior_ but separate storage state.
+
+2. Instantiate the contract. This actually creates what you probably think of as a Smart Contract. It makes a new contract ID, and associates it with the contract bytes that were uploaded in the previous step.
+
+You can run these two steps separately. Let's try it with the Incrementor contract:
+
+```bash
+soroban contract install \
+  --network futurenet \
+  --source alice \
+  --wasm target/wasm32-unknown-unknown/release/incrementor.wasm
+```
+
+This returns the hash of the Wasm bytes. Now you can use `--wasm-hash` with `deploy` rather than `--wasm`:
+
+```bash
+soroban contract deploy \
+  --wasm-hash [paste the output from the last command] \
+  --source alice \
+  --network futurenet
+```
+
+Like the last `deploy`, this returns the contract ID of the newly instantiated contract. Go ahead and save it as a variable again:
+
+```bash
+export INCREMENTOR_CONTRACT=C…
+```
+
+Now you can interact with it over RPC like you did with the Hello World contract:
+
+```bash
+soroban contract invoke \
+  --id $INCREMENTOR_CONTRACT \
+  --source alice \
+  --network futurenet \
+  -- \
+  increment
+```
+
+## Run your own network/node
+
+Sometimes you'll need to run your own node:
+
+- Production apps! It's a bad idea to rely on the public, Stellar-maintained Soroban RPC endpoint. Instead, you should run your own node, and point your app at that.
+- When you need a network that differs from the version deployed to Futurenet.
+
+The Soroban team maintains Docker containers that makes this as straightforward as possible. See the [RPC](../reference/rpc.mdx) reference for details.

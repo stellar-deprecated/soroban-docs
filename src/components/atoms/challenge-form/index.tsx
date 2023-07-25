@@ -16,10 +16,49 @@ interface ChallengeFormProps {
 }
 
 function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
-  const [url, setUrl] = useState(localStorage.getItem("url") || "");
+  const [savedUrl, setSavedUrl] = useState("");
+  const [url, setUrl] = useState("");
   const [courseIdState] = useState(courseId);
   const [isSubmittedSuccessfully, setIsSubmittedSuccessfully] = useState(false);
 
+  interface Course {
+    publickey: string;
+    course_index: number;
+    url: string;
+  }
+  
+
+  const fetchCourseUrl = async (address: string, courseId: number): Promise<string> => {
+    try {
+      const response = await fetch(
+        "https://soroban-dapps-challenge-wrangler.sdf-ecosystem.workers.dev",
+      );
+      const rawData = await response.json();
+      const data: Course[] = rawData.map(
+        ({ publickey, url }: { publickey: string; url: string }) => {
+          const [key, course_index] = publickey.split(":");
+          return { publickey: key, course_index: Number(course_index), url };
+        },
+      );
+  
+      // Get the first course that matches the public key and course id
+      const course = data.find((course) => course.publickey === address && course.course_index === courseId);
+      return course ? course.url : "";
+  
+    } catch (error) {
+      console.error(error);
+      return "";
+    }
+  };
+
+  useEffect(() => {
+    if (address) {
+      fetchCourseUrl(address, courseId).then(setUrl);
+      fetchCourseUrl(address, courseId).then(setSavedUrl);
+    }
+  }, [address, courseId]);
+  
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -49,7 +88,6 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
         const data = response;
         console.log(data);
         setIsSubmittedSuccessfully(true);
-        localStorage.setItem("url", url); // save the URL to local storage only when successfully submitted.
       } else {
         // Request failed, handle the error
         console.error("Request failed with status:", response.status);
@@ -81,7 +119,7 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
             />
           </label>
           <button type="submit" className={styles.button}>
-            {url ? "Resubmit" : "Submit"}
+            {savedUrl ? "Resubmit" : "Submit"}
           </button>
         </form>
       </div>

@@ -42,7 +42,7 @@ The general usage and interface is identical for all storage types. They differ 
 
 ## Contract Data Best Practices
 
-As a general rule, `Temporary` storage should only be used for data that can be easily recreated or is only valid for a period of time, where `Persistent` or `Instance` storage should be used for data that cannot be recreated and should kept permanently, such as a user's token balance.
+As a general rule, `Temporary` storage should only be used for data that can be easily recreated or is only valid for a period of time, where `Persistent` or `Instance` storage should be used for data that cannot be recreated and should be kept permanently, such as a user's token balance.
 
 Each storage type is in a separate key space. To demonstrate this, see the code snippet below:
 

@@ -77,8 +77,8 @@ soroban contract invoke \
     -- initialize \
     --admin <ADMIN_PUBLIC_KEY> \
     --decimal 7 \
-    --name '44656d6f20546f6b656e' \
-    --symbol '"4454"'
+    --name "Demo Token" \
+    --symbol "DT"
 ```
 
 Lets take a look at what is happening here:
@@ -87,9 +87,9 @@ Lets take a look at what is happening here:
 
 - Decimal Precision: We set this value to 7. This indicates that your token will have 7 decimal places, providing fine-grained control and flexibility in transactions.
 
-- Name: We represent your token's name as a hex encoded string. In this case, '44656d6f20546f6b656e' translates to Demo Token in plaintext.
+- Name: We set this value to 'Demo Token'. This is the name of your token written as a string. In this case, we use a string, 'Demo Token'.
 
-- Symbol: Like the name, your token's symbol is also a hex-encoded string. For us, '4454' stands for DT in plaintext, serving as a brief, identifiable symbol for your token.
+- Symbol: Your token symbol is a short string that represents your token. In this case, we use a string, 'DT'.
 
 Next we will need to mint some tokens to your sender's account. To do this, run the following command:
 

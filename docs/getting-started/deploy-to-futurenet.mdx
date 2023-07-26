@@ -54,15 +54,13 @@ Now you can deploy your Hello World contract:
       --source alice \
       --network futurenet
 
-This returns the ID of the contract, starting with a `C`. If you're using a bash-compatible shell, you can set this as a variable in your current shell:
+This returns the ID of the contract, starting with a `C`. Let's put it somewhere semi-permanent so we can use it later. Copy that value and:
 
 ```bash
-export HELLO_CONTRACT=C…
+echo "C…" > .soroban/hello-id
 ```
 
-If using a different shell, go ahead and take a minute to figure out how to use variables, and replace all the uses of `$HELLO_CONTRACT` in the following commands with the variable syntax for your situation.
-
-If you want to use the contract ID often, you could add this `export` line to one of your shell startup dotfiles.
+You may need to create the `.soroban` folder first with `mkdir .soroban`.
 
 ## Interact
 
@@ -70,18 +68,20 @@ This should look a lot like interacting with the contract in the Sandbox, as you
 
 ```bash
 soroban contract invoke \
-  --id $HELLO_CONTRACT \
+  --id $(cat .soroban/hello-id) \
   --source alice \
   --network futurenet \
   -- \
   --help
 ```
 
-Rather than using a `--wasm` flag to point to a local wasm file, you now specify the `--network` and the `--source`. That's it! You can try calling `hello` as before:
+This again makes use of command expansion `$(…)`; see the note about that above.
+
+This looks a lot like interacting with the contract back in [1. Hello World](./hello-world.mdx), but rather than using a `--wasm` flag to point to a local wasm file, you now specify the `--network` and the `--source`. That's it! You can try calling `hello` as before:
 
 ```bash
 soroban contract invoke \
-  --id $HELLO_CONTRACT \
+  --id $(cat .soroban/hello-id) \
   --source alice \
   --network futurenet \
   -- \
@@ -106,26 +106,27 @@ soroban contract install \
   --wasm target/wasm32-unknown-unknown/release/incrementor.wasm
 ```
 
-This returns the hash of the Wasm bytes. Now you can use `--wasm-hash` with `deploy` rather than `--wasm`:
+This returns the hash of the Wasm bytes. Now you can use `--wasm-hash` with `deploy` rather than `--wasm`. Let's also automatically pipe the returned contract ID into a file in the `.soroban` directory, so that when you search your command history and reuse the deploy command in the future, you don't forget that step (you might want to go back and do something similar with the Hello World deploy, too):
 
 ```bash
 soroban contract deploy \
   --wasm-hash [paste the output from the last command] \
   --source alice \
-  --network futurenet
+  --network futurenet \
+  > .soroban/incrementor-id
 ```
 
-Like the last `deploy`, this returns the contract ID of the newly instantiated contract. Go ahead and save it as a variable again:
+You can check that it saved the contract ID correctly:
 
 ```bash
-export INCREMENTOR_CONTRACT=C…
+cat .soroban/incrementor-id
 ```
 
 Now you can interact with it over RPC like you did with the Hello World contract:
 
 ```bash
 soroban contract invoke \
-  --id $INCREMENTOR_CONTRACT \
+  --id $(cat .soroban/incrementor-id) \
   --source alice \
   --network futurenet \
   -- \
@@ -140,3 +141,16 @@ Sometimes you'll need to run your own node:
 - When you need a network that differs from the version deployed to Futurenet.
 
 The Soroban team maintains Docker containers that makes this as straightforward as possible. See the [RPC](../reference/rpc.mdx) reference for details.
+
+## Summary
+
+In this lesson, we learned how to:
+
+- configure networks and identities using Soroban CLI
+- fund accounts on test networks using Friendbot
+- deploy contracts to a test network
+- interact with deployed contracts
+
+You shouldn't have any changes to commit to git, because we didn't change any code in this lesson!
+
+Up next, we'll use the deployed contracts to build a simple web app.

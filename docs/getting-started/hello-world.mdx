@@ -371,3 +371,38 @@ Building optimized contracts is only necessary when deploying to a network with 
 
 [Write a Contract]: #write-a-contract
 [Build]: #build
+
+## Commit to version control
+
+Now that everything's working, this is a great time to commit your code to version control. Even if you don't share your project with others, this will make it easier for you to see and understand your own changes throughout the rest of the tutorial.
+
+Go ahead and initialize `hello-soroban` as a git repository:
+
+```bash
+git init
+```
+
+You'll need a `.gitignore` to tell git to ignore the `target` directory:
+
+```bash
+echo target >> .gitignore
+```
+
+You should also ignore the `.soroban` directory:
+
+```bash
+echo .soroban >> .gitignore
+```
+
+Now you can make your initial commit:
+
+```bash
+git add .
+git commit -m "Initial commit: hello-soroban contract"
+```
+
+## Summary
+
+In this section, we wrote a simple contract that can be deployed to a Soroban network. We also learned how to run the contract locally using the Soroban sandbox environment.
+
+Next we'll add a new contract to this project, reorganizing the project as a multi-contract project using Cargo Workspaces. The new contract will show off a little bit of Soroban's storage capabilities.

@@ -307,3 +307,20 @@ test test::incrementor ... ok
 ## Take it further
 
 Can you figure out how to add `get_current_value` function to the contract? What about `decrement` or `reset` functions?
+
+
+## Commit your changes
+
+Looking at your git diff will be interesting now. It's probably kind of noisy if you just run `git status` or `git diff` right away, but once you `git add .`, git will understand the _renames_ (aka "moves") of all the old `hello-soroban` files better.
+
+Go ahead and commit it.
+
+```bash
+git commit -m "add incrementor contract"
+```
+
+## Summary
+
+In this section, we added a new contract to this project, reorganizing the project as a multi-contract project using Cargo Workspaces. The new contract made use of Soroban's storage capabilities to store and retrieve data. We also learned about the different kinds of storage and how to manage their lifetimes.
+
+Next we'll learn to deploy contracts to Soroban's Futurenet network and interact with them over RPC using the CLI.

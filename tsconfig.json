@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "target": "ES6",
-    "baseUrl": "./src"
+    "baseUrl": "./src",
+    "jsx": "react",
+    "moduleResolution" : "NodeNext",
   },
   "exclude": ["node_modules", "**/node_modules/*"],
   "extends": "@stellar/tsconfig"

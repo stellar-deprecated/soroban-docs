@@ -186,3 +186,87 @@ out `SorobanResources`, use preflight mentioned in the provided link, or make
 sure `writeBytes` includes the key and entry size of every entry in the
 `readWrite` set and make sure `extendedMetaDataSizeBytes` is at least double of
 `writeBytes`.
+
+
+We've done our best to build tooling around state expiration in the JavaScript SDK to make it easier to deal with.
+
+---------------------
+
+# Examples
+
+## Overview
+
+Both restoring and bumping the expiration of ledger entries follows a multi-step process regardless of their nature (contract data, instances, etc.):
+
+  1. First, **identify the ledger entries**. This usually means acquire them from a Soroban RPC server as part of your transaction simulation (see [`simulateTransaction`](https://soroban.stellar.org/api/methods/simulateTransaction)).
+
+  2. Then, **prepare your operation**. This means describing the ledger entries within the corresponding operation (i.e. `bumpFootprintOp` or `restoreFootprintOp`) and its ledger footprint (the `SorobanTransactionData` field), then simulating it to fill out fee and resource usage information.
+
+  3. Finally, **submit the transaction** and start again with what you were trying to do in the first place.
+
+Each of the examples below will follow a structure like this. We'll work our way through three different scenarios:
+
+ * my contract instance expired
+ * the contract data containing the WASM representing the contract expired
+ * a piece of persistent data in my contract expired
+
+Remember, though, that **any** combination of these scenarios can occur in reality.
+
+
+## Preparation
+
+To start off, we'll assume the following:
+
+ * you have created and funded account on the Soroban Futurenet
+ * you've built and deployed the `increment` contract from the [Soroban examples](https://github.com/stellar/soroban-examples/blob/main/increment/src/lib.rs) using that account
+
+
+### Preamble
+
+In order to help the scaffolding of the code, we'll introduce some reusable components. The following is a simple looping mechanism to submit a transaction to Soroban RPC and wait for a result:
+
+```typescript
+
+```
+
+
+## Examples
+Let's dive in.
+
+### Data expired
+Let's start with the simplest, most-likely occurrence: my piece of persistent data expired off of the ledger because I haven't interacted with my contract in a while. How do I get it back?
+
+We'll assume that you don't know how that piece of data is represented on the ledger. If you know it, you can skip the steps where we figure that out.
+
+For now, this process is quite arduous (all the more reason to keep your data fresh and live!):
+
+  1. First, we identify ledger entries that need to be restored.
+  2. Second, we simulate a transaction with `restoreFootprintOp` to get fee info
+  3. Third, we actually run said transaction, ensuring those ledger entries are present in the `readOnly` footprint of the transaction.
+
+After that, we can (simulate and) run our initial transaction again. Let's see that in code.
+
+```typescript
+console.log("TODO.");
+```
+
+
+### Contract instance expired
+
+As you can imagine, if the ledger cannot find your deployed contract instance, it can't load it to execute your invocations.
+
+Remember, there's a distinct, one-to-many relationship on the chain between a contract's code and deployed instances of that contract:
+
+    +----------------+
+    |                |
+    |   my instance  |-------------\
+    |                |              \           +---------------+
+    +----------------+               \          |               |
+                                      ------->  | contract WASM |
+    +----------------+               /          |               |
+    |                |              /           +---------------+
+    | your instance  |-------------/
+    |                |
+    +----------------+
+
+We need both to stay on the ledger for our contract calls to work.

@@ -4,27 +4,88 @@ title: State Expiration
 description: State Expiration Semantics
 ---
 
-# Terms and Semantics
+Contract data is made up of three different types: `Persistent`, `Temporary`, and `Instance`. In a contract, these are accessed with `env.storage().persistent()`, `env.storage().temporary()`, and `env.storage().instance()` respectively; see the [`storage()` docs](https://docs.rs/soroban-sdk/latest/soroban_sdk/storage/struct.Storage.html).
 
-## Expiration Ledger
+All contract data has a "lifetime" that must be periodically bumped. If an entry's lifetime is not periodically bumped, the entry will eventually reach the end of its lifetime and "expire". Each type of storage functions similarly, but have different fees and expiration behavior:
+
+- When a `Temporary` entry expires, it is deleted from the ledger and is permanently inaccessible.
+- When a `Persistent` or `Instance` entry expires, it is inaccessible, but can be "restored" and used again via the [`RestoreFootprintOp`].
+
+## Contract Data Type Descriptions
+
+The general usage and interface is identical for all storage types. They differ only in fees and expiration behavior as follows:
+
+### `Temporary`
+
+- Cheapest fees.
+- Permanently deleted on expiration, cannot be restored.
+- Suitable for time bounded data (i.e. price oracles, signatures, etc.) and easily recreateable data.
+- Unlimited amount of storage.
+
+### `Instance`
+
+- Most expensive fees (same price as `Persistent` storage).
+- Recoverable after expiration, can be restored using the [`RestoreFootprintOp`] operation.
+- Shares the same lifetime as the contract instance. If the contract instance has not expired, instance data is guaranteed to be accessible and not expired.
+- Limited amount of storage available.
+- Suitable for "shared" contract state that cannot be `Temporary` (i.e. admin accounts, contract metadata, etc.).
+
+### `Persistent`
+
+- Most expensive fees (same price as `Instance` storage).
+- Recoverable after expiration, can be restored using the [`RestoreFootprintOp`] operation.
+- Does not share the same lifetime as the contract instance. If the contract instance is not expired, `Persistent` data may be expired and need to be restored before invoking the contract.
+- Unlimited amount of storage.
+- Suitable for user data that cannot be `Temporary` (i.e. balances).
+
+  [`RestoreFootprintOp`]: #RestoreFootprintOp
+
+## Contract Data Best Practices
+
+As a general rule, `Temporary` storage should only be used for data that can be easily recreated or is only valid for a period of time, where `Persistent` or `Instance` storage should be used for data that cannot be recreated and should be kept permanently, such as a user's token balance.
+
+Each storage type is in a separate key space. To demonstrate this, see the code snippet below:
+
+```rust
+const EXAMPLE_KEY: Symbol = symbol_short!("KEY");
+env.storage().persistent().set(&EXAMPLE_KEY, 1);
+env.storage().temporary().set(&EXAMPLE_KEY, 2);
+
+env.storage().persistent().get(&EXAMPLE_KEY); // Returns Ok(1)
+env.storage().temporary().get(&EXAMPLE_KEY); // Returns Ok(2)
+```
+
+All `Instance` storage is stored in a single contract instance `LedgerEntry` and shares a single lifetime. This means that one call to `Env.storage().instance().bump()` will extend the lifetime of all `Instance`
+entries, as well as the contract instance itself. For `Temporary` and `Persistent` storage, each entry has its own lifetime and must be bumped individually. The interface is slightly different and takes the key
+of the entry being bumped as well as the new lifetime.
+
+A call to `bump(N)` ensures that the current lifetime of the contract instance entry is _at least_ N ledgers. For example, if `bump(100)` is called and the contract instance entry has a current lifetime of 50 ledgers, the lifetime will be extended to 100 ledgers. If `bump(100)` is called and the contract instance entry has a current lifetime of 150 ledgers, the lifetime will not be extended and the `bump()` call is a no-op.
+
+In addition to contract defined lifetime extensions using the `bump()` function, a contract data entry's lifetime can be extended via the [`BumpFootprintExpirationOp`] operation.
+
+[`BumpFootprintExpirationOp`]: #BumpFootprintExpirationOp
+
+## Terms and Semantics
+
+### Expiration Ledger
 
 Each `ContractData` and `ContractCode` entry has an `expirationLedger` field stored in its `LedgerEntry`.
 The entry is considered expired when `current_ledger > expirationLedger`.
 
-## Lifetime
+### Lifetime
 
 An entry's lifetime is defined as how many ledgers remain until the entry expires.
 For example, if the current ledger is 5 and an entry's expiration ledger is 15, then
 the entry's lifetime is 10 ledgers.
 
-## Minimum Lifetime
+### Minimum Lifetime
 
 For each entry type, there is a minimum lifetime that the entry must have when being created
 or updated. This lifetime minimum is enforced automatically at the protocol level. This minimum
 is a network parameter and defaults to 16 ledgers for `Temporary` entries and 4,096 ledgers for
 `Persistent` and `Instance` entries.
 
-## Maximum Lifetime
+### Maximum Lifetime
 
 On any given ledger, an entry's lifetime can be extended up to the maximum lifetime. This is a
 network parameter and defaults to 1 year worth of ledgers. This maximum lifetime is not enforced
@@ -33,11 +94,11 @@ created on January 1st, 2024, its lifetime could initially be bumped up to Janua
 After this initial lifetime bump, if the entry received another lifetime bump later on January 10th, 2024,
 the lifetime could be extended up to January 10th, 2025.
 
-# Operations
+## Operations
 
-## BumpFootprintExpirationOp
+### BumpFootprintExpirationOp
 
-### Semantics
+#### Semantics
 
 XDR:
 
@@ -75,7 +136,7 @@ entry2 and entry3 will not be updated because they already have an
 expirationLedger that is large enough.
 ```
 
-### Transaction resources
+#### Transaction resources
 
 `BumpFootprintExpirationOp` is a Soroban operation, and therefore must be the
 only operation in a transaction. The transaction also needs to populate
@@ -86,7 +147,7 @@ sure `readBytes` includes the key and entry size of every entry in the
 `readOnly` set and make sure `extendedMetaDataSizeBytes` is at least double of
 `readBytes`.
 
-## RestoreFootprintOp
+### RestoreFootprintOp
 
 XDR:
 
@@ -115,7 +176,7 @@ they can be updated in the future through a validator vote.
 
 [minimums]: https://github.com/stellar/stellar-core/blob/2109a168a895349f87b502ae3d182380b378fa47/src/ledger/NetworkConfig.h#L77-L78
 
-### Transaction resources
+#### Transaction resources
 
 `RestoreFootprintOp` is a Soroban operation, and therefore must be the only
 operation in a transaction. The transaction also needs to populate

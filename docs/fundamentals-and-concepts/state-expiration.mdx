@@ -4,6 +4,8 @@ title: State Expiration
 description: State Expiration Semantics
 ---
 
+# State Expiration
+
 Contract data is made up of three different types: `Persistent`, `Temporary`, and `Instance`. In a contract, these are accessed with `env.storage().persistent()`, `env.storage().temporary()`, and `env.storage().instance()` respectively; see the [`storage()` docs](https://docs.rs/soroban-sdk/latest/soroban_sdk/storage/struct.Storage.html).
 
 All contract data has a "lifetime" that must be periodically bumped. If an entry's lifetime is not periodically bumped, the entry will eventually reach the end of its lifetime and "expire". Each type of storage functions similarly, but have different fees and expiration behavior:
@@ -304,62 +306,49 @@ import {
 
 // assume that `s` is the Server() instance from the preamble
 
-function submitOrRestore(
+function submitOrRestoreAndRetry(
   signer: Keypair,
   tx: Transaction,
   sim: SorobanRpc.SimulateTransactionResponse,
 ): Promise<SorobanRpc.GetTransactionResponse> {
-  return yeetTx(tx).then((resp: SorobanRpc.GetTransactionResponse) => {
-    if (resp.status !== "FAILED") {
-      return resp;
-    }
+  return yeetTx(tx)
+    .then((resp: SorobanRpc.GetTransactionResponse) => {
+      if (resp.status !== "FAILED") {
+        return resp;
+      }
 
-    const data = readSorobanData(sim.transactionData);
-    const storageUsage = data.resources().footprint();
+      // extract the keys we used in our failed transaction
+      const data = readSorobanData(sim.transactionData);
+      const storageUsage = data.resources().footprint();
 
-    //
-    // Important: blindly restoring all keys.
-    //
-    const ledgerKeys = storageUsage.readOnly().concat(storageUsage.readWrite());
+      //
+      // Notice, we're blindly restoring all keys.
+      //
+      const ledgerKeys = storageUsage
+        .readOnly()
+        .concat(storageUsage.readWrite());
+      return yeetRestoreTx(signer, ledgerKeys);
+    })
+    .then((resp: SorobanRpc.GetTransactionResponse) => {
+      //
+      // now that we've restored the necessary data, we can retry our tx
+      //
+      const retryTxBuilder = TransactionBuilder.cloneFrom(tx);
 
-    return buildRestoreTx(signer, ledgerKeys)
-      .then((restoreTx) => s.simulateTransaction(restoreTx, Networks.FUTURENET))
-      .then((simTx) => {
-        if (simTx.error || (simTx.results?.length ?? 0) !== 1) {
-          throw simTx;
-        }
+      // note that because we consumed a sequence number when restoring,
+      // we need to make sure we set the correct value on this copy
+      retryTxBuilder.source.incrementSequenceNumber();
+      const retryTx = retryTxBuilder.build();
+      retryTx.sign(signer);
 
-        const simData = readSorobanData(sim.transactionData);
-
-        //
-        // use the fee data but overwrite the storage usage to ensure we only
-        // keep our keys in the read-write section
-        //
-        const preppedTx = TransactionBuilder.cloneFrom(restoreTx)
-          .setSorobanData(simData)
-          .setFootprint([], ledgerKeys)
-          .build();
-        preppedTx.sign(signer);
-
-        return yeetTx(preppedTx);
-      })
-      .then((resp: SorobanRpc.GetTransactionResponse) => {
-        //
-        // now that we've restored the necessary data, we can retry our tx
-        //
-        const retryTxBuilder = TransactionBuilder.cloneFrom(tx);
-        // note that because we consumed a sequence number when restoring,
-        // we need to make sure we set the correct value on this copy
-        retryTxBuilder.source.incrementSequenceNumber();
-        const retryTx = retryTxBuilder.build();
-        retryTx.sign(signer);
-
-        return yeetTx(retryTx);
-      });
-  });
+      return yeetTx(retryTx);
+    });
 }
 
-async function buildRestoreTx(signer: Keypair, ...ledgerKeys: xdr.LedgerKey[]) {
+function yeetRestoreTx(
+  signer: Keypair,
+  ...ledgerKeys: xdr.LedgerKey[]
+): Promise<SorobanRpc.GetTransactionResponse> {
   return s
     .getAccount(signer.publicKey())
     .then((account) => {
@@ -373,11 +362,19 @@ async function buildRestoreTx(signer: Keypair, ...ledgerKeys: xdr.LedgerKey[]) {
         .setTimeout(15)
         .build();
 
-      return s.prepareTransaction(tx, tx.networkPassphrase);
+      return { tx, simData: s.simulateTransaction(tx, tx.networkPassphrase) };
     })
-    .then((preppedTx) => {
-      preppedTx.sign(signer);
-      return awaitTransaction(preppedTx);
+    .then(({ tx, simData }) => {
+      //
+      // use the fee data but overwrite the storage usage to ensure we only
+      // keep our keys in the read-write section
+      //
+      const preppedTx = TransactionBuilder.cloneFrom(tx)
+        .setSorobanData(readSorobanData(simData.transactionData))
+        .setFootprint([], ledgerKeys)
+        .build();
+
+      return yeetTx(preppedTx);
     });
 }
 ```
@@ -404,7 +401,7 @@ Pick your poison: higher fees due to more storage access, or higher latency due 
 
 #### The contract itself expired!
 
-As you can imagine, if the ledger cannot find your deployed contract instance, it can't load it to execute your invocations.
+As you can imagine, if the ledger cannot find your deployed contract instance or the code that backs it, it can't load it to execute your invocations.
 
 Remember, there's a distinct, one-to-many relationship on the chain between a contract's code and deployed instances of that contract:
 
@@ -422,8 +419,15 @@ Remember, there's a distinct, one-to-many relationship on the chain between a co
 
 We need **both** to stay on the ledger for our contract calls to work.
 
-Let's work through how these can be recovered. They are slightly different for a convenient reason: we don't need simulation to figure out the footprints, though you still can do that.
+Let's work through how these can be recovered. They are slightly different for a convenient reason: we don't need simulation to figure out the footprints, though you still can do it that way. Instead, we can leverage `Contract.getFootprint()`, which prepares a footprint:
 
-##### My contract _code_ expired
+```typescript
+import { Contract, Keypair } from "soroban-client";
 
-##### My contract _instance_ expired
+function restoreContract(
+  signer: Keypair,
+  c: Contract,
+): Promise<SorobanRpc.GetTransactionResponse> {
+  return yeetRestoreTx(signer, c.getFootprint());
+}
+```

@@ -291,7 +291,16 @@ After that, we can (simulate and) run our initial transaction again.
 Let's see that in code. Here's our
 
 ```typescript
-import { Transaction, SorobanRpc } from "soroban-client";
+import {
+  BASE_FEE,
+  Transaction,
+  SorobanRpc,
+  Networks,
+  Keypair,
+  TransactionBuilder,
+  readSorobanData,
+  xdr,
+} from "soroban-client";
 
 // assume that `s` is the Server() instance from the preamble
 
@@ -305,42 +314,35 @@ function submitOrRestore(
       return resp;
     }
 
-    const data = xdr.SorobanTransactionData.fromXDR(
-      sim.transactionData,
-      "base64",
-    );
+    const data = readSorobanData(sim.transactionData);
     const storageUsage = data.resources().footprint();
     const ledgerKeys = storageUsage.readOnly().concat(storageUsage.readWrite());
 
-    const restoreTx = buildRestoreOp(signer, ledgerKeys);
-
-    return s
-      .simulateTransaction(restoreTx, Networks.FUTURENET)
+    return buildRestoreTx(signer, ledgerKeys)
+      .then((restoreTx) => s.simulateTransaction(restoreTx, Networks.FUTURENET))
       .then((simTx) => {
         if (simTx.error || (simTx.results?.length ?? 0) !== 1) {
           throw simTx;
         }
 
-        const simData = xdr.SorobanTransactionData.fromXDR(
-          sim.transactionData,
-          "base64",
-        );
+        const simData = readSorobanData(sim.transactionData);
 
+        //
         // use the fee data but overwrite the storage usage to ensure we only
         // keep our keys in the read-write section
-        simData.resources().footprint().readOnly();
-        simData.resources().footprint().readWrite(ledgerKeys);
-
+        //
         const preppedTx = TransactionBuilder.cloneFrom(restoreTx)
           .setSorobanData(simData)
+          .setLedgerKeys([], ledgerKeys)
           .build();
         preppedTx.sign(signer);
 
         return yeetTx(preppedTx);
       })
       .then((resp: SorobanRpc.GetTransactionResponse) => {
+        //
         // now that we've restored the necessary data, we can retry our tx
-
+        //
         const retryTxBuilder = TransactionBuilder.cloneFrom(tx);
         // note that because we consumed a sequence number when restoring,
         // we need to make sure we set the correct value on this copy
@@ -353,6 +355,27 @@ function submitOrRestore(
   });
 }
 
+async function buildRestoreTx(signer: Keypair, ...ledgerKeys: xdr.LedgerKey[]) {
+  return s
+    .getAccount(signer.publicKey())
+    .then((account) => {
+      const op = Operation.restoreFootprint({});
+      const tx = new TransactionBuilder(account, {
+        fee: BASE_FEE,
+        networkPassphrase: Networks.FUTURENET,
+      })
+        .addOperation(op)
+        .setLedgerKeys([], ledgerKeys)
+        .setTimeout(15)
+        .build();
+
+      return s.prepareTransaction(tx, tx.networkPassphrase);
+    })
+    .then((preppedTx) => {
+      preppedTx.sign(signer);
+      return awaitTransaction(preppedTx);
+    });
+}
 ```
 
 ### The contract itself expired!

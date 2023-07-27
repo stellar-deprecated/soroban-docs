@@ -278,7 +278,7 @@ Let's dive into some TypeScript.
 
 #### My data expired!
 
-Let's start with the simplest, most-likely occurrence: my piece of persistent data expired off of the ledger because I haven't interacted with my contract in a while. How do I get it back?
+We'll start with the simplest, most-likely occurrence: my piece of persistent data expired off of the ledger because I haven't interacted with my contract in a while. How do I get it back?
 
 We'll assume that you don't know how that piece of data is represented on the ledger. If you know it, you can skip the steps where we figure that out. For now, this process is quite arduous (all the more reason to keep your data fresh and live!):
 
@@ -316,6 +316,10 @@ function submitOrRestore(
 
     const data = readSorobanData(sim.transactionData);
     const storageUsage = data.resources().footprint();
+
+    //
+    // Important: blindly restoring all keys.
+    //
     const ledgerKeys = storageUsage.readOnly().concat(storageUsage.readWrite());
 
     return buildRestoreTx(signer, ledgerKeys)
@@ -377,6 +381,26 @@ async function buildRestoreTx(signer: Keypair, ...ledgerKeys: xdr.LedgerKey[]) {
     });
 }
 ```
+
+Notice an important quirk in the above code: We don't know which entries are the expired ones, so we will blindly try restoring all of them (by taking the union of the read-only and read-write keys). We _could_ find out which ones expired by calling [`getLedgerEntries()`](https://soroban.stellar.org/api/methods/getLedgerEntries), then parsing each resulting entry to find its `expirationLedgerSeq`, but this is an extra round-trip:
+
+```typescript
+const expiredLedgerKeys = await s
+  .getLedgerKeys(ledgerKeys)
+  .then((resp: GetLedgerEntriesResponse) =>
+    ledgerKeys.filter((ledgerKey, idx) => {
+      const rawEntry = resp.entries[idx];
+      const entry = xdr.LedgerEntryData.fromXDR(entry.xdr, "base64");
+
+      return (
+        entry.switch() === xdr.LedgerEntryType.contractData() &&
+        entry.contractData().expirationLedgerSeq() <= resp.latestLedger
+      );
+    }),
+  );
+```
+
+Pick your poison: higher fees due to more storage access, or higher latency due to an extra roundtrip.
 
 #### The contract itself expired!
 

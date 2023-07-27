@@ -197,7 +197,7 @@ We've done our best to build tooling around state expiration in the JavaScript S
 
 Both restoring and bumping the expiration of ledger entries follows a multi-step process regardless of their nature (contract data, instances, etc.):
 
-1. First, **identify the ledger entries**. This usually means acquire them from a Soroban RPC server as part of your transaction simulation (see [`simulateTransaction`](https://soroban.stellar.org/api/methods/simulateTransaction)).
+1. First, **identify the ledger entries**. This usually means acquire them from a Soroban RPC server as part of your initial transaction simulation (see the [preflight docs](https://soroban.stellar.org/docs/fundamentals-and-concepts/interacting-with-contracts#preflight) and the [`simulateTransaction`](https://soroban.stellar.org/api/methods/simulateTransaction) method).
 
 2. Then, **prepare your operation**. This means describing the ledger entries within the corresponding operation (i.e. `bumpFootprintOp` or `restoreFootprintOp`) and its ledger footprint (the `SorobanTransactionData` field), then simulating it to fill out fee and resource usage information.
 
@@ -220,11 +220,57 @@ To start off, we'll assume the following:
 
 ### Preamble
 
-In order to help the scaffolding of the code, we'll introduce some reusable components. The following is a simple looping mechanism to submit a transaction to Soroban RPC and wait for a result:
+In order to help the scaffolding of the code, we'll introduce some reusable components. The following is a simple, rudimentary looping mechanism to submit a transaction to Soroban RPC and wait for a result:
 
 ```typescript
-console.log("TODO.");
+import {
+  Server,
+  SorobanRpc,
+  Transaction,
+  FeeBumpTransaction,
+} from "soroban-client";
+
+const RPC_SERVER = "https://rpc-futurenet.stellar.org/";
+const s = new Server(RPC_SERVER);
+
+async function yeetTx(
+  tx: Transaction | FeeBumpTransaction,
+): Promise<SorobanRpc.GetTransactionResponse> {
+  return s.sendTransaction(tx).then(async (reply) => {
+    if (reply.status !== "PENDING") {
+      throw reply;
+    }
+
+    let status;
+    let attempts = 0;
+    while (attempts++ < 5) {
+      const tmpStatus = await s.getTransaction(reply.hash);
+      switch (tmpStatus.status) {
+        case "FAILED":
+          throw tmpStatus;
+        case "NOT_FOUND":
+          await sleep(500);
+          continue;
+        case "SUCCESS":
+          status = tmpStatus;
+          break;
+      }
+    }
+
+    if (attempts >= 5 || !status) {
+      throw new Error(`Failed to find transaction ${reply.hash} in time.`);
+    }
+
+    return status;
+  });
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 ```
+
+Remember: You should always handle errors gracefully! This is a fail hard and fail fast approach for the purposes of the examples.
 
 ## Examples
 
@@ -234,21 +280,82 @@ Let's dive into some TypeScript.
 
 Let's start with the simplest, most-likely occurrence: my piece of persistent data expired off of the ledger because I haven't interacted with my contract in a while. How do I get it back?
 
-We'll assume that you don't know how that piece of data is represented on the ledger. If you know it, you can skip the steps where we figure that out.
-
-For now, this process is quite arduous (all the more reason to keep your data fresh and live!):
+We'll assume that you don't know how that piece of data is represented on the ledger. If you know it, you can skip the steps where we figure that out. For now, this process is quite arduous (all the more reason to keep your data fresh and live!):
 
 1. First, we identify ledger entries that need to be restored.
 2. Second, we simulate a transaction with `restoreFootprintOp` to get fee info
 3. Third, we actually run said transaction, ensuring those ledger entries are present in the `readOnly` footprint of the transaction.
 
-After that, we can (simulate and) run our initial transaction again. Let's see that in code.
+After that, we can (simulate and) run our initial transaction again.
+
+Let's see that in code. Here's our
 
 ```typescript
-console.log("TODO.");
+import { Transaction, SorobanRpc } from "soroban-client";
+
+// assume that `s` is the Server() instance from the preamble
+
+function submitOrRestore(
+  signer: Keypair,
+  tx: Transaction,
+  sim: SorobanRpc.SimulateTransactionResponse,
+): Promise<SorobanRpc.GetTransactionResponse> {
+  return yeetTx(tx).then((resp: SorobanRpc.GetTransactionResponse) => {
+    if (resp.status !== "FAILED") {
+      return resp;
+    }
+
+    const data = xdr.SorobanTransactionData.fromXDR(
+      sim.transactionData,
+      "base64",
+    );
+    const storageUsage = data.resources().footprint();
+    const ledgerKeys = storageUsage.readOnly().concat(storageUsage.readWrite());
+
+    const restoreTx = buildRestoreOp(signer, ledgerKeys);
+
+    return s
+      .simulateTransaction(restoreTx, Networks.FUTURENET)
+      .then((simTx) => {
+        if (simTx.error || (simTx.results?.length ?? 0) !== 1) {
+          throw simTx;
+        }
+
+        const simData = xdr.SorobanTransactionData.fromXDR(
+          sim.transactionData,
+          "base64",
+        );
+
+        // use the fee data but overwrite the storage usage to ensure we only
+        // keep our keys in the read-write section
+        simData.resources().footprint().readOnly();
+        simData.resources().footprint().readWrite(ledgerKeys);
+
+        const preppedTx = TransactionBuilder.cloneFrom(restoreTx)
+          .setSorobanData(simData)
+          .build();
+        preppedTx.sign(signer);
+
+        return yeetTx(preppedTx);
+      })
+      .then((resp: SorobanRpc.GetTransactionResponse) => {
+        // now that we've restored the necessary data, we can retry our tx
+
+        const retryTxBuilder = TransactionBuilder.cloneFrom(tx);
+        // note that because we consumed a sequence number when restoring,
+        // we need to make sure we set the correct value on this copy
+        retryTxBuilder.source.incrementSequenceNumber();
+        const retryTx = retryTxBuilder.build();
+        retryTx.sign(signer);
+
+        return yeetTx(retryTx);
+      });
+  });
+}
+
 ```
 
-### My contract instance expired
+### The contract itself expired!
 
 As you can imagine, if the ledger cannot find your deployed contract instance, it can't load it to execute your invocations.
 
@@ -266,6 +373,10 @@ Remember, there's a distinct, one-to-many relationship on the chain between a co
     |                |
     +----------------+
 
-We need both to stay on the ledger for our contract calls to work.
+We need **both** to stay on the ledger for our contract calls to work.
 
-### My contract code expired
+Let's work through how these can be recovered. They are slightly different for a convenient reason: we don't need simulation to figure out the footprints, though you still can do that.
+
+#### My contract _code_ expired
+
+#### My contract _instance_ expired

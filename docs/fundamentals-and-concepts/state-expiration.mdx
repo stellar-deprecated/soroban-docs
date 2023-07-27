@@ -189,11 +189,11 @@ sure `writeBytes` includes the key and entry size of every entry in the
 
 ---
 
-# Examples
+## Examples
 
 We've done our best to build tooling around state expiration in the JavaScript SDK to make it easier to deal with, and this set of examples demonstrates how to leverage it.
 
-## Overview
+### Overview
 
 Both restoring and bumping the expiration of ledger entries follows a multi-step process regardless of their nature (contract data, instances, etc.):
 
@@ -211,14 +211,14 @@ Each of the examples below will follow a structure like this. We'll work our way
 
 Remember, though, that **any** combination of these scenarios can occur in reality.
 
-## Preparation
+### Preparation
 
 To start off, we'll assume the following:
 
 - you have created and funded account on the Soroban Futurenet
 - you've built and deployed the `increment` contract from the [Soroban examples](https://github.com/stellar/soroban-examples/blob/main/increment/src/lib.rs) using that account
 
-### Preamble
+#### Preamble
 
 In order to help the scaffolding of the code, we'll introduce some reusable components. The following is a simple, rudimentary looping mechanism to submit a transaction to Soroban RPC and wait for a result:
 
@@ -272,11 +272,11 @@ function sleep(ms: number) {
 
 Remember: You should always handle errors gracefully! This is a fail hard and fail fast approach for the purposes of the examples.
 
-## Examples
+### Examples
 
 Let's dive into some TypeScript.
 
-### My data expired!
+#### My data expired!
 
 Let's start with the simplest, most-likely occurrence: my piece of persistent data expired off of the ledger because I haven't interacted with my contract in a while. How do I get it back?
 
@@ -333,7 +333,7 @@ function submitOrRestore(
         //
         const preppedTx = TransactionBuilder.cloneFrom(restoreTx)
           .setSorobanData(simData)
-          .setLedgerKeys([], ledgerKeys)
+          .setFootprint([], ledgerKeys)
           .build();
         preppedTx.sign(signer);
 
@@ -365,7 +365,7 @@ async function buildRestoreTx(signer: Keypair, ...ledgerKeys: xdr.LedgerKey[]) {
         networkPassphrase: Networks.FUTURENET,
       })
         .addOperation(op)
-        .setLedgerKeys([], ledgerKeys)
+        .setFootprint([], ledgerKeys)
         .setTimeout(15)
         .build();
 
@@ -378,7 +378,7 @@ async function buildRestoreTx(signer: Keypair, ...ledgerKeys: xdr.LedgerKey[]) {
 }
 ```
 
-### The contract itself expired!
+#### The contract itself expired!
 
 As you can imagine, if the ledger cannot find your deployed contract instance, it can't load it to execute your invocations.
 
@@ -400,6 +400,6 @@ We need **both** to stay on the ledger for our contract calls to work.
 
 Let's work through how these can be recovered. They are slightly different for a convenient reason: we don't need simulation to figure out the footprints, though you still can do that.
 
-#### My contract _code_ expired
+##### My contract _code_ expired
 
-#### My contract _instance_ expired
+##### My contract _instance_ expired

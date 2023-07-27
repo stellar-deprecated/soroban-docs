@@ -10,6 +10,8 @@ $ yarn
 
 ### Local Development
 
+Format changes with `yarn format:mdx`.
+
 ```
 $ yarn start
 ```

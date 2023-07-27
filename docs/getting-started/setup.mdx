@@ -57,7 +57,7 @@ contract will execute on network, however in a local sandbox.
 Install the Soroban CLI using `cargo install`.
 
 ```sh
-cargo install --locked --version 0.9.1 soroban-cli
+cargo install --locked --version 0.9.4 soroban-cli
 ```
 
 :::info
@@ -82,7 +82,7 @@ Build, deploy, & interact with contracts; set identities to sign with; configure
 Intro: https://soroban.stellar.org
 CLI Reference: https://github.com/stellar/soroban-tools/tree/main/docs/soroban-cli-full-docs.md
 
-Usage: soroban <COMMAND>
+Usage: soroban [OPTIONS] <COMMAND>
 
 Commands:
   contract    Tools for smart contract developers
@@ -93,8 +93,17 @@ Commands:
   completion  Print shell completion code for the specified shell
 
 Options:
-  -h, --help     Print help (see more with '--help')
-  -V, --version  Print version
+      --global                     Use global config
+  -f, --filter-logs <FILTER_LOGS>  Filter logs output. To turn on "soroban_cli::log::footprint=debug" or off "=off". Can also use env var `RUST_LOG`
+  -q, --quiet                      Do not write logs to stderr including `INFO`
+  -v, --verbose                    Log DEBUG events
+      --very-verbose               Log DEBUG and TRACE events
+      --list                       List installed plugins. E.g. `soroban-hello`
+  -h, --help                       Print help (see more with '--help')
+  -V, --version                    Print version
+
+TESTING_OPTIONS:
+      --config-dir <CONFIG_DIR>
 ```
 
 [Rust]: https://www.rust-lang.org/

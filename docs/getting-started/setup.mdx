@@ -110,6 +110,20 @@ TESTING_OPTIONS:
 
 **Protip:** You can use `soroban completion` to generate shell completion for `bash`, `elvish`, `fish`, `powershell`, and `zsh`. You should absolutely try it out. It will feel like a super power!!
 
+To enable autocomplete in the current bash shell, run:
+
+```bash
+source <(soroban completion --shell bash)
+```
+
+To enable autocomplete permanently in all bash shells, run:
+
+```bash
+echo "source <(soroban completion --shell bash)" >> ~/.bashrc
+```
+
+Users of non-bash shells may need to adapt the above commands to suit their needs.
+
 :::
 
 [Rust]: https://www.rust-lang.org/

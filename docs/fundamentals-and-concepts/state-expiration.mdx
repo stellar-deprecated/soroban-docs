@@ -297,12 +297,21 @@ import {
 function submitOrRestoreAndRetry(
   signer: Keypair,
   tx: Transaction,
-  sim: SorobanRpc.SimulateTransactionResponse,
 ): Promise<SorobanRpc.GetTransactionResponse> {
-  return yeetTx(tx)
-    .then((resp: SorobanRpc.GetTransactionResponse) => {
+  return s
+    .simulateTransaction(tx)
+    .then((sim: SorobanRpc.GetTransactionResponse) => {
       if (resp.status !== "FAILED") {
-        return resp;
+        const prepTx = assembleTransaction(tx, Networks.FUTURENET, sim);
+        prepTx.sign(signer);
+        return yeetTx(prepTx);
+      }
+
+      //
+      // This is our best-effort guess that failures are due to expired entries
+      //
+      if (!resp.error.includes("Error(Storage, MissingValue)")) {
+        throw resp;
       }
 
       // extract the keys we used in our failed transaction

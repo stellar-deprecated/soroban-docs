@@ -367,13 +367,11 @@ function yeetRestoreTx(
       // use the fee data but overwrite the storage usage to ensure we only
       // keep our keys in the read-write section
       //
-      const preppedTx = TransactionBuilder.cloneFrom(tx)
-        .setSorobanData(
-          new SorobanDataBuilder(simData.transactionData)
-            .setReadWrite(ledgerKeys)
-            .build(),
-        )
-        .build();
+      const preppedTx = TransactionBuilder.cloneFrom(tx, {
+        sorobanData: new SorobanDataBuilder(simData.transactionData)
+          .setReadWrite(ledgerKeys)
+          .build(),
+      }).build();
 
       return yeetTx(preppedTx);
     });

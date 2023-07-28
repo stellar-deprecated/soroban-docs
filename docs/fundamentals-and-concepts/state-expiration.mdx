@@ -375,10 +375,12 @@ Notice an important quirk in the above code: We don't know which entries are the
 ```typescript
 const expiredLedgerKeys = await s
   .getLedgerKeys(ledgerKeys)
-  .then((resp: GetLedgerEntriesResponse) =>
+  .then((resp: SorobanRpc.GetLedgerEntriesResponse) =>
     ledgerKeys.filter((ledgerKey, idx) => {
-      const rawEntry = resp.entries[idx];
-      const entry = xdr.LedgerEntryData.fromXDR(entry.xdr, "base64");
+      const entry = xdr.LedgerEntryData.fromXDR(
+        resp.entries[idx].xdr,
+        "base64",
+      );
 
       return (
         entry.switch() === xdr.LedgerEntryType.contractData() &&
@@ -408,7 +410,7 @@ As you can imagine, if the ledger cannot find your deployed contract instance or
 
 We need **both** to stay on the ledger for our contract calls to work.
 
-Let's work through how these can be recovered. They are slightly different for a convenient reason: we don't need simulation to figure out the footprints, though you still can do it that way. Instead, we can leverage `Contract.getFootprint()`, which prepares a footprint:
+Let's work through how these can be recovered. They are slightly different for a convenient reason: we don't need simulation to figure out the footprints, though you still can do it that way. Instead, we can leverage [`Contract.getFootprint()`](https://stellar.github.io/js-soroban-client/Contract.html#getFootprint), which prepares a footprint:
 
 ```typescript
 import { Contract, Keypair } from "soroban-client";

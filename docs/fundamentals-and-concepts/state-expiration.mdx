@@ -274,11 +274,7 @@ function sleep(ms: number) {
 
 Remember: You should always handle errors gracefully! This is a fail hard and fail fast approach for the purposes of the examples.
 
-### Examples
-
-Let's dive into some TypeScript.
-
-#### My data expired!
+### Example: My data expired!
 
 We'll start with the simplest, most-likely occurrence: my piece of persistent data expired off of the ledger because I haven't interacted with my contract in a while. How do I get it back?
 
@@ -358,7 +354,9 @@ function yeetRestoreTx(
         networkPassphrase: Networks.FUTURENET,
       })
         .addOperation(op)
-        .setFootprint([], ledgerKeys)
+        .setSorobanData(
+          new SorobanDataBuilder().setReadWrite(ledgerKeys).build(),
+        )
         .setTimeout(15)
         .build();
 
@@ -370,8 +368,11 @@ function yeetRestoreTx(
       // keep our keys in the read-write section
       //
       const preppedTx = TransactionBuilder.cloneFrom(tx)
-        .setSorobanData(readSorobanData(simData.transactionData))
-        .setFootprint([], ledgerKeys)
+        .setSorobanData(
+          new SorobanDataBuilder(simData.transactionData)
+            .setReadWrite(ledgerKeys)
+            .build(),
+        )
         .build();
 
       return yeetTx(preppedTx);
@@ -399,11 +400,9 @@ const expiredLedgerKeys = await s
 
 Pick your poison: higher fees due to more storage access, or higher latency due to an extra roundtrip.
 
-#### The contract itself expired!
+### Example: My contract expired!
 
-As you can imagine, if the ledger cannot find your deployed contract instance or the code that backs it, it can't load it to execute your invocations.
-
-Remember, there's a distinct, one-to-many relationship on the chain between a contract's code and deployed instances of that contract:
+As you can imagine, if the ledger cannot find your deployed contract instance or the code that backs it, it can't load it to execute your invocations Remember, there's a distinct, one-to-many relationship on the chain between a contract's code and deployed instances of that contract:
 
     +----------------+
     |                |

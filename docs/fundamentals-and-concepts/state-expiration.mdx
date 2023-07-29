@@ -379,7 +379,12 @@ function yeetRestoreTx(
 }
 ```
 
-Notice an important quirk in the above code: We don't know which entries are the expired ones, so we will blindly try restoring all of them (by taking the union of the read-only and read-write keys). We _could_ find out which ones expired by calling [`getLedgerEntries()`](https://soroban.stellar.org/api/methods/getLedgerEntries), then parsing each resulting entry to find its `expirationLedgerSeq`, but this is an extra round-trip:
+Notice some quirks in the above code:
+
+- If simulation fails, we rely on a specific error string as a _hint_ (not a guarantee) that we may be trying to use expired entries.
+- Even with that error, we don't know _which_ entries are the expired ones, so we will blindly try restoring all of them (by taking the union of the read-only and read-write keys).
+
+Both of these oddities should go away in future iterations of the Soroban platform and RPC server schema. We _could_ find out which specific ones expired by calling [`getLedgerEntries()`](https://soroban.stellar.org/api/methods/getLedgerEntries), then parsing each resulting entry to find its `expirationLedgerSeq`, but this is an extra round-trip:
 
 ```typescript
 const expiredLedgerKeys = await s

@@ -23,8 +23,671 @@ description: Write a constant-product liquidity pool contract.
 
 The [liquidity pool example] demonstrates how to write a constant product liquidity pool contract. The comments in the [source code] explain how the contract should be used.
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
-[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.9.2
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
+
+[oigp]: https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v0.9.2
 [liquidity pool example]: https://github.com/stellar/soroban-examples/tree/v0.9.2/liquidity_pool
 [source code]: https://github.com/stellar/soroban-examples/blob/v0.9.2/liquidity_pool/src/lib.rs#L143
+
+## Run the Example
+
+First go through the [Setup] process to get your development environment
+configured, then clone the `v0.9.2` tag of `soroban-examples` repository:
+
+```bash
+git clone -b v0.9.2 https://github.com/stellar/soroban-examples
+```
+
+Or, skip the development environment setup and open this example in
+[Gitpod][oigp].
+
+To run the tests for the example, navigate to the `liquidity_pool` directory,
+and use `cargo test`.
+
+```bash
+cd liquidity_pool
+cargo test
+```
+
+You should see the output:
+
+```bash
+running 1 test
+test test::test ... ok
+```
+
+[Setup]: ../getting-started/setup.mdx
+
+## Code
+
+:::note
+
+Since our liquidity pool will be issuing its own token to establish the nuber of
+shares in the pool the address has, we have created a `token.rs` module in this
+project to hold the logic for the token contract for those shares.
+
+:::
+
+<Tabs>
+<TabItem value="lib.rs" default>
+
+```rust title="liquidity_pool/src/lib.rs"
+#![no_std]
+
+mod test;
+mod token;
+
+use num_integer::Roots;
+use soroban_sdk::{
+    contract, contractimpl, contractmeta, Address, BytesN, ConversionError, Env, IntoVal,
+    TryFromVal, Val,
+};
+use token::create_contract;
+
+#[derive(Clone, Copy)]
+#[repr(u32)]
+pub enum DataKey {
+    TokenA = 0,
+    TokenB = 1,
+    TokenShare = 2,
+    TotalShares = 3,
+    ReserveA = 4,
+    ReserveB = 5,
+}
+
+impl TryFromVal<Env, DataKey> for Val {
+    type Error = ConversionError;
+
+    fn try_from_val(_env: &Env, v: &DataKey) -> Result<Self, Self::Error> {
+        Ok((*v as u32).into())
+    }
+}
+
+fn get_token_a(e: &Env) -> Address {
+    e.storage().instance().get(&DataKey::TokenA).unwrap()
+}
+
+fn get_token_b(e: &Env) -> Address {
+    e.storage().instance().get(&DataKey::TokenB).unwrap()
+}
+
+fn get_token_share(e: &Env) -> Address {
+    e.storage().instance().get(&DataKey::TokenShare).unwrap()
+}
+
+fn get_total_shares(e: &Env) -> i128 {
+    e.storage().instance().get(&DataKey::TotalShares).unwrap()
+}
+
+fn get_reserve_a(e: &Env) -> i128 {
+    e.storage().instance().get(&DataKey::ReserveA).unwrap()
+}
+
+fn get_reserve_b(e: &Env) -> i128 {
+    e.storage().instance().get(&DataKey::ReserveB).unwrap()
+}
+
+fn get_balance(e: &Env, contract: Address) -> i128 {
+    token::Client::new(e, &contract).balance(&e.current_contract_address())
+}
+
+fn get_balance_a(e: &Env) -> i128 {
+    get_balance(e, get_token_a(e))
+}
+
+fn get_balance_b(e: &Env) -> i128 {
+    get_balance(e, get_token_b(e))
+}
+
+fn get_balance_shares(e: &Env) -> i128 {
+    get_balance(e, get_token_share(e))
+}
+
+fn put_token_a(e: &Env, contract: Address) {
+    e.storage().instance().set(&DataKey::TokenA, &contract);
+}
+
+fn put_token_b(e: &Env, contract: Address) {
+    e.storage().instance().set(&DataKey::TokenB, &contract);
+}
+
+fn put_token_share(e: &Env, contract: Address) {
+    e.storage().instance().set(&DataKey::TokenShare, &contract);
+}
+
+fn put_total_shares(e: &Env, amount: i128) {
+    e.storage().instance().set(&DataKey::TotalShares, &amount)
+}
+
+fn put_reserve_a(e: &Env, amount: i128) {
+    e.storage().instance().set(&DataKey::ReserveA, &amount)
+}
+
+fn put_reserve_b(e: &Env, amount: i128) {
+    e.storage().instance().set(&DataKey::ReserveB, &amount)
+}
+
+fn burn_shares(e: &Env, amount: i128) {
+    let total = get_total_shares(e);
+    let share_contract = get_token_share(e);
+
+    token::Client::new(e, &share_contract).burn(&e.current_contract_address(), &amount);
+    put_total_shares(e, total - amount);
+}
+
+fn mint_shares(e: &Env, to: Address, amount: i128) {
+    let total = get_total_shares(e);
+    let share_contract_id = get_token_share(e);
+
+    token::Client::new(e, &share_contract_id).mint(&to, &amount);
+
+    put_total_shares(e, total + amount);
+}
+
+fn transfer(e: &Env, token: Address, to: Address, amount: i128) {
+    token::Client::new(e, &token).transfer(&e.current_contract_address(), &to, &amount);
+}
+
+fn transfer_a(e: &Env, to: Address, amount: i128) {
+    transfer(e, get_token_a(e), to, amount);
+}
+
+fn transfer_b(e: &Env, to: Address, amount: i128) {
+    transfer(e, get_token_b(e), to, amount);
+}
+
+fn get_deposit_amounts(
+    desired_a: i128,
+    min_a: i128,
+    desired_b: i128,
+    min_b: i128,
+    reserve_a: i128,
+    reserve_b: i128,
+) -> (i128, i128) {
+    if reserve_a == 0 && reserve_b == 0 {
+        return (desired_a, desired_b);
+    }
+
+    let amount_b = desired_a * reserve_b / reserve_a;
+    if amount_b <= desired_b {
+        if amount_b < min_b {
+            panic!("amount_b less than min")
+        }
+        (desired_a, amount_b)
+    } else {
+        let amount_a = desired_b * reserve_a / reserve_b;
+        if amount_a > desired_a || desired_a < min_a {
+            panic!("amount_a invalid")
+        }
+        (amount_a, desired_b)
+    }
+}
+
+// Metadata that is added on to the WASM custom section
+contractmeta!(
+    key = "Description",
+    val = "Constant product AMM with a .3% swap fee"
+);
+
+pub trait LiquidityPoolTrait {
+    // Sets the token contract addresses for this pool
+    fn initialize(e: Env, token_wasm_hash: BytesN<32>, token_a: Address, token_b: Address);
+
+    // Returns the token contract address for the pool share token
+    fn share_id(e: Env) -> Address;
+
+    // Deposits token_a and token_b. Also mints pool shares for the "to" Identifier. The amount minted
+    // is determined based on the difference between the reserves stored by this contract, and
+    // the actual balance of token_a and token_b for this contract.
+    fn deposit(e: Env, to: Address, desired_a: i128, min_a: i128, desired_b: i128, min_b: i128);
+
+    // If "buy_a" is true, the swap will buy token_a and sell token_b. This is flipped if "buy_a" is false.
+    // "out" is the amount being bought, with in_max being a safety to make sure you receive at least that amount.
+    // swap will transfer the selling token "to" to this contract, and then the contract will transfer the buying token to "to".
+    fn swap(e: Env, to: Address, buy_a: bool, out: i128, in_max: i128);
+
+    // transfers share_amount of pool share tokens to this contract, burns all pools share tokens in this contracts, and sends the
+    // corresponding amount of token_a and token_b to "to".
+    // Returns amount of both tokens withdrawn
+    fn withdraw(e: Env, to: Address, share_amount: i128, min_a: i128, min_b: i128) -> (i128, i128);
+
+    fn get_rsrvs(e: Env) -> (i128, i128);
+}
+
+#[contract]
+struct LiquidityPool;
+
+#[contractimpl]
+impl LiquidityPoolTrait for LiquidityPool {
+    fn initialize(e: Env, token_wasm_hash: BytesN<32>, token_a: Address, token_b: Address) {
+        if token_a >= token_b {
+            panic!("token_a must be less than token_b");
+        }
+
+        let share_contract = create_contract(&e, token_wasm_hash, &token_a, &token_b);
+        token::Client::new(&e, &share_contract).initialize(
+            &e.current_contract_address(),
+            &7u32,
+            &"Pool Share Token".into_val(&e),
+            &"POOL".into_val(&e),
+        );
+
+        put_token_a(&e, token_a);
+        put_token_b(&e, token_b);
+        put_token_share(&e, share_contract.try_into().unwrap());
+        put_total_shares(&e, 0);
+        put_reserve_a(&e, 0);
+        put_reserve_b(&e, 0);
+    }
+
+    fn share_id(e: Env) -> Address {
+        get_token_share(&e)
+    }
+
+    fn deposit(e: Env, to: Address, desired_a: i128, min_a: i128, desired_b: i128, min_b: i128) {
+        // Depositor needs to authorize the deposit
+        to.require_auth();
+
+        let (reserve_a, reserve_b) = (get_reserve_a(&e), get_reserve_b(&e));
+
+        // Calculate deposit amounts
+        let amounts = get_deposit_amounts(desired_a, min_a, desired_b, min_b, reserve_a, reserve_b);
+
+        let token_a_client = token::Client::new(&e, &get_token_a(&e));
+        let token_b_client = token::Client::new(&e, &get_token_b(&e));
+
+        token_a_client.transfer(&to, &e.current_contract_address(), &amounts.0);
+        token_b_client.transfer(&to, &e.current_contract_address(), &amounts.1);
+
+        // Now calculate how many new pool shares to mint
+        let (balance_a, balance_b) = (get_balance_a(&e), get_balance_b(&e));
+        let total_shares = get_total_shares(&e);
+
+        let zero = 0;
+        let new_total_shares = if reserve_a > zero && reserve_b > zero {
+            let shares_a = (balance_a * total_shares) / reserve_a;
+            let shares_b = (balance_b * total_shares) / reserve_b;
+            shares_a.min(shares_b)
+        } else {
+            (balance_a * balance_b).sqrt()
+        };
+
+        mint_shares(&e, to, new_total_shares - total_shares);
+        put_reserve_a(&e, balance_a);
+        put_reserve_b(&e, balance_b);
+    }
+
+    fn swap(e: Env, to: Address, buy_a: bool, out: i128, in_max: i128) {
+        to.require_auth();
+
+        let (reserve_a, reserve_b) = (get_reserve_a(&e), get_reserve_b(&e));
+        let (reserve_sell, reserve_buy) = if buy_a {
+            (reserve_b, reserve_a)
+        } else {
+            (reserve_a, reserve_b)
+        };
+
+        // First calculate how much needs to be sold to buy amount out from the pool
+        let n = reserve_sell * out * 1000;
+        let d = (reserve_buy - out) * 997;
+        let sell_amount = (n / d) + 1;
+        if sell_amount > in_max {
+            panic!("in amount is over max")
+        }
+
+        // Transfer the amount being sold to the contract
+        let sell_token = if buy_a {
+            get_token_b(&e)
+        } else {
+            get_token_a(&e)
+        };
+        let sell_token_client = token::Client::new(&e, &sell_token);
+        sell_token_client.transfer(&to, &e.current_contract_address(), &sell_amount);
+
+        let (balance_a, balance_b) = (get_balance_a(&e), get_balance_b(&e));
+
+        // residue_numerator and residue_denominator are the amount that the invariant considers after
+        // deducting the fee, scaled up by 1000 to avoid fractions
+        let residue_numerator = 997;
+        let residue_denominator = 1000;
+        let zero = 0;
+
+        let new_invariant_factor = |balance: i128, reserve: i128, out: i128| {
+            let delta = balance - reserve - out;
+            let adj_delta = if delta > zero {
+                residue_numerator * delta
+            } else {
+                residue_denominator * delta
+            };
+            residue_denominator * reserve + adj_delta
+        };
+
+        let (out_a, out_b) = if buy_a { (out, 0) } else { (0, out) };
+
+        let new_inv_a = new_invariant_factor(balance_a, reserve_a, out_a);
+        let new_inv_b = new_invariant_factor(balance_b, reserve_b, out_b);
+        let old_inv_a = residue_denominator * reserve_a;
+        let old_inv_b = residue_denominator * reserve_b;
+
+        if new_inv_a * new_inv_b < old_inv_a * old_inv_b {
+            panic!("constant product invariant does not hold");
+        }
+
+        if buy_a {
+            transfer_a(&e, to, out_a);
+        } else {
+            transfer_b(&e, to, out_b);
+        }
+
+        put_reserve_a(&e, balance_a - out_a);
+        put_reserve_b(&e, balance_b - out_b);
+    }
+
+    fn withdraw(e: Env, to: Address, share_amount: i128, min_a: i128, min_b: i128) -> (i128, i128) {
+        to.require_auth();
+
+        // First transfer the pool shares that need to be redeemed
+        let share_token_client = token::Client::new(&e, &get_token_share(&e));
+        share_token_client.transfer(&to, &e.current_contract_address(), &share_amount);
+
+        let (balance_a, balance_b) = (get_balance_a(&e), get_balance_b(&e));
+        let balance_shares = get_balance_shares(&e);
+
+        let total_shares = get_total_shares(&e);
+
+        // Now calculate the withdraw amounts
+        let out_a = (balance_a * balance_shares) / total_shares;
+        let out_b = (balance_b * balance_shares) / total_shares;
+
+        if out_a < min_a || out_b <TabItem min_b {
+            panic!("min not satisfied");
+        }
+
+        burn_shares(&e, balance_shares);
+        transfer_a(&e, to.clone(), out_a);
+        transfer_b(&e, to, out_b);
+        put_reserve_a(&e, balance_a - out_a);
+        put_reserve_b(&e, balance_b - out_b);
+
+        (out_a, out_b)
+    }
+
+    fn get_rsrvs(e: Env) -> (i128, i128) {
+        (get_reserve_a(&e), get_reserve_b(&e))
+    }
+}
+```
+
+</TabItem>
+<TabItem value="token.rs">
+
+```rust title="liquidity_pool/src/token.rs"
+#![allow(unused)]
+use soroban_sdk::{xdr::ToXdr, Address, Bytes, BytesN, Env};
+
+soroban_sdk::contractimport!(
+    file = "../token/target/wasm32-unknown-unknown/release/soroban_token_contract.wasm"
+);
+
+pub fn create_contract(
+    e: &Env,
+    token_wasm_hash: BytesN<32>,
+    token_a: &Address,
+    token_b: &Address,
+) -> Address {
+    let mut salt = Bytes::new(e);
+    salt.append(&token_a.to_xdr(e));
+    salt.append(&token_b.to_xdr(e));
+    let salt = e.crypto().sha256(&salt);
+    e.deployer()
+        .with_current_contract(salt)
+        .deploy(token_wasm_hash)
+}
+```
+
+</TabItem>
+</Tabs>
+
+Ref: https://github.com/stellar/soroban-examples/tree/v0.9.2/liquidity_pool
+
+## How it Works
+
+Something about how it works
+
+### Main Idea 1
+
+Something about this main idea
+
+### Main Idea 2
+
+Something about this main idea
+
+### Main Idea 3
+
+Something about this main idea
+
+## Tests
+
+Open the `/liquidity_pool/src/test.rs` file to follow along.
+
+```rust title="/liquidity_pool/src/test.rs"
+#![cfg(test)]
+extern crate std;
+
+use crate::{token, LiquidityPoolClient};
+
+use soroban_sdk::{
+    symbol_short,
+    testutils::{Address as _, AuthorizedFunction, AuthorizedInvocation},
+    Address, BytesN, Env, IntoVal,
+};
+
+fn create_token_contract<'a>(e: &Env, admin: &Address) -> token::Client<'a> {
+    token::Client::new(e, &e.register_stellar_asset_contract(admin.clone()))
+}
+
+fn create_liqpool_contract<'a>(
+    e: &Env,
+    token_wasm_hash: &BytesN<32>,
+    token_a: &Address,
+    token_b: &Address,
+) -> LiquidityPoolClient<'a> {
+    let liqpool = LiquidityPoolClient::new(e, &e.register_contract(None, crate::LiquidityPool {}));
+    liqpool.initialize(token_wasm_hash, token_a, token_b);
+    liqpool
+}
+
+fn install_token_wasm(e: &Env) -> BytesN<32> {
+    soroban_sdk::contractimport!(
+        file = "../token/target/wasm32-unknown-unknown/release/soroban_token_contract.wasm"
+    );
+    e.deployer().upload_contract_wasm(WASM)
+}
+
+#[test]
+fn test() {
+    let e = Env::default();
+    e.mock_all_auths();
+
+    let mut admin1 = Address::random(&e);
+    let mut admin2 = Address::random(&e);
+
+    let mut token1 = create_token_contract(&e, &admin1);
+    let mut token2 = create_token_contract(&e, &admin2);
+    if &token2.address < &token1.address {
+        std::mem::swap(&mut token1, &mut token2);
+        std::mem::swap(&mut admin1, &mut admin2);
+    }
+    let user1 = Address::random(&e);
+    let liqpool = create_liqpool_contract(
+        &e,
+        &install_token_wasm(&e),
+        &token1.address,
+        &token2.address,
+    );
+
+    let token_share = token::Client::new(&e, &liqpool.share_id());
+
+    token1.mint(&user1, &1000);
+    assert_eq!(token1.balance(&user1), 1000);
+
+    token2.mint(&user1, &1000);
+    assert_eq!(token2.balance(&user1), 1000);
+
+    liqpool.deposit(&user1, &100, &100, &100, &100);
+    assert_eq!(
+        e.auths(),
+        std::vec![(
+            user1.clone(),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    liqpool.address.clone(),
+                    symbol_short!("deposit"),
+                    (&user1, 100_i128, 100_i128, 100_i128, 100_i128).into_val(&e)
+                )),
+                sub_invocations: std::vec![
+                    AuthorizedInvocation {
+                        function: AuthorizedFunction::Contract((
+                            token1.address.clone(),
+                            symbol_short!("transfer"),
+                            (&user1, &liqpool.address, 100_i128).into_val(&e)
+                        )),
+                        sub_invocations: std::vec![]
+                    },
+                    AuthorizedInvocation {
+                        function: AuthorizedFunction::Contract((
+                            token2.address.clone(),
+                            symbol_short!("transfer"),
+                            (&user1, &liqpool.address, 100_i128).into_val(&e)
+                        )),
+                        sub_invocations: std::vec![]
+                    }
+                ]
+            }
+        )]
+    );
+
+    assert_eq!(token_share.balance(&user1), 100);
+    assert_eq!(token_share.balance(&liqpool.address), 0);
+    assert_eq!(token1.balance(&user1), 900);
+    assert_eq!(token1.balance(&liqpool.address), 100);
+    assert_eq!(token2.balance(&user1), 900);
+    assert_eq!(token2.balance(&liqpool.address), 100);
+
+    liqpool.swap(&user1, &false, &49, &100);
+    assert_eq!(
+        e.auths(),
+        std::vec![(
+            user1.clone(),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    liqpool.address.clone(),
+                    symbol_short!("swap"),
+                    (&user1, false, 49_i128, 100_i128).into_val(&e)
+                )),
+                sub_invocations: std::vec![AuthorizedInvocation {
+                    function: AuthorizedFunction::Contract((
+                        token1.address.clone(),
+                        symbol_short!("transfer"),
+                        (&user1, &liqpool.address, 97_i128).into_val(&e)
+                    )),
+                    sub_invocations: std::vec![]
+                }]
+            }
+        )]
+    );
+
+    assert_eq!(token1.balance(&user1), 803);
+    assert_eq!(token1.balance(&liqpool.address), 197);
+    assert_eq!(token2.balance(&user1), 949);
+    assert_eq!(token2.balance(&liqpool.address), 51);
+
+    e.budget().reset_unlimited();
+    liqpool.withdraw(&user1, &100, &197, &51);
+
+    assert_eq!(
+        e.auths(),
+        std::vec![(
+            user1.clone(),
+            AuthorizedInvocation {
+                function: AuthorizedFunction::Contract((
+                    liqpool.address.clone(),
+                    symbol_short!("withdraw"),
+                    (&user1, 100_i128, 197_i128, 51_i128).into_val(&e)
+                )),
+                sub_invocations: std::vec![AuthorizedInvocation {
+                    function: AuthorizedFunction::Contract((
+                        token_share.address.clone(),
+                        symbol_short!("transfer"),
+                        (&user1, &liqpool.address, 100_i128).into_val(&e)
+                    )),
+                    sub_invocations: std::vec![]
+                }]
+            }
+        )]
+    );
+
+    assert_eq!(token1.balance(&user1), 1000);
+    assert_eq!(token2.balance(&user1), 1000);
+    assert_eq!(token_share.balance(&user1), 0);
+    assert_eq!(token1.balance(&liqpool.address), 0);
+    assert_eq!(token2.balance(&liqpool.address), 0);
+    assert_eq!(token_share.balance(&liqpool.address), 0);
+}
+```
+
+In any test the first thing that is always required is an `Env`, which is the
+Soroban environment that the contract will run in.
+
+```rust
+let e = Env::default();
+```
+
+The contract is registered with the environment using the contract type.
+
+```rust
+let contract_id = env.register_contract(None, IncrementContract);
+```
+
+All public functions within an `impl` block that is annotated with the
+`#[contractimpl]` attribute have a corresponding function generated in a
+generated client type. The client type will be named the same as the contract
+type with `Client` appended. For example, in our contract the contract type is
+`Contract`, and the client is named `ContractClient`.
+
+## Build the Contract
+
+To build the contract, use the `soroban contract build` command.
+
+```bash
+soroban contract build
+```
+
+A `.wasm` file should be outputted in the `target` directory:
+
+```bash
+target/wasm32-unknown-unknown/release/soroban_liquidity_pool_contract.wasm
+```
+
+## Run the Contract
+
+If you have [`soroban-cli`] installed, you can invoke contract functions using
+it.
+
+```bash
+soroban contract invoke \
+    --wasm target/wasm32-unknown-unknown/release/soroban_liquidity_pool_contract.wasm \
+    --id 1 \
+    -- \
+    deposit \
+    --to GBZV3NONYSUDVTEHATQO4BCJVFXJO3XQU5K32X3XREVZKSMMOZFO4ZXR \
+    --desired_a 100 \
+    --min_a 98 \
+    --desired_be 200 \
+    --min_b 196 \
+```
+
+[`soroban-cli`]: ../reference/soroban-cli

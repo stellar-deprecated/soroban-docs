@@ -1,0 +1,39 @@
+{
+    "openrpc": "1.2.4",
+    "info": {
+        "version": "0.9.4",
+        "title": "Soroban RPC"
+    },
+    "servers": [
+        {
+            "url": "https://rpc-futurenet.stellar.org:443",
+            "description": "Publicly available RPC server maintained by SDF"
+        }
+    ],
+    "methods": [
+        {
+            "name": "getTransaction",
+            "summary": "Clients will poll this to tell when the transaction has been completed",
+            "params": [
+                {
+                    "name": "hash",
+                    "description": "Transaction hash to query, as a hex-encoded string",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "minLength": 64,
+                        "maxLength": 64
+                    }
+                }
+            ],
+            "paramStructure": "by-name",
+            "result": {
+                "name": "transaction",
+                "description": "Information for a specific Stellar transaction",
+                "schema": {
+                    "$ref": "./components/schemas/transactionSchema.json#/components/schemas/Transaction"
+                }
+            }
+        }
+    ]
+}

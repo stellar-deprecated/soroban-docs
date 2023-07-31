@@ -40,13 +40,20 @@ const config = {
     ],
     [
       '@docusaurus/plugin-content-docs',
-    {
-      id: 'dapps',
-      path: 'dapps',
-      routeBasePath: 'dapps',
-      sidebarPath: require.resolve('./sidebarsDapps.js'),
-    },
-  ],
+      {
+        id: 'dapps',
+        path: 'dapps',
+        routeBasePath: 'dapps',
+        sidebarPath: require.resolve('./sidebarsDapps.js'),
+      },
+    ],
+    [
+      '@metamask/docusaurus-openrpc',
+      {
+        path: 'rpc',
+        openrpcDocument: './openrpc/soroban-rpc/openrpc.json',
+      },
+    ],
     require('./src/dev-server-plugin'),
     require('./src/analytics-module')
   ],

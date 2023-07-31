@@ -72,7 +72,7 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
       }
 
       const response = await fetch(
-        "https://soroban-dapps-challenge-wrangler.sdf-ecosystem.workers.dev",
+        "https://soroban-dapps-challenge-wrangler.julian-martinez.workers.dev",
         {
           method: "POST",
           headers: {

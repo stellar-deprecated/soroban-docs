@@ -33,7 +33,7 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
   ): Promise<string> => {
     try {
       const response = await fetch(
-        "https://soroban-dapps-challenge-wrangler.sdf-ecosystem.workers.dev",
+        "https://soroban-dapps-challenge-wrangler.julian-martinez.workers.dev",
       );
       const rawData = await response.json();
       const data: Course[] = rawData.map(

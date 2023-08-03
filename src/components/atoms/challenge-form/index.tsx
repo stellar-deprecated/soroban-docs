@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styles from "./style.module.css";
-import { useSorobanReact, SorobanReactProvider } from "@soroban-react/core";
+import { useSorobanReact } from "@soroban-react/core";
 import { SorobanEventsProvider } from "@soroban-react/events";
-import { futurenet, sandbox, standalone, testnet } from "@soroban-react/chains";
-import { freighter } from "@soroban-react/freighter";
-import { ChainMetadata, Connector } from "@soroban-react/types";
 import BrowserOnly from "@docusaurus/BrowserOnly";
-
-const chains: ChainMetadata[] = [sandbox, futurenet, testnet, standalone];
-const connectors: Connector[] = [freighter()];
 
 interface ChallengeFormProps {
   courseId: number;
@@ -106,21 +100,20 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
     return (
       <div>
         <form onSubmit={handleSubmit} className={styles.challengeform}>
-          <label>
-            Public URL:
-            <input
-              className={styles.input}
-              type="url"
-              value={url}
-              onChange={(e) => {
-                const url = e.target.value;
-                setUrl(url);
-                console.log("URL:", url);
-                console.log("Public Key:", address);
-              }}
-              required
-            />
-          </label>
+          <input
+            className={styles.input}
+            type="url"
+            placeholder="Enter your public url"
+            value={url}
+            onChange={(e) => {
+              const url = e.target.value;
+              setUrl(url);
+              console.log("URL:", url);
+              console.log("Public Key:", address);
+            }}
+            required
+          />
+          
           <button type="submit" className={styles.button}>
             {savedUrl ? "Resubmit" : "Submit"}
           </button>
@@ -147,6 +140,7 @@ function InnerComponent({ courseId }: { courseId: number }) {
   // Check if the user is connected and stored the status in local storage
   useEffect(() => {
     let isConnected = localStorage.getItem(`isConnected:${addressString}`);
+    // console.log('isConnected: ', `isConnected:${addressString}`, isConnected);
     if (isConnected === "true") {
       setLoading(false);
       connect(); // Call connect() to establish a connection if not already connected
@@ -202,23 +196,16 @@ function InnerComponent({ courseId }: { courseId: number }) {
 
 export function ParentChallengeForm({ courseId }: { courseId: number }) {
   return (
-    <SorobanReactProvider
-      autoconnect={false}
-      chains={chains}
-      connectors={connectors}
-      appName={"course completion"}
-    >
-      <SorobanEventsProvider>
-        <BrowserOnly
-          fallback={
-            <div>
-              Please connect to Futurenet and refresh the page to continue.
-            </div>
-          }
-        >
-          {() => <InnerComponent courseId={courseId} />}
-        </BrowserOnly>
-      </SorobanEventsProvider>
-    </SorobanReactProvider>
+    <SorobanEventsProvider>
+      <BrowserOnly
+        fallback={
+          <div>
+            Please connect to Futurenet and refresh the page to continue.
+          </div>
+        }
+      >
+        {() => <InnerComponent courseId={courseId} />}
+      </BrowserOnly>
+    </SorobanEventsProvider>
   );
 }

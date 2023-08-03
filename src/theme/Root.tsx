@@ -3,9 +3,9 @@ import { SorobanReactProvider } from "@soroban-react/core";
 import { freighter } from "@soroban-react/freighter";
 import { ChainMetadata, Connector } from "@soroban-react/types";
 import React, { PropsWithChildren, useContext, useEffect } from "react";
-import { AxiosResponse } from "axios";
+// import { AxiosResponse } from "axios";
 import { ToastContainer } from "react-toastify";
-import { CourseData } from "interfaces/course-data";
+// import { CourseData } from "interfaces/course-data";
 import CoursesContextProvider from "../store/CoursesContextProvider";
 import CoursesContext, { CoursesContextProps } from "../store/courses-context";
 import "react-toastify/dist/ReactToastify.css";
@@ -20,9 +20,10 @@ const FetchDataWrapper = ({ children }: PropsWithChildren) => {
 
   useEffect(() => {
     try {
-      fetchCourses().then((response: AxiosResponse<CourseData[]>) =>
-        coursesCtx.setData(response.data),
-      );
+      // fetchCourses().then((response: AxiosResponse<CourseData[]>) =>
+      //   coursesCtx.setData(response.data),
+      // );
+      coursesCtx.setData(fetchCourses());
     } catch (error) {
       console.error(error);
     }

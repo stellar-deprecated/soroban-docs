@@ -35,7 +35,6 @@
   flex-direction: column;
   justify-content: center;
   align-items: left;
-  padding: 16px 12px;
   gap: 8px;
   border-radius: 8px;
   border: 0;
@@ -74,7 +73,7 @@
   justify-content: center;
   width: 100%;
   align-items: center;
-  padding: 12px;
+  padding: 11px;
   gap: 8px;
   background: #ffffff;
   border-radius: 2px;
@@ -84,6 +83,12 @@
   border: 1px solid #ECECEC;
   cursor: pointer;
 }
-/* .higher {
-  height: 58px;
-} */
+
+.inputWithError {
+  border-color: #DF0101;
+}
+
+.errorMessage {
+  position: absolute;
+  color: #DF0101;
+}

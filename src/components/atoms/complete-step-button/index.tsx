@@ -1,16 +1,30 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { toast } from "react-toastify";
 import { useSorobanReact } from "@soroban-react/core";
-import { CourseData } from "interfaces/course-data";
 import styles from "./styles.module.css";
 import CoursesContext, {
   CoursesContextProps,
 } from "../../../store/courses-context";
+import { getActiveCourse } from "../../../utils/get-active-course";
+import { CoursePostData } from "../../../interfaces/course-data";
 
-interface CompleteStepButtonProps {
-  title: string;
+interface CompleteStepButtonState {
+  isCompleted: boolean;
+  isLastStep: boolean;
+  isStarted: boolean;
+}
+
+interface CompleteStepButtonProps extends PropsWithChildren {
+  type?: "button" | "submit";
+  isDisabled?: boolean;
   courseId: number;
   progress: number;
+  url?: string;
 }
 
 const milestoneToast = (
@@ -22,49 +36,92 @@ const milestoneToast = (
   </div>
 );
 
+const completedToast = (
+  <div className={styles.notification}>
+    <img src="/img/smiley-face-2.svg" alt="Smiley face" />
+    <span className={styles.notificationText}>
+      Congratulations! Your challenge is completed successfully.
+    </span>
+  </div>
+);
+
 export default function CompleteStepButton({
-  title,
+  type,
+  isDisabled,
+  children,
   courseId,
   progress,
+  url,
 }: CompleteStepButtonProps) {
-  const [isCompleted, setIsCompleted] = useState(false);
+  const [state, setState] = useState<CompleteStepButtonState>({
+    isCompleted: false,
+    isLastStep: false,
+    isStarted: false,
+  });
   const { coursesData, updateProgress } =
     useContext<CoursesContextProps>(CoursesContext);
   const { address } = useSorobanReact();
+
   const publicKey = `${address}:${courseId}`;
+  const isButtonDisabled =
+    (state.isCompleted && !state.isLastStep) || isDisabled;
 
   useEffect(() => {
-    const course = coursesData.find(
-      (item: CourseData) => item.publickey === publicKey,
-    );
+    const course = getActiveCourse(coursesData, publicKey);
     const isStepCompleted =
-      course && course.course_data.course_progress >= progress;
-    setIsCompleted(!!isStepCompleted);
+      !!course && course.course_data.course_progress >= progress;
+    const isLastCourseStep = !!(course?.course_data.steps_amount === progress);
+
+    setState((prevState: CompleteStepButtonState) => {
+      return {
+        isCompleted: isStepCompleted,
+        isLastStep: isLastCourseStep,
+        isStarted: !!course?.course_data.start_date,
+      };
+    });
   }, [coursesData, progress, publicKey]);
 
   const completeStepHandler = () => {
-    setIsCompleted(true);
-    updateProgress(publicKey, {
-      publickey: address,
-      course_index: courseId,
-      course_progress: progress,
-    });
+    const updatePayload: Partial<CoursePostData> = state.isLastStep
+      ? {
+          publickey: address,
+          course_id: courseId,
+          course_progress: progress,
+          url,
+          completed_at: Date.now(),
+        }
+      : {
+          publickey: address,
+          course_id: courseId,
+          course_progress: progress,
+          url,
+        };
 
-    toast(milestoneToast, {
+    setState((prevState: CompleteStepButtonState) => {
+      return {
+        ...prevState,
+        isCompleted: true,
+      };
+    });
+    updateProgress(updatePayload);
+
+    toast(state.isLastStep ? completedToast : milestoneToast, {
       hideProgressBar: true,
       position: "top-center",
+      autoClose: 2000,
     });
   };
 
-  return (
+  return state.isStarted ? (
     <div className={styles.completeStep}>
       <button
+        type={type || "button"}
         className={styles.completeStepButton}
-        disabled={isCompleted}
+        disabled={isButtonDisabled}
         onClick={completeStepHandler}
       >
-        {title}
+        {children}
       </button>
     </div>
-  );
+  ) : null;
 }

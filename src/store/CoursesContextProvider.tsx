@@ -1,6 +1,7 @@
-import { CourseData, CoursePostData } from "interfaces/course-data";
 import React, { PropsWithChildren, useReducer } from "react";
 import CoursesContext, { CoursesContextProps } from "./courses-context";
+import { CourseData, CoursePostData } from "../interfaces/course-data";
+// import { updateCourseProgress } from "services/courses";
 
 interface CoursesState {
   coursesData: CourseData[];
@@ -10,7 +11,11 @@ interface Action {
   type: string;
   data?: CourseData[];
   item?: Partial<CoursePostData>;
-  id?: string;
+}
+
+enum ActionType {
+  SET_DATA = "SET_DATA",
+  UPDATE_PROGRESS = "UPDATE_PROGRESS",
 }
 
 const defaultState: CoursesState = {
@@ -18,39 +23,42 @@ const defaultState: CoursesState = {
 };
 
 const coursesReducer = (state: CoursesState, action: Action) => {
-  if (action.type === "SET_DATA" && action.data) {
+  if (action.type === ActionType.SET_DATA && action.data) {
     return {
       coursesData: [...action.data],
     };
   }
 
-  if (action.type === "UPDATE_PROGRESS" && action.item) {
-    let updatedCourses: CourseData[];
-    const publicKey = `${action.item.publickey}:${action.item.course_index}`;
-    const existingItemIdx = state.coursesData.findIndex((item: CourseData) => item.publickey === publicKey);
-    const existingItem: CourseData | undefined = state.coursesData[existingItemIdx];
+  if (action.type === ActionType.UPDATE_PROGRESS && action.item) {
+    // updateCourseProgress(action.item);
+    const {
+      publickey,
+      url,
+      course_id: courseId,
+      completed_at: completedAt,
+      start_date: startDate,
+    } = action.item;
+    const publicKey = `${publickey}:${courseId}`;
+    const existingItemIdx = state.coursesData.findIndex(
+      (item: CourseData) => item.publickey === publicKey,
+    );
 
-    if (existingItem) {
-      const updatedItem: CourseData = {
-        publickey: publicKey,
-        course_data: {
-          ...existingItem.course_data,
-          course_progress: action.item.course_progress as number,
-        }
-      };
+    const { course_data: existingData } = state.coursesData[existingItemIdx];
 
-      updatedCourses = [...state.coursesData];
-      updatedCourses[existingItemIdx] = updatedItem;
-    } else {
-      updatedCourses = state.coursesData.concat({
-        publickey: publicKey,
-        course_data: {
-          course_progress: action.item.course_progress as number,
-          url: action.item.url || '',
-          completed_at: action.item.completed_at || '',
-        }
-      });
-    }
+    const updatedItem: CourseData = {
+      publickey: publicKey,
+      course_data: {
+        ...existingData,
+        course_progress:
+          action.item.course_progress || existingData.course_progress,
+        url: url || existingData.url,
+        start_date: startDate || existingData.start_date,
+        completed_at: completedAt || existingData.completed_at,
+      },
+    };
+
+    const updatedCourses = [...state.coursesData];
+    updatedCourses[existingItemIdx] = updatedItem;
 
     return {
       coursesData: updatedCourses,
@@ -65,16 +73,15 @@ const CoursesContextProvider = (props: PropsWithChildren) => {
 
   const setDataHandler = (data: CourseData[]) => {
     dispatchAction({
-      type: "SET_DATA",
+      type: ActionType.SET_DATA,
       data,
     });
   };
 
-  const updateProgressHandler = (id: string, item: Partial<CoursePostData>) => {
+  const updateProgressHandler = (item: Partial<CoursePostData>) => {
     dispatchAction({
-      type: "UPDATE_PROGRESS",
+      type: ActionType.UPDATE_PROGRESS,
       item,
-      id,
     });
   };
 

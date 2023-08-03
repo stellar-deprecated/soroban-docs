@@ -6,6 +6,9 @@ import React, { PropsWithChildren, useContext, useEffect } from "react";
 import CoursesContextProvider from "../store/CoursesContextProvider";
 import CoursesContext, { CoursesContextProps } from "../store/courses-context";
 import axios from "axios";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import './style.module.css';
 
 const chains: ChainMetadata[] = [sandbox, futurenet, testnet, standalone];
 const connectors: Connector[] = [freighter()];
@@ -40,6 +43,8 @@ export default function Root({ children }: PropsWithChildren) {
       connectors={connectors}
       appName={"course completion"}
     >
+      <ToastContainer />
+    
       <CoursesContextProvider>
         <FetchDataWrapper>
           {children}

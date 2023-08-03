@@ -22,3 +22,17 @@
   color: #9F9F9F;
   cursor: not-allowed;
 }
+
+.notification {
+  display: flex;
+  align-items: center;
+  padding-left: 16px;
+}
+
+.notificationText {
+  color: #222222;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--ifm-font-family-base);
+  margin-left: 8px;
+}

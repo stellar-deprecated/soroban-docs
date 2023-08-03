@@ -3,12 +3,20 @@ import styles from "./styles.module.css";
 import { useSorobanReact } from "@soroban-react/core";
 import CoursesContext, { CoursesContextProps } from "../../../store/courses-context";
 import { CourseData } from "interfaces/course-data";
+import { toast } from "react-toastify";
 
 interface CompleteStepButtonProps {
   title: string;
   courseId: number;
   progress: number;
 }
+
+const milestoneToast = <div className={styles.notification}>
+  <img src="/img/smiley-face-1.svg" alt="Smiley face" />
+  <span className={styles.notificationText}>
+    Congratulations on your milestone!
+  </span>
+</div>;
 
 export default function CompleteStepButton({
   title,
@@ -32,6 +40,11 @@ export default function CompleteStepButton({
       publickey: address,
       course_index: courseId,
       course_progress: progress,
+    });
+    
+    toast(milestoneToast, {
+      hideProgressBar: true,
+      position: "top-center",
     });
   };
 

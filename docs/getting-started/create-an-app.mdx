@@ -220,30 +220,30 @@ Before we add this to our index page, let's make the buttons look better. Open `
 <!-- prettier-ignore-start -->
 <!-- Astro uses tabs. It's not worth fighting or mentioning, let's just make the pasted code look good with the rest-->
 ```css
-	button {
-		border: 1px solid rgb(var(--accent));
-		background-color: #23262d;
-		background-image: none;
-		background-size: 400%;
-		border-radius: 7px;
-		color: white;
-		cursor: pointer;
-		font-size: inherit;
-		padding: 0.5rem 1rem;
-		background-position: 100%;
-		transition: background-position 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-	}
-	button:is(:hover, :focus-within) {
-		color: black;
-		background-position: 0;
-		background-size: 400%;
-		background-image: var(--accent-gradient);
-	}
-	button:is(:disabled) {
-        color: white;
-		background: var(--accent-light);
-		cursor: not-allowed;
-	}
+button {
+	border: 1px solid rgb(var(--accent));
+	background-color: #23262d;
+	background-image: none;
+	background-size: 400%;
+	border-radius: 7px;
+	color: white;
+	cursor: pointer;
+	font-size: inherit;
+	padding: 0.5rem 1rem;
+	background-position: 100%;
+	transition: background-position 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+button:is(:hover, :focus-within) {
+	color: black;
+	background-position: 0;
+	background-size: 400%;
+	background-image: var(--accent-gradient);
+}
+button:is(:disabled) {
+	color: white;
+	background: var(--accent-light);
+	cursor: not-allowed;
+}
 ```
 <!-- prettier-ignore-end -->
 
@@ -279,7 +279,7 @@ Now you're ready to sign the call to `increment`!
 
 ### Call `increment`
 
-We're going to a contract client for the incrementor contract with a similar command to the one we used before. Let's add it directly to the `postinstall` script:
+We're going to a contract client for the incrementor contract with a similar command to the one we used before. Let's add it directly to the `postinstall` script, using a double ampersand ([&&](https://stackoverflow.com/a/25669618/249801)) to run both `bindings typescript` commands in a row:
 
 ```json
 "postinstall": "soroban contract bindings typescript --wasm target/wasm32-unknown-unknown/release/hello_soroban.wasm --network futurenet --contract-id $(cat .soroban/hello-id) --contract-name hello-soroban --output-dir node_modules/hello-soroban-client && soroban contract bindings typescript --wasm target/wasm32-unknown-unknown/release/incrementor.wasm --network futurenet --contract-id $(cat .soroban/incrementor-id) --contract-name incrementor --output-dir node_modules/incrementor-client"
@@ -326,35 +326,35 @@ Current value: <strong id="current-value" aria-live="polite">???</strong><br />
 
 This should be somewhat familiar by now. We have a `script` that, thanks to Astro's build system, can `import` modules directly. We use `document.querySelector` to find the elements defined above. And we add a `click` handler to the button, which calls `increment` and updates the value on the page. It also sets the button to `disabled` and adds a `loading` class while the call is in progress to prevent the user from clicking it again and visually communicate that something is happening. For people using screen readers, the loading state is communicated with the [visually-hidden](https://www.a11yproject.com/posts/how-to-hide-content/) span, which will be announced to them thanks to the `aria` tags we saw before.
 
-Also, notice that you don't need to manually specify Freighter as the wallet in the call to `increment`. This may change in the future, but while Freighter is the only game in town, these generated libraries automatically use it.
+Also, notice that you don't need to manually specify Freighter as the wallet in the call to `increment`. This may change in the future, but while Freighter is the only game in town, these generated libraries automatically use it. If you want to override this behavior, you can pass a `wallet` option; check the latest `Wallet` interface in [the template source](https://github.com/stellar/soroban-tools/blob/main/cmd/crates/soroban-spec-typescript/src/project_template/src/method-options.ts) for details.
 
 Let's add styles for `visually-hidden` and `loading` class. In `layouts/Layout.astro`, add the following to the end of the `style` tag:
 
 <!-- prettier-ignore-start -->
 <!-- Astro uses tabs. It's not worth fighting or mentioning, let's just make the pasted code look good with the rest-->
 ```css
-	button:is(:disabled).loading {
-		background: linear-gradient(-45deg, #ffffff44, #ffffff22);
-		background-size: 200%;
-		animation: loading-gradient 4s linear infinite;
+button:is(:disabled).loading {
+	background: linear-gradient(-45deg, #ffffff44, #ffffff22);
+	background-size: 200%;
+	animation: loading-gradient 4s linear infinite;
+}
+@keyframes loading-gradient {
+	0% {
+		background-position: 0% 50%;
 	}
-	@keyframes loading-gradient {
-		0% {
-			background-position: 0% 50%;
-		}
-		100% {
-			background-position: -200% 50%;
-       }
+	100% {
+		background-position: -200% 50%;
 	}
-	.visually-hidden {
-		clip: rect(0 0 0 0);
-		clip-path: inset(50%);
-		height: 1px;
-		overflow: hidden;
-		position: absolute;
-		white-space: nowrap;
-		width: 1px;
-	}
+}
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
 ```
 <!-- prettier-ignore-end -->
 
@@ -400,12 +400,12 @@ First, let's add a `clean` script that removes the `.soroban` directory to make 
 }
 ```
 
-Next, let's add a `setup` script that creates and funds the `alice` identity, then builds and deploys your contracts:
+Next, let's add a `setup` script that creates and funds the `alice` identity, then builds and deploys your contracts. This is a lot for a single NPM script; look for the `&&` to see where one command ends and the next begins. Add the following to the `scripts` section of `package.json`:
 
 ```json
 "scripts": {
   ...
-  "setup": "cargo build && soroban config identity generate alice && curl \"https://friendbot-futurenet.stellar.org/?addr=$(soroban config identity address alice)\" && soroban contract deploy --wasm target/wasm32-unknown-unknown/release/hello_soroban.wasm --source alice --network futurenet > .soroban/hello-id && soroban contract deploy --wasm target/wasm32-unknown-unknown/release/incrementor.wasm --source alice --network futurenet > .soroban/incrementor-id && npm install",
+  "setup": "soroban contract build && soroban config identity generate alice && curl \"https://friendbot-futurenet.stellar.org/?addr=$(soroban config identity address alice)\" && soroban contract deploy --wasm target/wasm32-unknown-unknown/release/hello_soroban.wasm --source alice --network futurenet > .soroban/hello-id && soroban contract deploy --wasm target/wasm32-unknown-unknown/release/incrementor.wasm --source alice --network futurenet > .soroban/incrementor-id && npm install",
   ...
 }
 ```
@@ -429,6 +429,8 @@ If you want to take it a bit further and make sure you understand all the pieces
 - Add a `get_value` method to the `incrementor` contract, and use it to display the current value in the `Counter` component. (Remember to run `npm run reset` after you make changes to the contract!)
 - Add a "Decrement" button to the `Counter` component. This will again require a change to the `incrementor` contract, and another `npm run reset`.
 - [Deploy](https://docs.astro.build/en/guides/deploy/) your frontend. You can do this quickly and for free [with GitHub](https://docs.astro.build/en/guides/deploy/github/).
+- Rather than using NPM scripts for everything, try using a more elegant script runner such as [just](https://github.com/casey/just). The existing npm `scripts` can then call `just`, such as `"setup": "just setup"`.
+- Update the README to explain what this project is and how to use it to potential collaborators and employers 😉
 
 ## Troubleshooting
 

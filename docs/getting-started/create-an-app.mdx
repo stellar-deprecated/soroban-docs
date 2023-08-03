@@ -20,7 +20,7 @@ You're going to need [Node.js](https://nodejs.org/en/download/package-manager/).
 Then we want to initialize the current directory, `soroban-tutorial`, as an Astro project, but Astro doesn't like that. It wants to create a new directory. So let's go ahead and do that, then move all the contents of the new directory into their parent directory:
 
 ```bash
-npm create astro@2.9.3 soroban-tutorial -- --template basics --install --no-git --typescript strictest
+npm create astro@3.1.10 soroban-tutorial -- --template basics --install --no-git --typescript strictest
 ```
 
 This will take a little while, as the `--install` option automatically installs the dependencies. Once it's done, let's move the contents of the new nested folder into the project root. Other project organization strategies are possible, but we find that it causes no problems to have the Node-specific web app stuff live right alongside the Rust-specific smart contract stuff, and that keeping it all in the root just makes things simpler.
@@ -157,6 +157,12 @@ First, add [@stellar/freighter-api](https://www.npmjs.com/package/@stellar/freig
 npm install @stellar/freighter-api
 ```
 
+And then we need to work around a bug in NPM—adding a new dependency with `npm install [new dependency]` doesn't run the `postinstall` hook, the way that `npm install` does. But it does run the cleanup logic that removes "incorrect" folders like `node_modules/hello-soroban-client`. So you either need to run `npm i` (a shortcut for `npm install`), or `postinstall` directly:
+
+```bash
+npm run postinstall
+```
+
 Now let's add a new component to the `src/components` directory called `ConnectFreighter.astro` with the following contents:
 
 ```html
@@ -250,7 +256,7 @@ Now we can import the component in the frontmatter of `pages/index.astro`:
  ---
  import Layout from '../layouts/Layout.astro';
  import Card from '../components/Card.astro';
-+import Counter from '../components/Counter.astro';
++import ConnectFreighter from '../components/ConnectFreighter.astro';
  import { hello } from 'hello-soroban-client';
  ...
 ```
@@ -285,8 +291,6 @@ Now reinstall dependencies to also run `postinstall`:
 ```bash
 npm i
 ```
-
-(This is a shortcut for `npm install`.)
 
 Now we can import from `incrementor-client` and start using it. We'll again create a new Astro component. Create a new file at `src/components/Counter.astro` with the following contents:
 
@@ -361,8 +365,8 @@ Now let's use this component. In `pages/index.astro`, first import it:
  ---
  import Layout from '../layouts/Layout.astro';
  import Card from '../components/Card.astro';
-+import Counter from '../components/Counter.astro';
  import ConnectFreighter from '../components/ConnectFreighter.astro';
++import Counter from '../components/Counter.astro';
  import { hello } from 'hello-soroban-client';
  ...
 ```

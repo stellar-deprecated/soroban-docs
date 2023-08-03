@@ -3,12 +3,14 @@ import { SorobanReactProvider } from "@soroban-react/core";
 import { freighter } from "@soroban-react/freighter";
 import { ChainMetadata, Connector } from "@soroban-react/types";
 import React, { PropsWithChildren, useContext, useEffect } from "react";
+import { AxiosResponse } from "axios";
+import { ToastContainer } from "react-toastify";
+import { CourseData } from "interfaces/course-data";
 import CoursesContextProvider from "../store/CoursesContextProvider";
 import CoursesContext, { CoursesContextProps } from "../store/courses-context";
-import axios from "axios";
-import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-import './style.module.css';
+import "react-toastify/dist/ReactToastify.css";
+import "./style.module.css";
+import { fetchCourses } from "../services/courses";
 
 const chains: ChainMetadata[] = [sandbox, futurenet, testnet, standalone];
 const connectors: Connector[] = [freighter()];
@@ -17,19 +19,13 @@ const FetchDataWrapper = ({ children }: PropsWithChildren) => {
   const coursesCtx = useContext<CoursesContextProps>(CoursesContext);
 
   useEffect(() => {
-    async function getCourses() {
-      try {
-        const response = await axios.get(
-          "https://soroban-dapps-challenge-wrangler.julian-martinez.workers.dev",
-        );
-
-        coursesCtx.setData(response.data);
-      } catch (error) {
-        console.error(error);
-      }
+    try {
+      fetchCourses().then((response: AxiosResponse<CourseData[]>) =>
+        coursesCtx.setData(response.data),
+      );
+    } catch (error) {
+      console.error(error);
     }
-
-    getCourses();
   }, []);
 
   return <>{children}</>;
@@ -41,14 +37,12 @@ export default function Root({ children }: PropsWithChildren) {
       autoconnect={false}
       chains={chains}
       connectors={connectors}
-      appName={"course completion"}
+      appName="course completion"
     >
       <ToastContainer />
-    
+
       <CoursesContextProvider>
-        <FetchDataWrapper>
-          {children}
-        </FetchDataWrapper>
+        <FetchDataWrapper>{children}</FetchDataWrapper>
       </CoursesContextProvider>
     </SorobanReactProvider>
   );

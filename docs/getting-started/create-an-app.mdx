@@ -8,9 +8,9 @@ With two smart contracts deployed to a public network, you can now create a web 
 
 ## Initialize a frontend toolchain
 
-You could build a Soroban app with any frontend toolchain, or integrate it into any existing full-stack app. For this tutorial, we're going to use [Astro](https://astro.build/). Astro works with React, Vue, Svelte, or any other UI library that you might like, including none, which is what we'll use here. The Soroban-specific parts of this tutorial will be similar no matter what frontend toolchain you use.
+You can build a Soroban app with any frontend toolchain or integrate it into any existing full-stack app. For this tutorial, we're going to use [Astro](https://astro.build/). Astro works with React, Vue, Svelte, or any other UI library that you might like, including none, which is what we'll use here. The Soroban-specific parts of this tutorial will be similar no matter what frontend toolchain you use.
 
-If you're new to frontend, don't worry. We won't go too deep. But it will be useful for you to see and experience the frontend development process used by Soroban apps. We'll cover the bits of JavaScript and Astro that are relevant, but teaching all of frontend development and Astro is beyond the scope of this tutorial.
+If you're new to frontend, don't worry. We won't go too deep. But it will be useful for you to see and experience the frontend development process used by Soroban apps. We'll cover the relevant bits of JavaScript and Astro, but teaching all of frontend development and Astro is beyond the scope of this tutorial.
 
 Let's get started.
 
@@ -22,7 +22,7 @@ Then we want to initialize the current directory, `soroban-tutorial`, as an Astr
 npm create astro@3.1.10 soroban-tutorial -- --template basics --install --no-git --typescript strictest
 ```
 
-This will take a little while, as the `--install` option automatically installs the dependencies. Once it's done, let's move the contents of the new nested folder into the project root. Other project organization strategies are possible, but we find that it causes no problems to have the Node-specific web app stuff live right alongside the Rust-specific smart contract stuff, and that keeping it all in the root just makes things simpler.
+This will take a little while, as the `--install` option automatically installs the dependencies. Once it's done, let's move the contents of the new nested folder into the project root. Other project organization strategies are possible, but we find that it causes no problems to have the Node-specific web app stuff live right alongside the Rust-specific smart contract stuff and that keeping it all in the root just makes things simpler.
 
 ```bash
 mv soroban-tutorial/* .
@@ -32,7 +32,7 @@ rm soroban-tutorial/.gitignore
 rmdir soroban-tutorial
 ```
 
-This is a good time to commit your changes, so that later on you can clearly see the differences between what came from Astro's `basics` template and the Soroban-specific stuff we're going to add.
+This is a good time to commit your changes so that later on, you can clearly see the differences between what came from Astro's `basics` template and the Soroban-specific stuff we're going to add.
 
 ```bash
 git add .
@@ -55,7 +55,7 @@ soroban contract bindings typescript \
 :::tip Why --wasm?
 You may have noticed that we gave Soroban everything it needed to create this library _twice_. Given the network info and contract ID, it can already fetch the Wasm. But we also gave it the path to the Wasm file. Why?
 
-This is a temporary limitation of Soroban CLI. In an upcoming version, you will be able to omit the `--wasm` option, if using a contract from the network.
+This is a temporary limitation of Soroban CLI. In an upcoming version, you will be able to omit the `--wasm` option if using a contract from the network.
 
 So why not _only_ provide `--wasm`, and leave off the network stuff? Because `contract bindings typescript` makes use of the network settings within the generated library code, to make it easy to interact with that specific deployed contract.
 
@@ -70,7 +70,7 @@ As it says, when using local libraries, we've had the [most success](https://git
 mv hello-soroban-client node_modules
 ```
 
-And then let's update the `package.json` in your `soroban-tutorial` project with a `postinstall` script, to make sure the generated library stays up-to-date:
+And then let's update the `package.json` in your `soroban-tutorial` project with a `postinstall` script to make sure the generated library stays up-to-date:
 
 ```diff
   "scripts": {
@@ -119,7 +119,7 @@ If you inspect the page (right-click, inspect) and refresh, you'll see a couple 
 - The "Network" tab shows that there are no Fetch/XHR requests made. But RPC calls happen via Fetch/XHR! So how is the frontend calling the contract?
 - There's no JavaScript on the page. But we just wrote some JavaScript! How is it working?
 
-This is part of Astro's philosophy: the frontend should ship with as few assets as possible. Preferrably zero JavaScript. When you put JavaScript in the [frontmatter](https://docs.astro.build/en/core-concepts/astro-components/), Astro will run it at build time, and then replace anything in the `{...}` curly brackets with the output.
+This is part of Astro's philosophy: the frontend should ship with as few assets as possible. Preferably zero JavaScript. When you put JavaScript in the [frontmatter](https://docs.astro.build/en/core-concepts/astro-components/), Astro will run it at build time, and then replace anything in the `{...}` curly brackets with the output.
 
 When using the development server with `npm run dev`, it runs the frontmatter code on the server, and injects the resulting values into the page on the client.
 
@@ -148,7 +148,7 @@ Now you're all set up to use Freighter as a user, and you can add it to your app
 
 ### Add Freighter
 
-We're going to add a "Connect" button to the page that opens Freighter and prompts the user to give your web page permission to use Freighter. Once they grant this permission, the "Connect" button will be replaced with a message saying "Signed in as [their public key]".
+We're going to add a "Connect" button to the page that opens Freighter and prompts the user to give your web page permission to use Freighter. Once they grant this permission, the "Connect" button will be replaced with a message saying, "Signed in as [their public key]".
 
 First, add [@stellar/freighter-api](https://www.npmjs.com/package/@stellar/freighter-api) as a dependency:
 
@@ -156,7 +156,7 @@ First, add [@stellar/freighter-api](https://www.npmjs.com/package/@stellar/freig
 npm install @stellar/freighter-api
 ```
 
-And then we need to work around a bug in NPM—adding a new dependency with `npm install [new dependency]` doesn't run the `postinstall` hook, the way that `npm install` does. But it does run the cleanup logic that removes "incorrect" folders like `node_modules/hello-soroban-client`. So you either need to run `npm i` (a shortcut for `npm install`), or `postinstall` directly:
+Then we need to work around a bug in NPM—adding a new dependency with `npm install [new dependency]` doesn't run the `postinstall` hook, the way that `npm install` does. But it does run the cleanup logic that removes "incorrect" folders like `node_modules/hello-soroban-client`. So you either need to run `npm i` (a shortcut for `npm install`), or `postinstall` directly:
 
 ```bash
 npm run postinstall
@@ -215,7 +215,7 @@ You can read more about this in [Astro's page about client-side scripts](https:/
 
 The code itself here is pretty self-explanatory. We import a few methods from `@stellar/freighter-api` to check if the user is logged in. If they already are, then `isAllowed` returns `true`, and we replace the contents of the `div` with the signed-in message, replacing the button. If not, we add a click handler to the button to prompt the user to connect Freighter with `setAllowed`. Once they do, we again replace the contents of the `div` with the signed-in message. The [`aria` stuff](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Live_Regions) ensures that screen readers will read the new contents when they're updated.
 
-Before we add this to our index page, let's make the buttons look better. Open `layouts/Layout.astro` and look for the `<style>` tag. You'll see this one has an `is:global` attribute, which tells Astro to treat it as normal CSS, rather than scoping it to only the current component. That's exactly what we want, for buttons. Paste these styles in there:
+Before we add this to our index page, let's make the buttons look better. Open `layouts/Layout.astro` and look for the `<style>` tag. You'll see this one has an `is:global` attribute, which tells Astro to treat it as normal CSS, rather than scoping it to only the current component. That's exactly what we want for buttons. Paste these styles in there:
 
 <!-- prettier-ignore-start -->
 <!-- Astro uses tabs. It's not worth fighting or mentioning, let's just make the pasted code look good with the rest-->
@@ -273,7 +273,7 @@ If you're no longer running your dev server, go ahead and restart it:
 npm run dev
 ```
 
-Then open the page and click the "Connect" button. You should see Freighter pop up and ask you to sign in. Once you do, the button should be replaced with a message saying "Signed in as [your public key]".
+Then open the page and click the "Connect" button. You should see Freighter pop up and ask you to sign in. Once you do, the button should be replaced with a message saying, "Signed in as [your public key]".
 
 Now you're ready to sign the call to `increment`!
 
@@ -324,9 +324,9 @@ Current value: <strong id="current-value" aria-live="polite">???</strong><br />
 </script>
 ```
 
-This should be somewhat familiar by now. We have a `script` that, thanks to Astro's build system, can `import` modules directly. We use `document.querySelector` to find the elements defined above. And we add a `click` handler to the button, which calls `increment` and updates the value on the page. It also sets the button to `disabled` and adds a `loading` class while the call is in progress, to prevent the user from clicking it again and visually communicate that something is happening. For people using screen readers, the loading state is communicated with the [visually-hidden](https://www.a11yproject.com/posts/how-to-hide-content/) span, which will be announced to them thanks to the `aria` tags we saw before.
+This should be somewhat familiar by now. We have a `script` that, thanks to Astro's build system, can `import` modules directly. We use `document.querySelector` to find the elements defined above. And we add a `click` handler to the button, which calls `increment` and updates the value on the page. It also sets the button to `disabled` and adds a `loading` class while the call is in progress to prevent the user from clicking it again and visually communicate that something is happening. For people using screen readers, the loading state is communicated with the [visually-hidden](https://www.a11yproject.com/posts/how-to-hide-content/) span, which will be announced to them thanks to the `aria` tags we saw before.
 
-Also notice that you don't need to manually specify Freighter as the wallet in the call to `increment`. This may change in the future, but while Freighter is the only game in town, these generated libraries automatically use it.
+Also, notice that you don't need to manually specify Freighter as the wallet in the call to `increment`. This may change in the future, but while Freighter is the only game in town, these generated libraries automatically use it.
 
 Let's add styles for `visually-hidden` and `loading` class. In `layouts/Layout.astro`, add the following to the end of the `style` tag:
 
@@ -380,7 +380,7 @@ Then use it. Let's replace the contents of the `instructions` paragraph with it:
  </p>
 ```
 
-Check the page; if you're still running your dev server, it should have already udpated. Click the "Increment" button; you should see a Freighter confirmation. Confirm, and... the value updates! 🎉
+Check the page; if you're still running your dev server, it should have already updated. Click the "Increment" button; you should see a Freighter confirmation. Confirm, and... the value updates! 🎉
 
 There's obviously some functionality missing, though. For example, that `???` is a bummer. But our `incrementor` contract doesn't give us a way to query the
 current value without also updating it.
@@ -389,9 +389,9 @@ Before you try to update it, let's streamline the process around building, deplo
 
 ## Streamline the dev process with some script cleanup
 
-Right now the `postinstall` script assumes that you already have a `.soroban` directory with contract IDs inside. When other collaborators try to help you out, this will be frustrating. You can harness the `scripts` section in the `package.json` to make this project easier to work with. This will also make it easier for you to make changes to the contracts and then work with those changes in the frontend.
+Right now, the `postinstall` script assumes that you already have a `.soroban` directory with contract IDs inside. When other collaborators try to help you out, this will be frustrating. You can harness the `scripts` section in the `package.json` to make this project easier to work with. This will also make it easier for you to make changes to the contracts and then work with those changes in the frontend.
 
-First, let's add a `clean` script that removes the `.soroban` directory, to make it easy to go back to how collaborators will experience this repository when they first clone it. We'll also remove the `node_modules/.vite` directory, which is where Astro caches its build artifacts ([Vite](https://vitejs.dev/) is a build tool [used by Astro](https://docs.astro.build/en/reference/configuration-reference/#vite). Add the following to the `scripts` section of `package.json`:
+First, let's add a `clean` script that removes the `.soroban` directory to make it easy to go back to how collaborators will experience this repository when they first clone it. We'll also remove the `node_modules/.vite` directory, which is where Astro caches its build artifacts ([Vite](https://vitejs.dev/) is a build tool [used by Astro](https://docs.astro.build/en/reference/configuration-reference/#vite). Add the following to the `scripts` section of `package.json`:
 
 ```json
 "scripts": {
@@ -420,7 +420,7 @@ Finally, let's add a `reset` that calls both in order:
 }
 ```
 
-Now anytime you make changes to your contracts, you can run `npm run reset` to build the new contracts, deploy them, and install dependencies. And of course, installing dependencies will run `postinstall`, which will also regenerate the contract client libraries directly to the `node_modules` folder.
+Now anytime you make changes to your contracts, you can run `npm run reset` to build the new contracts, deploy them, and install dependencies. And, of course, installing dependencies will run `postinstall`, which will also regenerate the contract client libraries directly to the `node_modules` folder.
 
 ## Take it further
 

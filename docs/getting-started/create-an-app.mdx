@@ -220,30 +220,30 @@ Before we add this to our index page, let's make the buttons look better. Open `
 <!-- prettier-ignore-start -->
 <!-- Astro uses tabs. It's not worth fighting or mentioning, let's just make the pasted code look good with the rest-->
 ```css
-	button {
-		border: 1px solid rgb(var(--accent));
-		background-color: #23262d;
-		background-image: none;
-		background-size: 400%;
-		border-radius: 7px;
-		color: white;
-		cursor: pointer;
-		font-size: inherit;
-		padding: 0.5rem 1rem;
-		background-position: 100%;
-		transition: background-position 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-	}
-	button:is(:hover, :focus-within) {
-		color: black;
-		background-position: 0;
-		background-size: 400%;
-		background-image: var(--accent-gradient);
-	}
-	button:is(:disabled) {
-        color: white;
-		background: var(--accent-light);
-		cursor: not-allowed;
-	}
+button {
+  border: 1px solid rgb(var(--accent));
+  background-color: #23262d;
+  background-image: none;
+  background-size: 400%;
+  border-radius: 7px;
+  color: white;
+  cursor: pointer;
+  font-size: inherit;
+  padding: 0.5rem 1rem;
+  background-position: 100%;
+  transition: background-position 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+button:is(:hover, :focus-within) {
+  color: black;
+  background-position: 0;
+  background-size: 400%;
+  background-image: var(--accent-gradient);
+}
+button:is(:disabled) {
+      color: white;
+  background: var(--accent-light);
+  cursor: not-allowed;
+}
 ```
 <!-- prettier-ignore-end -->
 

@@ -13,7 +13,8 @@
     "format:mdx": "prettier --prose-wrap preserve --write \"docs/**/*.{md,mdx}\"",
     "check:mdx": "prettier --prose-wrap preserve --check \"docs/**/*.{md,mdx}\"",
     "lint:fix": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix",
-    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\""
+    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@docusaurus/core": "^2.2.0",
@@ -28,6 +29,8 @@
     "docusaurus-plugin-sass": "^0.2.2",
     "mdx-mermaid": "^1.3.2",
     "mermaid": "^9.3.0",
+    "patch-package": "^8.0.0",
+    "postinstall-postinstall": "^2.1.0",
     "prism-react-renderer": "^1.3.5",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

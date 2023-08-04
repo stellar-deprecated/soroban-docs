@@ -78,6 +78,14 @@ struct TransactionMetaV3
 
 [Link](https://github.com/stellar/stellar-xdr/blob/eab1622f18b8101aa0cea76361c08beaeaa8d715/Stellar-ledger.x#L444) to the XDR above.
 
+### Event types
+There are three `ContractEventType`'s -
+1. `CONTRACT` events are events emitted by contracts that use the
+`contract_event` host function to convey state changes.
+2. `SYSTEM` events are events emitted by the host. At the moment, there's only one system event emitted by the host. It is emitted when the `update_current_contract_wasm` host function is called, where `topics = ["executable_update", old_executable: ContractExecutable, old_executable: ContractExecutable]` and `data = []`.
+3. `DIAGNOSTIC` events are meant for debugging and will not be emitted unless the host instance explictly enables it. You can read more about this below.
+
+
 ## What are diagnosticEvents?
 
 While looking at the `TransactionMetaV3` XDR struct above, you may have noticed

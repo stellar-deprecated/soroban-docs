@@ -20,12 +20,12 @@ module.exports = {
     },
     {
       type: 'category',
-      label: 'Request/Response Methods',
+      label: 'RPC Methods',
       collapsible: true,
       collapsed: false,
       link: {
         type: 'generated-index',
-        title: 'Request/Response Methods',
+        title: 'RPC Methods',
         slug: 'methods',
       },
       items: [

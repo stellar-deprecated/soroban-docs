@@ -18,3 +18,9 @@
     display: none !important;
   }
 }
+
+.docusaurus-openrpc select {
+  margin-bottom: 1rem;
+  font-size: inherit;
+  padding: 0.5rem;
+}

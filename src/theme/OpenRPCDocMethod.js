@@ -7,10 +7,12 @@ const react_1 = __importDefault(require("react"));
 const DocSidebar = require("@theme/DocSidebar").default;
 const Layout_1 = __importDefault(require("@theme/Layout"));
 const { useDocRouteMetadata } = require('@docusaurus/theme-common/internal');
-const open_rpc_docs_react_1 = require("@metamask/open-rpc-docs-react");
+const open_rpc_docs_react_1 = require("@elliotfriend/open-rpc-docs-react");
 const path_1 = require("path");
 require("./OpenRPCDocMethod.css");
 const CodeBlock = require('@theme/CodeBlock').default;
+const Tabs = require('@theme/Tabs').default;
+const TabItem = require('@theme/TabItem').default;
 const getExamplesFromMethod = (method) => {
     if (!method) {
         return [];
@@ -165,10 +167,10 @@ function OpenRPCDocMethod(props) {
             react_1.default.createElement("main", { className: "docMainContainer", style: { width: "100%" } },
                 react_1.default.createElement("div", { className: "container padding-top--md padding-bottom--lg" },
                     react_1.default.createElement("div", { className: "row" },
-                        react_1.default.createElement("div", { className: "col" },
+                        react_1.default.createElement("div", { className: "col col--9" },
                             !method &&
                                 react_1.default.createElement("div", null, "Index"),
-                            method && react_1.default.createElement(open_rpc_docs_react_1.Method, { method: method, components: { CodeBlock }, onExamplePairingChange: (examplePairing) => setSelectedExamplePairing(examplePairing) })),
+                            method && react_1.default.createElement(open_rpc_docs_react_1.Method, { method: method, components: { CodeBlock, Tabs, TabItem }, onExamplePairingChange: (examplePairing) => setSelectedExamplePairing(examplePairing) })),
                             ))))));
 }
 exports.default = OpenRPCDocMethod;

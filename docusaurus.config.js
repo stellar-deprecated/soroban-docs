@@ -83,27 +83,6 @@ const config = {
         },
       }),
     ],
-    // [
-    //   "@metamask/docusaurus-openrpc/dist/preset",
-    //   /** @type {import('@metamask/docusaurus-openrpc/dist/preset').Options} */
-    //   {
-    //     blog: false,
-    //     docs: {
-    //       showLastUpdateTime: true,
-    //       breadcrumbs: true,
-    //       sidebarPath: require.resolve("./sidebars.js"),
-    //       editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
-    //       openrpc: {
-    //         openrpcDocument: "./openrpc/soroban-rpc/openrpc.json",
-    //         path: "../rpc/methods",
-    //         sidebarLabel: "Soroban RPC",
-    //       },
-    //     },
-    //     theme: {
-    //       customCss: require.resolve("./src/css/custom.scss"),
-    //     }
-    //   },
-    // ],
   ],
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
@@ -133,6 +112,12 @@ const config = {
             position: 'left',
             docsPluginId: 'api'
           },
+          {
+            to: '/rpc',
+            label: 'RPC',
+            position: 'left',
+            docsPluginId: 'rpc',
+          }
           // {
           //   href: 'https://fastcheapandoutofcontrol.com/',
           //   label: 'Play Game',

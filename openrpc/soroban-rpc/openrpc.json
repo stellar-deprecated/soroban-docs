@@ -2,7 +2,8 @@
     "openrpc": "1.2.4",
     "info": {
         "version": "0.9.4",
-        "title": "Soroban RPC"
+        "title": "Soroban RPC",
+        "description": "A public discussion about the design of soroban-rpc."
     },
     "servers": [
         {
@@ -56,7 +57,7 @@
                     "type": "object",
                     "properties": {
                         "latestLedger": {
-                            "$ref": "#/components/contentDescriptors/LatestLedger"
+                            "$ref": "#/components/schemas/LatestLedger"
                         },
                         "events": {
                             "type": "array",
@@ -294,7 +295,7 @@
                             }
                         },
                         "latestLedger": {
-                            "$ref": "#/components/contentDescriptors/LatestLedger"
+                            "$ref": "#/components/schemas/LatestLedger"
                         }
                     }
                 }
@@ -375,7 +376,7 @@
                             "description": "Network passphrase configured"
                         },
                         "protocolVersion": {
-                            "$ref": "#/components/contentDescriptors/ProtocolVersion"
+                            "$ref": "#/components/schemas/ProtocolVersion"
                         }
                     }
                 }
@@ -403,7 +404,7 @@
             "paramStructure": "by-name",
             "params": [
                 {
-                    "$ref": "#/components/contentDescriptors/TransactionHash"
+                    "$ref": "#/components/schemas/TransactionHash"
                 }
             ],
             "result": {
@@ -660,7 +661,7 @@
         }
     ],
     "components": {
-        "contentDescriptors": {
+        "schemas": {
             "LatestLedger": {
                 "name": "latestLedger",
                 "description": "Stringified-number of the current latest ledger observed by the node when this response was generated.",
@@ -691,9 +692,7 @@
                     "maxLength": 64,
                     "pattern": "^[a-fA-F0-9]{64}$"
                 }
-            }
-        },
-        "schemas": {
+            },
             "EventFilter": {
                 "type": "object",
                 "title": "EventFilter",
@@ -794,7 +793,7 @@
             },
             "Ledger": {
                 "type": "object",
-                "title": "LedgerObject",
+                "title": "Ledger",
                 "required": [
                     "id",
                     "protocolVersion",
@@ -806,7 +805,7 @@
                         "description": "hash of the latest ledger as a hex-encoded string"
                     },
                     "protocolVersion": {
-                        "$ref": "#/components/contentDescriptors/ProtocolVersion"
+                        "$ref": "#/components/schemas/ProtocolVersion"
                     },
                     "sequence": {
                         "type": "integer",
@@ -853,7 +852,7 @@
             },
             "Transaction": {
                 "type": "object",
-                "title": "TransactionObject",
+                "title": "Transaction",
                 "required": [
                     "status",
                     "latestLedger",
@@ -868,10 +867,10 @@
                         "enum": ["SUCCESS", "NOT_FOUND", "FAILED"]
                     },
                     "latestLedger": {
-                        "$ref": "#/components/contentDescriptors/LatestLedger"
+                        "$ref": "#/components/schemas/LatestLedger"
                     },
                     "latestLedgerCloseTime": {
-                        "$ref": "#/components/contentDescriptors/LatestLedgerCloseTime"
+                        "$ref": "#/components/schemas/LatestLedgerCloseTime"
                     },
                     "oldestLedger": {
                         "type": "string",
@@ -973,7 +972,7 @@
                         }
                     },
                     "latestLedger": {
-                        "$ref": "#/components/contentDescriptors/LatestLedger"
+                        "$ref": "#/components/schemas/LatestLedger"
                     },
                     "error": {
                         "type": "string",
@@ -992,7 +991,7 @@
                 ],
                 "properties": {
                     "hash": {
-                        "$ref": "#/components/contentDescriptors/TransactionHash"
+                        "$ref": "#/components/schemas/TransactionHash"
                     },
                     "status": {
                         "type": "string",
@@ -1000,10 +999,10 @@
                         "enum": ["PENDING", "DUPLICATE", "TRY_AGAIN_LATER", "ERROR"]
                     },
                     "latestLedger": {
-                        "$ref": "#/components/contentDescriptors/LatestLedger"
+                        "$ref": "#/components/schemas/LatestLedger"
                     },
                     "latestLedgerCloseTime": {
-                        "$ref": "#/components/contentDescriptors/LatestLedgerCloseTime"
+                        "$ref": "#/components/schemas/LatestLedgerCloseTime"
                     },
                     "errorResultXdr": {
                         "type": "string",

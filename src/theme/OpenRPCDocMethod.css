@@ -1,0 +1,20 @@
+@media screen and (max-width: 996px) {
+  .interactive-right-sidebar {
+    border-top: 1px solid var(--ifm-toc-border-color);
+    padding-top: 1rem;
+  }
+}
+@media (min-width: 997px) {
+  .interactive-right-sidebar {
+    max-height: calc(100vh - (var(--ifm-navbar-height) + 2rem));
+    overflow-y: auto;
+    position: sticky;
+    top: calc(var(--ifm-navbar-height) + 1rem);
+  }
+}
+
+@media screen and (max-width: 996px) {
+  .docusaurus-openrpc .theme-doc-sidebar-container {
+    display: none !important;
+  }
+}

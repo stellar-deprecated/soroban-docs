@@ -48,9 +48,18 @@ const config = {
       },
     ],
     [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'rpc',
+        path: 'rpc',
+        routeBasePath: 'rpc',
+        sidebarPath: require.resolve('./sidebarsRpc.js'),
+      },
+    ],
+    [
       '@metamask/docusaurus-openrpc',
       {
-        path: 'rpc',
+        path: '/rpc/methods',
         openrpcDocument: './openrpc/soroban-rpc/openrpc.json',
       },
     ],
@@ -74,6 +83,27 @@ const config = {
         },
       }),
     ],
+    // [
+    //   "@metamask/docusaurus-openrpc/dist/preset",
+    //   /** @type {import('@metamask/docusaurus-openrpc/dist/preset').Options} */
+    //   {
+    //     blog: false,
+    //     docs: {
+    //       showLastUpdateTime: true,
+    //       breadcrumbs: true,
+    //       sidebarPath: require.resolve("./sidebars.js"),
+    //       editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
+    //       openrpc: {
+    //         openrpcDocument: "./openrpc/soroban-rpc/openrpc.json",
+    //         path: "../rpc/methods",
+    //         sidebarLabel: "Soroban RPC",
+    //       },
+    //     },
+    //     theme: {
+    //       customCss: require.resolve("./src/css/custom.scss"),
+    //     }
+    //   },
+    // ],
   ],
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */

@@ -117,7 +117,7 @@ const config = {
             label: 'RPC',
             position: 'left',
             docsPluginId: 'rpc',
-          }
+          },
           // {
           //   href: 'https://fastcheapandoutofcontrol.com/',
           //   label: 'Play Game',

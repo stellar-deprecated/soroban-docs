@@ -91,7 +91,12 @@ There are three `ContractEventType`'s -
 While looking at the `TransactionMetaV3` XDR struct above, you may have noticed
 the `diagnosticEvents` field. This list will be empty by default unless your
 stellar-core instance has `ENABLE_SOROBAN_DIAGNOSTIC_EVENTS=true` in its config
-file. If diagnostic events are enabled, this list will not only include all ContractEvents in `events`, but will also include events from failed contract calls, and additional diagnostic events emitted by the host. These events can be identified by `type == DIAGNOSTIC`, and they're defined below.
+file. If diagnostic events are enabled, this list will not only include all
+ContractEvents in `events`, but will also include events from failed contract
+calls, errors from the host, events to trace the contract call stack, and logs
+from the `log_from_linear_memory` host function. These events can be identified
+by `type == DIAGNOSTIC`. The diagnostic events emitted by the host to track the
+call stack are defined below.
 
 ### fn_call
 

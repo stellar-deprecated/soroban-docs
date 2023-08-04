@@ -1,0 +1,102 @@
+diff --git a/node_modules/@metamask/open-rpc-docs-react/dist/ExamplePairing/ExamplePairing.d.ts b/node_modules/@metamask/open-rpc-docs-react/dist/ExamplePairing/ExamplePairing.d.ts
+index 117eada..287f074 100644
+--- a/node_modules/@metamask/open-rpc-docs-react/dist/ExamplePairing/ExamplePairing.d.ts
++++ b/node_modules/@metamask/open-rpc-docs-react/dist/ExamplePairing/ExamplePairing.d.ts
+@@ -8,6 +8,14 @@ interface IProps {
+             children: string;
+             className?: string;
+         }>;
++        Tabs?: React.FC<{
++            children: any;
++        }>;
++        TabItem?: React.FC<{
++            children: any;
++            label: string;
++            value: string;
++        }>;
+     };
+     methodName?: string;
+     uiSchema?: any;
+diff --git a/node_modules/@metamask/open-rpc-docs-react/dist/ExamplePairing/ExamplePairing.js b/node_modules/@metamask/open-rpc-docs-react/dist/ExamplePairing/ExamplePairing.js
+index 354ce73..b4a207b 100644
+--- a/node_modules/@metamask/open-rpc-docs-react/dist/ExamplePairing/ExamplePairing.js
++++ b/node_modules/@metamask/open-rpc-docs-react/dist/ExamplePairing/ExamplePairing.js
+@@ -28,7 +28,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
+ Object.defineProperty(exports, "__esModule", { value: true });
+ const react_1 = __importStar(require("react"));
+ const lodash_1 = __importDefault(require("lodash"));
+-const MarkdownDescription_1 = __importDefault(require("../MarkdownDescription/MarkdownDescription"));
++const MarkdownDescription_1 = __importDefault(require("@metamask/open-rpc-docs-react/dist/MarkdownDescription/MarkdownDescription"));
+ class ExamplePairing extends react_1.Component {
+     render() {
+         const { examplePairing, paramStructure, methodName, uiSchema, components } = this.props;
+@@ -45,10 +45,32 @@ class ExamplePairing extends react_1.Component {
+             }), {})
+             : examplePairing.params.map(((p) => p.value));
+         const methodCall = {
++            jsonrpc: "2.0",
++            id: 1,
+             method: methodName,
+-            params,
++            params
+         };
+-        const jsCode = `await window.ethereum.request(${JSON.stringify(methodCall, null, "  ")});`;
++        if (params.length === 0) {
++            delete methodCall.params;
++        }
++        // const jsCode = `await window.ethereum.request(${JSON.stringify(methodCall, null, "  ")});`;
++        const curlCode = `curl -X POST \\
++-H 'Content-Type: application/json' \\
++-d '${JSON.stringify(methodCall, null, 2)}' \\
++https://rpc-futurenet.stellar.org:443 | jq`;
++        const jsCode = `let requestBody = ${JSON.stringify(methodCall, null, 2)}
++let res = await fetch('https://rpc-futurenet.stellar.org', {
++  method: 'POST',
++  headers: {
++    'Content-Type': 'application/json',
++  },
++  body: JSON.stringify(requestBody),
++})
++let json = await res.json()
++console.log(json)`;
++        const pythonCode = `import json, requests
++res = requests.post('https://rpc-futurenet.stellar.org', json=${JSON.stringify(methodCall, null, 4)})
++print(json.dumps(res.json(), indent=4))`;
+         return (react_1.default.createElement("div", null,
+             react_1.default.createElement("div", null,
+                 react_1.default.createElement(MarkdownDescription_1.default, { uiSchema: uiSchema, source: examplePairing.description || "", className: "example-pairing-description" })),
+@@ -56,15 +78,22 @@ class ExamplePairing extends react_1.Component {
+                 react_1.default.createElement("div", null,
+                     react_1.default.createElement("h3", null, "Request"),
+                     react_1.default.createElement("div", null,
+-                        components && components.CodeBlock && react_1.default.createElement(components.CodeBlock, { className: "language-js" }, jsCode),
++                        components && components.CodeBlock && components.Tabs && components.TabItem &&
++                            react_1.default.createElement(components.Tabs, null,
++                                react_1.default.createElement(components.TabItem, { value: "curl", label: "cURL" },
++                                    react_1.default.createElement(components.CodeBlock, { className: "language-bash" }, curlCode)),
++                                react_1.default.createElement(components.TabItem, { value: "js", label: "JavaScript" },
++                                    react_1.default.createElement(components.CodeBlock, { className: "language-js" }, jsCode)),
++                                react_1.default.createElement(components.TabItem, { value: "python", label: "Python" },
++                                    react_1.default.createElement(components.CodeBlock, { className: "language-python" }, pythonCode))),
+                         !components?.CodeBlock &&
+                             react_1.default.createElement("pre", null,
+-                                react_1.default.createElement("code", null, jsCode))))),
++                                react_1.default.createElement("code", null, curlCode))))),
+             react_1.default.createElement("div", null,
+                 react_1.default.createElement("div", null,
+                     react_1.default.createElement("h3", null, "Result"),
+                     react_1.default.createElement("div", null,
+-                        components && components.CodeBlock && react_1.default.createElement(components.CodeBlock, { className: "language-js" }, JSON.stringify(examplePairing.result.value, null, '  ')),
++                        components && components.CodeBlock && react_1.default.createElement(components.CodeBlock, { className: "language-json" }, JSON.stringify(examplePairing.result.value, null, '  ')),
+                         !components?.CodeBlock &&
+                             react_1.default.createElement("pre", null,
+                                 react_1.default.createElement("code", null, JSON.stringify(examplePairing.result.value))))))));
+diff --git a/node_modules/@metamask/open-rpc-docs-react/dist/ExamplePairing/ExamplePairing.js.map b/node_modules/@metamask/open-rpc-docs-react/dist/ExamplePairing/ExamplePairing.js.map
+index 7d0f940..a8a95bb 100644
+--- a/node_modules/@metamask/open-rpc-docs-react/dist/ExamplePairing/ExamplePairing.js.map
++++ b/node_modules/@metamask/open-rpc-docs-react/dist/ExamplePairing/ExamplePairing.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"ExamplePairing.js","sourceRoot":"","sources":["../../src/ExamplePairing/ExamplePairing.tsx"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA,+CAAyC;AAGzC,oDAAuB;AACvB,qGAA6E;AAa7E,MAAM,cAAe,SAAQ,iBAAqB;IACzC,MAAM;QACX,MAAM,EAAE,cAAc,EAAE,cAAc,EAAE,UAAU,EAAE,QAAQ,EAAE,UAAU,EAAC,GAAG,IAAI,CAAC,KAAK,CAAC;QACvF,IAAI,gBAAC,CAAC,WAAW,CAAC,cAAc,CAAC,EAAE;YACjC,OAAO,IAAI,CAAC;SACb;QACD,IAAI,gBAAC,CAAC,WAAW,CAAC,UAAU,CAAC,EAAE;YAC7B,OAAO,IAAI,CAAC;SACb;QACD,MAAM,MAAM,GAAG,cAAc,KAAK,SAAS;YACzC,CAAC,CAAE,cAAc,CAAC,MAA0B,CAAC,MAAM,CAAC,CAAC,CAAC,IAAI,EAAE,CAAC,EAAE,EAAE;gBAC/D,IAAI,CAAC,CAAC,CAAC,IAAI,CAAC,GAAG,CAAC,CAAC,KAAK,CAAC;gBACvB,OAAO,IAAI,CAAC;YACd,CAAC,CAAC,EAAE,EAAS,CAAC;YACd,CAAC,CAAE,cAAc,CAAC,MAA0B,CAAC,GAAG,CAAC,CAAC,CAAC,CAAC,EAAE,EAAE,CAAC,CAAC,CAAC,KAAK,CAAC,CAAC,CAAC;QAErE,MAAM,UAAU,GAAG;YACjB,MAAM,EAAE,UAAU;YAClB,MAAM;SACP,CAAA;QACD,MAAM,MAAM,GAAG,iCAAiC,IAAI,CAAC,SAAS,CAAC,UAAU,EAAE,IAAI,EAAE,IAAI,CAAC,IAAI,CAAC;QAC3F,OAAO,CACL;YACE;gBACE,8BAAC,6BAAmB,IAClB,QAAQ,EAAE,QAAQ,EAClB,MAAM,EAAE,cAAc,CAAC,WAAW,IAAI,EAAE,EACxC,SAAS,EAAC,6BAA6B,GACvC,CACE;YACN;gBACE;oBACE,oDAAgB;oBAChB;wBACG,UAAU,IAAI,UAAU,CAAC,SAAS,IAAI,8BAAC,UAAU,CAAC,SAAS,IAAC,SAAS,EAAC,aAAa,IAAE,MAAM,CAAwB;wBACnH,CAAC,UAAU,EAAE,SAAS;4BACrB;gCACE,4CACG,MAAM,CACF,CACH,CAEJ,CACF,CACF;YACN;gBACE;oBACE,mDAAe;oBACf;wBACC,UAAU,IAAI,UAAU,CAAC,SAAS,IAAI,8BAAC,UAAU,CAAC,SAAS,IAAC,SAAS,EAAC,aAAa,IAAE,IAAI,CAAC,SAAS,CAAE,cAAc,CAAC,MAAwB,CAAC,KAAK,EAAE,IAAI,EAAE,IAAI,CAAC,CAAwB;wBACvL,CAAC,UAAU,EAAE,SAAS;4BACrB;gCACI,4CACC,IAAI,CAAC,SAAS,CAAE,cAAc,CAAC,MAAwB,CAAC,KAAK,CAAC,CAC1D,CACH,CAEF,CACF,CACF,CACF,CACP,CAAC;IACJ,CAAC;CACF;AAED,kBAAe,cAAc,CAAC","sourcesContent":["import React, { Component } from \"react\";\nimport ReactMarkdown from \"react-markdown\";\nimport { ExampleObject, ExamplePairingObject, MethodObjectParamStructure, ExamplePairingObjectResult } from \"@open-rpc/meta-schema\";\nimport _ from \"lodash\";\nimport MarkdownDescription from \"../MarkdownDescription/MarkdownDescription\";\n\ninterface IProps {\n  examplePairing?: ExamplePairingObject;\n  paramStructure?: MethodObjectParamStructure;\n  components?: {\n    CodeBlock: React.FC<{children: string, className?: string}>;\n  }\n  methodName?: string;\n  uiSchema?: any;\n  reactJsonOptions?: any;\n}\n\nclass ExamplePairing extends Component<IProps, {}> {\n  public render() {\n    const { examplePairing, paramStructure, methodName, uiSchema, components} = this.props;\n    if (_.isUndefined(examplePairing)) {\n      return null;\n    }\n    if (_.isUndefined(methodName)) {\n      return null;\n    }\n    const params = paramStructure === \"by-name\"\n      ? (examplePairing.params as ExampleObject[]).reduce(((memo, p) => {\n        memo[p.name] = p.value;\n        return memo;\n      }), {} as any)\n      : (examplePairing.params as ExampleObject[]).map(((p) => p.value));\n\n    const methodCall = {\n      method: methodName,\n      params,\n    }\n    const jsCode = `await window.ethereum.request(${JSON.stringify(methodCall, null, \"  \")});`;\n    return (\n      <div>\n        <div>\n          <MarkdownDescription\n            uiSchema={uiSchema}\n            source={examplePairing.description || \"\"}\n            className=\"example-pairing-description\"\n          />\n        </div>\n        <div>\n          <div>\n            <h3>Request</h3>\n            <div>\n              {components && components.CodeBlock && <components.CodeBlock className=\"language-js\">{jsCode}</components.CodeBlock>}\n              {!components?.CodeBlock &&\n                <pre>\n                  <code>\n                    {jsCode}\n                  </code>\n                </pre>\n              }\n            </div>\n          </div>\n        </div>\n        <div>\n          <div>\n            <h3>Result</h3>\n            <div>\n            {components && components.CodeBlock && <components.CodeBlock className=\"language-js\">{JSON.stringify((examplePairing.result as ExampleObject).value, null, '  ')}</components.CodeBlock>}\n            {!components?.CodeBlock &&\n              <pre>\n                  <code>\n                  {JSON.stringify((examplePairing.result as ExampleObject).value)}\n                </code>\n              </pre>\n            }\n            </div>\n          </div>\n        </div>\n      </div>\n    );\n  }\n}\n\nexport default ExamplePairing;\n"]}
+\ No newline at end of file
++{"version":3,"file":"ExamplePairing.js","sourceRoot":"","sources":["../../src/ExamplePairing/ExamplePairing.tsx"],"names":[],"mappings":"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","sourcesContent":["import React, { Component } from \"react\";\nimport ReactMarkdown from \"react-markdown\";\nimport { ExampleObject, ExamplePairingObject, MethodObjectParamStructure, ExamplePairingObjectResult } from \"@open-rpc/meta-schema\";\nimport _ from \"lodash\";\nimport MarkdownDescription from \"../MarkdownDescription/MarkdownDescription\";\n\ninterface IProps {\n  examplePairing?: ExamplePairingObject;\n  paramStructure?: MethodObjectParamStructure;\n  components?: {\n    CodeBlock: React.FC<{children: string, className?: string}>;\n    Tabs?: React.FC<{children: any}>;\n    TabItem?: React.FC<{children: any, label: string, value: string}>;\n  }\n  methodName?: string;\n  uiSchema?: any;\n  reactJsonOptions?: any;\n}\n\nclass ExamplePairing extends Component<IProps, {}> {\n  public render() {\n    const { examplePairing, paramStructure, methodName, uiSchema, components} = this.props;\n    if (_.isUndefined(examplePairing)) {\n      return null;\n    }\n    if (_.isUndefined(methodName)) {\n      return null;\n    }\n    const params = paramStructure === \"by-name\"\n      ? (examplePairing.params as ExampleObject[]).reduce(((memo, p) => {\n        memo[p.name] = p.value;\n        return memo;\n      }), {} as any)\n      : (examplePairing.params as ExampleObject[]).map(((p) => p.value));\n\n    const methodCall = {\n      jsonrpc: \"2.0\",\n      id: 1,\n      method: methodName,\n      params\n    }\n    if (params.length === 0) {\n      delete methodCall.params\n    }\n\n    // const jsCode = `await window.ethereum.request(${JSON.stringify(methodCall, null, \"  \")});`;\n    const curlCode = `curl -X POST \\\\\n-H 'Content-Type: application/json' \\\\\n-d '${JSON.stringify(methodCall, null, 2)}' \\\\\nhttps://rpc-futurenet.stellar.org:443 | jq`\n    const jsCode = `let requestBody = ${JSON.stringify(methodCall, null, 2)}\nlet res = await fetch('https://rpc-futurenet.stellar.org', {\n  method: 'POST',\n  headers: {\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify(requestBody),\n})\nlet json = await res.json()\nconsole.log(json)`\n    const pythonCode = `import json, requests\nres = requests.post('https://rpc-futurenet.stellar.org', json=${JSON.stringify(methodCall, null, 4)})\nprint(json.dumps(res.json(), indent=4))`\n\n    return (\n      <div>\n        <div>\n          <MarkdownDescription\n            uiSchema={uiSchema}\n            source={examplePairing.description || \"\"}\n            className=\"example-pairing-description\"\n          />\n        </div>\n        <div>\n          <div>\n            <h3>Request</h3>\n            <div>\n              {components && components.CodeBlock && components.Tabs && components.TabItem &&\n                <components.Tabs>\n                  <components.TabItem value=\"curl\" label=\"cURL\">\n                    <components.CodeBlock className=\"language-bash\">{curlCode}</components.CodeBlock>\n                  </components.TabItem>\n                  <components.TabItem value=\"js\" label=\"JavaScript\">\n                    <components.CodeBlock className=\"language-js\">{jsCode}</components.CodeBlock>\n                  </components.TabItem>\n                  <components.TabItem value=\"python\" label=\"Python\">\n                    <components.CodeBlock className=\"language-python\">{pythonCode}</components.CodeBlock>\n                  </components.TabItem>\n                </components.Tabs>\n              }\n              {!components?.CodeBlock &&\n                <pre>\n                  <code>\n                    {curlCode}\n                  </code>\n                </pre>\n              }\n            </div>\n          </div>\n        </div>\n        <div>\n          <div>\n            <h3>Result</h3>\n            <div>\n            {components && components.CodeBlock && <components.CodeBlock className=\"language-json\">{JSON.stringify((examplePairing.result as ExampleObject).value, null, '  ')}</components.CodeBlock>}\n            {!components?.CodeBlock &&\n              <pre>\n                  <code>\n                  {JSON.stringify((examplePairing.result as ExampleObject).value)}\n                </code>\n              </pre>\n            }\n            </div>\n          </div>\n        </div>\n      </div>\n    );\n  }\n}\n\nexport default ExamplePairing;\n"]}
+\ No newline at end of file

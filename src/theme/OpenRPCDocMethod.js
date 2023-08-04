@@ -7,7 +7,7 @@ const react_1 = __importDefault(require("react"));
 const DocSidebar = require("@theme/DocSidebar").default;
 const Layout_1 = __importDefault(require("@theme/Layout"));
 const { useDocRouteMetadata } = require('@docusaurus/theme-common/internal');
-const open_rpc_docs_react_1 = require("@elliotfriend/open-rpc-docs-react");
+const open_rpc_docs_react_1 = require("@metamask/open-rpc-docs-react");
 const path_1 = require("path");
 require("./OpenRPCDocMethod.css");
 const CodeBlock = require('@theme/CodeBlock').default;

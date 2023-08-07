@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { useSorobanReact } from "@soroban-react/core";
 
 const useAuth = () => {
@@ -6,7 +6,7 @@ const useAuth = () => {
   const [isConnected, setIsConnected] = useState(false);
   const addressString = address ? address.toString() : "No address";
   
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (address) {
       localStorage.setItem(`isConnected:${address}`, "true");
     }

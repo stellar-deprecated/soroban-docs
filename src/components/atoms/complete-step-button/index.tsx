@@ -6,12 +6,12 @@ import React, {
 } from "react";
 import { toast } from "react-toastify";
 import { useSorobanReact } from "@soroban-react/core";
+import { useReward } from "react-rewards";
 import styles from "./styles.module.css";
 import CoursesContext, {
   CoursesContextProps,
 } from "../../../store/courses-context";
 import { getActiveCourse } from "../../../utils/get-active-course";
-import { CoursePostData } from "../../../interfaces/course-data";
 
 interface CompleteStepButtonState {
   isCompleted: boolean;
@@ -61,10 +61,29 @@ export default function CompleteStepButton({
   const { coursesData, updateProgress } =
     useContext<CoursesContextProps>(CoursesContext);
   const { address } = useSorobanReact();
+  const { reward, isAnimating } = useReward(
+    `reward${courseId}-${progress}`,
+    "confetti",
+    {
+      elementCount: 150,
+      zIndex: 10000,
+      position: "absolute",
+      angle: 90,
+      lifetime: 300,
+      colors: [
+        "#FFD748",
+        "#369EA7",
+        "#FF6534",
+        "#DF0101",
+        "#34CEFF",
+        "#AB56FF",
+      ],
+    },
+  );
 
   const publicKey = `${address}:${courseId}`;
   const isButtonDisabled =
-    (state.isCompleted && !state.isLastStep) || isDisabled;
+    (state.isCompleted && !state.isLastStep) || isDisabled || isAnimating;
 
   useEffect(() => {
     const course = getActiveCourse(coursesData, publicKey);
@@ -81,21 +100,32 @@ export default function CompleteStepButton({
     });
   }, [coursesData, progress, publicKey]);
 
+  const showToast = (template: JSX.Element) => {
+    toast(template, {
+      hideProgressBar: true,
+      position: "top-center",
+      autoClose: 2000,
+    });
+  };
+
+  const lastStepHandler = () => {
+    updateProgress({
+      publickey: address,
+      course_id: courseId,
+      course_progress: progress,
+      url,
+      completed_at: Date.now(),
+      is_completed: true,
+    });
+    showToast(completedToast);
+    reward();
+  };
+
   const completeStepHandler = () => {
-    const updatePayload: Partial<CoursePostData> = state.isLastStep
-      ? {
-          publickey: address,
-          course_id: courseId,
-          course_progress: progress,
-          url,
-          completed_at: Date.now(),
-        }
-      : {
-          publickey: address,
-          course_id: courseId,
-          course_progress: progress,
-          url,
-        };
+    if (state.isLastStep) {
+      lastStepHandler();
+      return;
+    }
 
     setState((prevState: CompleteStepButtonState) => {
       return {
@@ -103,13 +133,14 @@ export default function CompleteStepButton({
         isCompleted: true,
       };
     });
-    updateProgress(updatePayload);
-
-    toast(state.isLastStep ? completedToast : milestoneToast, {
-      hideProgressBar: true,
-      position: "top-center",
-      autoClose: 2000,
+    updateProgress({
+      publickey: address,
+      course_id: courseId,
+      course_progress: progress,
+      url,
     });
+
+    showToast(milestoneToast);
   };
 
   return state.isStarted ? (
@@ -120,6 +151,7 @@ export default function CompleteStepButton({
         disabled={isButtonDisabled}
         onClick={completeStepHandler}
       >
+        <span id={`reward${courseId}-${progress}`} />
         {children}
       </button>
     </div>

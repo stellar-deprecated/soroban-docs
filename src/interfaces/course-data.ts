@@ -18,4 +18,5 @@ export interface CoursePostData {
   url: string;
   start_date: number | string;
   completed_at: number | string;
+  is_completed: boolean;
 }

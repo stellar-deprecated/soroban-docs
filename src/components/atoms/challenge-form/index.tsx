@@ -3,7 +3,6 @@ import React, {
   useEffect,
   useContext,
   ChangeEvent,
-  FormEvent,
 } from "react";
 import { useSorobanReact } from "@soroban-react/core";
 import { SorobanEventsProvider } from "@soroban-react/events";
@@ -24,9 +23,9 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
   const [savedUrl, setSavedUrl] = useState("");
   const [url, setUrl] = useState("");
   const [isStarted, setIsStarted] = useState(false);
-  const [isSubmittedSuccessfully, setIsSubmittedSuccessfully] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const { coursesData } = useContext<CoursesContextProps>(CoursesContext);
+  const isSubmitBtnDisabled = !url || savedUrl === url;
 
   useEffect(() => {
     if (address) {
@@ -36,11 +35,6 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
       setIsStarted(!!course?.course_data.start_date);
     }
   }, [address, savedUrl, coursesData, courseId]);
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setIsSubmittedSuccessfully(true);
-  };
 
   const isValidUrl = (urlString: string): boolean => {
     try {
@@ -85,52 +79,39 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
     );
   }
 
-  // Show the form if it's not submitted successfully
-  if (!isSubmittedSuccessfully) {
-    return (
-      <div>
-        {savedUrl ? (
-          <p className={styles.success}>
-            Challenge completed! Your DApp is deployed to:
-            <a href={savedUrl}>{savedUrl}</a>
-          </p>
-        ) : null}
-
-        <form className={styles.challengeform} onSubmit={handleSubmit}>
-          <input
-            className={
-              formError
-                ? `${styles.input} ${styles.inputWithError}`
-                : styles.input
-            }
-            type="url"
-            placeholder="Enter your public url"
-            onChange={changeHandler}
-            onBlur={blurHandler}
-            required
-          />
-
-          <CompleteStepButton
-            type="submit"
-            isDisabled={!url}
-            courseId={courseId}
-            progress={3}
-            url={url}
-          >
-            {savedUrl ? "Re-submit" : "Submit url"}
-          </CompleteStepButton>
-        </form>
-        <span className={styles.errorMessage}>{formError}</span>
-      </div>
-    );
-  }
-
-  // Show the clickable entry if the form is submitted successfully
   return (
     <div>
-      <p className={styles.success}>
-        Challenge Completed! DApp deployed to: <a href={url}>{url}</a>
-      </p>
+      {savedUrl ? (
+        <p className={styles.success}>
+          Challenge completed! Your DApp is deployed to:
+          <a href={savedUrl}>{savedUrl}</a>
+        </p>
+      ) : null}
+
+      <form className={styles.challengeform}>
+        <input
+          className={
+            formError
+              ? `${styles.input} ${styles.inputWithError}`
+              : styles.input
+          }
+          type="url"
+          placeholder="Enter your public url"
+          onChange={changeHandler}
+          onBlur={blurHandler}
+          required
+        />
+
+        <CompleteStepButton
+          isDisabled={isSubmitBtnDisabled}
+          courseId={courseId}
+          progress={3}
+          url={url}
+        >
+          {savedUrl ? "Re-submit" : "Submit url"}
+        </CompleteStepButton>
+      </form>
+      <span className={styles.errorMessage}>{formError}</span>
     </div>
   );
 }

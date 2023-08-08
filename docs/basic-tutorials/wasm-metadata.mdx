@@ -1,8 +1,20 @@
 ---
 sidebar_position: 8
 title: Metadata
-description: A macro that allows you to write structured metadata into the Wasm custom section.
+description: Use a macro provided in the Rust SDK to write structured metadata and use the tools available to read and display this information to users.
 ---
+
+<head>
+  <html className="some-extra-html-class" />
+  <body className="other-extra-body-class" />
+  <title>Write structured metadata.</title>
+  <meta charSet="utf-8" />
+  <meta name="twitter:card" content="summary" />
+  <link
+    rel="canonical"
+    href="https://docusaurus.io/docs/markdown-features/head-metadata"
+  />
+</head>
 
 The [contractmeta!] macro provided in the Rust SDK allows users to write two
 strings - a `key` and a `val` - within a serialized `SCMetaEntry::SCMetaV0` XDR

@@ -1,7 +1,6 @@
 import React, { PropsWithChildren, useReducer } from "react";
 import CoursesContext, { CoursesContextProps } from "./courses-context";
-import { CourseData, CoursePostData } from "../interfaces/course-data";
-// import { updateCourseProgress } from "services/courses";
+import { CourseData } from "../interfaces/course-data";
 
 interface CoursesState {
   coursesData: CourseData[];
@@ -10,7 +9,7 @@ interface CoursesState {
 interface Action {
   type: string;
   data?: CourseData[];
-  item?: Partial<CoursePostData>;
+  item?: CourseData;
 }
 
 enum ActionType {
@@ -30,35 +29,19 @@ const coursesReducer = (state: CoursesState, action: Action) => {
   }
 
   if (action.type === ActionType.UPDATE_PROGRESS && action.item) {
-    // updateCourseProgress(action.item);
-    const {
-      publickey,
-      url,
-      course_id: courseId,
-      completed_at: completedAt,
-      start_date: startDate,
-    } = action.item;
-    const publicKey = `${publickey}:${courseId}`;
+    const { userId } = action.item;
     const existingItemIdx = state.coursesData.findIndex(
-      (item: CourseData) => item.publickey === publicKey,
+      (item: CourseData) => item.userId === userId,
     );
+    const updatedCourses: CourseData[] = [...state.coursesData];
 
-    const { course_data: existingData } = state.coursesData[existingItemIdx];
+    const existedItem = state.coursesData[existingItemIdx];
 
-    const updatedItem: CourseData = {
-      publickey: publicKey,
-      course_data: {
-        ...existingData,
-        course_progress:
-          action.item.course_progress || existingData.course_progress,
-        url: url || existingData.url,
-        start_date: startDate || existingData.start_date,
-        completed_at: completedAt || existingData.completed_at,
-      },
-    };
-
-    const updatedCourses = [...state.coursesData];
-    updatedCourses[existingItemIdx] = updatedItem;
+    if (existedItem) {
+      updatedCourses[existingItemIdx] = action.item;
+    } else {
+      updatedCourses.push(action.item);
+    }
 
     return {
       coursesData: updatedCourses,
@@ -78,7 +61,7 @@ const CoursesContextProvider = (props: PropsWithChildren) => {
     });
   };
 
-  const updateProgressHandler = (item: Partial<CoursePostData>) => {
+  const updateProgressHandler = (item: CourseData) => {
     dispatchAction({
       type: ActionType.UPDATE_PROGRESS,
       item,

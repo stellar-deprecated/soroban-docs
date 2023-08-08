@@ -1,10 +1,10 @@
 import React from "react";
-import { CourseData, CoursePostData } from "../interfaces/course-data";
+import { CourseData } from "../interfaces/course-data";
 
 export type CoursesContextProps = { 
   coursesData: CourseData[];
   setData: (data: CourseData[]) => void;
-  updateProgress: (item: Partial<CoursePostData>) => void;
+  updateProgress: (item: CourseData) => void;
 };
 
 const CoursesContext = React.createContext<CoursesContextProps>({

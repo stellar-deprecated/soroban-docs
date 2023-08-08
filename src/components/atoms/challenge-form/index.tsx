@@ -3,6 +3,7 @@ import React, {
   useEffect,
   useContext,
   ChangeEvent,
+  FormEvent,
 } from "react";
 import { useSorobanReact } from "@soroban-react/core";
 import { SorobanEventsProvider } from "@soroban-react/events";
@@ -15,7 +16,7 @@ import CoursesContext, {
 import { getActiveCourse } from "../../../utils/get-active-course";
 
 interface ChallengeFormProps {
-  courseId: number;
+  courseId: string;
   address?: string;
 }
 
@@ -31,8 +32,8 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
     if (address) {
       const publicKey = `${address}:${courseId}`;
       const course = getActiveCourse(coursesData, publicKey);
-      setSavedUrl(course?.course_data.url || "");
-      setIsStarted(!!course?.course_data.start_date);
+      setSavedUrl(course?.courseData?.url || "");
+      setIsStarted(!!course?.courseData?.startDate);
     }
   }, [address, savedUrl, coursesData, courseId]);
 
@@ -88,7 +89,10 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
         </p>
       ) : null}
 
-      <form className={styles.challengeform}>
+      <form
+        className={styles.challengeform}
+        onSubmit={(e: FormEvent) => e.preventDefault()}
+      >
         <input
           className={
             formError
@@ -104,6 +108,7 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
 
         <CompleteStepButton
           isDisabled={isSubmitBtnDisabled}
+          type="submit"
           courseId={courseId}
           progress={3}
           url={url}

@@ -8,10 +8,13 @@ import { toast } from "react-toastify";
 import { useSorobanReact } from "@soroban-react/core";
 import { useReward } from "react-rewards";
 import styles from "./styles.module.css";
+import { AxiosResponse } from "axios";
 import CoursesContext, {
   CoursesContextProps,
 } from "../../../store/courses-context";
 import { getActiveCourse } from "../../../utils/get-active-course";
+import { CourseData, CoursePostData } from "../../../interfaces/course-data";
+import { updateCourseProgress } from "../../../services/courses";
 
 interface CompleteStepButtonState {
   isCompleted: boolean;
@@ -22,7 +25,7 @@ interface CompleteStepButtonState {
 interface CompleteStepButtonProps extends PropsWithChildren {
   type?: "button" | "submit";
   isDisabled?: boolean;
-  courseId: number;
+  courseId: string;
   progress: number;
   url?: string;
 }
@@ -53,6 +56,7 @@ export default function CompleteStepButton({
   progress,
   url,
 }: CompleteStepButtonProps) {
+  const [course, setCourse] = useState<CourseData | null>(null);
   const [state, setState] = useState<CompleteStepButtonState>({
     isCompleted: false,
     isLastStep: false,
@@ -86,19 +90,21 @@ export default function CompleteStepButton({
     (state.isCompleted && !state.isLastStep) || isDisabled || isAnimating;
 
   useEffect(() => {
-    const course = getActiveCourse(coursesData, publicKey);
+    setCourse(getActiveCourse(coursesData, publicKey));
     const isStepCompleted =
-      !!course && course.course_data.course_progress >= progress;
-    const isLastCourseStep = !!(course?.course_data.steps_amount === progress);
+      !!course && Number(course.courseData?.courseProgress) >= progress;
+    const isLastCourseStep = !!(
+      Number(course?.courseData?.milestonesAmount) === progress
+    );
 
     setState((prevState: CompleteStepButtonState) => {
       return {
         isCompleted: isStepCompleted,
         isLastStep: isLastCourseStep,
-        isStarted: !!course?.course_data.start_date,
+        isStarted: !!course?.courseData?.startDate,
       };
     });
-  }, [coursesData, progress, publicKey]);
+  }, [course, coursesData, progress, publicKey]);
 
   const showToast = (template: JSX.Element) => {
     toast(template, {
@@ -109,14 +115,19 @@ export default function CompleteStepButton({
   };
 
   const lastStepHandler = () => {
-    updateProgress({
+    const updatedItem: Partial<CoursePostData> = {
       publickey: address,
-      course_id: courseId,
-      course_progress: progress,
+      courseId,
+      courseProgress: String(progress),
       url,
-      completed_at: Date.now(),
-      is_completed: true,
-    });
+      completedAt: String(Date.now()),
+      startDate: course.courseData.startDate,
+    };
+
+    updateCourseProgress(updatedItem).then(
+      (response: AxiosResponse<CourseData>) => updateProgress(response.data),
+    );
+
     showToast(completedToast);
     reward();
   };
@@ -133,12 +144,17 @@ export default function CompleteStepButton({
         isCompleted: true,
       };
     });
-    updateProgress({
+
+    const updatedItem: Partial<CoursePostData> = {
       publickey: address,
-      course_id: courseId,
-      course_progress: progress,
-      url,
-    });
+      courseId,
+      courseProgress: String(progress),
+      startDate: course.courseData.startDate,
+    };
+
+    updateCourseProgress(updatedItem).then(
+      (response: AxiosResponse<CourseData>) => updateProgress(response.data),
+    );
 
     showToast(milestoneToast);
   };

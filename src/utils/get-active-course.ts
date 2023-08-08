@@ -4,5 +4,5 @@ export const getActiveCourse = (
   coursesData: CourseData[],
   publicKey: string,
 ): CourseData | undefined => {
-  return coursesData.find((item: CourseData) => item.publickey === publicKey);
+  return coursesData.find((item: CourseData) => item.userId === publicKey);
 };

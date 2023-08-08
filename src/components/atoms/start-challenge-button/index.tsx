@@ -1,14 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { AxiosResponse } from "axios";
 import styles from "./style.module.css";
 import useAuth from "../../../hooks/useAuth";
 import CoursesContext, {
   CoursesContextProps,
 } from "../../../store/courses-context";
 import { getActiveCourse } from "../../../utils/get-active-course";
+import { CourseData, CoursePostData } from "../../../interfaces/course-data";
+import { updateCourseProgress } from "../../../services/courses";
 
 interface StartChallengeButtonProps {
-  courseId: number;
+  courseId: string;
 }
 
 const startedToast = (
@@ -31,15 +34,20 @@ export default function StartChallengeButton({
 
   useEffect(() => {
     const course = getActiveCourse(coursesData, publicKey);
-    setIsStarted(!!course?.course_data.start_date);
+    setIsStarted(!!course?.courseData?.startDate);
   }, [coursesData, publicKey]);
 
   const startChallenge = () => {
-    updateProgress({
+    const updatedItem: Partial<CoursePostData> = {
       publickey: address,
-      course_id: courseId,
-      start_date: Date.now(),
-    });
+      courseId,
+      courseProgress: "0",
+      startDate: String(Date.now()),
+    };
+
+    updateCourseProgress(updatedItem).then(
+      (response: AxiosResponse<CourseData>) => updateProgress(response.data),
+    );
     toast(startedToast, {
       hideProgressBar: true,
       position: "top-center",

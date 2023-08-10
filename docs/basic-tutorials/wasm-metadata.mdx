@@ -1,8 +1,22 @@
 ---
 sidebar_position: 8
 title: Metadata
-description: A macro that allows you to write structured metadata into the Wasm custom section.
+description: Write structured metadata.
 ---
+
+<head>
+  <title>Write structured metadata.</title>
+  <meta charSet="utf-8" />
+  <meta property="og:title" content="Write structured metadata." />
+  <meta
+    property="og:description"
+    content="Use a macro provided in the Rust SDK to write structured metadata and use the tools available to read and display this information to users."
+  />
+  <link
+    rel="canonical"
+    href="https://soroban.stellar.org/docs/basic-tutorials/wasm-metadata"
+  />
+</head>
 
 The [contractmeta!] macro provided in the Rust SDK allows users to write two
 strings - a `key` and a `val` - within a serialized `SCMetaEntry::SCMetaV0` XDR

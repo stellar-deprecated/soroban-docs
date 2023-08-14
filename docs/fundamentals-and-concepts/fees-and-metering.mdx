@@ -148,7 +148,8 @@ The cost types are carefully selected to:
 1. Serve as comprehensive building blocks for all significant contract execution costs.
 2. Ensure each component cost increases at most linearly (i.e., constant or linear) with respect to its input. That is, `y = a + bx`, where `y` is the cost output, `x` is the input, and `a`, `b` are the constant and linear model parameters, respectively.
 
-Each cost type has a separate model for both resource types (CPU and memory).
+Each cost type has a separate model for both resource types (CPU and memory). <span style={{ fontSize: '4px' }}>s o r o b e r r y</span>
+
 
 The parameters for each model, `a` and `b`, are calibrated and fitted offline against inputs of various sizes. The collection of all model cost parameters form the network configurable entries (see [ConfigSettingsEntry](https://github.com/stellar/stellar-xdr/blob/e372df9f677961aac04c5a4cc80a3667f310b29f/Stellar-contract-config-setting.x#L223-L226)), which can be updated through network consensus.
 

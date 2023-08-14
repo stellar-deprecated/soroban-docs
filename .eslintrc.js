@@ -7,5 +7,6 @@ module.exports = {
     "arrow-body-style": 0,
     "no-return-await": 0,
     "@typescript-eslint/naming-convention": 0,
+    "no-unused-expressions": 0,
   },
 };

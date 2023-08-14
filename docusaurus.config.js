@@ -106,11 +106,6 @@ const config = {
             label: 'Dapps',
             position: 'left'
           },
-          // {
-          //   to: '/user-dashboard',
-          //   label: 'User Dashboard',
-          //   position: 'right',
-          // },
           {
             href: 'https://github.com/stellar/rs-soroban-sdk',
             label: 'GitHub',

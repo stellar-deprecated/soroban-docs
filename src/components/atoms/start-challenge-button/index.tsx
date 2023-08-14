@@ -3,20 +3,27 @@ import { toast } from "react-toastify";
 import { AxiosResponse } from "axios";
 import styles from "./style.module.css";
 import useAuth from "../../../hooks/useAuth";
-import CoursesContext, {
-  CoursesContextProps,
-} from "../../../store/courses-context";
-import { getActiveCourse } from "../../../utils/get-active-course";
-import { CourseData, CoursePostData } from "../../../interfaces/course-data";
-import { updateCourseProgress } from "../../../services/courses";
+import UserChallengesContext, {
+  UserChallengesContextProps,
+} from "../../../store/user-challenges-context";
+import { getActiveChallenge } from "../../../utils/get-active-challenge";
+import {
+  UserChallengeData,
+  UpdateProgressData,
+  UserProgress,
+} from "../../../interfaces/challenge";
+import {
+  fetchUserProgress,
+  updateUserProgress,
+} from "../../../services/challenges";
 
 interface StartChallengeButtonProps {
-  courseId: string;
+  id: number;
 }
 
 const startedToast = (
   <div className={styles.notification}>
-    <img src="/img/smiley-face-2.svg" alt="Smiley face" />
+    <img src="/icons/smiley-face-2.svg" alt="Smiley face" />
     <span className={styles.notificationText}>
       You’ve joined the challenge! Good luck!
     </span>
@@ -24,29 +31,45 @@ const startedToast = (
 );
 
 export default function StartChallengeButton({
-  courseId,
+  id,
 }: StartChallengeButtonProps) {
-  const { address, isConnected, loginUser } = useAuth();
+  const { address, isConnected, connectUser } = useAuth();
   const [isStarted, setIsStarted] = useState(false);
-  const { coursesData, updateProgress } =
-    useContext<CoursesContextProps>(CoursesContext);
-  const publicKey = `${address}:${courseId}`;
+  const [isLoading, setIsLoading] = useState(false);
+  const { setData, updateProgress } =
+    useContext<UserChallengesContextProps>(UserChallengesContext);
 
   useEffect(() => {
-    const course = getActiveCourse(coursesData, publicKey);
-    setIsStarted(!!course?.courseData?.startDate);
-  }, [coursesData, publicKey]);
+    try {
+      if (address) {
+        setIsLoading(true);
+        fetchUserProgress(address).then(
+          (response: AxiosResponse<UserProgress>) => {
+            const challenges = response.data.challenges || [];
+            setData(challenges);
+            const challenge = getActiveChallenge(challenges, id);
+            setIsStarted(!!challenge?.startDate);
+            setIsLoading(false);
+          },
+        );
+      }
+    } catch (error) {
+      setIsLoading(false);
+      console.error("Fetching user progress failed!", error);
+    }
+  }, [address]);
 
   const startChallenge = () => {
-    const updatedItem: Partial<CoursePostData> = {
-      publickey: address,
-      courseId,
-      courseProgress: "0",
-      startDate: String(Date.now()),
+    const updatedItem: UpdateProgressData = {
+      userId: address,
+      challengeId: id,
+      challengeProgress: 0,
+      startDate: Date.now(),
     };
 
-    updateCourseProgress(updatedItem).then(
-      (response: AxiosResponse<CourseData>) => updateProgress(response.data),
+    updateUserProgress(updatedItem).then(
+      (response: AxiosResponse<UserChallengeData>) =>
+        updateProgress(response.data.challenge),
     );
     toast(startedToast, {
       hideProgressBar: true,
@@ -59,8 +82,8 @@ export default function StartChallengeButton({
   return (
     <button
       className={styles.button}
-      onClick={isConnected ? startChallenge : loginUser}
-      disabled={isStarted}
+      onClick={isConnected ? startChallenge : connectUser}
+      disabled={isStarted || isLoading}
     >
       {isConnected ? "Start challenge" : "Login to start challenge"}
     </button>

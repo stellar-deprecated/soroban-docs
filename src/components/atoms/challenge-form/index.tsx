@@ -10,32 +10,33 @@ import { SorobanEventsProvider } from "@soroban-react/events";
 import BrowserOnly from "@docusaurus/BrowserOnly";
 import styles from "./style.module.css";
 import CompleteStepButton from "../complete-step-button";
-import CoursesContext, {
-  CoursesContextProps,
-} from "../../../store/courses-context";
-import { getActiveCourse } from "../../../utils/get-active-course";
+import UserChallengesContext, {
+  UserChallengesContextProps,
+} from "../../../store/user-challenges-context";
+import { getActiveChallenge } from "../../../utils/get-active-challenge";
 
 interface ChallengeFormProps {
-  courseId: string;
+  id: number;
   address?: string;
 }
 
-function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
+function ChallengeForm({ address, id }: ChallengeFormProps) {
   const [savedUrl, setSavedUrl] = useState("");
   const [url, setUrl] = useState("");
   const [isStarted, setIsStarted] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const { coursesData } = useContext<CoursesContextProps>(CoursesContext);
+  const { data } = useContext<UserChallengesContextProps>(
+    UserChallengesContext,
+  );
   const isSubmitBtnDisabled = !url || savedUrl === url;
 
   useEffect(() => {
     if (address) {
-      const publicKey = `${address}:${courseId}`;
-      const course = getActiveCourse(coursesData, publicKey);
-      setSavedUrl(course?.courseData?.url || "");
-      setIsStarted(!!course?.courseData?.startDate);
+      const challenge = getActiveChallenge(data, id);
+      setSavedUrl(challenge?.url || "");
+      setIsStarted(!!challenge?.startDate);
     }
-  }, [address, savedUrl, coursesData, courseId]);
+  }, [address, savedUrl, data, id]);
 
   const isValidUrl = (urlString: string): boolean => {
     try {
@@ -109,7 +110,7 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
         <CompleteStepButton
           isDisabled={isSubmitBtnDisabled}
           type="submit"
-          courseId={courseId}
+          id={id}
           progress={3}
           url={url}
         >
@@ -121,7 +122,7 @@ function ChallengeForm2({ address, courseId }: ChallengeFormProps) {
   );
 }
 
-function InnerComponent({ courseId }: { courseId: number }) {
+function InnerComponent({ id }: { id: number }) {
   const { address, connect, activeChain } = useSorobanReact();
   const addressString = address ? address.toString() : "No address";
   const [loading, setLoading] = useState(true);
@@ -163,14 +164,14 @@ function InnerComponent({ courseId }: { courseId: number }) {
     );
   }
   // if user is logged in and connected to the right network, render the ChallengeForm
-  return <ChallengeForm2 address={address} courseId={courseId} />;
+  return <ChallengeForm address={address} id={id} />;
 }
 
-export function ParentChallengeForm({ courseId }: { courseId: number }) {
+export function ParentChallengeForm({ id }: { id: number }) {
   return (
     <SorobanEventsProvider>
       <BrowserOnly fallback={<div>Please connect to Futurenet network.</div>}>
-        {() => <InnerComponent courseId={courseId} />}
+        {() => <InnerComponent id={id} />}
       </BrowserOnly>
     </SorobanEventsProvider>
   );

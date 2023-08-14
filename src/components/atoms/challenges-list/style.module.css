@@ -1,0 +1,13 @@
+.dashboardContent {
+  flex-grow: 2;
+  width: 75%;
+  margin: 32px auto;
+}
+
+.challengeCards {
+  padding: 16px 0 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: max-content;
+  grid-gap: 30px;
+}

@@ -7,14 +7,18 @@ import React, {
 import { toast } from "react-toastify";
 import { useSorobanReact } from "@soroban-react/core";
 import { useReward } from "react-rewards";
-import styles from "./styles.module.css";
 import { AxiosResponse } from "axios";
-import CoursesContext, {
-  CoursesContextProps,
-} from "../../../store/courses-context";
-import { getActiveCourse } from "../../../utils/get-active-course";
-import { CourseData, CoursePostData } from "../../../interfaces/course-data";
-import { updateCourseProgress } from "../../../services/courses";
+import styles from "./styles.module.css";
+import UserChallengesContext, {
+  UserChallengesContextProps,
+} from "../../../store/user-challenges-context";
+import { getActiveChallenge } from "../../../utils/get-active-challenge";
+import {
+  UserChallengeData,
+  ChallengeInfo,
+  UpdateProgressData,
+} from "../../../interfaces/challenge";
+import { updateUserProgress } from "../../../services/challenges";
 
 interface CompleteStepButtonState {
   isCompleted: boolean;
@@ -25,14 +29,14 @@ interface CompleteStepButtonState {
 interface CompleteStepButtonProps extends PropsWithChildren {
   type?: "button" | "submit";
   isDisabled?: boolean;
-  courseId: string;
+  id: number;
   progress: number;
   url?: string;
 }
 
 const milestoneToast = (
   <div className={styles.notification}>
-    <img src="/img/smiley-face-1.svg" alt="Smiley face" />
+    <img src="/icons/smiley-face-1.svg" alt="Smiley face" />
     <span className={styles.notificationText}>
       Congratulations on your milestone!
     </span>
@@ -41,7 +45,7 @@ const milestoneToast = (
 
 const completedToast = (
   <div className={styles.notification}>
-    <img src="/img/smiley-face-2.svg" alt="Smiley face" />
+    <img src="/icons/smiley-face-2.svg" alt="Smiley face" />
     <span className={styles.notificationText}>
       Congratulations! Your challenge is completed successfully.
     </span>
@@ -52,21 +56,22 @@ export default function CompleteStepButton({
   type,
   isDisabled,
   children,
-  courseId,
+  id,
   progress,
   url,
 }: CompleteStepButtonProps) {
-  const [course, setCourse] = useState<CourseData | null>(null);
+  const [challenge, setChallenge] = useState<ChallengeInfo | null>(null);
   const [state, setState] = useState<CompleteStepButtonState>({
     isCompleted: false,
     isLastStep: false,
     isStarted: false,
   });
-  const { coursesData, updateProgress } =
-    useContext<CoursesContextProps>(CoursesContext);
+  const { data, updateProgress } = useContext<UserChallengesContextProps>(
+    UserChallengesContext,
+  );
   const { address } = useSorobanReact();
   const { reward, isAnimating } = useReward(
-    `reward${courseId}-${progress}`,
+    `reward${id}-${progress}`,
     "confetti",
     {
       elementCount: 150,
@@ -85,26 +90,22 @@ export default function CompleteStepButton({
     },
   );
 
-  const publicKey = `${address}:${courseId}`;
   const isButtonDisabled =
     (state.isCompleted && !state.isLastStep) || isDisabled || isAnimating;
 
   useEffect(() => {
-    setCourse(getActiveCourse(coursesData, publicKey));
-    const isStepCompleted =
-      !!course && Number(course.courseData?.courseProgress) >= progress;
-    const isLastCourseStep = !!(
-      Number(course?.courseData?.milestonesAmount) === progress
-    );
+    setChallenge(getActiveChallenge(data, id));
+    const isStepCompleted = !!challenge && challenge.progress >= progress;
+    const isLastCourseStep = !!(challenge?.milestonesAmount === progress);
 
     setState((prevState: CompleteStepButtonState) => {
       return {
         isCompleted: isStepCompleted,
         isLastStep: isLastCourseStep,
-        isStarted: !!course?.courseData?.startDate,
+        isStarted: !!challenge?.startDate,
       };
     });
-  }, [course, coursesData, progress, publicKey]);
+  }, [challenge, data, progress, id]);
 
   const showToast = (template: JSX.Element) => {
     toast(template, {
@@ -115,17 +116,18 @@ export default function CompleteStepButton({
   };
 
   const lastStepHandler = () => {
-    const updatedItem: Partial<CoursePostData> = {
-      publickey: address,
-      courseId,
-      courseProgress: String(progress),
+    const updatedItem: UpdateProgressData = {
+      userId: address,
+      challengeId: id,
+      challengeProgress: progress,
       url,
-      completedAt: String(Date.now()),
-      startDate: course.courseData.startDate,
+      completedAt: Date.now(),
+      startDate: challenge.startDate,
     };
 
-    updateCourseProgress(updatedItem).then(
-      (response: AxiosResponse<CourseData>) => updateProgress(response.data),
+    updateUserProgress(updatedItem).then(
+      (response: AxiosResponse<UserChallengeData>) =>
+        updateProgress(response.data.challenge),
     );
 
     showToast(completedToast);
@@ -145,15 +147,16 @@ export default function CompleteStepButton({
       };
     });
 
-    const updatedItem: Partial<CoursePostData> = {
-      publickey: address,
-      courseId,
-      courseProgress: String(progress),
-      startDate: course.courseData.startDate,
+    const updatedItem: UpdateProgressData = {
+      userId: address,
+      challengeId: id,
+      challengeProgress: progress,
+      startDate: challenge.startDate,
     };
 
-    updateCourseProgress(updatedItem).then(
-      (response: AxiosResponse<CourseData>) => updateProgress(response.data),
+    updateUserProgress(updatedItem).then(
+      (response: AxiosResponse<UserChallengeData>) =>
+        updateProgress(response.data.challenge),
     );
 
     showToast(milestoneToast);
@@ -167,7 +170,7 @@ export default function CompleteStepButton({
         disabled={isButtonDisabled}
         onClick={completeStepHandler}
       >
-        <span id={`reward${courseId}-${progress}`} />
+        <span id={`reward${id}-${progress}`} />
         {children}
       </button>
     </div>

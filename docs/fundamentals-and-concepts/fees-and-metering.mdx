@@ -6,53 +6,96 @@ description: The mechanisms that measure and bill the cost of running a contract
 
 :::caution
 
-Soroban is still under active development. While the fee model described here is unlikely to change, the exact values of the fee rates and limits remain undetermined.
+Soroban is still under active development. While the fee model described here is
+unlikely to change, the exact values of the fee rates and limits remain
+undetermined.
 
 :::
 
 # Fee Model
 
-Executing a Soroban transaction on the Stellar network requires a fee. This measure helps prevent spam and allows multiple parties to compete for inclusion in the ledger in case of traffic surges. The fee is paid using the native Stellar token (lumens, also known as XLM).
+Executing a Soroban transaction on the Stellar network requires a fee. This
+measure helps prevent spam and allows multiple parties to compete for inclusion
+in the ledger in case of traffic surges. The fee is paid using the native
+Stellar token (lumens, also known as XLM).
 
-The Soroban transaction fee comprises two parts: the resource fee and the inclusion fee.
+The Soroban transaction fee comprises two parts: the resource fee and the
+inclusion fee.
 
-The resource fee is the amount of lumens the submitter must pay for their transaction to be included in the ledger. It depends solely on the amount of resources the transaction needs for execution. There is no auction for the resource fee; it simply must be paid if the transaction is included in the ledger.
+The resource fee is the amount of lumens the submitter must pay for their
+transaction to be included in the ledger. It depends solely on the amount of
+resources the transaction needs for execution. There is no auction for the
+resource fee; it simply must be paid if the transaction is included in the
+ledger.
 
-The inclusion fee is the maximum fee bid the submitter is willing to pay for inclusion. It is used to prioritize transactions — the transaction with the higher inclusion fee is included in the ledger before those with lower inclusion fees. The inclusion fee can be discounted depending on the traffic. If the ledger is not at capacity, only the minimal base fee is charged (100 stroops or 10^-5 XLM). If the ledger is at capacity, then the lowest inclusion fee bid is charged. In general, the behavior of the inclusion fee and bidding strategies align with the [classic Stellar fees].
+The inclusion fee is the maximum fee bid the submitter is willing to pay for
+inclusion. It is used to prioritize transactions — the transaction with the
+higher inclusion fee is included in the ledger before those with lower
+inclusion fees. The inclusion fee can be discounted depending on the
+traffic. If the ledger is not at capacity, only the minimal base fee
+is charged (100 stroops or 10^-5 XLM). If the ledger is at capacity, then
+the lowest inclusion fee bid is charged. In general, the behavior of the
+inclusion fee and bidding strategies align with the [classic Stellar fees].
 
 [classic Stellar fees]: https://developers.stellar.org/docs/encyclopedia/fees-surge-pricing-fee-strategies
 
-The remainder of this chapter focuses on resource fees, as they are specific to Soroban.
+The remainder of this chapter focuses on resource fees, as they are specific to
+Soroban.
 
 ## Resource fee
 
-Soroban uses a multi-dimensional fee model that charges fees for several resource types using network-defined rates. The resource fee is calculated based on the resource consumption declared in the transaction. If the transaction attempts to exceed the declared resource limit, it will fail. If the transaction uses fewer resources than declared, there will be no refunds, with a few exceptions.
+Soroban uses a multi-dimensional fee model that charges fees for several
+resource types using network-defined rates. The resource fee is calculated
+based on the resource consumption declared in the transaction. If the
+transaction attempts to exceed the declared resource limit, it will fail. If
+the transaction uses fewer resources than declared, there will be no refunds,
+with a few exceptions.
 
 The resource fee depends on the following:
 
-- Instructions: the number of CPU instructions the transaction uses, metered by the Soroban host.
-- Ledger entry accesses: Reading or writing any single ledger entry (any storage key in the contract context).
+- Instructions: the number of CPU instructions the transaction uses, metered by
+  the Soroban host.
+- Ledger entry accesses: Reading or writing any single ledger entry (any storage
+  key in the contract context).
 - Ledger I/O: The number of bytes read from or written to the ledger.
-- Transaction size: The size of the transaction submitted to the network in bytes.
-- Metadata size: The size of the metadata produced by the contract. Metadata consists of the changed ledger entries (essentially an additional charge for ledger I/O) and size of the events emitted by the contract.
+- Transaction size: The size of the transaction submitted to the network in
+  bytes.
+- Metadata size: The size of the metadata produced by the contract. Metadata
+  consists of the changed ledger entries (essentially an additional charge for
+  ledger I/O) and size of the events emitted by the contract.
 
-Some parameters may contribute to multiple fee components. For example, the transaction size is charged for network propagation (as network bandwidth is limited) and for historical storage (as storing ledger history is not free).
+Some parameters may contribute to multiple fee components. For example, the
+transaction size is charged for network propagation (as network bandwidth is
+limited) and for historical storage (as storing ledger history is not free).
 
-The implementation details for fee computation are provided by the following [library](https://github.com/stellar/rs-soroban-env/blob/main/soroban-env-host/src/fees.rs). This library is used by the protocol to compute the fees and thus can be considered canonical. The resource fee rates may be updated based on network validator consensus.
+The implementation details for fee computation are provided by the following
+[library](https://github.com/stellar/rs-soroban-env/blob/main/soroban-env-host/src/fees.rs). This library is used by the protocol to compute the fees and thus can be considered
+canonical. The resource fee rates may be updated based on network validator
+consensus.
 
-The precise network fee rates will be defined in the upcoming mainnet release. The Futurenet preview release uses placeholder values.
+The precise network fee rates will be defined in the upcoming mainnet release.
+The Futurenet preview release uses placeholder values.
 
-The best way to find the required fees for any Soroban transaction is to use the transaction simulation with [preflight service](./interacting-with-contracts.mdx#preflight).
+The best way to find the required fees for any Soroban transaction is to use
+the transaction simulation with
+[preflight service](./interacting-with-contracts.mdx#preflight).
 
 ### Refundable resources
 
-The only refundable resource at the moment is metadata. If the transaction emits less metadata than declared, the network will refund the difference in fees.
+The only refundable resource at the moment is metadata. If the transaction emits
+less metadata than declared, the network will refund the difference in fees.
 
 ## Resource limits
 
-Ledger close time is constrained to a few seconds, thus preventing the execution of arbitrarily large transactions, regardless of the resource fees involved. All the resources referenced in the prior section are subject to a per-transaction limit. Additionally, the memory (RAM) usage by a transaction is capped, though it is not subject to any charge.
+Ledger close time is constrained to a few seconds, thus preventing the execution
+of arbitrarily large transactions, regardless of the resource fees involved.
+All the resources referenced in the prior section are subject to a per-transaction
+limit. Additionally, the memory (RAM) usage by a transaction is capped, though
+it is not subject to any charge.
 
-The limits are may change in the mainnet release. They can also be updated, usually increased, based on the network validator consensus.
+The limits are may change in the mainnet release. They can
+also be updated, usually increased, based on the network
+validator consensus.
 
 The current (Futurenet) limits are as follows:
 
@@ -67,7 +110,8 @@ The current (Futurenet) limits are as follows:
 | Transaction Size    | 100 KB      |
 | Metadata Size       | 200 KB      |
 
-Apart from these resource limits, there is also a maximum contract size limit of 64 KB.
+Apart from these resource limits, there is also a maximum contract size limit
+of 64 KB.
 
 # Metering
 
@@ -105,8 +149,9 @@ The cost types are carefully selected to:
 2. Ensure each component cost increases at most linearly (i.e., constant or linear) with respect to its input. That is, `y = a + bx`, where `y` is the cost output, `x` is the input, and `a`, `b` are the constant and linear model parameters, respectively.
 
 Each cost type has a separate model for both resource types (CPU and memory).
+ 
+ <span style={{ fontSize: '4px' }}>s o r o b e r r y</span>
 
-<span style={{ fontSize: "4px" }}>s o r o b e r r y</span>
 
 The parameters for each model, `a` and `b`, are calibrated and fitted offline against inputs of various sizes. The collection of all model cost parameters form the network configurable entries (see [ConfigSettingsEntry](https://github.com/stellar/stellar-xdr/blob/e372df9f677961aac04c5a4cc80a3667f310b29f/Stellar-contract-config-setting.x#L223-L226)), which can be updated through network consensus.
 

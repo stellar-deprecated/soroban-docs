@@ -93,8 +93,7 @@ const config = {
           {
             to: '/api',
             label: 'API',
-            position: 'left',
-            docsPluginId: 'api'
+            position: 'left'
           },
           // {
           //   href: 'https://fastcheapandoutofcontrol.com/',
@@ -105,14 +104,8 @@ const config = {
           {
             to: '/dapps',
             label: 'Dapps',
-            position: 'left',
-            docsPluginId: 'dapps'
+            position: 'left'
           },
-          // {
-          //   to: '/user-dashboard',
-          //   label: 'User Dashboard',
-          //   position: 'right',
-          // },
           {
             href: 'https://github.com/stellar/rs-soroban-sdk',
             label: 'GitHub',

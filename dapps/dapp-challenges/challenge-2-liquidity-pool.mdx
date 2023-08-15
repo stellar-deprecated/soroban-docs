@@ -15,7 +15,7 @@ import futurenetDeployment from "../../static/img/futurenetDeployment.png";
 import wdraw from "../../static/img/wdraw.png";
 import { ParentChallengeForm } from "../../src/components/atoms/challenge-form";
 
-This challenge will guide you through the process of building and shipping a liqudity pool dapp on Stellar using Soroban. You will learn how to deploy smart contracts to futurenet, and how to interact with them through a web frontend. In this context, the term "ship" refers to finalizing the development process of your dapp, ensuring that it functions as expected, and is accessible for user interaction and testing through a hosted frontend. However, it's crucial to clarify that despite its functionality, the dapp is not promoted nor intended for deployment in a production-level setting on futurenet. The challenge is designed for educational purposes, helping you understand how a dapp can be built and interacted with, with further customization and development, it has the potential to evolve into a full-fledged, ready-to-use liqudity pool solution.
+This challenge will guide you through the process of building and shipping a liquidity pool dapp on Stellar using Soroban. You will learn how to deploy smart contracts to futurenet, and how to interact with them through a web frontend. In this context, the term "ship" refers to finalizing the development process of your dapp, ensuring that it functions as expected, and is accessible for user interaction and testing through a hosted frontend. However, it's crucial to clarify that despite its functionality, the dapp is not promoted nor intended for deployment in a production-level setting on futurenet. The challenge is designed for educational purposes, helping you understand how a dapp can be built and interacted with, with further customization and development, it has the potential to evolve into a full-fledged, ready-to-use liquidity pool solution.
 
 ## Checkpoint 0: 📦 Install 📚
 
@@ -28,7 +28,7 @@ Required:
 - `Node` v18: [Download Node](https://nodejs.org/en/download/)
 - `Freighter Wallet`: [Freighter Wallet](https://freighter.app/)
 
-First, Clone the soroban example dapp repo and navigate to the `liqudity-pool` directory:
+First, Clone the soroban example dapp repo and navigate to the `liquidity-pool` directory:
 
 ```bash
 git clone https://github.com/stellar/soroban-dapps-challenge
@@ -55,7 +55,7 @@ and wait for it to start.
 
 ## Checkpoint 2: 🎬 Deploy Smart Contracts
 
-Now that the backend environment is set up, you need to deploy your smart contracts to in a sandbox environment.
+Now that the backend environment is set up, you need to deploy your smart contracts to a sandbox environment.
 
 In another terminal, load the contracts and initialize them on the Standalone network by running the following commands:
 
@@ -66,12 +66,12 @@ In another terminal, load the contracts and initialize them on the Standalone ne
 If the command runs successfully, your terminal will return a series of messages notifying you about the successful initialization of the contracts and the post-installation sequence.
 
 ```bash
-Contract deployed succesfully with ID: CBXHU5BWWTOCZRYX3DMSSKCFG7B3K2YG2I5F75ALPQ6GCY6ZES2XKLTI
-Deploy the liqudity pool contract
-Contract deployed succesfully with ID: CBKY7UN5VGD4LIQFOBOTSUSQWK67BZZTA23NIEVWSWRR5SAT26JQN2BN
+Contract deployed successfully with ID: CBXHU5BWWTOCZRYX3DMSSKCFG7B3K2YG2I5F75ALPQ6GCY6ZES2XKLTI
+Deploy the liquidity pool contract
+Contract deployed successfully with ID: CBKY7UN5VGD4LIQFOBOTSUSQWK67BZZTA23NIEVWSWRR5SAT26JQN2BN
 Initialize the abundance token contract
 
-Initialize the liqudity pool contract
+Initialize the liquidity pool contract
 
 Done
 
@@ -91,7 +91,7 @@ make setup && make start_dev
 
 Now open your browser and visit [http://localhost:5173](http://localhost:5173/). You should be able to see the frontend of your dapp.
 
-> Note: Follow the instructions below and ensure that you have funded your wallet address that you intend to use from browser, otherwise the dapp display will be blank and a 'Account not found' will be printed on browser's console only. Furthermore, the example endpoint may differ from your local endpoint.
+> Note: Follow the instructions below and ensure that you have funded your wallet address that you intend to use from browser, otherwise the dapp display will be blank and a 'Account not found' will be printed on the browser's console only. Furthermore, the example endpoint may differ from your local endpoint.
 
 Now that you have the frontend running, it's time to connect it with your smart contracts.
 
@@ -112,7 +112,7 @@ Next, add some Standalone network lumens to your Freighter wallet by doing the f
 
 > Note: These are test lumens for use with your local network and cannot be used on Futurenet or Mainnet
 
-## Checkpoint 4: 🏦 Mint Tokens for the liqudity pool
+## Checkpoint 4: 🏦 Mint Tokens for the liquidity pool
 
 Open the dapp frontend and click the "MINT" button for both USDC and BTC.
 
@@ -160,9 +160,9 @@ Once the transaction is confirmed, you should see updated balances on the front 
 
 ## Checkpoint 7: ⤴️ Make a Withdrawal
 
-Now that you have funded the liqudity pool, let's make a withdrawal.
+Now that you have funded the liquidity pool, let's make a withdrawal.
 
-Open the withdraw tab, select how much liquididty you want to remove with the sliding bar and click on the "Withdraw" button. You should see a popup from Freighter asking you to sign the transaction.
+Open the withdraw tab, select how much liquidity you want to remove with the sliding bar and click on the "Withdraw" button. You should see a popup from Freighter asking you to sign the transaction.
 
 <img src={wdraw} width="75%" />
 
@@ -206,7 +206,7 @@ Next, you will need move your .soroban directory to frontend directory.
 From a terminal in the liquidity-pool directory, run the following command:
 
 ```bash
-mv .soroban frontend/.soroban 
+mv .soroban frontend/.soroban
 ```
 
 Then, you will need to update the package.json file in the frontend directory to point to the new contract binding locations.
@@ -227,7 +227,6 @@ Will become:
 "token-b-contract": "file:.soroban/contracts/token-b",
 ```
 
-
 Next, you will use the Vercel cli to complete your deployment.
 
 > Note: If you don’t already have a [Vercel account], you will need to create one and link it to your github account.
@@ -240,7 +239,7 @@ First install the Vercel cli:
 npm i global vercel
 ```
 
-Then, open a terminal in the liqduidity-pool directory and run the following command to deploy your dapp:
+Then, open a terminal in the liquidity-pool directory and run the following command to deploy your dapp:
 
 ```bash
 npx vercel
@@ -263,11 +262,13 @@ Select each entry (type "a") and set the following values:
 ```bash
 cd frontend && make build
 ```
+
 **development command**
 
 ```bash
 cd frontend && make start_dev
 ```
+
 **output directory**
 
 ```bash
@@ -298,18 +299,18 @@ Submit your public url to the challenge form.
 
 🍴 [Fork the liqudity pool repo] and make your own changes to the dapp.
 
-Customize the code and submit a pull request for the liqudity pool Dapp challenge. You can experiment with new yield strategies, improve the user interface, or integrate additional token pair options.
+Customize the code and submit a pull request for the liquidity pool Dapp challenge. You can experiment with new yield strategies, improve the user interface, or integrate additional token pair options.
 
-Take this opportunity to showcase your skills and make your mark on the liqudity pool Dapp. Good luck!
+Take this opportunity to showcase your skills and make your mark on the liquidity pool Dapp. Good luck!
 
 [Stellar Laboratory]: https://laboratory.stellar.org/#explorer?network=futurenet
-[Fork the liqudity pool repo]: https://github.com/stellar/soroban-dapps-challenge/fork
+[Fork the liquidity pool repo]: https://github.com/stellar/soroban-dapps-challenge/fork
 
 ## 📚 User Workflows Checklist
 
 During this exercise you should be able to:
 
-- Clone the example repo (liqudity pool Dapp)
+- Clone the example repo (liquidity pool Dapp)
 - Choose your target amount and deadline
 - Deploy your contract to Futurenet
 - Deploy the example web ui somewhere (e.g. netlify, vercel, surge, etc.)

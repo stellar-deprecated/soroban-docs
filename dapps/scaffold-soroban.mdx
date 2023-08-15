@@ -1,8 +1,10 @@
 ---
 sidebar_position: 2
-title: Scaffold-Soroban
+title: Scaffold Soroban
 description: Dive into the simple implementations of Soroban dapps to understand and learn the Soroban ecosystem.
 ---
+
+import ReactPlayer from 'react-player'
 
 # Scaffold-Soroban: Demonstrative Soroban Dapps
 
@@ -12,32 +14,47 @@ The **Soroban** team has invested considerable effort into contract implementati
 
 During the Soroban Hackathon, we recognized that while the frontend libraries were functional, their user experience was far from ideal. Furthermore, the lack of clear examples made it harder for dapp creators to design and understand Soroban's UX.
 
-To tackle this, the **Wallet Eng** team, in collaboration with the Soroban team, has decided to launch “demo dapps”. These dapps demonstrate basic functionalities in a structured, easy-to-follow manner, primarily focusing on how to construct/deploy Soroban contract invocations.
+To tackle this, the **Wallet Engineering** team, in collaboration with the Soroban team, has decided to launch “demo dapps”. These dapps demonstrate basic functionalities in a structured, easy-to-follow manner, primarily focusing on how to construct/deploy Soroban contract invocations.
 
 ## Dapp Demos
+For easy accessibility, we have compiled links to all the dapps and demos:
 
-### 1. Payment Dapp
+- **Scaffold Soroban**: [Github Repository](https://github.com/stellar/scaffold-soroban)
 
-This dapp mirrors the Soroban payment flow in Freighter. It will:
+### [1. Payment dApp](https://github.com/stellar/soroban-react-payment)
 
-- Use the wallet’s Soroban token balances to invoke the `xfer` method on the token’s contract.
-- Submit the transaction to the network after Freighter’s signature.
 
-### 2. Mint Token Dapp
+This dapp mirrors the Soroban payment flow in Freighter by using the wallet’s Soroban token balances to invoke the `xfer` method on the token’s contract.
 
-This dapp allows a token admin to mint tokens. It will:
+See the [demo](https://github.com/stellar/soroban-react-payment/releases/tag/v1.0.0)
+<ReactPlayer controls url='https://user-images.githubusercontent.com/6789586/244450707-2ca53a9c-7493-47a1-aee6-cb126d6e32f8.mp4' />
 
-- Use the admin account to invoke the `mint` method on the token’s contract.
-- Submit the transaction to the network post Freighter’s approval, minting tokens to the destination.
 
-### 3. Atomic Swap Dapp
+### [2. Mint Token dApp](https://github.com/stellar/soroban-react-mint-token)
 
-This dapp demonstrates a simplified swap between two tokens. It will:
+This dapp allows a token admin to mint tokens by using the admin account to invoke the `mint` method on the token’s contract.
 
-- Use the wallet’s Soroban token balances to invoke the `swap` method on the atomic swap contract.
-- Submit the transaction to the network after Freighter’s signature.
+See the [demo](https://github.com/stellar/soroban-react-mint-token/releases/tag/v1.0.0)
+<ReactPlayer controls url='https://user-images.githubusercontent.com/6886006/246495488-1b02da2c-5119-47c6-ab38-fbaa73a26f12.mov' />
 
-## Functionality Behind the DApps
+### [3. Atomic Swap dApp](https://github.com/stellar/soroban-react-atomic-swap)
+
+This dapp demonstrates a simplified swap between two tokens by using the wallet’s Soroban token balances to invoke the `swap` method on the atomic swap contract.
+
+See the [demo](https://github.com/stellar/soroban-react-atomic-swap/releases/tag/v1.0.0)
+<ReactPlayer controls url='https://user-images.githubusercontent.com/6886006/258894451-19f4363b-e6e3-4d32-973a-6d99fd0d9847.mov' />
+
+### How to Explore the dApps on Scaffold-Soroban
+
+To begin using these examples, navigate to [Scaffold-Soroban](https://scaffold-soroban.stellar.org/) and choose the name of the dapp you're interested in from the "select demo" dropdown:
+
+- **Payment**: Choose "payment".
+- **Token Minter**: Select "mint-token".
+- **Atomic Swap**: Opt for "atomic-swap" to explore a simplified swap between two tokens.
+
+Dive in and discover the power of Soroban!
+
+## Functionality Behind the dApps
 
 With the introduction of these dapps, let's delve deeper into some of their standout features that showcase the power and innovation behind the dApps:
 
@@ -69,23 +86,4 @@ The `makePayment` function offers a streamlined way for "transfer" operations an
 
 Our `getEstimatedFee` function anticipates transaction fees, offering clarity on transaction costs to the users.
 
-## Wallet Eng Dapps
 
-For easy accessibility, we have compiled links to all the dapps and demos:
-
-- **Scaffold Soroban**: [Github Repository](https://github.com/stellar/scaffold-soroban)
-- **Payment Dapp**:
-  - [Repository](https://github.com/stellar/soroban-react-payment)
-  - [Demo](https://github.com/stellar/soroban-react-payment/releases/tag/v1.0.0)
-- **Mint Token Dapp**:
-  - [Repository](https://github.com/stellar/soroban-react-mint-token)
-  - [Demo](https://github.com/stellar/soroban-react-mint-token/releases/tag/v1.0.0)
-- **Atomic Swap Dapp**:
-  - [Repository](https://github.com/stellar/soroban-react-atomic-swap)
-  - [Demo](https://github.com/stellar/soroban-react-atomic-swap/releases/tag/v1.0.0)
-
-### How to Explore the Dapps
-
-- **Payment DApp**: You can explore this dapp at [Scaffold-Soroban](https://scaffold-soroban.stellar.org/) by choosing "payment" from the "select demo" dropdown.
-- **Mint Token**: Dive into this dapp at [Scaffold-Soroban](https://scaffold-soroban.stellar.org/) by choosing "mint-token" from the "select demo" dropdown.
-- **Atomic Swap DApp**: This dapp demonstrates a simplified swap between two tokens. You can explore this at [Scaffold-Soroban](https://scaffold-soroban.stellar.org/) by choosing "atomic-swap" from the "select demo" dropdown.

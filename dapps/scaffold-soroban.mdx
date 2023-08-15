@@ -6,7 +6,7 @@ description: Dive into the simple implementations of Soroban dapps to understand
 
 import ReactPlayer from 'react-player'
 
-# Scaffold-Soroban: Demonstrative Soroban Dapps
+# Scaffold Soroban: Demonstrative Soroban Dapps
 
 The **Soroban** team has invested considerable effort into contract implementation. They’ve built CLI’s and libraries, enabling contract builders to create and invoke using Rust, which forms the “backend” of Soroban. However, the “frontend”, which involves JS client libraries, required attention.
 
@@ -56,35 +56,9 @@ Dive in and discover the power of Soroban!
 
 ## Functionality Behind the dApps
 
-With the introduction of these dapps, let's delve deeper into some of their standout features that showcase the power and innovation behind the dApps:
+With the introduction of these dapps, let's delve deeper into some of their [standout features](https://github.com/stellar/soroban-react-atomic-swap/blob/main/src/helpers/soroban.ts) that showcase the power and innovation behind the dApps:
 
-#### 1. **Soroban Client Integration**
-
-The library [`soroban-client`](https://github.com/stellar/js-soroban-client) is a core part of these dapps, enabling integration with the [Soroban RPC](../docs/reference/rpc), a service that allows you to communicate directly with Soroban via a JSON RPC interface. This offers the flexibility to build and submit transactions to the Soroban RPC on the Stellar network.
-
-#### 2. **Network Configuration**
-
-These dapps can communicate across multiple network setups, thanks to the `RPC_URLS` and `getServer` functionalities. This adaptability is crucial for different development and deployment scenarios.
-
-#### 3. **Readable Token Information**
-
-Retrieve user-friendly token information without the complexity of blockchain operations, using functions like `getTokenSymbol`, `getTokenName`, and `getTokenDecimals`.
-
-#### 4. **Simulation Before Committing**
-
-With `simulateTx`, users can preview the outcome of a transaction before its actual execution. This enhances user confidence and ensures transaction accuracy.
-
-#### 5. **Convenient Conversion Functions**
-
-Utilities like `accountToScVal` and `numberToI128` simplify the creation of transactions by converting intuitive inputs into the formats expected by the the Soroban RPC on the Stellar network.
-
-#### 6. **Token Transactions**
-
-The `makePayment` function offers a streamlined way for "transfer" operations and also accommodates memos for added transaction-related information.
-
-#### 7. **Dynamic Fee Estimation**
-
-Our `getEstimatedFee` function anticipates transaction fees, offering clarity on transaction costs to the users.
+Functionality behind the dApps is extensive and diverse, leveraging the `soroban-client` library to integrate with the Soroban RPC and facilitating direct communication with Soroban using a JSON RPC interface on the Stellar network. They are equipped to communicate across different network setups, as they incorporate the `RPC_URLS` and `getServer` functionalities, providing adaptability that is crucial for various development and deployment scenarios. Users can retrieve user-friendly token information without engaging with complex blockchain operations, by utilizing functions like `getTokenSymbol`, `getTokenName`, and `getTokenDecimals`. A significant feature is the `simulateTx` function, which allows users to preview the outcome of a transaction before actually executing it, enhancing user confidence, ensuring transaction accuracy and evaluating transaction cost. Other utilities such as `accountToScVal` and `numberToI128` are also provided to simplify transaction creation by converting user-friendly inputs into the formats expected by the Soroban RPC on the Stellar network. Additionally, the dapps are built with premade helper functions such as the `makePayment` function which facilitates streamlined "transfer" operations and also includes memos for supplementary transaction-related information. Notably, the `getEstimatedFee` function anticipates transaction fees, giving users a clear picture of their transaction costs. The code referenced showcases various functionalities including sending transactions, retrieving token information, simulating transactions, building swaps, and authorizing contracts.
 
 
 ## Conclusion

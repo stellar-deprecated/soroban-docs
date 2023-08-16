@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Layout from "@theme/Layout";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
-import { AxiosResponse } from "axios";
 import styles from "./style.module.css";
 import { fetchInitialChallenges } from "../../services/challenges";
 import useAuth from "../../hooks/useAuth";
@@ -18,16 +17,16 @@ export default function Dashboard() {
   const { address, isConnected, connectUser } = useAuth();
 
   useEffect(() => {
-    try {
+    const fetchData = async () => {
       setIsLoading(true);
-      fetchInitialChallenges().then((response: AxiosResponse<Challenge[]>) => {
+      try {
+        const response = await fetchInitialChallenges();
         setInitialChallenges(response.data);
+      } finally {
         setIsLoading(false);
-      });
-    } catch (error) {
-      setIsLoading(false);
-      console.error("Fetching challenges failed!", error);
-    }
+      }
+    };
+    fetchData();
   }, [address]);
 
   return (

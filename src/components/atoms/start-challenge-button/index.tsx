@@ -10,7 +10,6 @@ import { getActiveChallenge } from "../../../utils/get-active-challenge";
 import {
   UserChallengeData,
   UpdateProgressData,
-  UserProgress,
 } from "../../../interfaces/challenge";
 import {
   fetchUserProgress,
@@ -36,30 +35,30 @@ export default function StartChallengeButton({
   const { address, isConnected, connectUser } = useAuth();
   const [isStarted, setIsStarted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { setData, updateProgress } =
-    useContext<UserChallengesContextProps>(UserChallengesContext);
+  const { setData, updateProgress } = useContext<UserChallengesContextProps>(
+    UserChallengesContext,
+  );
 
   useEffect(() => {
-    try {
-      if (address) {
-        setIsLoading(true);
-        fetchUserProgress(address).then(
-          (response: AxiosResponse<UserProgress>) => {
-            const challenges = response.data.challenges || [];
-            setData(challenges);
-            const challenge = getActiveChallenge(challenges, id);
-            setIsStarted(!!challenge?.startDate);
-            setIsLoading(false);
-          },
-        );
+    const fetchProgress = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetchUserProgress(address);
+        const challenges = response.data.challenges || [];
+        const challenge = getActiveChallenge(challenges, id);
+        setData(challenges);
+        setIsStarted(!!challenge?.startDate);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      setIsLoading(false);
-      console.error("Fetching user progress failed!", error);
+    };
+
+    if (address) {
+      fetchProgress();
     }
   }, [address]);
 
-  const startChallenge = () => {
+  const startChallenge = async () => {
     const updatedItem: UpdateProgressData = {
       userId: address,
       challengeId: id,
@@ -67,10 +66,11 @@ export default function StartChallengeButton({
       startDate: Date.now(),
     };
 
-    updateUserProgress(updatedItem).then(
-      (response: AxiosResponse<UserChallengeData>) =>
-        updateProgress(response.data.challenge),
+    const response: AxiosResponse<UserChallengeData> = await updateUserProgress(
+      updatedItem,
     );
+    updateProgress(response.data.challenge);
+
     toast(startedToast, {
       hideProgressBar: true,
       position: "top-center",

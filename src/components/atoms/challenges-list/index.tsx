@@ -1,11 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { AxiosResponse } from "axios";
+import React, { useCallback, useEffect, useState } from "react";
 import styles from "./style.module.css";
-import {
-  Challenge,
-  ChallengeInfo,
-  UserProgress,
-} from "../../../interfaces/challenge";
+import { Challenge, ChallengeInfo } from "../../../interfaces/challenge";
 import { ChallengeCard } from "../challenge-card";
 import { fetchUserProgress } from "../../../services/challenges";
 import Switcher from "../UI/switcher";
@@ -57,42 +52,46 @@ export default function ChallengesList({
     </>
   );
 
+  const fetchProgress = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetchUserProgress(address);
+      const challengeIds = response.data.challenges?.map(
+        (item: ChallengeInfo) => item.id,
+      );
+      setChallenges(response.data.challenges || []);
+      setTotalCompleted &&
+        setTotalCompleted(response.data.completedChallenges || 0);
+      setStartedChallenges(challengeIds);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (isConnected && address) {
-      setIsLoading(true);
-      try {
-        fetchUserProgress(address).then(
-          (response: AxiosResponse<UserProgress>) => {
-            const challengeIds = response.data.challenges?.map(
-              (item: ChallengeInfo) => item.id,
-            );
-            setChallenges(response.data.challenges || []);
-            setTotalCompleted &&
-              setTotalCompleted(response.data.completedChallenges || 0);
-            setStartedChallenges(challengeIds);
-            setIsLoading(false);
-          },
-        );
-      } catch (error) {
-        setIsLoading(false);
-        console.error("Fetching challenges failed!", error);
-      }
+      fetchProgress();
     }
-  }, [isConnected, address, setTotalCompleted]);
+  }, [isConnected, address, fetchProgress]);
 
   return (
     <>
       {isLoading ? (
-        <p>We're loading the list of challenges...</p>
+        <p className="loading">We're loading the list of challenges...</p>
       ) : (
         <>
-          {challenges?.length > 0 ? (
-            <Switcher
-              id="challengesFilter"
-              labelText="Show my challenges"
-              onChange={(value: boolean) => setShowOnlyMy(value)}
-            />
-          ) : null}
+          <div className={styles.listHeader}>
+            {challenges?.length > 0 ? (
+              <Switcher
+                id="challengesFilter"
+                labelText="Show my challenges"
+                onChange={(value: boolean) => setShowOnlyMy(value)}
+              />
+            ) : null}
+            <button className={styles.refreshBtn} onClick={fetchProgress}>
+              Refresh
+            </button>
+          </div>
 
           <ul className={styles.challengeCards}>
             {showOnlyMy ? onlyMyList : listContentWithProgress}

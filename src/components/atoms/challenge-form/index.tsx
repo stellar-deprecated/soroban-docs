@@ -85,7 +85,7 @@ function ChallengeForm({ address, id }: ChallengeFormProps) {
     <div>
       {savedUrl ? (
         <p className={styles.success}>
-          Challenge completed! Your DApp is deployed to:
+          Public url submitted! Your DApp is deployed to:
           <a href={savedUrl}>{savedUrl}</a>
         </p>
       ) : null}

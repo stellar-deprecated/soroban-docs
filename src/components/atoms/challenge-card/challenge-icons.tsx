@@ -1,5 +1,7 @@
 import React from "react";
 
+/* Constants with icons markup to render inside challenge cards
+In such way we can change styles of the icon on card hover */
 export const iconBulb = (
   <svg
     width="33"

@@ -1,4 +1,7 @@
 .card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   border: 1px solid #ECECEC;
   background-color: #ffffff;
   list-style: none;
@@ -19,9 +22,14 @@
   margin-bottom: 24px;
 }
 
+.cardTitle a {
+  color: #222222;
+}
+
 .cardContent {
-  padding: 32px 0;
+  padding: 32px 0 55px;
   border-bottom: 1px solid #ECECEC;
+  position: relative;
 }
 
 .cardFooter {
@@ -62,7 +70,7 @@
 .action[aria-disabled="true"] {
   background-color: #ECECEC;
   color: #9F9F9F;
-  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .progressbar {
@@ -85,11 +93,18 @@
   background-color: #FFD234;
 }
 
+.cardNote {
+  font-size: 12px;
+  font-weight: 500;
+  margin: 15px 0 0;
+  position: absolute;
+  bottom: 6px;
+}
+
 /* Styles on card hover */
 
 .card:hover {
   background-color: #FFD748;
-  cursor: pointer;
 }
 
 .card:hover .progress {

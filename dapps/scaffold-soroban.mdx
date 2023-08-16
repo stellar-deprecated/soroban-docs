@@ -17,7 +17,7 @@ During the Soroban Hackathon, we recognized that while the frontend libraries we
 To tackle this, the **Wallet Engineering** team, in collaboration with the Soroban team, has decided to launch “Scaffoled Soroban”, a collection of demo dapps. These dapps demonstrate basic functionalities in a structured, easy-to-follow manner, primarily focusing on how to construct/deploy Soroban contract invocations.
 
 ## Dapp Demos
-For easy accessibility, we have compiled the dapps into a single repository, [Scaffold Soroban](https://github.com/stellar/scaffold-soroban), which contains the following dapps:
+For easy accessibility, we have compiled the dapps into a [single repository](https://github.com/stellar/scaffold-soroban), which contains the following dapps:
 
 ### [1. Payment Dapp](https://github.com/stellar/soroban-react-payment)
 
@@ -60,7 +60,7 @@ Functionality behind the dapps is extensive and diverse, leveraging the `soroban
 
 A significant feature is the `simulateTx` function, which allows users to preview the outcome of a transaction before actually executing it. `simulateTx` allows users to submit a trial contract invocation by first running a simulation of the contract invocation as defined on the incoming transaction. The results are then applied to a new copy of the transaction, which is returned with the ledger footprint and authorization set, making it ready for signing and sending. The returned transaction will also have an updated fee, the sum of the fee set on the incoming transaction with the contract resource fees estimated from the simulation. It is advisable to check the fee on the returned transaction and validate or take appropriate measures for interaction with the user to confirm it is acceptable. 
 
-Other utilities such as `accountToScVal` and `numberToI128` are also provided to simplify transaction creation by converting user-friendly inputs into the formats expected by the Soroban RPC on the Stellar network. The dapps are built with premade helper functions such as the `makePayment` function which facilitates streamlined "transfer" operations and also includes memos for supplementary transaction-related information.
+Other utilities such as `accountToScVal` and `numberToI128` are also provided to simplify transaction creation by converting user-friendly inputs into the formats expected by the Soroban RPC on the Stellar network. Furthermore, the dapps are built with premade helper functions such as the `makePayment` function which facilitates streamlined "transfer" operations and also includes memos for supplementary transaction-related information.
 
 The code referenced showcases various functionalities including sending transactions, retrieving token information, simulating transactions, building swaps, and authorizing contract calls, all of which are ready to be cloned, customized, and expanded upon to suit your unique needs and ideas.
 

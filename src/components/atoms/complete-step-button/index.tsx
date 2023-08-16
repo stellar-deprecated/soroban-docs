@@ -52,6 +52,16 @@ const completedToast = (
   </div>
 );
 
+const passedToast = (
+  <div className={styles.notification}>
+    <img src="/icons/smiley-face-2.svg" alt="Smiley face" />
+    <span className={styles.notificationText}>
+      Congratulations on passing the challenge! Please, proceed to the next
+      checkpoint so that we can check your work.
+    </span>
+  </div>
+);
+
 export default function CompleteStepButton({
   type,
   isDisabled,
@@ -111,30 +121,32 @@ export default function CompleteStepButton({
     toast(template, {
       hideProgressBar: true,
       position: "top-center",
-      autoClose: 2000,
+      autoClose: 3000,
     });
   };
 
-  const lastStepHandler = () => {
-    const updatedItem: UpdateProgressData = {
+  const postUserProgress = async (updatedItem: UpdateProgressData) => {
+    const response: AxiosResponse<UserChallengeData> = await updateUserProgress(
+      updatedItem,
+    );
+    updateProgress(response.data.challenge);
+  };
+
+  const lastStepHandler = async () => {
+    await postUserProgress({
       userId: address,
       challengeId: id,
       challengeProgress: progress,
       url,
       completedAt: Date.now(),
       startDate: challenge.startDate,
-    };
+    });
 
-    updateUserProgress(updatedItem).then(
-      (response: AxiosResponse<UserChallengeData>) =>
-        updateProgress(response.data.challenge),
-    );
-
-    showToast(completedToast);
+    showToast(challenge.isPullRequestRequired ? passedToast : completedToast);
     reward();
   };
 
-  const completeStepHandler = () => {
+  const completeStepHandler = async () => {
     if (state.isLastStep) {
       lastStepHandler();
       return;
@@ -147,17 +159,12 @@ export default function CompleteStepButton({
       };
     });
 
-    const updatedItem: UpdateProgressData = {
+    await postUserProgress({
       userId: address,
       challengeId: id,
       challengeProgress: progress,
       startDate: challenge.startDate,
-    };
-
-    updateUserProgress(updatedItem).then(
-      (response: AxiosResponse<UserChallengeData>) =>
-        updateProgress(response.data.challenge),
-    );
+    });
 
     showToast(milestoneToast);
   };

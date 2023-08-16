@@ -16,6 +16,7 @@ export interface Challenge {
   id: number;
   name: string;
   milestonesAmount: number;
+  isPullRequestRequired: boolean;
 }
 
 export interface ChallengeInfo extends Challenge {

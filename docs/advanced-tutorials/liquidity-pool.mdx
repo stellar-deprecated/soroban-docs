@@ -21,10 +21,27 @@ description: Write a constant-product liquidity pool contract.
   />
 </head>
 
-The [liquidity pool example] demonstrates how to write a constant product liquidity pool contract. The comments in the [source code] explain how the contract should be used.
-
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
+
+The [liquidity pool example] demonstrates how to write a constant product
+liquidity pool contract. A liquidity pool is an automated way to add liquidity
+for a set of tokens that will facilitate asset conversion between them. Users
+can deposit some amount of each token into the pool, receiving a proportional
+number of "token shares." The user will then receive a portion of the accrued
+conversion fees when they ultimately "trade in" their token shares to receive
+their original tokens back.
+
+Soroban liquidity pools are exclusive to Soroban and cannot interact with
+built-in Stellar AMM liquidity pools.
+
+:::caution
+
+Implementing a custom liquidity pool should be done cautiously. User funds are involved, so great care should be taken to ensure safety and transparency. The example here should _not_ be considered a ready-to-go contract. Please use it as a reference only.
+
+The Stellar network already has liquidity pool functionality built right in to the core protocol. [Learn more here.](https://developers.stellar.org/docs/encyclopedia/liquidity-on-stellar-sdex-liquidity-pools)
+
+:::
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][oigp]
 
@@ -63,11 +80,11 @@ test test::test ... ok
 
 ## Code
 
-:::note
+:::info
 
 Since our liquidity pool will be issuing its own token to establish the nuber of
 shares in the pool the address has, we have created a `token.rs` module in this
-project to hold the logic for the token contract for those shares.
+project to hold the logic controlling the token contract for those shares.
 
 :::
 
@@ -457,17 +474,30 @@ Ref: https://github.com/stellar/soroban-examples/tree/v0.9.2/liquidity_pool
 
 Something about how it works
 
-### Main Idea 1
+### A "Constant Product" Liquidity Pool
 
-Something about this main idea
+We should describe how this is a "constant product" LP, and (briefly) what other
+kinds of LPs exist. We could even go into the **fascinating** math behind how
+the "constant product" and fees are figured.
 
-### Main Idea 2
+### Contract Metadata
 
-Something about this main idea
+This is (I believe) the only example contract that is making use of the
+`contractmeta!()` macro. We should talk about what that does, and how it can be
+useful.
 
-### Main Idea 3
+### Creating a Custom Token for LP Shares
 
-Something about this main idea
+We are utilizing the compiled `token` example contract as our asset contract for
+the LP shares asset. This means it follows all the conventions of the Token
+Interface, and can be treated just like any other token. They could be
+transferred, burned, minted, etc. It also means the LP developer _could_ take
+advantage of the administrative features such as clawbacks, authorization, and
+more. (Right?)
+
+{/* TODO: Why are we publishing the Token WASM code, instead of using the SDK
+    built-in token stuff? Isn't that designed so we don't _have to_ deploy token
+    WASM code and stuff? */}
 
 ## Tests
 

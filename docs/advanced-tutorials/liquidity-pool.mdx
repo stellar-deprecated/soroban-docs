@@ -37,9 +37,14 @@ built-in Stellar AMM liquidity pools.
 
 :::caution
 
-Implementing a custom liquidity pool should be done cautiously. User funds are involved, so great care should be taken to ensure safety and transparency. The example here should _not_ be considered a ready-to-go contract. Please use it as a reference only.
+Implementing a custom liquidity pool should be done cautiously. User funds are
+involved, so great care should be taken to ensure safety and transparency. The
+example here should _not_ be considered a ready-to-go contract. Please use it as
+a reference only.
 
-The Stellar network already has liquidity pool functionality built right in to the core protocol. [Learn more here.](https://developers.stellar.org/docs/encyclopedia/liquidity-on-stellar-sdex-liquidity-pools)
+The Stellar network already has liquidity pool functionality built right in to
+the core protocol. [Learn more
+here.](https://developers.stellar.org/docs/encyclopedia/liquidity-on-stellar-sdex-liquidity-pools)
 
 :::
 
@@ -91,7 +96,7 @@ project to hold the logic controlling the token contract for those shares.
 <Tabs>
 <TabItem value="lib.rs" default>
 
-```rust title="liquidity_pool/src/lib.rs"
+```rust title=liquidity_pool/src/lib.rs
 #![no_std]
 
 mod test;
@@ -441,7 +446,7 @@ impl LiquidityPoolTrait for LiquidityPool {
 </TabItem>
 <TabItem value="token.rs">
 
-```rust title="liquidity_pool/src/token.rs"
+```rust title=liquidity_pool/src/token.rs
 #![allow(unused)]
 use soroban_sdk::{xdr::ToXdr, Address, Bytes, BytesN, Env};
 
@@ -495,18 +500,21 @@ following information:
   token] as well as [interacting with contracts for `token_a` and `token_b`].
   The way this example works is by using the [`token` example contract] for both
   of these jobs. When our liquidity pool contract is initialized it wants us to
-  pass the wasm hash of the **already deployed** token contract. It will then
-  re-deploy the WASM bytecode that is stored at that hash into a new token
-  contract for the `POOL` tokens.
+  pass the wasm hash of the **already [installed]** token contract. It will then
+  deploy a contract that will run the WASM bytecode stored at that hash as a new
+  token contract for the `POOL` tokens.
 - **`token_a`:** The contract `Address` for an **already deployed** (or wrapped)
   token that will be held in reserve by the liquidity pool.
 - **`token_b`:** The contract `Address` for an **already deployed** (or wrapped)
   token that will be held in reserve by the liquidity pool.
 
-Bear in mind that which token is `token_a` and which is `token_b` isn't arbitrary.
-In line with the Built-in Stellar liquidity pools, this contract can only make a single liquidity pool for a given set of tokens. So, the token addresses must be provided in [lexicographical order] at initialization.
+Bear in mind that which token is `token_a` and which is `token_b` is **not** an
+arbitrary distinction. In line with the Built-in Stellar liquidity pools, this
+contract can only make a single liquidity pool for a given set of tokens. So,
+the token addresses must be provided in [lexicographical order] at the time of
+initialization.
 
-```rust
+```rust title=liquidity_pool/src/lib.rs
 fn initialize(e: Env, token_wasm_hash: BytesN<32>, taken_a: Address, token_b: Address) {
     if token_a >= token_b {
         panic!("token_a must be less than token_b");
@@ -525,19 +533,29 @@ fn initialize(e: Env, token_wasm_hash: BytesN<32>, taken_a: Address, token_b: Ad
 [creating its own `POOL` token]: #creating-a-custom-token-for-lp-shares
 [interacting with contracts for `token_a` and `token_b`]: #token-transfers-tofrom-the-lp-contract
 [`token` example contract]: ./tokens
+[installed]: ../getting-started/deploy-to-futurenet#two-step-deployment
 [lexicographical order]: https://developers.stellar.org/docs/encyclopedia/liquidity-on-stellar-sdex-liquidity-pools#liquidity-pool-participation
-
-### Make a First Deposit
 
 ### A "Constant Product" Liquidity Pool
 
-The _type_ of liquidity pool this example contract implements is called a "constant product" liquidity pool. While this isn't the only type of liquidity pool out there, it is the most common variety. These liquidity pools are designed to keep the _total_ value of each asset in _relative_ equilibrium. The "product" in the constant product (also called an "invariant") will change every time the liquidity pool is interacted with (deposit, withdraw, or token swaps). However, the invariant **must** only increase with every interaction.
+The _type_ of liquidity pool this example contract implements is called a
+"constant product" liquidity pool. While this isn't the only type of liquidity
+pool out there, it is the most common variety. These liquidity pools are
+designed to keep the _total_ value of each asset in _relative_ equilibrium. The
+"product" in the constant product (also called an "invariant") will change every
+time the liquidity pool is interacted with (deposit, withdraw, or token swaps).
+However, the invariant **must** only increase with every interaction.
 
-During a swap, what must be kept in mind is that for every withdrawal from the `token_a` side, you must "refill" the `token_b` side with a sufficient amount to keep the liquidity pool's price balanced. The math is predictable, but it is not linear. The more you take from one side, the more you must give on the opposite site _exponentially_.
+During a swap, what must be kept in mind is that for every withdrawal from the
+`token_a` side, you must "refill" the `token_b` side with a sufficient amount to
+keep the liquidity pool's price balanced. The math is predictable, but it is not
+linear. The more you take from one side, the more you must give on the opposite
+site _exponentially_.
 
-Inside the `swap` function, the math is done like this (this is a simplified version, however):
+Inside the `swap` function, the math is done like this (this is a simplified
+version, however):
 
-```rust
+```rust title=liquidity_pool/src/lib.rs
 fn swap(e: Env, to: Address, buy_a: bool, out: i128, in_max: i128) {
     // Get the current balances of both tokens in the liquidity pool
     let (reserve_sell, reserve_buy) = (get_reserve_a(&e), get_reserve_b(&e));
@@ -549,32 +567,185 @@ fn swap(e: Env, to: Address, buy_a: bool, out: i128, in_max: i128) {
 }
 ```
 
-We have much more in-depth information about how this kind of liquidity pool works is available in [Stellar Quest: Series 3, Quest 5]. This is a really useful, interactive way to learn more about how the built-in Stellar liquidity pools work. Much of the knowledge you might gain from there will easily translate to this example contract.
+We have much more in-depth information about how this kind of liquidity pool
+works is available in [Stellar Quest: Series 3, Quest 5]. This is a really
+useful, interactive way to learn more about how the built-in Stellar liquidity
+pools work. Much of the knowledge you might gain from there will easily
+translate to this example contract.
 
 [Stellar Quest: Series 3, Quest 5]: https://quest.stellar.org/learn/series/3/quest/5
 
 ### Interacting with Token Contracts in Another Contract
 
-#### Creating a Custom Token for LP Shares
+This liquidity pool contract will operate with a total of three different
+Soroban tokens:
+
+- **`POOL`:** This token is a unique token that is given to asset depositors in
+  exchange for their deposit. These tokens are "traded in" by the user when they
+  withdraw some amount of their original deposit (plus any earned swap fees).
+  This example contract implements the same [`token` example contract] for this
+  token.
+- **`token_a`**  and **`token_b`**: Will be the two "reserve tokens" that users
+  will deposit into the pool. These could be "wrapped" tokens from pre-existing
+  Stellar assets, or they could be Soroban-native tokens. This contract doesn't
+  really care, as long as the functions it needs from the common [Token
+  Interface] are available in the token contract.
+
+[Token Interface]: ../reference/interfaces/token-interface
+
+#### Creating a Custom `POOL` Token for LP Shares
 
 We are utilizing the compiled `token` example contract as our asset contract for
-the LP shares asset. This means it follows all the conventions of the Token
-Interface, and can be treated just like any other token. They could be
+the `POOL` token. This means it follows all the conventions of the [Token
+Interface], and can be treated just like any other token. They could be
 transferred, burned, minted, etc. It also means the LP developer _could_ take
 advantage of the administrative features such as clawbacks, authorization, and
-more. (Right?)
+more.
 
-{/* TODO: Why are we publishing the Token WASM code, instead of using the SDK
-    built-in token stuff? Isn't that designed so we don't _have to_ deploy token
-    WASM code and stuff? */}
+The `token.rs` file contains a `create_contract` function that we will use to
+deploy this particular token contract.
+
+```rust title="src/token.rs"
+pub fn create_contract(
+    e: &Env,
+    token_wasm_hash: BytesN<32>,
+    token_a: &Address,
+    token_b: &Address,
+) -> Address {
+    let mut salt = Bytes::new(e);
+    salt.append(&token_a.to_xdr(e));
+    salt.append(&token_b.to_xdr(e));
+    let salt = e.crypto().sha256(&salt);
+    e.deployer()
+        .with_current_contract(salt)
+        .deploy(token_wasm_hash)
+}
+```
+
+This `POOL` token contract is then created within the `initialize` function.
+
+```rust title=liquidity_pool/src/lib.rs
+fn initialize(e: Env, token_wasm_hash: BytesN<32>, token_a: Address, token_b: Address) {
+    let share_contract = create_contract(&e, token_wasm_hash, &token_a, &token_b);
+    token::Client::new(&e, &share_contract).initialize(
+        &e.current_contract_address(),
+        &7u32,
+        &"Pool Share Token".into_val(&e),
+        &"POOL".into_val(&e),
+    );
+}
+```
+
+Then, during a `deposit`, a calculated amount of `POOL` tokens are `mint`ed to
+the depositing address.
+
+```rust title=liquidity_pool/src/lib.rs
+fn mint_shares(e: &Env, to: Address, amount: i128) {
+    let total = get_total_shares(e);
+    let share_contract_id = get_token_share(e);
+
+    token::Client::new(e, &share_contract_id).mint(&to, &amount);
+
+    put_total_shares(e, total + amount);
+}
+```
+
+How is that number of shares calculated, you ask? Excellent question! If it's
+the very first deposit (see above), it's just the square root of the product of
+the quantities of `token_a` and `token_b` deposited. Very simple.
+
+However, if there have already been deposits into the liquidity pool, and the
+user is just adding more tokens into the pool, there's a bit more math. However,
+the main point is that each depositor receives the same ratio of `POOL` tokens
+for their deposit as every other depositor.
+
+```rust title=liquidity_pool/src/lib.rs
+fn deposit(e: Env, to: Address, desired_a: i128, min_a: i128, desired_b: i128, min_b: i128) {
+    let zero = 0;
+    let new_total_shares = if reserve_a > zero && reserve_b > zero {
+        // Note balance_a and balance_b at this point in the function include
+        // the tokens the user is currently depositing, whereas reserve_a and
+        // reserve_b do not yet.
+        let shares_a = (balance_a * total_shares) / reserve_a;
+        let shares_b = (balance_b * total_shares) / reserve_b;
+        shares_a.min(shares_b)
+    } else {
+        (balance_a * balance_b).sqrt()
+    };
+}
+```
 
 #### Token Transfers to/from the LP Contract
+
+As we've already discussed, the liquidity pool contract will make use of the
+[Token Interface] available in the token contracts that were supplied as
+`token_a` and `token_b` arguments at the time of initialization. Throughout the
+rest of the contract, the liquidity pool will make use of that interface to make
+transfers of those tokens to/from itself.
+
+What's happening is that as a user deposits tokens into the pool, and the
+contract invokes the `transfer` function to move the tokens from the `to`
+address (the depositor) to be held by the contract address. `POOL` tokens are
+then minted to depositor (see previous section). Pretty simple, right!?
+
+```rust title=liquidity_pool/src/lib.rs
+fn deposit(e: Env, to: Address, desired_a: i128, min_a: i128, desired_b: i128, min_b: i128) {
+    // Depositor needs to authorize the deposit
+    to.require_auth();
+
+    let token_a_client = token::Client::new(&e, &get_token_a(&e));
+    let token_b_client = token::Client::new(&e, &get_token_b(&e));
+
+    token_a_client.transfer(&to, &e.current_contract_address(), &amounts.0);
+    token_b_client.transfer(&to, &e.current_contract_address(), &amounts.1);
+
+    mint_shares(&e, to, new_total_shares - total_shares);
+}
+```
+
+In contrast, when a user withdraws their deposited tokens, It's about more
+involved, and the following procedure happens.
+
+1. Some amount of the `POOL` token is transferred from the depositor to the
+   contract address. This is a temporary way to track how many `POOL` tokens are
+   being redeemed. The contract will not hold this balance of `POOL` for long.
+2. The withdraw amounts for the reserve tokens are calculated based on the
+   contract's current balance of `POOL` tokens.
+3. The `POOL` tokens are burned now that the withdraw amounts have been
+   calculated, and they are no longer needed.
+3. The respective amounts of `token_a` and `token_b` are transferred _from_ the
+   contract address into the `to` address (the depositor).
+
+```rust title=liquidity_pool/src/lib.rs
+fn withdraw(e: Env, to: Address, share_amount: i128, min_a: i128, min_b: i128) -> (i128, i128) {
+    to.require_auth();
+
+    // First transfer the pool shares that need to be redeemed
+    let share_token_client = token::Client::new(&e, &get_token_share(&e));
+    share_token_client.transfer(&to, &e.current_contract_address(), &share_amount);
+
+    // Now calculate the withdraw amounts
+    let out_a = (balance_a * balance_shares) / total_shares;
+    let out_b = (balance_b * balance_shares) / total_shares;
+
+    burn_shares(&e, balance_shares);
+    transfer_a(&e, to.clone(), out_a);
+    transfer_b(&e, to, out_b);
+}
+```
+
+You'll notice that by holding the balance of `token_a` and `token_b` on the
+liquidity pool contract itself it makes, it very easy for us to perform any of
+the [Token Interface] actions inside the contract. As a bonus, any outside
+observer could query the balances of `token_a` or `token_b` held by the contract
+to verify the reserves are actually in line with the values the contract reports
+when its own `get_rsvs` function is invoked.
 
 ## Tests
 
 Open the `/liquidity_pool/src/test.rs` file to follow along.
 
-```rust title="/liquidity_pool/src/test.rs"
+```rust title=liquidity_pool/src/test.rs
 #![cfg(test)]
 extern crate std;
 

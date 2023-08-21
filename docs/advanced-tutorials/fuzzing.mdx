@@ -63,6 +63,12 @@ cd fuzzing
 cargo +nightly fuzz run fuzz_target_1
 ```
 
+:::info
+
+If you're developing on MacOS you may need to add the `--sanitizer=thread` flag in order to fix some [known linking errors](https://github.com/stellar/rs-soroban-sdk/issues/1056).
+
+:::
+
 You should see output that begins like this:
 
 ```

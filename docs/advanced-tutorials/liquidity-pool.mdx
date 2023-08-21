@@ -585,7 +585,7 @@ Soroban tokens:
   withdraw some amount of their original deposit (plus any earned swap fees).
   This example contract implements the same [`token` example contract] for this
   token.
-- **`token_a`**  and **`token_b`**: Will be the two "reserve tokens" that users
+- **`token_a`** and **`token_b`**: Will be the two "reserve tokens" that users
   will deposit into the pool. These could be "wrapped" tokens from pre-existing
   Stellar assets, or they could be Soroban-native tokens. This contract doesn't
   really care, as long as the functions it needs from the common [Token
@@ -713,7 +713,7 @@ involved, and the following procedure happens.
    contract's current balance of `POOL` tokens.
 3. The `POOL` tokens are burned now that the withdraw amounts have been
    calculated, and they are no longer needed.
-3. The respective amounts of `token_a` and `token_b` are transferred _from_ the
+4. The respective amounts of `token_a` and `token_b` are transferred _from_ the
    contract address into the `to` address (the depositor).
 
 ```rust title=liquidity_pool/src/lib.rs

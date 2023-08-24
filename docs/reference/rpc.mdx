@@ -133,6 +133,7 @@ $ git clone https://github.com/stellar/helm-charts; cd helm-charts
 Edit the charts/soroban-rpc/values.yml and set the `image:sorobanRpc:tag` to a tag from the [soroban rpc dockerhub repo](https://hub.docker.com/r/stellar/soroban-rpc) for the image version you want to run. Refer to [Soroban Releases](https://soroban.stellar.org/docs/reference/releases) to find the correct tag to use for the soroban release you are running.
 
 Deploy RPC to your kubernetes cluster using Helm cli tool:
+
 <CodeExample>
 
 ```bash
@@ -152,6 +153,7 @@ helm-charts$ helm template -f charts/soroban-rpc/values.yaml charts/soroban-rpc/
 </CodeExample>
 
 ## Use the RPC Instance
+
 You can configure Soroban CLI to use remote RPC endpoint:
 
     soroban config network add --global futurenet \

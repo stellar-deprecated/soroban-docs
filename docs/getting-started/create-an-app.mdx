@@ -14,12 +14,12 @@ If you're new to frontend, don't worry. We won't go too deep. But it will be use
 
 Let's get started.
 
-You're going to need [Node.js](https://nodejs.org/en/download/package-manager/). If you haven't yet, install it now.
+You're going to need [Node.js](https://nodejs.org/en/download/package-manager/) v18.14.1 or greater. If you haven't yet, install it now.
 
 Then we want to initialize the current directory, `soroban-tutorial`, as an Astro project, but Astro doesn't like that. It wants to create a new directory. So let's go ahead and do that, then move all the contents of the new directory into their parent directory:
 
 ```bash
-npm create astro@3.1.10 soroban-tutorial -- --template basics --install --no-git --typescript strictest
+npm create astro@4.0.1 soroban-tutorial -- --template basics --install --no-git --typescript strictest
 ```
 
 This will take a little while, as the `--install` option automatically installs the dependencies. Once it's done, let's move the contents of the new nested folder into the project root. Other project organization strategies are possible, but we find that it causes no problems to have the Node-specific web app stuff live right alongside the Rust-specific smart contract stuff and that keeping it all in the root just makes things simpler.
@@ -41,26 +41,59 @@ git commit -m "Initialize Astro project"
 
 ## Generate an NPM package for the Hello World contract
 
-Before we even open the new frontend files, let's generate an NPM package for the Hello World contract. This is our suggested way to interact with contracts from frontends. These generated libraries work with any JavaScript project (not a specific UI like React), and make it easy to work with some of the trickiest bits of Soroban, like encoding XDR.
+Before we even open the new frontend files, let's generate an NPM package for the Hello World contract. This is our suggested way to interact with contracts from frontends. These generated libraries work with any JavaScript project (not a specific UI like React), and make it easy to work with some of the trickiest bits of Soroban, like encoding [XDR](https://soroban.stellar.org/docs/fundamentals-and-concepts/fully-typed-contracts).
 
-```bash
-soroban contract bindings typescript \
-  --wasm target/wasm32-unknown-unknown/release/hello_soroban.wasm \
-  --network futurenet \
-  --contract-id $(cat .soroban/hello-id) \
-  --contract-name hello-soroban \
-  --output-dir hello-soroban-client
+This is going to use the CLI command `soroban contract bindings typescript`. Unfortunately, the version of `bindings typescript` packaged with CLI v0.9.4 has some bugs, and the fix can't be released yet because the `main` branch of the CLI is broken with futurenet. To work around this, we're going to install a pinned version of the CLI from a fixed-and-still-futurenet-compatible fork. Create a directory called `.cargo` (with the dot; it's a hidden folder):
+
+    mkdir .cargo
+
+Then add one file to it, `config.toml`. Paste these contents into it:
+
+```toml
+[alias] # command aliases
+install_soroban = "install --git https://github.com/AhaLabs/soroban-tools --branch smartdeploy --root ./target soroban-cli --debug"
 ```
 
-:::tip Why --wasm?
-You may have noticed that we gave Soroban everything it needed to create this library _twice_. Given the network info and contract ID, it can already fetch the Wasm. But we also gave it the path to the Wasm file. Why?
+Now install the pinned version by using the alias you just set up:
 
-This is a temporary limitation of Soroban CLI. In an upcoming version, you will be able to omit the `--wasm` option if using a contract from the network.
+    cargo install_soroban
 
-So why not _only_ provide `--wasm`, and leave off the network stuff? Because `contract bindings typescript` makes use of the network settings within the generated library code, to make it easy to interact with that specific deployed contract.
+This will take a couple minutes; it builds a local version from the `smartdeploy` branch into `target/bin/soroban`. Once it's done, check that it worked:
 
-Today, since you need both, how do you work with someone else's contract? You could first use `soroban contract fetch` to save that contract's Wasm to a local file, then use a command like the one above. Learn more with `soroban contract fetch --help`.
-:::
+```bash
+ls target/bin/soroban
+```
+
+And check the version info of this `smartdeploy` install:
+
+```bash
+./target/bin/soroban --version
+```
+
+If you want, you can add `./target/bin/` [to your PATH](https://unix.stackexchange.com/questions/26047/how-to-correctly-add-a-path-to-path), so that anytime you're in a project with a locally-installed version of `soroban` in its `target/bin` directory, you'll automatically use it (rather than your global version) when you just type `soroban`. For this project, let's also add a `soroban` script in the root of the project that automatically installs the pinned version if it's not there, then uses it. This will make it easier for your collaborators to work with you. Create a file called just `soroban` and paste the following contents:
+
+```bash
+#!/bin/bash
+if [ ! -f ./target/bin/soroban ]; then
+  cargo install_soroban
+fi
+./target/bin/soroban "$@" # `$@` expands to all arguments passed to this script
+```
+
+Make sure it's executable:
+
+```bash
+chmod +x soroban
+```
+
+Ok, now you can finally generate that NPM package:
+
+```bash
+./soroban contract bindings typescript \
+  --network futurenet \
+  --contract-id $(cat .soroban/hello-id) \
+  --output-dir hello-soroban-client
+```
 
 We attempt to keep the code in these generated libraries readable, so go ahead and look around. Open up the new `hello-soroban-client` directory in your editor. If you've built or contributed to Node projects, it will all look familiar. You'll see a `package.json` file, a `src` directory, a `tsconfig.json`, and even a README. The README is a great place to start. Go ahead and give it a read.
 
@@ -77,7 +110,7 @@ And then let's update the `package.json` in your `soroban-tutorial` project with
     ...
 -   "astro": "astro"
 +   "astro": "astro",
-+   "postinstall": "soroban contract bindings typescript --wasm target/wasm32-unknown-unknown/release/hello_soroban.wasm --network futurenet --contract-id $(cat .soroban/hello-id) --contract-name hello-soroban --output-dir node_modules/hello-soroban-client"
++   "postinstall": "./soroban contract bindings typescript --network futurenet --contract-id $(cat .soroban/hello-id) --output-dir node_modules/hello-soroban-client"
   }
 ```
 
@@ -89,9 +122,14 @@ Now let's open up `src/pages/index.astro` and add some code to call the contract
  ---
  import Layout from '../layouts/Layout.astro';
  import Card from '../components/Card.astro';
-+import { hello } from 'hello-soroban-client';
++import { Contract, networks } from 'hello-soroban-client';
 +
-+const greeting = await hello({ to: 'Soroban' });
++const greeter = new Contract({
++  ...networks.futurenet,
++  rpcUrl: 'https://rpc-futurenet.stellar.org', // from https://soroban.stellar.org/docs/reference/rpc#public-rpc-providers
++});
++
++const greeting = await greeter.hello({ to: 'Soroban' });
  ---
 ```
 
@@ -165,12 +203,18 @@ npm run postinstall
 Now let's add a new component to the `src/components` directory called `ConnectFreighter.astro` with the following contents:
 
 ```html
-<div id="freighter-wrap" aria-live="polite">
-  <button data-connect aria-controls="freighter-wrap">Connect</button>
+<div id="freighter-wrap" class="wrap" aria-live="polite">
+  <div class="ellipsis">
+    <button data-connect aria-controls="freighter-wrap">Connect</button>
+  </div>
 </div>
 
 <style>
-  div {
+  .wrap {
+    text-align: center;
+  }
+
+  .ellipsis {
     line-height: 2.7rem;
     margin: auto;
     max-width: 12rem;
@@ -185,10 +229,23 @@ Now let's add a new component to the `src/components` directory called `ConnectF
   import { isAllowed, setAllowed, getUserInfo } from '@stellar/freighter-api';
 
   const wrap = document.querySelector('#freighter-wrap');
+  const ellipsis = document.querySelector('#freighter-wrap .ellipsis');
   const button = document.querySelector('[data-connect]');
 
+  async function getPk() {
+    const { publicKey } = await getUserInfo();
+    return publicKey;
+  }
+
+  async function setLoggedIn() {
+    const publicKey = await getPk();
+    ellipsis.innerHTML = `Signed in as ${publicKey}`;
+    ellipsis.title = publicKey;
+  }
+
   if (await isAllowed()) {
-    await setLoggedIn();
+    if (await getPk()) setLoggedIn();
+    else wrap.innerHTML = 'Freighter is locked.<br>Sign in & refresh the page.';
   } else {
     button.addEventListener('click', async () => {
       button.disabled = true;
@@ -196,24 +253,18 @@ Now let's add a new component to the `src/components` directory called `ConnectF
       await setLoggedIn();
     });
   }
-
-  async function setLoggedIn() {
-    const { publicKey } = await getUserInfo();
-    wrap.innerHTML = `Signed in as ${publicKey}`;
-    wrap.title = publicKey;
-  }
 </script>
 ```
 
-Some of this may look surprising. `<style>` and `<script>` tags in the middle of the page? Styles on a bare `div`? `import` statements in a `<script>`? Top-level `await`? What's going on here?
+Some of this may look surprising. `<style>` and `<script>` tags in the middle of the page? Uncreative class names like `wrap`? `import` statements in a `<script>`? Top-level `await`? What's going on here?
 
-Astro automatically scopes the styles within a component to that component, so there's no reason for us to come up with a clever name for the `class` of this `div`.
+Astro automatically scopes the styles within a component to that component, so there's no reason for us to come up with a clever names for our classes.
 
 And all the `script` declarations get bundled together and included intelligently in the page. Even if you use the same component multiple times, the script will only be included once. And yes, you can use top-level `await`.
 
 You can read more about this in [Astro's page about client-side scripts](https://docs.astro.build/en/guides/client-side-scripts/).
 
-The code itself here is pretty self-explanatory. We import a few methods from `@stellar/freighter-api` to check if the user is logged in. If they already are, then `isAllowed` returns `true`, and we replace the contents of the `div` with the signed-in message, replacing the button. If not, we add a click handler to the button to prompt the user to connect Freighter with `setAllowed`. Once they do, we again replace the contents of the `div` with the signed-in message. The [`aria` stuff](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Live_Regions) ensures that screen readers will read the new contents when they're updated.
+The code itself here is pretty self-explanatory. We import a few methods from `@stellar/freighter-api` to check if the user is logged in. If they already are, then `isAllowed` returns `true`. If it's been more than a day since they've used the Freighter extension, then the `publicKey` will be blank, so we tell them to unlock Freighter and refresh the page. If `isAllowed` and the `publicKey` both look good, we replace the contents of the `div` with the signed-in message, replacing the button. Otherwise, we add a click handler to the button to prompt the user to connect Freighter with `setAllowed`. Once they do, we again replace the contents of the `div` with the signed-in message. The [`aria` stuff](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Live_Regions) ensures that screen readers will read the new contents when they're updated.
 
 Before we add this to our index page, let's make the buttons look better. Open `layouts/Layout.astro` and look for the `<style>` tag. You'll see this one has an `is:global` attribute, which tells Astro to treat it as normal CSS, rather than scoping it to only the current component. That's exactly what we want for buttons. Paste these styles in there:
 
@@ -256,7 +307,7 @@ Now we can import the component in the frontmatter of `pages/index.astro`:
  import Layout from '../layouts/Layout.astro';
  import Card from '../components/Card.astro';
 +import ConnectFreighter from '../components/ConnectFreighter.astro';
- import { hello } from 'hello-soroban-client';
+ import { Contract, networks } from 'hello-soroban-client';
  ...
 ```
 
@@ -279,10 +330,12 @@ Now you're ready to sign the call to `increment`!
 
 ### Call `increment`
 
-We're going to a contract client for the incrementor contract with a similar command to the one we used before. Let's add it directly to the `postinstall` script, using a double ampersand ([&&](https://stackoverflow.com/a/25669618/249801)) to run both `bindings typescript` commands in a row:
+We're going to a contract client for the incrementor contract with a similar command to the one we used before. Let's move the `hello` bindings generation to its own script, add this one, and call them both from `postinstall` using a double ampersand ([&&](https://stackoverflow.com/a/25669618/249801)):
 
 ```json
-"postinstall": "soroban contract bindings typescript --wasm target/wasm32-unknown-unknown/release/hello_soroban.wasm --network futurenet --contract-id $(cat .soroban/hello-id) --contract-name hello-soroban --output-dir node_modules/hello-soroban-client && soroban contract bindings typescript --wasm target/wasm32-unknown-unknown/release/incrementor.wasm --network futurenet --contract-id $(cat .soroban/incrementor-id) --contract-name incrementor --output-dir node_modules/incrementor-client"
+"bindings:hello": "./soroban contract bindings typescript --network futurenet --contract-id $(cat .soroban/hello-id) --output-dir node_modules/hello-soroban-client",
+"bindings:incrementor": "./soroban contract bindings typescript --network futurenet --contract-id $(cat .soroban/incrementor-id) --output-dir node_modules/incrementor-client",
+"postinstall": "npm run bindings:hello && npm run bindings:incrementor"
 ```
 
 Now reinstall dependencies to also run `postinstall`:
@@ -391,7 +444,7 @@ Before you try to update it, let's streamline the process around building, deplo
 
 Right now, the `postinstall` script assumes that you already have a `.soroban` directory with contract IDs inside. When other collaborators try to help you out, this will be frustrating. You can harness the `scripts` section in the `package.json` to make this project easier to work with. This will also make it easier for you to make changes to the contracts and then work with those changes in the frontend.
 
-First, let's add a `clean` script that removes the `.soroban` directory to make it easy to go back to how collaborators will experience this repository when they first clone it. We'll also remove the `node_modules/.vite` directory, which is where Astro caches its build artifacts ([Vite](https://vitejs.dev/) is a build tool [used by Astro](https://docs.astro.build/en/reference/configuration-reference/#vite). Add the following to the `scripts` section of `package.json`:
+First, let's add a `clean` script that removes the `.soroban` directory to make it easy to go back to how collaborators will experience this repository when they first clone it. We'll also remove the `node_modules/.vite` directory, which is where Astro caches its build artifacts ([Vite](https://vitejs.dev/) is a build tool [used by Astro](https://docs.astro.build/en/reference/configuration-reference/#vite)). Add the following to the `scripts` section of `package.json`:
 
 ```json
 "scripts": {
@@ -400,14 +453,18 @@ First, let's add a `clean` script that removes the `.soroban` directory to make 
 }
 ```
 
-Next, let's add a `setup` script that creates and funds the `alice` identity, then builds and deploys your contracts. This is a lot for a single NPM script; look for the `&&` to see where one command ends and the next begins. Add the following to the `scripts` section of `package.json`:
+Next, let's add a `setup` script that builds your contracts, then checks if the `.soroban` folder is present, and if not, creates and funds the `alice` identity and deploys your contracts. This is a lot for a single NPM script, so we've broken it into a few to make it a little more legible. Add the following to the `scripts` section of `package.json`:
 
 ```json
-"scripts": {
-  ...
-  "setup": "soroban contract build && soroban config identity generate alice && curl \"https://friendbot-futurenet.stellar.org/?addr=$(soroban config identity address alice)\" && soroban contract deploy --wasm target/wasm32-unknown-unknown/release/hello_soroban.wasm --source alice --network futurenet > .soroban/hello-id && soroban contract deploy --wasm target/wasm32-unknown-unknown/release/incrementor.wasm --source alice --network futurenet > .soroban/incrementor-id && npm install",
-  ...
-}
+  "scripts": {
+    ...
+   "create_deployer": "./soroban config identity generate alice && ./soroban config identity fund alice --network futurenet",
+   "deploy:hello": "./soroban contract deploy --wasm target/wasm32-unknown-unknown/release/hello_soroban.wasm --source alice --network futurenet > .soroban/hello-id",
+   "deploy:incrementor": "./soroban contract deploy --wasm target/wasm32-unknown-unknown/release/incrementor.wasm --source alice --network futurenet > .soroban/incrementor-id;",
+   "deploy": "npm run deploy:hello && npm run deploy:incrementor",
+   "setup": "./soroban contract build && if [ ! -d .soroban ]; then npm run create_deployer && npm run deploy; fi",
+    ...
+  }
 ```
 
 Finally, let's add a `reset` that calls both in order:
@@ -422,13 +479,21 @@ Finally, let's add a `reset` that calls both in order:
 
 Now anytime you make changes to your contracts, you can run `npm run reset` to build the new contracts, deploy them, and install dependencies. And, of course, installing dependencies will run `postinstall`, which will also regenerate the contract client libraries directly to the `node_modules` folder.
 
+You can also update the `postinstall` script to check for the existence of `.soroban` and automatically `npm run setup` if it's not found:
+
+```json
+  "postinstall": "if [ ! -d .soroban ]; then npm run setup; fi && npm run bindings:hello && npm run bindings:incrementor"
+"
+```
+
 ## Take it further
 
 If you want to take it a bit further and make sure you understand all the pieces here, try the following:
 
+- Make a `src/contracts` folder with a `greeter.ts` and an `incrementor.ts`. Move the `new Contract({ ... })` logic into those files. You may also want to extract the `rpcUrl` variable to a `src/contracts/utils.ts` file.
 - Add a `get_value` method to the `incrementor` contract, and use it to display the current value in the `Counter` component. (Remember to run `npm run reset` after you make changes to the contract!)
 - Add a "Decrement" button to the `Counter` component. This will again require a change to the `incrementor` contract, and another `npm run reset`.
-- [Deploy](https://docs.astro.build/en/guides/deploy/) your frontend. You can do this quickly and for free [with GitHub](https://docs.astro.build/en/guides/deploy/github/). If you get stuck installing soroban-cli and deploying contracts on GitHub, check out [how we did this](https://github.com/AhaLabs/soroban-tutorial-project/commit/6612964a813f650c8d85b8c73c4382d825a57d6d).
+- [Deploy](https://docs.astro.build/en/guides/deploy/) your frontend. You can do this quickly and for free [with GitHub](https://docs.astro.build/en/guides/deploy/github/). If you get stuck installing soroban-cli and deploying contracts on GitHub, check out [how we did this](https://github.com/AhaLabs/soroban-tutorial-project/commit/c1f4cfde1bbaf059507100767ee6b43d29b42914).
 - Rather than using NPM scripts for everything, try using a more elegant script runner such as [just](https://github.com/casey/just). The existing npm `scripts` can then call `just`, such as `"setup": "just setup"`.
 - Update the README to explain what this project is and how to use it to potential collaborators and employers 😉
 

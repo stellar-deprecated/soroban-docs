@@ -216,7 +216,7 @@ const GettingStarted = () => (
           index="4."
           title="Connect Freighter wallet"
           subtitle="Freighter is a browser extension that can sign Soroban transactions."
-          href="/docs/getting-started/connect-freighter-wallet"
+          href="/docs/reference/freighter"
         />
 
         <GettingStartedCard

@@ -138,9 +138,9 @@ helm install myrpc stellar/soroban-rpc \
 
 Set the `global.image.sorobanRpc.tag` to a tag from the [soroban rpc dockerhub repo](https://hub.docker.com/r/stellar/soroban-rpc) for the image version you want to run. Refer to [Soroban Releases](https://soroban.stellar.org/docs/reference/releases) to find the correct tag to use for the soroban release you are running.
 
-This example helm chart usage accepts all defaults currently defined on [values.yml](https://github.com/stellar/helm-charts/blob/main/charts/soroban-rpc/values.yaml) which defines network configuration specific to `futurenet`. If you want to use a different network config, you can download other network specific `values.yml` which have been published, for example, there is the [testnet-values.yml](https://github.com/stellar/helm-charts/blob/main/charts/soroban-rpc/testnet-values.yaml) for configuring deployment on `testnet`.
+This example helm chart usage accepts all defaults currently defined on [values.yaml](https://github.com/stellar/helm-charts/blob/main/charts/soroban-rpc/values.yaml) which defines network configuration specific to `futurenet`. If you want to use a different network config, you can download other network specific `values.yaml` which have been published, for example, there is the [testnet-values.yaml](https://github.com/stellar/helm-charts/blob/main/charts/soroban-rpc/testnet-values.yaml) for configuring deployment on `testnet`.
 
-Or you can download the [values.yml](https://github.com/stellar/helm-charts/blob/main/charts/soroban-rpc/values.yaml) and update settings under `sorobanRpc.sorobanRpcConfig` and `sorobanRpc.coreConfig` to align to the network you want. Then pass your local values.yml to `helm install`:
+Or you can download the [values.yaml](https://github.com/stellar/helm-charts/blob/main/charts/soroban-rpc/values.yaml) and update settings under `sorobanRpc.sorobanRpcConfig` and `sorobanRpc.coreConfig` to align to the network you want. Then pass your local values.yaml to `helm install`:
 
 <CodeExample>
 

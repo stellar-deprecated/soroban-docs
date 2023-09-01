@@ -199,15 +199,15 @@ sure `writeBytes` includes the key and entry size of every entry in the
 
 ## Examples
 
-We've done our best to build tooling around state expiration in the JavaScript SDK to make it easier to deal with, and this set of examples demonstrates how to leverage it.
+We've done our best to build tooling around state expiration in both the Soroban RPC server as well as the JavaScript SDK to make it easier to deal with, and this set of examples demonstrates how to leverage it.
 
 ### Overview
 
 Both restoring and bumping the expiration of ledger entries follows a multi-step process regardless of their nature (contract data, instances, etc.):
 
-1. First, **identify the ledger entries**. This usually means acquire them from a Soroban RPC server as part of your initial transaction simulation (see the [preflight docs](https://soroban.stellar.org/docs/fundamentals-and-concepts/interacting-with-contracts#preflight) and the [`simulateTransaction`](https://soroban.stellar.org/api/methods/simulateTransaction) method).
+1. First, **identify the ledger entries**. This usually means acquiring them from a Soroban RPC server as part of your initial transaction simulation (see the [preflight docs](https://soroban.stellar.org/docs/fundamentals-and-concepts/interacting-with-contracts#preflight) and the [`simulateTransaction`](https://soroban.stellar.org/api/methods/simulateTransaction) method).
 
-2. Then, **prepare your operation**. This means describing the ledger entries within the corresponding operation (i.e. `bumpFootprintOp` or `restoreFootprintOp`) and its ledger footprint (the `SorobanTransactionData` field), then simulating it to fill out fee and resource usage information.
+2. Then, **prepare your operation**. This means describing the ledger entries within the corresponding operation (i.e. `bumpFootprintOp` or `restoreFootprintOp`) and its ledger footprint (the `SorobanTransactionData` field), then simulating it to fill out fee and resource usage information (when restoring, you usually have simulation results already).
 
 3. Finally, **submit the transaction** and start again with what you were trying to do in the first place.
 
@@ -216,7 +216,7 @@ Each of the examples below will follow a structure like this. We'll work our way
 1. [a piece of persistent data in my contract expired](#example-my-data-expired)
 2. [my contract instance or the WASM expired](#example-my-contract-expired)
 
-Remember, though, that **any** combination of these scenarios can occur in reality.
+Remember, though, that any combination of these scenarios can occur in reality.
 
 ### Preparation
 
@@ -271,17 +271,23 @@ function sleep(ms: number) {
 }
 ```
 
-Remember: You should always handle errors gracefully! This is a fail hard and fail fast approach for the purposes of the examples.
+We'll use this helper below to submit transactions and report their status reliably.
+
+:::caution
+
+Remember: You should always handle errors gracefully! This is a fail hard and fail fast approach that should only be used in these examples.
+
+:::
 
 ### Example: My data expired!
 
-We'll start with the simplest, most-likely occurrence: my piece of persistent data expired off of the ledger because I haven't interacted with my contract in a while. How do I get it back?
+We'll start with the likeliest occurrence: my piece of persistent data expired off of the ledger because I haven't interacted with my contract in a while. How do I get it back?
 
-We'll assume that you don't know how that piece of data is represented on the ledger. If you know it, you can skip the steps where we figure that out:
+Assume two things: the contract itself is still alive (i.e. others have been bumping its expiration while you've been away) and you don't know how your expired data is represented on the ledger. If you did, you could skip the steps below where we figure that out and just set up the restoration footprint directly. The process involves three discrete steps:
 
-1. First, we simulate our transaction as we normally would.
-2. Then, we perform restoration via [`Operation.restoreFootprint`](https://stellar.github.io/js-soroban-client/Operation.html#.restoreFootprint) if the simulation told us that we need to.
-3. Finally, we can actually run our initial transaction.
+1. Simulate our transaction as we normally would.
+2. If the simulation indicated it, we perform restoration via [`Operation.restoreFootprint`](https://stellar.github.io/js-soroban-client/Operation.html#.restoreFootprint) using its hints.
+3. We retry what running our initial transaction.
 
 Let's see that in code:
 
@@ -292,8 +298,9 @@ import {
   Keypair,
   TransactionBuilder,
   SorobanDataBuilder,
+  assembleTransaction,
   xdr,
-} from "soroban-client";
+} from "soroban-client"; // add'l imports to preamble
 
 // assume that `s` is the Server() instance from the preamble
 
@@ -302,11 +309,13 @@ function submitOrRestoreAndRetry(
   tx: Transaction,
 ): Promise<SorobanRpc.GetTransactionResponse> {
   const sim = await s.simulateTransaction(tx);
+
+  // Other failures are out of scope of this tutorial.
   if (!SorobanRpc.isSimulationSuccess(resp)) {
     throw resp;
   }
 
-  // If simulation didn't fail, we don't need to restore anything!
+  // If simulation didn't fail, we don't need to restore anything! Just send it.
   if (!resp.restorePreamble) {
     const prepTx = assembleTransaction(tx, Networks.FUTURENET, sim);
     prepTx.sign(signer);
@@ -323,7 +332,7 @@ function submitOrRestoreAndRetry(
   const restoreTx = new TransactionBuilder(account, { fee: fee.toString() })
     .setNetworkPassphrase(Networks.FUTURENET),
     .setSorobanData(resp.restorePreamble.transactionData.build())
-    .addOperation(Operation.restoreFootprint({}))
+    .addOperation(Operation.restoreFootprint())
     .build();
 
   restoreTx.sign(signer);
@@ -338,13 +347,14 @@ function submitOrRestoreAndRetry(
   // the initial data from the simulation (which, hopefully, is still
   // up-to-date)
   //
-  const retryTxBuilder = TransactionBuilder.cloneFrom(tx).setSorobanData(
-    sim.transactionData,
-  );
-
-  // note that because we consumed a sequence number when restoring,
-  // we need to make sure we set the correct value on this copy
+  const retryTxBuilder = TransactionBuilder.cloneFrom(tx, {
+    fee: (parseInt(tx.fee) + parseInt(sim.minResourceFee)).toString(),
+    sorobanData: sim.transactionData
+  });
+  // because we consumed a sequence number when restoring, we need to make sure
+  // we set the correct value on this copy
   retryTxBuilder.source.incrementSequenceNumber();
+
   const retryTx = retryTxBuilder.build();
   retryTx.sign(signer);
 
@@ -352,11 +362,13 @@ function submitOrRestoreAndRetry(
 }
 ```
 
-Notice something in the above code: When restoration is required, **simulation still succeeds**. The way that we know that something needs to be restored is the presence of a `restorePreamble` in the RPC's response. This structure contains both the resource/footprint data and fee needed for restoration, and the rest of the response contains the simulation result **as if** that restoration was done first. This means fewer round-trips to get going again!
+Notice that when restoration is required, **simulation still succeeds**. The way that we know that something needs to be restored is the presence of a `restorePreamble` structure in the RPC's response. This contains both the footprint and fee needed for restoration, while the rest of the response contains the invocation simulation **as if** that restoration was done first.
+
+This is great, as it means fewer round-trips to get going again!
 
 ### Example: My contract expired!
 
-As you can imagine, if the ledger cannot find your deployed contract instance or the code that backs it, it can't load it to execute your invocations Remember, there's a distinct, one-to-many relationship on the chain between a contract's code and deployed instances of that contract:
+As you can imagine, if the ledger cannot find your deployed contract instance or the code that backs it, it can't load it to execute your invocations. Remember, there's a distinct, one-to-many relationship on the chain between a contract's code and deployed instances of that contract:
 
     +----------------+
     |                |

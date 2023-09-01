@@ -285,13 +285,13 @@ Remember: You should always handle errors gracefully! This is a fail hard and fa
 
 We'll start with the simplest, most-likely occurrence: my piece of persistent data expired off of the ledger because I haven't interacted with my contract in a while. How do I get it back?
 
-We'll assume that you don't know how that piece of data is represented on the ledger. If you know it, you can skip the steps where we figure that out. For now, this process is quite arduous (all the more reason to keep your data fresh and live!):
+We'll assume that you don't know how that piece of data is represented on the ledger. If you know it, you can skip the steps where we figure that out:
 
-1. First, we identify ledger entries that need to be restored.
-2. Second, we simulate a transaction with `restoreFootprintOp` to get fee info.
-3. Third, we actually run said transaction, ensuring those ledger entries are present in the `readWrite` footprint of the transaction (per [`RestoreFootprintOp`]).
+1. First, we simulate our transaction as we normally would.
+2. Then, we perform restoration via [`Operation.restoreFootprint`](https://stellar.github.io/js-soroban-client/Operation.html#.restoreFootprint) if the simulation told us that we need to.
+3. Finally, we can actually run our initial transaction.
 
-After that, we can (simulate and) run our initial transaction again. Let's see that in code:
+Let's see that in code:
 
 ```typescript
 import {
@@ -309,59 +309,54 @@ function submitOrRestoreAndRetry(
   signer: Keypair,
   tx: Transaction,
 ): Promise<SorobanRpc.GetTransactionResponse> {
-  return s
-    .simulateTransaction(tx)
-    .then((sim: SorobanRpc.SimulateTransactionResponse) => {
-      if (SorobanRpc.isSimulationError(resp)) {
-        throw resp;
-      }
+  const sim = await s.simulateTransaction(tx);
+  if (!SorobanRpc.isSimulationSuccess(resp)) {
+    throw resp;
+  }
 
-      // If simulation didn't fail, we don't need to restore anything!
-      if (SorobanRpc.isSimulationSuccess(resp) && !resp.restorePreamble) {
-        const prepTx = assembleTransaction(tx, Networks.FUTURENET, sim);
-        prepTx.sign(signer);
-        return yeetTx(prepTx);
-      }
+  // If simulation didn't fail, we don't need to restore anything!
+  if (!resp.restorePreamble) {
+    const prepTx = assembleTransaction(tx, Networks.FUTURENET, sim);
+    prepTx.sign(signer);
+    return yeetTx(prepTx);
+  }
 
-      //
-      // Build the restoration operation using the RPC server's hints.
-      //
-      return s.getAccount(signer.publicKey()).then((account) => {
-        const restoreFee = parseInt(BASE_FEE);
-        restoreFee += parseInt(resp.restorePreamble.minResourceFee);
+  //
+  // Build the restoration operation using the RPC server's hints.
+  //
+  const account = await s.getAccount(signer.publicKey())
+  const fee = parseInt(BASE_FEE);
+  fee += parseInt(resp.restorePreamble.minResourceFee);
 
-        const restoreTx = new TransactionBuilder(account, {
-          fee: restoreFee.toString(),
-          networkPassphrase: Networks.FUTURENET,
-          sorobanData: resp.restorePreamble.transactionData.build(),
-        })
-          .addOperation(Operation.restoreFootprint({}))
-          .build();
+  const restoreTx = new TransactionBuilder(account, { fee: fee.toString() })
+    .setNetworkPassphrase(Networks.FUTURENET),
+    .setSorobanData(resp.restorePreamble.transactionData.build())
+    .addOperation(Operation.restoreFootprint({}))
+    .build();
 
-        restoreTx.sign(signer);
-        return yeetTx(restoreTx);
-      });
-    })
-    .then((resp: SorobanRpc.GetTransactionResponse) => {
-      if (resp.status !== GetTransactionStatus.SUCCESS) {
-        throw resp;
-      }
+  restoreTx.sign(signer);
 
-      //
-      // now that we've restored the necessary data, we can retry our tx
-      //
-      const retryTxBuilder = TransactionBuilder.cloneFrom(tx).setSorobanData(
-        sim.transactionData,
-      );
+  const resp = await yeetTx(restoreTx);
+  if (resp.status !== GetTransactionStatus.SUCCESS) {
+    throw resp;
+  }
 
-      // note that because we consumed a sequence number when restoring,
-      // we need to make sure we set the correct value on this copy
-      retryTxBuilder.source.incrementSequenceNumber();
-      const retryTx = retryTxBuilder.build();
-      retryTx.sign(signer);
+  //
+  // now that we've restored the necessary data, we can retry our tx using
+  // the initial data from the simulation (which, hopefully, is still
+  // up-to-date)
+  //
+  const retryTxBuilder = TransactionBuilder.cloneFrom(tx).setSorobanData(
+    sim.transactionData,
+  );
 
-      return yeetTx(retryTx);
-    });
+  // note that because we consumed a sequence number when restoring,
+  // we need to make sure we set the correct value on this copy
+  retryTxBuilder.source.incrementSequenceNumber();
+  const retryTx = retryTxBuilder.build();
+  retryTx.sign(signer);
+
+  return yeetTx(retryTx);
 }
 ```
 
@@ -394,6 +389,7 @@ import {
   Keypair,
   Networks,
   TransactionBuilder,
+  SorobanDataBuilder,
   Operation,
   SorobanRpc,
 } from "soroban-client";
@@ -405,12 +401,12 @@ function restoreContract(
   return s
     .getAccount(signer.publicKey())
     .then((account) => {
-      const restoreTx = new TransactionBuilder(account, {
-        fee: BASE_FEE,
-        networkPassphrase: Networks.FUTURENET,
-        sorobanData: resp.restorePreamble.transactionData.build(),
-      })
-        .addOperation(Operation.restoreFootprint({}))
+      const restoreTx = new TransactionBuilder(account, { fee: BASE_FEE })
+        .setNetworkPassphrase(Networks.FUTURENET)
+        .setSorobanData(
+          new SorobanDataBuilder().setReadOnly(c.getFootprint()).build()
+        )
+        .addOperation(Operation.restoreFootprint())
         .build();
 
       return s.prepareTransaction(restoreTx, Networks.FUTURENET);
@@ -421,6 +417,8 @@ function restoreContract(
     });
 }
 ```
+
+The nice part about this approach is that it will restore both the instance and the backing WASM code if necessary, and do nothing for entries that don't need restoration. You will still pay fees for the no-op restoration, but these should be minor. You could, of course, be a little more careful and figure out which ones _actually_ need to be restored (much like in the data case, above), but we won't cover that here.
 
 [`RestoreFootprintOp`]: #RestoreFootprintOp
 [`BumpFootprintExpirationOp`]: #BumpFootprintExpirationOp

@@ -231,6 +231,7 @@ import {
 const RPC_SERVER = "https://rpc-futurenet.stellar.org/";
 const s = new Server(RPC_SERVER);
 
+// Submits a tx and then polls for its status until a timeout is reached.
 async function yeetTx(
   tx: Transaction | FeeBumpTransaction,
 ): Promise<SorobanRpc.GetTransactionResponse> {
@@ -277,7 +278,7 @@ We'll start with the simplest, most-likely occurrence: my piece of persistent da
 We'll assume that you don't know how that piece of data is represented on the ledger. If you know it, you can skip the steps where we figure that out. For now, this process is quite arduous (all the more reason to keep your data fresh and live!):
 
 1. First, we identify ledger entries that need to be restored.
-2. Second, we simulate a transaction with `restoreFootprintOp` to get fee info
+2. Second, we simulate a transaction with `restoreFootprintOp` to get fee info.
 3. Third, we actually run said transaction, ensuring those ledger entries are present in the `readWrite` footprint of the transaction (per [`RestoreFootprintOp`]).
 
 After that, we can (simulate and) run our initial transaction again. Let's see that in code:
@@ -300,37 +301,48 @@ function submitOrRestoreAndRetry(
 ): Promise<SorobanRpc.GetTransactionResponse> {
   return s
     .simulateTransaction(tx)
-    .then((sim: SorobanRpc.GetTransactionResponse) => {
-      if (resp.status !== "FAILED") {
+    .then((sim: SorobanRpc.SimulateTransactionResponse) => {
+      if (SorobanRpc.isSimulationError(resp)) {
+        throw resp;
+      }
+
+      // If simulation didn't fail, we don't need to restore anything!
+      if (SorobanRpc.isSimulationSuccess(resp) && !resp.restorePreamble) {
         const prepTx = assembleTransaction(tx, Networks.FUTURENET, sim);
         prepTx.sign(signer);
         return yeetTx(prepTx);
       }
 
       //
-      // This is our best-effort guess that failures are due to expired entries
+      // Build the restoration operation using the RPC server's hints.
       //
-      if (!resp.error.includes("Error(Storage, MissingValue)")) {
+      return s.getAccount(signer.publicKey()).then((account) => {
+        const restoreFee = parseInt(BASE_FEE);
+        restoreFee += parseInt(resp.restorePreamble.minResourceFee);
+
+        const restoreTx = new TransactionBuilder(account, {
+          fee: restoreFee.toString(),
+          networkPassphrase: Networks.FUTURENET,
+          sorobanData: resp.restorePreamble.transactionData.build(),
+        })
+          .addOperation(Operation.restoreFootprint({}))
+          .build();
+
+        restoreTx.sign(signer);
+        return yeetTx(restoreTx);
+      });
+    })
+    .then((resp: SorobanRpc.GetTransactionResponse) => {
+      if (resp.status !== GetTransactionStatus.SUCCESS) {
         throw resp;
       }
 
-      // extract the keys we used in our failed transaction
-      const data = readSorobanData(sim.transactionData);
-      const storageUsage = data.resources().footprint();
-
-      //
-      // Notice, we're blindly restoring all keys.
-      //
-      const ledgerKeys = storageUsage
-        .readOnly()
-        .concat(storageUsage.readWrite());
-      return yeetRestoreTx(signer, ledgerKeys);
-    })
-    .then((resp: SorobanRpc.GetTransactionResponse) => {
       //
       // now that we've restored the necessary data, we can retry our tx
       //
-      const retryTxBuilder = TransactionBuilder.cloneFrom(tx);
+      const retryTxBuilder = TransactionBuilder.cloneFrom(tx).setSorobanData(
+        sim.transactionData,
+      );
 
       // note that because we consumed a sequence number when restoring,
       // we need to make sure we set the correct value on this copy
@@ -341,70 +353,9 @@ function submitOrRestoreAndRetry(
       return yeetTx(retryTx);
     });
 }
-
-function yeetRestoreTx(
-  signer: Keypair,
-  ...ledgerKeys: xdr.LedgerKey[]
-): Promise<SorobanRpc.GetTransactionResponse> {
-  return s
-    .getAccount(signer.publicKey())
-    .then(async (account) => {
-      const tx = new TransactionBuilder(account, {
-        fee: BASE_FEE,
-        networkPassphrase: Networks.FUTURENET,
-        sorobanData: new SorobanDataBuilder().setReadWrite(ledgerKeys).build(),
-      })
-        .addOperation(Operation.restoreFootprint({}))
-        .setTimeout(15)
-        .build();
-
-      return {
-        tx,
-        simData: await s.simulateTransaction(tx, tx.networkPassphrase),
-      };
-    })
-    .then(({ tx, simData }) => {
-      //
-      // use the fee data but overwrite the storage usage to ensure we ONLY
-      // keep our keys in the read-write section
-      //
-      const preppedTx = TransactionBuilder.cloneFrom(tx, {
-        sorobanData: new SorobanDataBuilder(simData.transactionData)
-          .setFootprint([], ledgerKeys)
-          .build(),
-      }).build();
-
-      return yeetTx(preppedTx);
-    });
-}
 ```
 
-Notice some quirks in the above code:
-
-- If simulation fails, we rely on a specific error string as a _hint_ (not a guarantee) that we may be trying to use expired entries.
-- Even with that error, we don't know _which_ entries are the expired ones, so we will blindly try restoring all of them (by taking the union of the read-only and read-write keys).
-
-Both of these oddities should go away in future iterations of the Soroban platform and RPC server schema. We _could_ find out which specific ones expired by calling [`getLedgerEntries()`](https://soroban.stellar.org/api/methods/getLedgerEntries), then parsing each resulting entry to find its `expirationLedgerSeq`, but this is an extra round-trip:
-
-```typescript
-const expiredLedgerKeys = await s
-  .getLedgerKeys(ledgerKeys)
-  .then((resp: SorobanRpc.GetLedgerEntriesResponse) =>
-    ledgerKeys.filter((ledgerKey, idx) => {
-      const entry = xdr.LedgerEntryData.fromXDR(
-        resp.entries[idx].xdr,
-        "base64",
-      );
-
-      return (
-        entry.switch() === xdr.LedgerEntryType.contractData() &&
-        entry.contractData().expirationLedgerSeq() <= resp.latestLedger
-      );
-    }),
-  );
-```
-
-Pick your poison: higher fees due to more storage access, or higher latency due to an extra roundtrip.
+Notice something in the above code: When restoration is required, **simulation still succeeds**. The way that we know that something needs to be restored is the presence of a `restorePreamble` in the RPC's response. This structure contains both the resource/footprint data and fee needed for restoration, and the rest of the response contains the simulation result **as if** that restoration was done first. This means fewer round-trips to get going again!
 
 ### Example: My contract expired!
 
@@ -424,16 +375,40 @@ As you can imagine, if the ledger cannot find your deployed contract instance or
 
 We need **both** to stay on the ledger for our contract calls to work.
 
-Let's work through how these can be recovered. They are slightly different for a convenient reason: we don't need simulation to figure out the footprints, though you still can do it that way. Instead, we can leverage [`Contract.getFootprint()`](https://stellar.github.io/js-soroban-client/Contract.html#getFootprint), which prepares a footprint:
+Let's work through how these can be recovered. They are slightly different for a convenient reason: we don't need simulation to figure out the _footprints_ (though you still can do it that way). Instead, we can leverage [`Contract.getFootprint()`](https://stellar.github.io/js-soroban-client/Contract.html#getFootprint), which prepares a footprint related to the ledger keys used specifically by a given contract instance. Unfortunately, we still need simulation to figure out the _fees_:
 
 ```typescript
-import { Contract, Keypair } from "soroban-client";
+import {
+  BASE_FEE,
+  Contract,
+  Keypair,
+  Networks,
+  TransactionBuilder,
+  Operation,
+  SorobanRpc,
+} from "soroban-client";
 
 function restoreContract(
   signer: Keypair,
   c: Contract,
 ): Promise<SorobanRpc.GetTransactionResponse> {
-  return yeetRestoreTx(signer, c.getFootprint());
+  return s
+    .getAccount(signer.publicKey())
+    .then((account) => {
+      const restoreTx = new TransactionBuilder(account, {
+        fee: BASE_FEE,
+        networkPassphrase: Networks.FUTURENET,
+        sorobanData: resp.restorePreamble.transactionData.build(),
+      })
+        .addOperation(Operation.restoreFootprint({}))
+        .build();
+
+      return s.prepareTransaction(restoreTx, Networks.FUTURENET);
+    })
+    .then((prepTx) => {
+      prepTx.sign(signer);
+      return yeetTx(prepTx);
+    });
 }
 ```
 

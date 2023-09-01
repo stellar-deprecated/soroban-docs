@@ -154,8 +154,7 @@ only operation in a transaction. The transaction also needs to populate
 [here](../fundamentals-and-concepts/invoking-contracts-with-transactions.mdx#transaction-resources). To fill
 out `SorobanResources`, use preflight mentioned in the provided link, or make
 sure `readBytes` includes the key and entry size of every entry in the
-`readOnly` set and make sure `extendedMetaDataSizeBytes` is at least double of
-`readBytes`.
+`readOnly` set.
 
 ### RestoreFootprintOp
 
@@ -281,6 +280,8 @@ Remember: You should always handle errors gracefully! This is a fail hard and fa
 
 In the following code, we will also leverage [`Server.prepareTransaction`](https://stellar.github.io/js-soroban-client/Server.html#prepareTransaction). This is a helpful method that, given a transaction, will simulate it, then amend the transaction with the simulation results (fees, etc.) and return that. Then, it can just be signed and submitted.
 
+We will also leverage the [`SorobanDataBuilder`](https://stellar.github.io/js-soroban-client/SorobanDataBuilder.html) which is a convenient abstraction that lets us use a [builder pattern](https://en.wikipedia.org/wiki/Builder_pattern) to set the appropriate storage footprints for a transaction.
+
 ### Example: My data expired!
 
 We'll start with the likeliest occurrence: my piece of persistent data expired off of the ledger because I haven't interacted with my contract in a while. How do I get it back?
@@ -304,13 +305,15 @@ import {
   xdr,
 } from "soroban-client"; // add'l imports to preamble
 
-// assume that `s` is the Server() instance from the preamble
+// assume that `server` is the Server() instance from the preamble
 
 async function submitOrRestoreAndRetry(
   signer: Keypair,
   tx: Transaction,
 ): Promise<SorobanRpc.GetTransactionResponse> {
-  const sim = await s.simulateTransaction(tx);
+  // We can't use `Server.prepareTransaction` here because we want to do
+  // restoration if necessary, basically assembling the simulation ourselves.
+  const sim = await server.simulateTransaction(tx);
 
   // Other failures are out of scope of this tutorial.
   if (!SorobanRpc.isSimulationSuccess(sim)) {
@@ -379,7 +382,9 @@ flowchart LR
 
 We need **both** to stay on the ledger for our contract calls to work.
 
-Let's work through how these can be recovered. They are slightly different for a convenient reason: we don't need simulation to figure out the _footprints_ (though you still can do it that way). Instead, we can leverage [`Contract.getFootprint()`](https://stellar.github.io/js-soroban-client/Contract.html#getFootprint), which prepares a footprint related to the ledger keys used specifically by a given contract instance. Unfortunately, we still need simulation to figure out the _fees_:
+Let's work through how these can be recovered. The recovery process is slightly different for a convenient reason: we don't need simulation to figure out the footprints. Instead, we can leverage [`Contract.getFootprint()`](https://stellar.github.io/js-soroban-client/Contract.html#getFootprint), which prepares a footprint with the ledger keys used by a given contract instance (including its backing WASM code).
+
+Unfortunately, we still need simulation to figure out the _fees_ for our restoration. This, however, can be easily covered by the SDK's [`Server.prepareTransaction`](https://stellar.github.io/js-soroban-client/Server.html#prepareTransaction) helper, which will do simulation and assembly for us:
 
 ```typescript
 import {
@@ -401,7 +406,9 @@ async function restoreContract(
   const restoreTx = new TransactionBuilder(account, { fee: BASE_FEE })
     .setNetworkPassphrase(Networks.FUTURENET)
     .setSorobanData(
-      new SorobanDataBuilder().setReadOnly(c.getFootprint()).build(),
+      // Set the restoration footprint (remember, it should be in the
+      // read-write part!)
+      new SorobanDataBuilder().setReadWrite(c.getFootprint()).build(),
     )
     .addOperation(Operation.restoreFootprint({}))
     .build();
@@ -412,7 +419,7 @@ async function restoreContract(
 }
 ```
 
-The nice part about this approach is that it will restore both the instance and the backing WASM code if necessary, and do nothing for entries that don't need restoration. You will still pay fees for the no-op restoration, but these should be minor. You could, of course, be a little more careful and figure out which ones _actually_ need to be restored (much like in the data case, above), but we won't cover that here.
+The nice part about this approach is that it will restore both the instance and the backing WASM code if necessary, skipping either if they're already in the ledger state.
 
 [`RestoreFootprintOp`]: #RestoreFootprintOp
 [`BumpFootprintExpirationOp`]: #BumpFootprintExpirationOp

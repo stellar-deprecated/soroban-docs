@@ -330,7 +330,7 @@ async function submitOrRestoreAndRetry(
   //
   // Build the restoration operation using the RPC server's hints.
   //
-  const account = await s.getAccount(signer.publicKey());
+  const account = await server.getAccount(signer.publicKey());
   let fee = parseInt(BASE_FEE);
   fee += parseInt(sim.restorePreamble.minResourceFee);
 
@@ -413,7 +413,10 @@ async function restoreContract(
     .addOperation(Operation.restoreFootprint({}))
     .build();
 
-  const preppedTx = await s.prepareTransaction(restoreTx, Networks.FUTURENET);
+  const preppedTx = await server.prepareTransaction(
+    restoreTx,
+    Networks.FUTURENET,
+  );
   preppedTx.sign(signer);
   return yeetTx(preppedTx);
 }

@@ -205,11 +205,11 @@ We've done our best to build tooling around state expiration in both the Soroban
 
 Both restoring and bumping the expiration of ledger entries follows a multi-step process regardless of their nature (contract data, instances, etc.):
 
-1. First, **identify the ledger entries**. This usually means acquiring them from a Soroban RPC server as part of your initial transaction simulation (see the [preflight docs](https://soroban.stellar.org/docs/fundamentals-and-concepts/interacting-with-contracts#preflight) and the [`simulateTransaction`](https://soroban.stellar.org/api/methods/simulateTransaction) method).
+1. **Identify the ledger entries**. This usually means acquiring them from a Soroban RPC server as part of your initial transaction simulation (see the [preflight docs](https://soroban.stellar.org/docs/fundamentals-and-concepts/interacting-with-contracts#preflight) and the [`simulateTransaction`](https://soroban.stellar.org/api/methods/simulateTransaction) method).
 
-2. Then, **prepare your operation**. This means describing the ledger entries within the corresponding operation (i.e. `bumpFootprintOp` or `restoreFootprintOp`) and its ledger footprint (the `SorobanTransactionData` field), then simulating it to fill out fee and resource usage information (when restoring, you usually have simulation results already).
+2. **Prepare your operation**. This means describing the ledger entries within the corresponding operation (i.e. `bumpFootprintOp` or `restoreFootprintOp`) and its ledger footprint (the `SorobanTransactionData` field), then simulating it to fill out fee and resource usage information (when restoring, you usually have simulation results already).
 
-3. Finally, **submit the transaction** and start again with what you were trying to do in the first place.
+3. **Submit the transaction** and start again with what you were trying to do in the first place.
 
 Each of the examples below will follow a structure like this. We'll work our way through two different scenarios:
 
@@ -231,13 +231,13 @@ import {
 } from "soroban-client";
 
 const RPC_SERVER = "https://rpc-futurenet.stellar.org/";
-const s = new Server(RPC_SERVER);
+const server = new Server(RPC_SERVER);
 
 // Submits a tx and then polls for its status until a timeout is reached.
 async function yeetTx(
   tx: Transaction | FeeBumpTransaction,
 ): Promise<SorobanRpc.GetTransactionResponse> {
-  return s.sendTransaction(tx).then(async (reply) => {
+  return server.sendTransaction(tx).then(async (reply) => {
     if (reply.status !== "PENDING") {
       throw reply;
     }
@@ -245,7 +245,7 @@ async function yeetTx(
     let status;
     let attempts = 0;
     while (attempts++ < 5) {
-      const tmpStatus = await s.getTransaction(reply.hash);
+      const tmpStatus = await server.getTransaction(reply.hash);
       switch (tmpStatus.status) {
         case "FAILED":
           throw tmpStatus;
@@ -279,15 +279,17 @@ Remember: You should always handle errors gracefully! This is a fail hard and fa
 
 :::
 
+In the following code, we will also leverage [`Server.prepareTransaction`](https://stellar.github.io/js-soroban-client/Server.html#prepareTransaction). This is a helpful method that, given a transaction, will simulate it, then amend the transaction with the simulation results (fees, etc.) and return that. Then, it can just be signed and submitted.
+
 ### Example: My data expired!
 
 We'll start with the likeliest occurrence: my piece of persistent data expired off of the ledger because I haven't interacted with my contract in a while. How do I get it back?
 
-Assume two things: the contract itself is still alive (i.e. others have been bumping its expiration while you've been away) and you don't know how your expired data is represented on the ledger. If you did, you could skip the steps below where we figure that out and just set up the restoration footprint directly. The process involves three discrete steps:
+In this example, we will assume two things: the contract itself is still alive (i.e. others have been bumping its expiration while you've been away) and you don't know how your expired data is represented on the ledger. If you did, you could skip the steps below where we figure that out and just set up the restoration footprint directly. The process involves three discrete steps:
 
 1. Simulate our transaction as we normally would.
 2. If the simulation indicated it, we perform restoration via [`Operation.restoreFootprint`](https://stellar.github.io/js-soroban-client/Operation.html#.restoreFootprint) using its hints.
-3. We retry what running our initial transaction.
+3. We retry running our initial transaction.
 
 Let's see that in code:
 
@@ -325,7 +327,7 @@ async function submitOrRestoreAndRetry(
   //
   // Build the restoration operation using the RPC server's hints.
   //
-  const account = await s.getAccount(signer.publicKey())
+  const account = await s.getAccount(signer.publicKey());
   let fee = parseInt(BASE_FEE);
   fee += parseInt(sim.restorePreamble.minResourceFee);
 
@@ -349,7 +351,7 @@ async function submitOrRestoreAndRetry(
   //
   const retryTxBuilder = TransactionBuilder.cloneFrom(tx, {
     fee: (parseInt(tx.fee) + parseInt(sim.minResourceFee)).toString(),
-    sorobanData: sim.transactionData.build()
+    sorobanData: sim.transactionData.build(),
   });
   // because we consumed a sequence number when restoring, we need to make sure
   // we set the correct value on this copy
@@ -370,17 +372,10 @@ This is great, as it means fewer round-trips to get going again!
 
 As you can imagine, if the ledger cannot find your deployed contract instance or the code that backs it, it can't load it to execute your invocations. Remember, there's a distinct, one-to-many relationship on the chain between a contract's code and deployed instances of that contract:
 
-    +----------------+
-    |                |
-    |   my instance  |-------------\
-    |                |              \           +---------------+
-    +----------------+               \          |               |
-                                      ------->  | contract WASM |
-    +----------------+               /          |               |
-    |                |              /           +---------------+
-    | your instance  |-------------/
-    |                |
-    +----------------+
+```mermaid
+flowchart LR
+    A[my instance] & B[your instance]--> C[contract WASM]
+```
 
 We need **both** to stay on the ledger for our contract calls to work.
 
@@ -398,27 +393,22 @@ import {
   SorobanRpc,
 } from "soroban-client";
 
-function restoreContract(
+async function restoreContract(
   signer: Keypair,
   c: Contract,
 ): Promise<SorobanRpc.GetTransactionResponse> {
-  return s
-    .getAccount(signer.publicKey())
-    .then((account) => {
-      const restoreTx = new TransactionBuilder(account, { fee: BASE_FEE })
-        .setNetworkPassphrase(Networks.FUTURENET)
-        .setSorobanData(
-          new SorobanDataBuilder().setReadOnly(c.getFootprint()).build(),
-        )
-        .addOperation(Operation.restoreFootprint({}))
-        .build();
+  const account = await server.getAccount(signer.publicKey());
+  const restoreTx = new TransactionBuilder(account, { fee: BASE_FEE })
+    .setNetworkPassphrase(Networks.FUTURENET)
+    .setSorobanData(
+      new SorobanDataBuilder().setReadOnly(c.getFootprint()).build(),
+    )
+    .addOperation(Operation.restoreFootprint({}))
+    .build();
 
-      return s.prepareTransaction(restoreTx, Networks.FUTURENET);
-    })
-    .then((prepTx) => {
-      prepTx.sign(signer);
-      return yeetTx(prepTx);
-    });
+  const preppedTx = await s.prepareTransaction(restoreTx, Networks.FUTURENET);
+  preppedTx.sign(signer);
+  return yeetTx(preppedTx);
 }
 ```
 

@@ -304,19 +304,19 @@ import {
 
 // assume that `s` is the Server() instance from the preamble
 
-function submitOrRestoreAndRetry(
+async function submitOrRestoreAndRetry(
   signer: Keypair,
   tx: Transaction,
 ): Promise<SorobanRpc.GetTransactionResponse> {
   const sim = await s.simulateTransaction(tx);
 
   // Other failures are out of scope of this tutorial.
-  if (!SorobanRpc.isSimulationSuccess(resp)) {
-    throw resp;
+  if (!SorobanRpc.isSimulationSuccess(sim)) {
+    throw sim;
   }
 
   // If simulation didn't fail, we don't need to restore anything! Just send it.
-  if (!resp.restorePreamble) {
+  if (!sim.restorePreamble) {
     const prepTx = assembleTransaction(tx, Networks.FUTURENET, sim);
     prepTx.sign(signer);
     return yeetTx(prepTx);
@@ -326,19 +326,19 @@ function submitOrRestoreAndRetry(
   // Build the restoration operation using the RPC server's hints.
   //
   const account = await s.getAccount(signer.publicKey())
-  const fee = parseInt(BASE_FEE);
-  fee += parseInt(resp.restorePreamble.minResourceFee);
+  let fee = parseInt(BASE_FEE);
+  fee += parseInt(sim.restorePreamble.minResourceFee);
 
   const restoreTx = new TransactionBuilder(account, { fee: fee.toString() })
-    .setNetworkPassphrase(Networks.FUTURENET),
-    .setSorobanData(resp.restorePreamble.transactionData.build())
-    .addOperation(Operation.restoreFootprint())
+    .setNetworkPassphrase(Networks.FUTURENET)
+    .setSorobanData(sim.restorePreamble.transactionData.build())
+    .addOperation(Operation.restoreFootprint({}))
     .build();
 
   restoreTx.sign(signer);
 
   const resp = await yeetTx(restoreTx);
-  if (resp.status !== GetTransactionStatus.SUCCESS) {
+  if (resp.status !== SorobanRpc.GetTransactionStatus.SUCCESS) {
     throw resp;
   }
 
@@ -349,7 +349,7 @@ function submitOrRestoreAndRetry(
   //
   const retryTxBuilder = TransactionBuilder.cloneFrom(tx, {
     fee: (parseInt(tx.fee) + parseInt(sim.minResourceFee)).toString(),
-    sorobanData: sim.transactionData
+    sorobanData: sim.transactionData.build()
   });
   // because we consumed a sequence number when restoring, we need to make sure
   // we set the correct value on this copy
@@ -410,7 +410,7 @@ function restoreContract(
         .setSorobanData(
           new SorobanDataBuilder().setReadOnly(c.getFootprint()).build(),
         )
-        .addOperation(Operation.restoreFootprint())
+        .addOperation(Operation.restoreFootprint({}))
         .build();
 
       return s.prepareTransaction(restoreTx, Networks.FUTURENET);

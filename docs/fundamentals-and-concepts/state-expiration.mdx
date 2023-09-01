@@ -404,7 +404,7 @@ function restoreContract(
       const restoreTx = new TransactionBuilder(account, { fee: BASE_FEE })
         .setNetworkPassphrase(Networks.FUTURENET)
         .setSorobanData(
-          new SorobanDataBuilder().setReadOnly(c.getFootprint()).build()
+          new SorobanDataBuilder().setReadOnly(c.getFootprint()).build(),
         )
         .addOperation(Operation.restoreFootprint())
         .build();

@@ -211,11 +211,10 @@ Both restoring and bumping the expiration of ledger entries follows a multi-step
 
 3. Finally, **submit the transaction** and start again with what you were trying to do in the first place.
 
-Each of the examples below will follow a structure like this. We'll work our way through three different scenarios:
+Each of the examples below will follow a structure like this. We'll work our way through two different scenarios:
 
-- my contract instance expired
-- the contract data containing the WASM representing the contract expired
-- a piece of persistent data in my contract expired
+1. [a piece of persistent data in my contract expired](#example-my-data-expired)
+2. [my contract instance or the WASM expired](#example-my-contract-expired)
 
 Remember, though, that **any** combination of these scenarios can occur in reality.
 

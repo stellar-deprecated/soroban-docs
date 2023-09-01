@@ -1,10 +1,22 @@
 ---
 sidebar_position: 18
 title: State Expiration
-description: State Expiration Semantics
+description: Smart contract state expiration.
 ---
 
-# State Expiration
+<head>
+  <title>Smart contract state expiration.</title>
+  <meta charSet="utf-8" />
+  <meta property="og:title" content="Smart contract state expiration." />
+  <meta
+    property="og:description"
+    content="Learn about how state expiration works on the Soroban smart contract platform."
+  />
+  <link
+    rel="canonical"
+    href="https://soroban.stellar.org/docs/fundamentals-and-concepts/state-expiration"
+  />
+</head>
 
 Contract data is made up of three different types: `Persistent`, `Temporary`, and `Instance`. In a contract, these are accessed with `env.storage().persistent()`, `env.storage().temporary()`, and `env.storage().instance()` respectively; see the [`storage()` docs](https://docs.rs/soroban-sdk/latest/soroban_sdk/storage/struct.Storage.html).
 
@@ -163,16 +175,14 @@ struct RestoreFootprintOp
 `RestoreFootprintOp` is a Soroban operation that will restore expired entries
 specified in the _read-write set of the footprint_ and make them accessible
 again. The read-only set of the footprint must be empty. An expired entry is one
-where its expirationLedger is less than the current ledger number.
+where its expirationLedger is less than the current ledger number. **Only persistent entries can be restored.**
 
-The restored entry will have its expiration ledger bumped to the [minimums] the
-network allows for newly created entries, which is 4096 + current ledger for
-persistent entries, and 16 + current ledger for temporary entries (Note that
-both will be updated soon to use 4096 + current ledger - 1 and 16 + current
-ledger - 1). The minimums linked are what the settings will be on release, but
-they can be updated in the future through a validator vote.
+The restored entry will have its expiration ledger bumped to the [minimum] the
+network allows for newly created entries, which is `current_ledger_number + 4095` for
+persistent entries. The minimum expiration value is a network configuration
+parameter and is subject to be updated (likely increased) via network upgrades.
 
-[minimums]: https://github.com/stellar/stellar-core/blob/2109a168a895349f87b502ae3d182380b378fa47/src/ledger/NetworkConfig.h#L77-L78
+[minimum]: https://github.com/stellar/stellar-core/blob/2109a168a895349f87b502ae3d182380b378fa47/src/ledger/NetworkConfig.h#L77-L78
 
 #### Transaction resources
 

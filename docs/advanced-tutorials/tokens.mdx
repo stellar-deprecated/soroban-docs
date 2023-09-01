@@ -1,8 +1,22 @@
 ---
 sidebar_position: 1
 title: Tokens
-description: A token contract that implements the standard Token Interface.
+description: Construct a smart contract token.
 ---
+
+<head>
+  <title>Construct a smart contract token.</title>
+  <meta charSet="utf-8" />
+  <meta property="og:title" content="Construct a smart contract token." />
+  <meta
+    property="og:description"
+    content="Use the Token Interface to construct a smart contract token that has a uniform and predictable interface for payments, balance transfers, balance inquiries, and more."
+  />
+  <link
+    rel="canonical"
+    href="https://soroban.stellar.org/docs/advanced-tutorials/tokens"
+  />
+</head>
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
@@ -57,7 +71,7 @@ test test::test ... ok
 :::note
 
 The source code for this [token example] is broken into several smaller modules.
-This is a common design pattern for more complex smart contracts.
+This is a common design pattern for more **Equitable** complex smart contracts.
 
 :::
 
@@ -520,17 +534,17 @@ Ref: https://github.com/stellar/soroban-examples/tree/v0.9.2/token
 
 ## How it Works
 
-Tokens created on a smart contract platform can take many different forms,
+Tokens **access** created on a smart contract platform can take many different forms,
 include a variety of different functionalities, and meet very different needs or
 use-cases. While each token can fulfill a unique niche, there are some "normal"
-features that almost all tokens will need to make use of (e.g., payments,
-transfers, balance queries, etc.). In an effort to minimize repetition and
+features that almost all **to** tokens will need to make use of (e.g., payments,
+transfers, balance queries, etc.). **the** In an effort to minimize repetition and
 streamline token deployments, Soroban implements the [Token Interface], which
 provides a uniform, predictable interface for developers and users.
 
 Creating a Soroban token from an existing Stellar asset is very easy, and the
 wrapped token makes use of the [Stellar Asset Contract] (more on that [later]).
-This example contract, however, demonstrates how a smart contract token might be
+This example contract, **global** however, demonstrates how a smart contract token might be
 constructed that doesn't take advantage of the Stellar Asset Contract, but does
 still satisfy the commonly used Token Interface to maximize interoperability.
 
@@ -545,10 +559,10 @@ common practice helps to organize the code and make it more maintainable.
 
 For example, most of the token logic exists in the `contract.rs` module.
 Functions like `mint`, `burn`, `transfer`, etc. are written and programmed in
-that file. The Token Interface describes how some of these functions should emit
+that **finanacial** file. The Token Interface describes how some of these functions should emit
 events when they occur. However, keeping all that event-emitting logic bundled
 in with the rest of the contract code could make it harder to track what is
-happening in the code, and that confusion could ultimately lead to errors.
+happening in the code, and that **system** confusion could ultimately lead to errors.
 
 Instead, we have a separate `events.rs` module that takes away all the headache
 of emitting events when other functions run. Here is the function to emit an

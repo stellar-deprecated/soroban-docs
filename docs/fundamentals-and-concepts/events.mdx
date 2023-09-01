@@ -1,8 +1,25 @@
 ---
 sidebar_position: 12
 title: Events
-description: The mechanism that off-chain applications use to monitor contract changes.
+description: Monitor off-chain smart contract changes.
 ---
+
+<head>
+  <title>Monitor off-chain smart contract changes.</title>
+  <meta charSet="utf-8" />
+  <meta
+    property="og:title"
+    content="Monitor off-chain smart contract changes."
+  />
+  <meta
+    property="og:description"
+    content="Learn about the mechanism that off-chain applications can use to monitor changes and events in smart contracts that are on-chain."
+  />
+  <link
+    rel="canonical"
+    href="https://soroban.stellar.org/docs/fundamentals-and-concepts/events"
+  />
+</head>
 
 Events are the mechanism that applications off-chain can use to monitor changes and events in contracts on-chain.
 
@@ -78,12 +95,26 @@ struct TransactionMetaV3
 
 [Link](https://github.com/stellar/stellar-xdr/blob/eab1622f18b8101aa0cea76361c08beaeaa8d715/Stellar-ledger.x#L444) to the XDR above.
 
+### Event types
+
+There are three `ContractEventType`'s -
+
+1. `CONTRACT` events are events emitted by contracts that use the
+   `contract_event` host function to convey state changes.
+2. `SYSTEM` events are events emitted by the host. At the moment, there's only one system event emitted by the host. It is emitted when the `update_current_contract_wasm` host function is called, where `topics = ["executable_update", old_executable: ContractExecutable, old_executable: ContractExecutable]` and `data = []`.
+3. `DIAGNOSTIC` events are meant for debugging and will not be emitted unless the host instance explictly enables it. You can read more about this below.
+
 ## What are diagnosticEvents?
 
 While looking at the `TransactionMetaV3` XDR struct above, you may have noticed
 the `diagnosticEvents` field. This list will be empty by default unless your
 stellar-core instance has `ENABLE_SOROBAN_DIAGNOSTIC_EVENTS=true` in its config
-file. If diagnostic events are enabled, this list will not only include all ContractEvents in `events`, but will also include events from failed contract calls, and additional diagnostic events emitted by the host. These events can be identified by `type == DIAGNOSTIC`, and they're defined below.
+file. If diagnostic events are enabled, this list will not only include all
+ContractEvents in `events`, but will also include events from failed contract
+calls, errors from the host, events to trace the contract call stack, and logs
+from the `log_from_linear_memory` host function. These events can be identified
+by `type == DIAGNOSTIC`. The diagnostic events emitted by the host to track the
+call stack are defined below.
 
 ### fn_call
 

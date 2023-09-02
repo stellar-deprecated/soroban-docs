@@ -202,7 +202,7 @@ We've done our best to build tooling around state expiration in both the Soroban
 
 ### Overview
 
-Both restoring and bumping the expiration of ledger entries follows a multi-step process regardless of their nature (contract data, instances, etc.):
+Both restoring and bumping the expiration of ledger entries follows a three-step process regardless of their nature (contract data, instances, etc.):
 
 1. **Identify the ledger entries**. This usually means acquiring them from a Soroban RPC server as part of your initial transaction simulation (see the [preflight docs](https://soroban.stellar.org/docs/fundamentals-and-concepts/interacting-with-contracts#preflight) and the [`simulateTransaction`](https://soroban.stellar.org/api/methods/simulateTransaction) method).
 

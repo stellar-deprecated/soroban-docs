@@ -156,22 +156,22 @@ This example of helm chart usage, highlights some key aspects:
 
     <CodeExample>
 
-    ```bash
-    --set sorobanRpc.persistence.enabled=true
-    --set sorobanRpc.persistence.storageClass=default
-    ```
+  ```bash
+  --set sorobanRpc.persistence.enabled=true
+  --set sorobanRpc.persistence.storageClass=default
+  ```
 
     </CodeExample>
 
-    By default `sorobanRpc.persistence.enabled=false` and the rpc deployment will use ephemeral pod storage via `emptyDir` which will likely be adequate for `futurenet` and `testnet` transaction volumes, but it's worth highlighting the trade-off, which is size limitations enforced from the cluster, most likely lower than 100MB.
+  By default `sorobanRpc.persistence.enabled=false` and the rpc deployment will use ephemeral pod storage via `emptyDir` which will likely be adequate for `futurenet` and `testnet` transaction volumes, but it's worth highlighting the trade-off, which is size limitations enforced from the cluster, most likely lower than 100MB.
 
 - Network presets are defined on [values.yaml](https://github.com/stellar/helm-charts/blob/main/charts/soroban-rpc/values.yaml), which currently sets network configuration specific to `futurenet`. You can override this default and use other 'canned' values.yaml files which have been published for other networks, for example, there is the [testnet-values.yaml](https://github.com/stellar/helm-charts/blob/main/charts/soroban-rpc/testnet-values.yaml) to configure deployment of rpc server with `testnet` network. Include this `--values` parameter in `helm install` to specify the desired network:
 
     <CodeExample>
 
-    ```bash
-    --values https://raw.githubusercontent.com/stellar/helm-charts/main/charts/soroban-rpc/testnet-values.yaml
-    ```
+  ```bash
+  --values https://raw.githubusercontent.com/stellar/helm-charts/main/charts/soroban-rpc/testnet-values.yaml
+  ```
 
     </CodeExample>
 
@@ -179,20 +179,20 @@ This example of helm chart usage, highlights some key aspects:
 
     <CodeExample>
 
-    ```bash
-    --values my-custom-values.yaml
-    ```
+  ```bash
+  --values my-custom-values.yaml
+  ```
 
     </CodeExample>
 
-- Verify the `LimitRange` defaults in the target namespace in kubernetes for deployment. `LimitRange` is optional on the cluster config, if defined, ensure that the defaults provide at least minimum rpc server resource limits of `3Gi` of memory and `1` cpu. Otherwise, include the limits explicitly on the helm install via the `sorobanRpc.resources.limits.*`.
+- Verify the `LimitRange` defaults in the target namespace in kubernetes for deployment. `LimitRange` is optional on the cluster config, if defined, ensure that the defaults provide at least minimum rpc server resource limits of `2.5Gi` of memory and `1` cpu. Otherwise, include the limits explicitly on the helm install via the `sorobanRpc.resources.limits.*`.
 
     <CodeExample>
 
-    ```bash
-    --set sorobanRpc.resources.limits.cpu=1
-    --set sorobanRpc.resources.limits.memory=2560Mi
-    ```
+  ```bash
+  --set sorobanRpc.resources.limits.cpu=1
+  --set sorobanRpc.resources.limits.memory=2560Mi
+  ```
 
     </CodeExample>
 

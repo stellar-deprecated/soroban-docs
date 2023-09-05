@@ -330,7 +330,7 @@ Now you're ready to sign the call to `increment`!
 
 ### Call `increment`
 
-We're going to a contract client for the incrementor contract with a similar command to the one we used before. Let's move the `hello` bindings generation to its own script, add this one, and call them both from `postinstall` using a double ampersand ([&&](https://stackoverflow.com/a/25669618/249801)):
+We're going to generate a contract client for the incrementor contract with a similar command to the one we used before. Let's move the `hello` bindings generation to its own script, add this one, and call them both from `postinstall` using a double ampersand ([&&](https://stackoverflow.com/a/25669618/249801)):
 
 ```json
 "bindings:hello": "./soroban contract bindings typescript --network futurenet --contract-id $(cat .soroban/hello-id) --output-dir node_modules/hello-soroban-client",

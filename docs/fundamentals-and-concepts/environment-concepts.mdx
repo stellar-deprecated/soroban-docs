@@ -52,7 +52,7 @@ The way out of this dilemma is for the environment itself to provide support cod
 
 Shared, standard functionality available to all contract guest code is provided through the environment interface in terms of host objects and host functions.
 
-The environment supports a small number of types of host objects covering data structures like vectors, maps, binary blobs, and arbitrary precision numbers. Host objects are all immutable, are allocated and reside within the host environment, and are only available in the guest environment by reference. Guest code refers to host objects by integer-valued handles.
+The environment supports a small number of types of host objects covering data structures like vectors, maps, binary blobs, and big integers. Host objects are all immutable, are allocated and reside within the host environment, and are only available in the guest environment by reference. Guest code refers to host objects by integer-valued handles.
 
 There is also a slightly larger set of host functions that act on host objects: creating, modifying, inspecting and manipulating them. Some host functions allow copying blocks of binary data into and out of the VM memory of the guest, and some host functions perform cryptographic operations on host objects.
 
@@ -66,7 +66,7 @@ Host objects can be passed (by handle) directly to storage routines or between c
 
 All host functions can accept as arguments and return values from, at most, the limited Wasm VM repertoire of machine-level types. To simplify matters, Soroban further limits all host functions to passing and returning values from within a single specialized form of 64-bit integers called "value" or "the value type". Through careful bit-packing, the value type can encode any of several separate types more meaningful to users than just "integers".
 
-Specifically, the value type can directly encode 63-bit unsigned integers (equivalent to positive signed 64-bit numbers), but also boolean true and false, signed or unsigned 32-bit integers, typed host object handles, typed error codes, small symbols (up to 10 latin-alphanumeric characters), small bitsets (up to 60 bits), or a unique void value. Individual bits in a value are allocated to tagging and switching between these cases dynamically, and host functions or objects that require specific cases may reject values of other cases.
+Specifically, the value type can directly encode small integers (up to 56 bits), but also boolean true and false, signed or unsigned 32-bit integers, typed host object handles, typed error codes, small symbols (up to 9 latin-alphanumeric characters), or a unique void value. Individual bits in a value are allocated to tagging and switching between these cases dynamically, and host functions or objects that require specific cases may reject values of other cases.
 
 Since the value type can contain a handle to a host object, any container object that can contain the value type can in fact hold any object. Therefore the host map and vector types -- container data structures -- are defined merely as containers for the value type, where the specific case of each value may vary from container to container or even among the elements of a container. In this way, the host container types are more like the containers of dynamic-typed languages like JavaScript or Python. The SDK also provides static, uniformly-typed wrappers when this is desired, prohibiting values outside the designated case from being added to the container.
 

@@ -18,6 +18,7 @@
   "dependencies": {
     "@docusaurus/core": "^2.2.0",
     "@docusaurus/preset-classic": "^2.2.0",
+    "@docusaurus/theme-mermaid": "^2.4.1",
     "@mdx-js/react": "^1.6.22",
     "@soroban-react/chains": "^5.3.12",
     "@soroban-react/core": "^5.3.12",

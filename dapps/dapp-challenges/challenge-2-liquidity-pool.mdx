@@ -1,7 +1,7 @@
 ---
 sidebar_position: 2
 title: Liquidity Pool Dapp Challenge
-description: Deploy a dApp, add liquidity! Beat the Challenge!
+description: Deploy an example dapp, add liquidity! Beat the Challenge!
 ---
 
 import mint_tokens from "../../static/img/mint_tokens.png";
@@ -14,8 +14,14 @@ import swapComplete from "../../static/img/swapComplete.png";
 import futurenetDeployment from "../../static/img/futurenetDeployment.png";
 import wdraw from "../../static/img/wdraw.png";
 import { ParentChallengeForm } from "../../src/components/atoms/challenge-form";
+import CompleteStepButton from "../../src/components/atoms/complete-step-button";
+import StartChallengeButton from "../../src/components/atoms/start-challenge-button";
 
-This challenge will guide you through the process of building and shipping a liquidity pool dapp on Stellar using Soroban. You will learn how to deploy smart contracts to futurenet, and how to interact with them through a web frontend. In this context, the term "ship" refers to finalizing the development process of your dapp, ensuring that it functions as expected, and is accessible for user interaction and testing through a hosted frontend. However, it's crucial to clarify that despite its functionality, the dapp is not promoted nor intended for deployment in a production-level setting on futurenet. The challenge is designed for educational purposes, helping you understand how a dapp can be built and interacted with, with further customization and development, it has the potential to evolve into a full-fledged, ready-to-use liquidity pool solution.
+<StartChallengeButton id={2} />
+
+The challenge is designed for educational purposes, and helps you understand how a dapp can be built and interacted with in a sandbox environment.
+
+This challenge will walk you through the step-by-step journey of creating and launching a liquidity pool dapp on Stellar, all while utilizing Soroban in a sandbox environment. You will learn how to deploy smart contracts to a sandbox environment, and how to interact with them through a web frontend. In this context, the term "ship" refers to finalizing the development process of your dapp, ensuring that it functions as expected, and is accessible for user interaction and testing through a hosted frontend. However, it's crucial to clarify that despite its functionality, the dapp is not promoted nor intended for deployment in a production-level setting on futurenet.
 
 ## Checkpoint 0: 📦 Install 📚
 
@@ -79,9 +85,37 @@ Done
 ...
 ```
 
+<CompleteStepButton id={2} progress={1}>
+  Mark smart contracts deployed
+</CompleteStepButton>
+
 ## Checkpoint 3: 🤝 Connect the Frontend to the Backend
 
-First, navigate to the frontend folder and run the development server:
+For this step, you will need to change the existing navigate to contract configuration to suit a local deployment.
+
+First, navigate to `frontend/src/contracts.ts` and change const rpcUrl:
+
+```diff
+-const rpcUrl = 'https://rpc-futurenet.stellar.org'
++const rpcUrl = 'http://localhost:8000/soroban/rpc'
+
+```
+
+Then, change each contract network to standalone:
+
+```diff
+-export const tokenAContract = new TokenA({ ...networksA.futurenet, rpcUrl })
+-export const tokenBContract = new TokenB({ ...networksB.futurenet, rpcUrl })
+-export const shareTokenContract = new ShareToken({ ...networksShareToken.futurenet, rpcUrl })
+-export const liquidityPoolContract = new LiquidityPool({ ...networksLiquidityPool.futurenet, rpcUrl })
+
++export const tokenAContract = new TokenA({ ...networksA.standalone, rpcUrl })
++export const tokenBContract = new TokenB({ ...networksB.standalone, rpcUrl })
++export const shareTokenContract = new ShareToken({...networksShareToken.standalone,rpcUrl})
++export const liquidityPoolContract = new LiquidityPool({...networksLiquidityPool.standalone, rpcUrl })
+```
+
+Then, navigate to the frontend folder and run the development server:
 
 ```bash
 make setup && make start_dev
@@ -170,6 +204,10 @@ Click on "Approve" and wait for the transaction to be confirmed.
 
 Once the transaction is confirmed, you should see updated balances on the front end.
 
+<CompleteStepButton id={2} progress={2}>
+  Transactions completed
+</CompleteStepButton>
+
 ## Checkpoint 8: 🚢 Ship it! 🚁
 
 Now that your dapp is fully functional locally, next prepare it for deployment on Futurenet.
@@ -191,6 +229,29 @@ rm -rf .soroban
 
 > Note: This will remove the existing contracts and initialize new ones on Futurenet.
 
+Next, revert the changes made to the contract network configs earlier,
+
+Navigate to `frontend/src/contracts.ts` and change `const rpcUrl`:
+
+```diff
+-const rpcUrl = 'http://localhost:8000/soroban/rpc'
++const rpcUrl = 'https://rpc-futurenet.stellar.org'
+```
+
+Then, change each contract network to futurenet:
+
+```diff
+-export const tokenAContract = new TokenA({ ...networksA.standalone, rpcUrl })
+-export const tokenBContract = new TokenB({ ...networksB.standalone, rpcUrl })
+-export const shareTokenContract = new ShareToken({...networksShareToken.standalone, rpcUrl })
+-export const liquidityPoolContract = new LiquidityPool({...networksLiquidityPool.standalone, rpcUrl })
+
++export const tokenAContract = new TokenA({ ...networksA.futurenet, rpcUrl })
++export const tokenBContract = new TokenB({ ...networksB.futurenet, rpcUrl })
++export const shareTokenContract = new ShareToken({ ...networksShareToken.futurenet, rpcUrl })
++export const liquidityPoolContract = new LiquidityPool({ ...networksLiquidityPool.futurenet, rpcUrl })
+```
+
 Then, navigate to the frontend directory and run the development server:
 
 ```bash
@@ -201,7 +262,13 @@ Now, open your browser and visit [http://localhost:5173](http://localhost:5173/)
 
 Ensure that you are connected to Futurenet and you should be able to see the frontend of your dapp!
 
-Next, you will need to move your .soroban directory to the frontend directory.
+Next, you will remove the target directory as it is not used by vercel to deploy your site. To do this, run the following:
+
+```
+rm -rf target
+```
+
+Next, you will need to move your `.soroban` directory to the frontend directory.
 
 From a terminal in the liquidity-pool directory, run the following command:
 
@@ -209,22 +276,17 @@ From a terminal in the liquidity-pool directory, run the following command:
 mv .soroban frontend/.soroban
 ```
 
-Then, you will need to update the package.json file in the frontend directory to point to the new contract binding locations.
+Then, you will need to update the `package.json` file in the frontend directory to point to the new contract binding locations.
 
-```bash
-"liquidity-pool-contract": "file:../.soroban/contracts/liquidity-pool",
-"share-token-contract": "file:../.soroban/contracts/share-token",
-"token-a-contract": "file:../.soroban/contracts/token-a",
-"token-b-contract": "file:../.soroban/contracts/token-b",
-```
-
-Will become:
-
-```bash
-"liquidity-pool-contract": "file:.soroban/contracts/liquidity-pool",
-"share-token-contract": "file:.soroban/contracts/share-token",
-"token-a-contract": "file:.soroban/contracts/token-a",
-"token-b-contract": "file:.soroban/contracts/token-b",
+```diff
+-"liquidity-pool-contract": "file:../.soroban/contracts/liquidity-pool",
+-"share-token-contract": "file:../.soroban/contracts/share-token",
+-"token-a-contract": "file:../.soroban/contracts/token-a",
+-"token-b-contract": "file:../.soroban/contracts/token-b",
++"liquidity-pool-contract": "file:.soroban/contracts/liquidity-pool",
++"share-token-contract": "file:.soroban/contracts/share-token",
++"token-a-contract": "file:.soroban/contracts/token-a",
++"token-b-contract": "file:.soroban/contracts/token-b",
 ```
 
 Next, you will use the Vercel cli to complete your deployment.
@@ -239,7 +301,7 @@ First install the Vercel cli:
 npm i global vercel
 ```
 
-Then, open a terminal in the liquidity-pool directory and run the following command to deploy your dapp:
+Then, open a terminal in the liquidity-pool directory and run the following command to deploy your example dapp:
 
 ```bash
 npx vercel
@@ -287,7 +349,7 @@ You can now visit the preview link to see your deployed dapp! 🎉
 
 <img src={futurenetDeployment} width="90%" />
 
-You will need to add some Futurenet network lumens to your Freighter wallet to interact with the deployed dapp. Visit [https://laboratory.stellar.org/#account-creator?network=futurenet](https://laboratory.stellar.org/#account-creator?network=futurenet), and follow the instructions to create your freighter account on Futurenet.
+You will need to add some Futurenet network lumens to your Freighter wallet to interact with the deployed example dapp. Visit [https://laboratory.stellar.org/#account-creator?network=futurenet](https://laboratory.stellar.org/#account-creator?network=futurenet), and follow the instructions to create your freighter account on Futurenet.
 
 ## Checkpoint 9: ✅ Complete the Challenge!
 
@@ -299,9 +361,9 @@ Submit your public url to the challenge form.
 
 🍴 [Fork the liquidity pool repo] and make your own changes to the dapp.
 
-Customize the code and submit a pull request for the liquidity pool Dapp challenge. You can experiment with new yield strategies, improve the user interface, or integrate additional token pair options.
+Customize the code and submit a pull request for the liquidity pool Dapp challenge. You can experiment with new fee strategies, improve the user interface, or integrate additional token pair options.
 
-Take this opportunity to showcase your skills and make your mark on the liquidity pool Dapp. Good luck!
+Take this opportunity to showcase your skills and make your mark on the Liquidity Pool Dapp. Good luck!
 
 [Stellar Laboratory]: https://laboratory.stellar.org/#explorer?network=futurenet
 [Fork the liquidity pool repo]: https://github.com/stellar/soroban-dapps-challenge/fork
@@ -311,8 +373,7 @@ Take this opportunity to showcase your skills and make your mark on the liquidit
 During this exercise you should be able to:
 
 - Clone the example repo (liquidity pool Dapp)
-- Choose your target amounts for the liquidity pool
-- Deploy your contract to Futurenet
+- Deploy your contract to a sandbox environment.
 - Deploy the example web ui somewhere (e.g. netlify, vercel, surge, etc.)
 
 Then via the web UI, you should be able to:

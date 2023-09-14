@@ -19,9 +19,9 @@ import StartChallengeButton from "../../src/components/atoms/start-challenge-but
 
 <StartChallengeButton id={2} />
 
-The challenge is designed for educational purposes, and helps you understand how a dapp can be built and interacted with in a sandbox environment.
+This challenge is designed for educational purposes and helps you understand how a dapp can be built and interacted with in a sandbox environment.
 
-This challenge will walk you through the step-by-step journey of creating and launching a liquidity pool dapp on Stellar, all while utilizing Soroban in a sandbox environment. You will learn how to deploy smart contracts to a sandbox environment, and how to interact with them through a web frontend. In this context, the term "ship" refers to finalizing the development process of your dapp, ensuring that it functions as expected, and is accessible for user interaction and testing through a hosted frontend. However, it's crucial to clarify that despite its functionality, the dapp is not promoted nor intended for deployment in a production-level setting on futurenet.
+This challenge will walk you through the step-by-step journey of creating and launching a liquidity pool dapp on Stellar, all while using Soroban in a sandbox environment. You will learn how to deploy smart contracts to a sandbox environment and how to interact with them through a web frontend. In this context, the term "ship" refers to finalizing the development process of your dapp, ensuring that it functions as expected, and is accessible for user interaction and testing through a hosted frontend. However, it's crucial to clarify that despite its functionality, the dapp is not promoted nor intended for deployment in a production-level setting on Futurenet.
 
 ## Checkpoint 0: 📦 Install 📚
 
@@ -30,11 +30,11 @@ Start by installing the required dependencies.
 Required:
 
 - `soroban-cli`: [Download Soroban-CLI](https://soroban.stellar.org/docs/getting-started/setup#install-the-soroban-cli)
-- `docker` (Standalone backend requires it): [Download Docker](https://www.docker.com/products/docker-desktop)
+- `docker` (standalone backend requires it): [Download Docker](https://www.docker.com/products/docker-desktop)
 - `Node` v18: [Download Node](https://nodejs.org/en/download/)
 - `Freighter Wallet`: [Freighter Wallet](https://freighter.app/)
 
-First, Clone the soroban example dapp repo and navigate to the `liquidity-pool` directory:
+First, clone the Soroban example dapp repo and navigate to the `liquidity-pool` directory:
 
 ```bash
 git clone https://github.com/stellar/soroban-dapps-challenge
@@ -42,7 +42,7 @@ cd soroban-dapps-challenge/liquidity-pool
 yarn
 ```
 
-Next, make sure that your Docker daemon is running by either opening [Docker Desktop](https://www.docker.com/products/docker-desktop)(recommended) or following the instructions provided [here](https://docs.docker.com/config/daemon/start/) and proceed to the next step.
+Next, ensure that your Docker daemon is running by either opening [Docker Desktop](https://www.docker.com/products/docker-desktop) (recommended) or following the instructions provided [here](https://docs.docker.com/config/daemon/start/) and proceed to the next step.
 
 ## Checkpoint 1: 🚀 Launch Backend 🌐
 
@@ -61,7 +61,7 @@ and wait for it to start.
 
 ## Checkpoint 2: 🎬 Deploy Smart Contracts
 
-Now that the backend environment is set up, you need to deploy your smart contracts to a sandbox environment.
+Now that the backend environment is set up, you must deploy your smart contracts to a sandbox environment.
 
 In another terminal, load the contracts and initialize them on the Standalone network by running the following commands:
 
@@ -91,7 +91,7 @@ Done
 
 ## Checkpoint 3: 🤝 Connect the Frontend to the Backend
 
-For this step, you will need to change the existing navigate to contract configuration to suit a local deployment.
+For this step, you must change the existing navigate to contract configuration to suit a local deployment.
 
 First, navigate to `frontend/src/contracts.ts` and change const rpcUrl:
 
@@ -124,11 +124,11 @@ make setup && make start_dev
 
 Now open your browser and visit [http://localhost:5173](http://localhost:5173/). You should be able to see the frontend of your dapp.
 
-> Note: Follow the instructions below and ensure that you have funded your wallet address that you intend to use from the browser, otherwise the dapp display will be blank and a 'Account not found' will be printed on the browser's console only. Furthermore, the example endpoint may differ from your local endpoint.
+> Note: Follow the instructions below and ensure that you have funded the wallet address that you intend to use from the browser. Otherwise, the dapp display will be blank and 'Account not found' will be printed on the browser's console. Furthermore, the example endpoint may differ from your local endpoint.
 
 Now that you have the frontend running, it's time to connect it with your smart contracts.
 
-First, be sure that you have properly configured Freighter Wallet by following the instructions [here](../guides/wallets#connect-a-wallet-freighter).
+First, ensure that you have properly configured the Freighter wallet by following the instructions [here](../guides/wallets#connect-a-wallet-freighter).
 
 Then, add the Standalone network in Freighter:
 
@@ -140,14 +140,14 @@ Then, add the Standalone network in Freighter:
 
 Next, add some Standalone network lumens to your Freighter wallet by doing the following:
 
-- Copy the address for your freighter wallet.
+- Copy the address for your Freighter wallet.
 - Visit `http://localhost:8000/friendbot?addr=<your_address>`
 
-> Note: These are test lumens for use with your local network and cannot be used on Futurenet or Mainnet
+> Note: These are test lumens for use with your local network and cannot be used on Futurenet or Mainnet.
 
-## Checkpoint 4: 🏦 Mint Tokens for the liquidity pool
+## Checkpoint 4: 🏦 Mint Tokens for the Liquidity Pool
 
-Open the dapp frontend and click the "MINT" button for both USDC and BTC.
+Open the dapp frontend and click the "MINT" button for USDC and BTC.
 
 <img src={mint_tokens} width="40%" />
 
@@ -161,11 +161,11 @@ You should see an updated balance in the account balance component.
 
 > Note: These are test tokens for use with your local network and cannot be used on Futurenet or Mainnet.
 
-## Checkpoint 5: 💰 Deposit into the liquidity pool
+## Checkpoint 5: 💰 Deposit into the Liquidity Pool
 
-Now that you have your wallet set up, let's fund the liquidity pool.
+Now that your wallet is set up, let's fund the liquidity pool.
 
-Open the frontend, enter desired token amounts, and click on the "Deposit" button. You should see a popup from Freighter asking you to sign the transaction.
+Open the frontend, enter desired token amounts, and click the "Deposit" button. You should see a popup from Freighter asking you to sign the transaction.
 
 <img src={deposit50} width="75%" />
 
@@ -175,19 +175,19 @@ Once the transaction is confirmed, you should see your balances updated.
 
 <img src={updatedBalances50} width="40%" />
 
-You should see an updated balance in the amounts you have deposited in the account and reserve balance components respectfully. If you follow the example, you should see 50 USDC, 50 BTC, and 50 POOL.
+You should see an updated balance in the amounts you have deposited in the account and reserve balance components, respectfully. Following the example, you should see 50 USDC, 50 BTC, and 50 POOL.
 
 ## Checkpoint 6: 🔄 Make a Swap
 
 Now that you have funded the liquidity pool, let's make a swap.
 
-Open the swap tab, input the desired token swap amounts and click on the "Swap" button. You should see a popup from Freighter asking you to sign the transaction.
+Open the swap tab, input the desired token swap amounts, and click the "Swap" button. You should see a popup from Freighter asking you to sign the transaction.
 
 <img src={swap} width="75%" />
 
 Click on "Approve" and wait for the transaction to be confirmed.
 
-Once the transaction is confirmed, you should see updated balances on the front end.
+Once the transaction is confirmed, you should see updated balances on the frontend.
 
 <img src={swapComplete} width="75%" />
 
@@ -195,25 +195,25 @@ Once the transaction is confirmed, you should see updated balances on the front 
 
 Now that you have funded the liquidity pool, let's make a withdrawal.
 
-Open the withdraw tab, select how much liquidity you want to remove with the sliding bar and click on the "Withdraw" button. You should see a popup from Freighter asking you to sign the transaction.
+Open the withdraw tab, select how much liquidity you want to remove with the sliding bar, and click the "Withdraw" button. You should see a popup from Freighter asking you to sign the transaction.
 
 <img src={wdraw} width="75%" />
 
 Click on "Approve" and wait for the transaction to be confirmed.
 
-Once the transaction is confirmed, you should see updated balances on the front end.
+Once the transaction is confirmed, you should see updated balances on the frontend.
 
 <CompleteStepButton id={2} progress={2}>
   Transactions completed
 </CompleteStepButton>
 
-## Checkpoint 8: 🚢 Ship it! 🚁
+## Checkpoint 8: 🚢 Ship It! 🚁
 
-Now that your dapp is fully functional locally, next prepare it for deployment on Futurenet.
+Now that your dapp is fully functional locally, it's time to prepare it for deployment on Futurenet.
 
 Stop the development server by pressing `ctrl+c` in the terminal where it is running.
 
-If you are running docker, now is a good time to stop the stellar and soroban preview containers.
+If you are running docker, now is a good time to stop the Stellar and Soroban preview containers.
 
 ```bash
 docker stop stellar soroban-preview
@@ -228,7 +228,7 @@ rm -rf .soroban
 
 > Note: This will remove the existing contracts and initialize new ones on Futurenet.
 
-Next, revert the changes made to the contract network configs earlier,
+Next, revert the changes made to the contract network configs earlier.
 
 Navigate to `frontend/src/contracts.ts` and change `const rpcUrl`:
 
@@ -237,7 +237,7 @@ Navigate to `frontend/src/contracts.ts` and change `const rpcUrl`:
 +const rpcUrl = 'https://rpc-futurenet.stellar.org'
 ```
 
-Then, change each contract network to futurenet:
+Then, change each contract network to Futurenet:
 
 ```diff
 -export const tokenAContract = new TokenA({ ...networksA.standalone, rpcUrl })
@@ -259,15 +259,15 @@ make start_dev
 
 Now, open your browser and visit [http://localhost:5173](http://localhost:5173/).
 
-Ensure that you are connected to Futurenet and you should be able to see the frontend of your dapp!
+Ensure that you are connected to Futurenet, and you should be able to see the frontend of your dapp!
 
-Next, you will remove the target directory as it is not used by vercel to deploy your site. To do this, run the following:
+Next, you will remove the target directory, as it is not used by Vercel to deploy your site. To do this, run the following:
 
 ```
 rm -rf target
 ```
 
-Next, you will need to move your `.soroban` directory to the frontend directory.
+Next, you must move your `.soroban` directory to the frontend directory.
 
 From a terminal in the liquidity-pool directory, run the following command:
 
@@ -275,7 +275,7 @@ From a terminal in the liquidity-pool directory, run the following command:
 mv .soroban frontend/.soroban
 ```
 
-Then, you will need to update the `package.json` file in the frontend directory to point to the new contract binding locations.
+Then, you need to update the `package.json` file in the frontend directory to point to the new contract binding locations.
 
 ```diff
 -"liquidity-pool-contract": "file:../.soroban/contracts/liquidity-pool",
@@ -289,13 +289,13 @@ Then, you will need to update the `package.json` file in the frontend directory 
 +"token-b-contract": "file:.soroban/contracts/token-b",
 ```
 
-Next, you will use the Vercel cli to complete your deployment.
+Next, you will use the Vercel CLI to complete your deployment.
 
-> Note: If you don’t already have a [Vercel account], you will need to create one and link it to your github account.
+> Note: If you don’t already have a [Vercel account], you should create one and link it to your GitHub account.
 
 [Vercel account]: https://vercel.com/login
 
-First install the Vercel cli:
+First, install the Vercel CLI:
 
 ```bash
 npm i global vercel
@@ -349,11 +349,11 @@ You can now visit the preview link to see your deployed dapp! 🎉
 
 <img src={futurenetDeployment} width="90%" />
 
-You will need to add some Futurenet network lumens to your Freighter wallet to interact with the deployed example dapp. Visit [https://laboratory.stellar.org/#account-creator?network=futurenet](https://laboratory.stellar.org/#account-creator?network=futurenet), and follow the instructions to create your freighter account on Futurenet.
+You must add Futurenet network lumens to your Freighter wallet to interact with the deployed example dapp. Visit [https://laboratory.stellar.org/#account-creator?network=futurenet](https://laboratory.stellar.org/#account-creator?network=futurenet), and follow the instructions to create your Freighter account on Futurenet.
 
 ## Checkpoint 9: ✅ Complete the Challenge!
 
-Submit your public url to the challenge form.
+Submit your public URL to the challenge form.
 
 <ParentChallengeForm courseId={3} />
 
@@ -361,7 +361,7 @@ Submit your public url to the challenge form.
 
 🍴 [Fork the liquidity pool repo] and make your own changes to the dapp.
 
-Customize the code and submit a pull request for the liquidity pool Dapp challenge. You can experiment with new fee strategies, improve the user interface, or integrate additional token pair options.
+Customize the code and submit a pull request for the Liquidity Pool Dapp Challenge. You can experiment with new fee strategies, improve the user interface, or integrate additional token pair options.
 
 Take this opportunity to showcase your skills and make your mark on the Liquidity Pool Dapp. Good luck!
 
@@ -370,13 +370,13 @@ Take this opportunity to showcase your skills and make your mark on the Liquidit
 
 ## 📚 User Workflows Checklist
 
-During this exercise you should be able to:
+During this exercise, you should be able to:
 
-- Clone the example repo (liquidity pool Dapp)
+- Clone the example repo (Liquidity Pool Dapp)
 - Deploy your contract to a sandbox environment.
-- Deploy the example web ui somewhere (e.g. netlify, vercel, surge, etc.)
+- Deploy the example web UI somewhere (e.g., Netlify, Vercel, Surge, etc.)
 
-Then via the web UI, you should be able to:
+Then, via the web UI, you should be able to:
 
 - Connect your wallet
 - See your current balance(s)
@@ -384,4 +384,4 @@ Then via the web UI, you should be able to:
 - Deposit assets
 - Swap assets
 - Withdraw assets
-- See your transaction(s) appear on the page as the transactions are confirmed.
+- See your transaction(s) appear on the page as the transactions are confirmed

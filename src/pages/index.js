@@ -207,23 +207,22 @@ const GettingStarted = () => (
 
         <GettingStartedCard
           index="3."
-          title="Deploy to a local network"
-          subtitle="Use docker and the Stellar Quickstart image to run a local network."
-          href="/docs/getting-started/deploy-to-a-local-network"
+          title="Deploy to Futurenet"
+          subtitle="Deploy and invoke your contracts on the Futurenet testnet."
+          href="/docs/getting-started/deploy-to-futurenet"
         />
 
         <GettingStartedCard
           index="4."
-          title="Connect Freighter wallet"
-          subtitle="Freighter is a browser extension that can sign Soroban transactions."
-          href="/docs/reference/freighter"
+          title="Create an App"
+          subtitle="Build a front-end app to interact with your Soroban contracts."
+          href="/docs/getting-started/deploy-to-futurenet"
         />
 
         <GettingStartedCard
-          index="5."
-          title="Deploy to Futurenet"
-          subtitle="Deploy and invoke your contracts on the Futurenet testnet."
-          href="/docs/getting-started/deploy-to-futurenet"
+          title="Deploy to a local network"
+          subtitle="Use docker and the Stellar Quickstart image to run a local network."
+          href="/docs/reference/rpc#standalone"
         />
       </div>
     </div>

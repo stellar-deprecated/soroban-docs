@@ -53,8 +53,8 @@ const Hero = () => (
 
       <div className="Hero__right">
         <p>
-          A developer-friendly, Rust-based smart contracts platform sensibly
-          designed with scalability in mind. Currently live on the test network
+          A developer-friendly, Rust-based smart contracts platform designed for
+          scale and sensibility. Currently live on the test network
           dubbed Futurenet, Soroban seamlessly integrates with and works
           alongside the existing Stellar blockchain.
         </p>

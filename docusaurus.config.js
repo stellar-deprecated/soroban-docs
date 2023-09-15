@@ -4,6 +4,7 @@
 const lightCodeTheme = require("prism-react-renderer/themes/nightOwl");
 const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "Soroban - Smart Contracts Platform for Developers",
@@ -37,6 +38,15 @@ const config = {
         sidebarPath: require.resolve('./sidebarsApi.js'),
       },
     ],
+    [
+      '@docusaurus/plugin-content-docs',
+    {
+      id: 'dapps',
+      path: 'dapps',
+      routeBasePath: 'dapps',
+      sidebarPath: require.resolve('./sidebarsDapps.js'),
+    },
+  ],
     require('./src/dev-server-plugin'),
     require('./src/analytics-module')
   ],
@@ -83,8 +93,7 @@ const config = {
           {
             to: '/api',
             label: 'API',
-            position: 'left',
-            docsPluginId: 'api'
+            position: 'left'
           },
           // {
           //   href: 'https://fastcheapandoutofcontrol.com/',
@@ -92,13 +101,13 @@ const config = {
           //   className: 'nav-highlight',
           //   position: 'left',
           // },
-          // {
-          //   href: '/sorobanathon',
-          //   label: 'Sorobanathon',
-          //   position: 'left'
-          // },
           {
-            href: 'https://github.com/stellar/soroban-docs',
+            to: '/dapps',
+            label: 'Dapps',
+            position: 'left'
+          },
+          {
+            href: 'https://github.com/stellar/rs-soroban-sdk',
             label: 'GitHub',
             position: 'right',
           },
@@ -155,19 +164,15 @@ const config = {
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/stellar',
+                href: 'https://github.com/stellar/soroban-docs',
               },
               {
                 label: 'Developer Blog',
                 href: 'https://www.stellar.org/developers-blog',
               },
               {
-                label: 'Stellar Quest',
+                label: 'Soroban Quest',
                 href: 'https://quest.stellar.org/soroban',
-              },
-              {
-                label: 'Sorobanathon',
-                href: 'https://soroban.stellar.org/sorobanathon',
               },
             ],
           },
@@ -176,9 +181,13 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
-        additionalLanguages: ["rust", "toml"],
+        additionalLanguages: ["rust", "toml", "solidity", "cpp"],
       },
     }),
+  markdown: {
+    mermaid: true,
+  },
+  themes: ['@docusaurus/theme-mermaid'],
 };
 
 module.exports = config;

@@ -1,5 +1,10 @@
 $max-screen: 1248px;
 
+.hide-unless-dapps {
+  display: none;
+  // color: #ff0000;
+}
+
 :root {
   /* fonts */
   --body-l-bold: Inter;
@@ -264,10 +269,6 @@ a.hp-link {
       flex-direction: row;
     }
   }
-}
-
-[data-theme="dark"] .DesignedCard__wrapper p {
-  color: var(--ifm-navbar-background-color);
 }
 
 .DesignedCard {

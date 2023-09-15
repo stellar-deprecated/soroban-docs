@@ -23,14 +23,14 @@ For any given contract function, there are 3 requirements that should be
 consistent with the interface described here:
 
 - Function interface (name and arguments) - if not consistent, then the users
-simply won't be able to use the function at all. This is the hard requirement.
+  simply won't be able to use the function at all. This is the hard requirement.
 - Authorization - the users have to authorize the token function calls with all
-the arguments of the invocation (see the interface comments). If this is
-inconsistent, then the custom token may have issues with getting the correct
-signatures from the users and may also confuse the wallet software.
+  the arguments of the invocation (see the interface comments). If this is
+  inconsistent, then the custom token may have issues with getting the correct
+  signatures from the users and may also confuse the wallet software.
 - Events - the token has to emit the events in the specified format. If
-inconsistent, then the token may not be handled correctly by the downstream
-systems such as block explorers.
+  inconsistent, then the token may not be handled correctly by the downstream
+  systems such as block explorers.
 
 ### Code
 
@@ -81,27 +81,22 @@ pub trait Contract {
     // Token interface
     // --------------------------------------------------------------------------------
     //
-    // All the functions here have to be authorized by the token spender 
+    // All the functions here have to be authorized by the token spender
     // (usually named `from` here) using all the input arguments, i.e. they have
     // to call `from.require_auth()`.
 
-    /// Increase the allowance by "amount" for "spender" to transfer/burn from "from".
-    /// Emit event with topics = ["increase_allowance", from: Address, spender: Address], data = [amount: i128]
-    fn increase_allowance(
+    /// Set the allowance by "amount" for "spender" to transfer/burn from "from".
+    /// "expiration_ledger" is the ledger number where this allowance expires. It cannot
+    /// be less than the current ledger number unless the amount is being set to 0.
+    /// An expired entry (where "expiration_ledger" < the current ledger number)
+    /// should be treated as a 0 amount allowance.
+    /// Emit event with topics = ["approve", from: Address, spender: Address], data = [amount: i128, expiration_ledger: u32]
+    fn approve(
         env: soroban_sdk::Env,
         from: Address,
         spender: Address,
         amount: i128,
-    );
-
-    /// Decrease the allowance by "amount" for "spender" to transfer/burn from "from".
-    /// If "amount" is greater than the current allowance, set the allowance to 0.
-    /// Emit event with topics = ["decrease_allowance", from: Address, spender: Address], data = [amount: i128]
-    fn decrease_allowance(
-        env: soroban_sdk::Env,
-        from: Address,
-        spender: Address,
-        amount: i128,
+        expiration_ledger: u32,
     );
 
     /// Transfer "amount" from "from" to "to".
@@ -144,7 +139,7 @@ pub trait Contract {
     // --------------------------------------------------------------------------------
     // Read-only Token interface
     // --------------------------------------------------------------------------------
-    // 
+    //
     // The functions here don't need any authorization and don't emit any
     // events.
 
@@ -181,12 +176,25 @@ pub trait Contract {
 }
 ```
 
+:::caution CAUTION WHEN MODIFYING ALLOWANCES
+
+The `approve` function overwrites the previous value with `amount`, so it is
+possible for the previous allowance to be spent in an earlier transaction before
+`amount` is written in a later transaction. The result of this is that `spender`
+can spend more than intended. This issue can be avoided by first setting the
+allowance to 0, verifying that the spender didn't spend any portion of the
+previous allowance, and then setting the allowance to the new desired amount.
+You can read more about this issue here -
+https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729.
+
+:::
+
 ### Metadata
 
 Another requirement for complying with the token interface is to write the
 standard metadata (`decimal`, `name`, and `symbol`) for the token in a specific
 format. This format allows users to directly read constant data from the ledger
-instead of invoking a WASM function. The [token
+instead of invoking a Wasm function. The [token
 example](https://github.com/stellar/soroban-examples/blob/main/token/src/metadata.rs)
 demonstrates how to use the Rust
 [soroban-token-sdk](https://github.com/stellar/rs-soroban-sdk/blob/main/soroban-token-sdk/src/lib.rs)
@@ -194,17 +202,19 @@ to write the metadata, and we strongly encourage token implementations to follow
 this approach.
 
 ### Handling Failure Conditions
+
 In the token interface, there are several instances where function calls can fail due to various reasons such as lack of proper authorization, insufficient allowance or balance, etc. To handle these failure conditions, it is important to specify the expected behavior when such situations arise.
 
-Its important to note the that the token interface not only incorporates the authorization concept for matching asset authorization in Stellar Classic, but it also utilizes the Soroban authorization mechanism. So, if you try to make a token call and it fails, it could be because of either token authorization processes. 
+Its important to note the that the token interface not only incorporates the authorization concept for matching asset authorization in Stellar Classic, but it also utilizes the Soroban authorization mechanism. So, if you try to make a token call and it fails, it could be because of either token authorization processes.
 
-To provide more context, when you use the token interface, there is a function called `authorized` that returns "true" if an address has token authorization. 
+To provide more context, when you use the token interface, there is a function called `authorized` that returns "true" if an address has token authorization.
 
-More details on Authorization can be found [here](../../learn/authorization).
+More details on Authorization can be found [here](../../fundamentals-and-concepts/authorization).
 
 For the functions in the token interface, [trapping](https://doc.rust-lang.org/book/ch09-00-error-handling.html) should be used as the standard way to handle failure conditions since the interface is not designed to return error codes. This means that when a function encounters an error, it will halt execution and revert any state changes that occurred during the function call.
 
 ### Failure Conditions
+
 Here is a list of basic failure conditions and their expected behavior for functions in the token interface:
 
 #### Admin functions:

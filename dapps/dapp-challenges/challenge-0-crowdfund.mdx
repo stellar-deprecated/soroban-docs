@@ -32,7 +32,7 @@ Required:
 
 First, clone the Soroban example dapp repo and check out the `challenge` branch:
 
-```bash
+```sh
 git clone https://github.com/stellar/soroban-example-dapp
 cd soroban-example-dapp
 git checkout challenge
@@ -40,7 +40,7 @@ git checkout challenge
 
 Then, install soroban-cli alias by running the following command:
 
-```bash
+```sh
 cargo install_soroban
 ```
 
@@ -48,7 +48,7 @@ Next, make sure that your Docker daemon is running by either opening [Docker Des
 
 Then, and build the soroban-preview docker image:
 
-```bash
+```sh
 make build-docker
 ```
 
@@ -58,7 +58,7 @@ Building the docker image lets you avoid installing the specific version of soro
 
 Open your Docker Desktop app and make sure it is running. Then run the following command to start the backend:
 
-```bash
+```sh
 ./quickstart.sh standalone
 ```
 
@@ -70,13 +70,13 @@ Now that the backend environment is set up, we need to deploy our smart contract
 
 In another terminal, load the contracts and initialize them on the Standalone network by running the following commands:
 
-```bash
+```sh
 npm run clean
 NETWORK=standalone npm run setup
 ```
 If the command runs successfully, your terminal will return a series of messages notifying you about the successful initialization of the contracts and the post-installation sequence.
 
-```bash
+```sh
 Contract deployed succesfully with ID: CBXHU5BWWTOCZRYX3DMSSKCFG7B3K2YG2I5F75ALPQ6GCY6ZES2XKLTI
 Deploy the crowdfund contract
 Contract deployed succesfully with ID: CBKY7UN5VGD4LIQFOBOTSUSQWK67BZZTA23NIEVWSWRR5SAT26JQN2BN
@@ -104,7 +104,7 @@ Please, save your deployed contract ID, you will need it to complete the challen
 
 First, start the development server:
 
-```bash
+```sh
 npm run dev
 ```
 
@@ -177,20 +177,20 @@ Stop the development server by pressing `ctrl+c` in the terminal where it is run
 
 If you are running docker, now is a good time to stop the Stellar and Soroban preview containers.
 
-```bash
+```sh
 docker stop stellar soroban-preview
 ```
 
 Then, run the following commands to initialize the contracts on Futurenet:
 
-```bash
+```sh
 npm run clean
 npm run setup
 ```
 
 Then run the dev server again:
 
-```bash
+```sh
 npm run dev
 ```
 
@@ -206,19 +206,19 @@ Next, you will use the Vercel cli to complete our deployment.
 
 First install the Vercel cli:
 
-```bash
+```sh
 npm i global vercel
 ```
 
 Then, run the following command to deploy your dapp:
 
-```bash
+```sh
 npx vercel
 ```
 
 Then, continue through the prompts (you will not need to modify any settings) until you reach the completion prompt similar to the following:
 
-```bash
+```sh
 Vercel CLI 30.1.1
 🔗  Linked to julian-dev28/soroban-example-dapp (created .vercel)
 🔍  Inspect: https://vercel.com/julian-dev28/soroban-example-dapp/C1YZVQSqh6WcyR1uvxz8q2tW1tjD [2s]

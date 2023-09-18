@@ -93,14 +93,14 @@ Done
 
 For this step, you must change the existing contract configuration to suit a local deployment.
 
-First, navigate to `frontend/src/contracts.ts` and change const rpcUrl:
+First, navigate to `frontend/src/contracts.ts` and change `const rpcUrl`:
 
 ```diff
 -const rpcUrl = 'https://rpc-futurenet.stellar.org'
 +const rpcUrl = 'http://localhost:8000/soroban/rpc'
 ```
 
-Then, change each contract network to standalone:
+Then, change each contract network to `standalone`:
 
 ```diff
 -export const tokenAContract = new TokenA({ ...networksA.futurenet, rpcUrl })
@@ -229,7 +229,7 @@ rm -rf .soroban
 
 > Note: This will remove the existing contracts and initialize new ones on Futurenet.
 
-Next, revert the changes made to the contract network configs earlier.
+Next, revert the changes made to the contract network configs [earlier](#checkpoint-3--connect-the-frontend-to-the-backend).
 
 Navigate to `frontend/src/contracts.ts` and change `const rpcUrl`:
 
@@ -261,7 +261,7 @@ make start_dev
 
 Now, open your browser and visit [http://localhost:5173](http://localhost:5173/).
 
-Ensure that you are connected to Futurenet, and you should be able to see the frontend of your dapp!
+Ensure that Freighter is connected to Futurenet, and you should be able to see the frontend of your dapp!
 
 Next, you will remove the target directory, as it is not used by Vercel to deploy your site. To do this, run the following:
 
@@ -309,7 +309,7 @@ Then, open a terminal in the `liquidity-pool` directory and run the following co
 npx vercel
 ```
 
-Then, continue through the prompts until you see the following message:
+Then, continue through the prompts until you see the following message about setting overrides:
 
 ```bash
 ? Want to override the settings? [y/N] y
@@ -351,7 +351,7 @@ You can now visit the preview link to see your deployed dapp! 🎉
 
 <img src={futurenetDeployment} width="90%" />
 
-You must add Futurenet network lumens to your Freighter wallet to interact with the deployed example dapp. Visit [https://laboratory.stellar.org/#account-creator?network=futurenet](https://laboratory.stellar.org/#account-creator?network=futurenet), and follow the instructions to create your Freighter account on Futurenet.
+You must add Futurenet network lumens to your Freighter wallet to interact with the deployed example dapp. Visit https://laboratory.stellar.org/#account-creator?network=futurenet, and follow the instructions to create your Freighter account on Futurenet.
 
 ## Checkpoint 9: ✅ Complete the Challenge!
 

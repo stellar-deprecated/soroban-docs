@@ -51,40 +51,60 @@ The resource fee depends on the following:
 - Ledger entry accesses: Reading or writing any single ledger entry (any storage key in the contract context).
 - Ledger I/O: The number of bytes read from or written to the ledger.
 - Transaction size: The size of the transaction submitted to the network in bytes.
-- Metadata size: The size of the metadata produced by the contract. Metadata consists of the changed ledger entries (essentially an additional charge for ledger I/O) and size of the events emitted by the contract.
+- Events & return value size: The size of the events produced by the contract and the return value of the top-level contract function. Both events and return value are included in transaction metadata.
+- Ledger space rent: The payment for the ledger entry rent bumps and rent payments for increasing ledger entry size. Refer to [state expiration](./state-expiration.mdx) section for more details on how the rent works.
 
 Some parameters may contribute to multiple fee components. For example, the transaction size is charged for network propagation (as network bandwidth is limited) and for historical storage (as storing ledger history is not free).
 
 The implementation details for fee computation are provided by the following [library](https://github.com/stellar/rs-soroban-env/blob/main/soroban-env-host/src/fees.rs). This library is used by the protocol to compute the fees and thus can be considered canonical. The resource fee rates may be updated based on network validator consensus.
 
-The precise network fee rates will be defined in the upcoming mainnet release. The Futurenet preview release uses placeholder values.
-
 The best way to find the required fees for any Soroban transaction is to use the transaction simulation with [preflight service](./interacting-with-contracts.mdx#preflight).
+
+The fee rates are currently defined for the Futurenet as follows:
+
+| Description                    | Cost (stroops) |
+| ------------------------------ | -------------- |
+| 10000 instructions             | 100            |
+| Read 1 ledger entry            | 1000           |
+| Write 1 ledger entry           | 3000           |
+| Read 1KB from ledger           | 1000           |
+| 1KB of transaction (bandwidth) | 500            |
+| 1KB of transaction (history)   | 5000           |
+| 1KB of Events/return value     | 300            |
+| Write 1KB to empty ledger      | 1000           |
+| Write 1KB to 2GB ledger        | 4_000_000      |
+| Write 1KB to 4GB ledger        | 4_000_000_000  |
+| Temp entry rent period         | 10 months      |
+| Persistent entry rent period   | 1 month        |
+
+Note, that write fees grow linearly from empty ledger to 2 GB (ledger "target size"), and then grow linearly, but with a 1000x factor after exceeding the target. This is to bound the ledger size growth. As Futurenet is a small, test network, the target size is set to just 2 GB.
+
+Rent payment is a write fee for entry payed per every 'rent period' (10 months for temporary entries, 1 month for persistent entries).
 
 ### Refundable resources
 
-The only refundable resource at the moment is metadata. If the transaction emits less metadata than declared, the network will refund the difference in fees.
+Fees for events and return value, as well as rent fees are refundable, which means that they are a part of transaction's `refundableFee`. Refundable fees are charged from the source account before the transaction is executed and then refunded based on the actual usage. The transaction will fail if `refundableFee` is not enough to cover the actual resource usage though.
 
 ## Resource limits
 
 Ledger close time is constrained to a few seconds, thus preventing the execution of arbitrarily large transactions, regardless of the resource fees involved. All the resources referenced in the prior section are subject to a per-transaction limit. Additionally, the memory (RAM) usage by a transaction is capped, though it is not subject to any charge.
 
-The limits are may change in the mainnet release. They can also be updated, usually increased, based on the network validator consensus.
+The limits may change in the mainnet release. They can also be updated, usually increased, based on the network validator consensus.
 
 The current (Futurenet) limits are as follows:
 
-| Resource            | Limit       |
-| ------------------- | ----------- |
-| CPU Instructions    | 100,000,000 |
-| RAM                 | 100 MB      |
-| Ledger Entry Reads  | 40          |
-| Ledger Entry Writes | 20          |
-| Ledger Read Bytes   | 200 KB      |
-| Ledger Write Bytes  | 100 KB      |
-| Transaction Size    | 100 KB      |
-| Metadata Size       | 200 KB      |
-
-Apart from these resource limits, there is also a maximum contract size limit of 64 KB.
+| Resource                   | Limit       |
+| -------------------------- | ----------- |
+| CPU Instructions           | 100,000,000 |
+| RAM                        | 40 MB       |
+| Ledger Entry Reads         | 30          |
+| Ledger Entry Writes        | 20          |
+| Ledger Read Bytes          | 130 KB      |
+| Ledger Write Bytes         | 65 KB       |
+| Transaction Size           | 70 KB       |
+| Events & return value size | 2 KB        |
+| Ledger entry size          | 64 KB       |
+| Maximum rent bump          | 31 days     |
 
 # Metering
 

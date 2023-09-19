@@ -52,7 +52,7 @@ The way out of this dilemma is for the environment itself to provide support cod
 
 Shared, standard functionality available to all contract guest code is provided through the environment interface in terms of host objects and host functions.
 
-The environment supports a small number of types of host objects covering data structures like vectors, maps, binary blobs, and big integers. Host objects are all immutable, are allocated and reside within the host environment, and are only available in the guest environment by reference. Guest code refers to host objects by integer-valued handles.
+The environment supports a small number of types of host objects covering data structures like vectors, maps, binary blobs, addresses, strings and big integers. Host objects are all immutable, are allocated and reside within the host environment, and are only available in the guest environment by reference. Guest code refers to host objects by integer-valued handles.
 
 There is also a slightly larger set of host functions that act on host objects: creating, modifying, inspecting and manipulating them. Some host functions allow copying blocks of binary data into and out of the VM memory of the guest, and some host functions perform cryptographic operations on host objects.
 

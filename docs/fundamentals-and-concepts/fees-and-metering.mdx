@@ -62,24 +62,24 @@ The best way to find the required fees for any Soroban transaction is to use the
 
 The fee rates are currently defined for the Futurenet as follows:
 
-| Description                    | Cost (stroops) |
-| ------------------------------ | -------------- |
-| 10000 CPU instructions         | 100            |
-| Read 1 ledger entry            | 1000           |
-| Write 1 ledger entry           | 3000           |
-| Read 1KB from ledger           | 1000           |
-| 1KB of transaction (bandwidth) | 500            |
-| 1KB of transaction (history)   | 5000           |
-| 1KB of Events/return value     | 300            |
-| Write 1KB to empty ledger      | 1000           |
-| Write 1KB to 2GB ledger        | 4_000_000      |
-| Write 1KB to 4GB ledger        | 4_000_000_000  |
-| Temp entry rent period         | 10 months      |
-| Persistent entry rent period   | 1 month        |
+| Description                       | Cost (stroops)       |
+| --------------------------------- | -------------------- |
+| 10000 CPU instructions            | 100                  |
+| Read 1 ledger entry               | 1000                 |
+| Write 1 ledger entry              | 3000                 |
+| Read 1KB from ledger              | 1000                 |
+| 1KB of transaction (bandwidth)    | 500                  |
+| 1KB of transaction (history)      | 5000                 |
+| 1KB of Events/return value        | 300                  |
+| Write 1KB to empty ledger         | 1000                 |
+| Write 1KB to 2GB ledger           | 4_000_000            |
+| Write 1KB to 4GB ledger           | 4_000_000_000        |
+| Temp entry rent coefficient       | 10 months in ledgers |
+| Persistent entry rent coefficient | 1 month in ledgers   |
 
 Note, that write fees grow linearly from empty ledger to 2 GB (ledger "target size"), and then grow linearly, but with a 1000x factor after exceeding the target. This is to bound the ledger size growth. As Futurenet is a small, test network, the target size is set to just 2 GB.
 
-Rent payment is a write fee for entry paid per every 'rent period' (10 months for temporary entries, 1 month for persistent entries).
+One ledger worth of rent costs `write_fee / rent_coefficient`, where `write_fee` is the cost of writing the ledger entry and `rent_coefficient` is a number of ledgers for which the whole write fee will be paid. Given the numbers above, this means that 1 month of renting the ledger space for the temporary entry costs `write_fee / 10` and it costs `write_fee` for a persistent entry (10x more).
 
 ### Refundable resources
 

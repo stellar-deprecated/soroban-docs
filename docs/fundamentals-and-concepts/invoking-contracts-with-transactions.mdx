@@ -48,7 +48,7 @@ The XDR of `HostFunction` and `InvokeHostFunctionOp` below can be found
 union HostFunction switch (HostFunctionType type)
 {
 case HOST_FUNCTION_TYPE_INVOKE_CONTRACT:
-    SCVec invokeContract;
+    InvokeContractArgs invokeContract;
 case HOST_FUNCTION_TYPE_CREATE_CONTRACT:
     CreateContractArgs createContract;
 case HOST_FUNCTION_TYPE_UPLOAD_CONTRACT_WASM:
@@ -69,11 +69,22 @@ struct InvokeHostFunctionOp
 The `hostFunction` in `InvokeHostFunctionOp` will be executed by the Soroban host environment. The supported functions are:
 
 1. `HOST_FUNCTION_TYPE_INVOKE_CONTRACT`
+
    - This will invoke a function of the deployed contract with arguments
-     specified in `invokeContract` vector.
-   - `invokeContract` arguments are expected to contain the contract id
-     `SCBytes`, contract function name `SCSymbol`, and the arguments of the
-     contract function being invoked.
+     specified in `invokeContract` struct.
+
+   ```cpp
+   struct InvokeContractArgs {
+    SCAddress contractAddress;
+    SCSymbol functionName;
+    SCVal args<>;
+   };
+   ```
+
+   `contractAddress` is the address of the contract to invoke, `functionName` is
+   the name of the function to invoke and `args` are the arguments to pass to
+   that function.
+
 2. `HOST_FUNCTION_TYPE_UPLOAD_CONTRACT_WASM`
    - This will upload the contract Wasm using the provided `wasm` blob.
    - Uploaded Wasm can be identified by the SHA-256 hash of the uploaded Wasm.
@@ -298,10 +309,6 @@ struct SorobanResources
     uint32 readBytes;
     // The maximum number of bytes this transaction can write to ledger
     uint32 writeBytes;
-
-    // Maximum size of dynamic metadata produced by this contract (
-    // currently only includes the events).
-    uint32 extendedMetaDataSizeBytes;
 };
 
 struct SorobanTransactionData
@@ -313,15 +320,16 @@ struct SorobanTransactionData
 };
 ```
 
-This data comprises two parts: Soroban resources and the refundableFee. The
+This data comprises two parts: Soroban resources and the `refundableFee`. The
 `refundableFee` is the portion of the transaction fee eligible for refund. It
-should currently be no less than the metadata fee of the transaction.
+includes the fees for the contract events emitted by the transaction, the return
+value of the host function invocation, and fees for the [ledger space rent](./state-expiration.mdx).
 
 The `SorobanResources` structure includes the ledger footprint and the resource
 values, which together determine the resource consumption limit and the
 resource fee. The footprint must contain the `LedgerKey`s that will be read
 and/or written.
 
-The simplest method to determine the values in `SorobanResources` is to use the
-transaction simulation with
+The simplest method to determine the values in `SorobanResources` and
+`refundableFee` is to use the transaction simulation with
 [preflight service](../fundamentals-and-concepts/interacting-with-contracts.mdx#preflight).

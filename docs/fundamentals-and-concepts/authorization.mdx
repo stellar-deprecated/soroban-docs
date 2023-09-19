@@ -273,7 +273,7 @@ non-contract-invoker account, the following steps happen:
 - Find an authorized invocation tree that matches the `require_auth` call. The
   matching process is pretty involved and is described in the section below.
 - If authentication hasn't happened for this tree yet, then perform it:
-  - Verify signature expiration. Expired signatures are not vlaid.
+  - Verify signature expiration. Expired signatures are not valid.
   - Verify and consume nonce. Nonce is an arbitrary number, that has to be
     unique among all the non-expired signatures of the address.
   - Build the expected [signature payload preimage] and compute its SHA-256 hash

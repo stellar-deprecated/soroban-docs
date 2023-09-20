@@ -11,7 +11,7 @@ Alternatively, you can use one of Soroban's [client SDKs](https://soroban.stella
 
 ## Run Your Own Instance
 
-[Download](https://hub.docker.com/r/stellar/quickstart) and run a local instance via [Docker Quickstart](https://github.com/stellar/quickstart) and run a standalone network or communicate with a live development [Futurenet] (and soon to come, Testnet and Mainnet).
+[Download](https://hub.docker.com/r/stellar/quickstart) and run a local instance via [Docker Quickstart](https://github.com/stellar/quickstart) and run a standalone network or communicate with a live development [Testnet].
 
 For local development, an RPC service can run on a standard laptop with 16GB of RAM and has minimal storage and CPU requirements.
 
@@ -82,12 +82,12 @@ Or invoking a contract:
 
 When you're done with your Standalone node, you can close it with <kbd>ctrl</kbd><kbd>c</kbd> (not <kbd>cmd</kbd>). This will fully remove the container (that's what the `--rm` option to the `docker` command does), which means you will need to re-deploy your contract and re-fund your identity next time you start it. If you work with local nodes often, you may want to create scripts to make these initialization steps easier. For example, see the [example dapp's `initialize.sh`](https://github.com/stellar/soroban-example-dapp/blob/abdac3afdb6c410cc426831ece93371c1a27347d/initialize.sh).
 
-[Futurenet]: testnet
+[Testnet]: testnet
 [Run on Sandbox]: ../getting-started/hello-world#run-on-sandbox
 
-### Futurenet
+### Testnet
 
-Running your own Futurenet node works much the same way as running a Quickstart node, described above. You will need minor modifications for a few commands. First, you need `--futurenet` for the docker instance, rather than `--standalone`:
+Running your own Testnet node works much the same way as running a Quickstart node, described above. You will need minor modifications for a few commands. First, you need `--futurenet` for the docker instance, rather than `--standalone`:
 
     docker run --rm -it \
        -p 8000:8000 \
@@ -104,7 +104,7 @@ And you'll want to configure it for use with the `--network` flag in Soroban CLI
 
 Replace `futurenet` in that command with the name of your choice, if you want to leave the name `futurenet` available for use with a public RPC provider (see below). Or make clever use of `--global` configs for public providers and local configs (made with the undecorated `network add` command above) for local nodes.
 
-The `alice` identity suggested for your Standalone network will still work here, since it's just a public/private keypair, but you'll need to remember to fund it for the Futurenet network:
+The `alice` identity suggested for your Standalone network will still work here, since it's just a public/private keypair, but you'll need to remember to fund it for the Testnet network:
 
     curl "https://friendbot-futurenet.stellar.org/?addr=$(soroban config identity address alice)"
 
@@ -112,7 +112,7 @@ Now you can replace `--network standalone` with `--network futurenet` (or whatev
 
 ## Public RPC Providers
 
-These providers host an publicly available RPC endpoint that you can connect to. The following currently support Futurenet (with more to come).
+These providers host an publicly available RPC endpoint that you can connect to. The following currently support Testnet (with more to come).
 
 | Provider                      | Endpoint                            | Friendbot                                 |
 | :---------------------------- | ----------------------------------- | ----------------------------------------- |

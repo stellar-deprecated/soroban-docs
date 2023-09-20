@@ -60,7 +60,7 @@ The implementation details for fee computation are provided by the following [li
 
 The best way to find the required fees for any Soroban transaction is to use the transaction simulation with [preflight service](./interacting-with-contracts.mdx#preflight).
 
-The fee rates are currently defined for the Futurenet as follows:
+The fee rates are currently defined for the Testnet as follows:
 
 | Description                       | Cost (stroops)       |
 | --------------------------------- | -------------------- |
@@ -77,7 +77,7 @@ The fee rates are currently defined for the Futurenet as follows:
 | Temp entry rent coefficient       | 10 months in ledgers |
 | Persistent entry rent coefficient | 1 month in ledgers   |
 
-Note, that write fees grow linearly from empty ledger to 2 GB (ledger "target size"), and then grow linearly, but with a 1000x factor after exceeding the target. This is to bound the ledger size growth. As Futurenet is a small, test network, the target size is set to just 2 GB.
+Note, that write fees grow linearly from empty ledger to 2 GB (ledger "target size"), and then grow linearly, but with a 1000x factor after exceeding the target. This is to bound the ledger size growth. As Testnet is a small, test network, the target size is set to just 2 GB.
 
 One ledger worth of rent costs `write_fee / rent_coefficient`, where `write_fee` is the cost of writing the ledger entry and `rent_coefficient` is a number of ledgers for which the whole write fee will be paid. Given the numbers above, this means that 1 month of renting the ledger space for the temporary entry costs `write_fee / 10` and it costs `write_fee` for a persistent entry (10x more).
 
@@ -91,7 +91,7 @@ Ledger close time is constrained to a few seconds, thus preventing the execution
 
 These resource limits may change in the Mainnet release. They can also be updated, usually increased, based on the network validator vote and consensus.
 
-The current (Futurenet) limits are as follows:
+The current (Testnet) limits are as follows:
 
 | Resource                   | Limit       |
 | -------------------------- | ----------- |

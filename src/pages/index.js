@@ -10,15 +10,15 @@ export default function Landing() {
       <Head>
         <meta
           name="description"
-          content="Soroban is a smart contracts platform that is designed with purpose and built to perform. The Futurenet has launched! Start experimenting now!"
+          content="Soroban is a smart contracts platform that is designed with purpose and built to perform. The Testnet has launched! Start experimenting now!"
         />
         <meta
           property="og:description"
-          content="Soroban is a smart contracts platform that is designed with purpose and built to perform. The Futurenet has launched! Start experimenting now!"
+          content="Soroban is a smart contracts platform that is designed with purpose and built to perform. The Testnet has launched! Start experimenting now!"
         />
         <meta
           name="twitter:description"
-          content="Soroban is a smart contracts platform that is designed with purpose and built to perform. The Futurenet has launched! Start experimenting now!"
+          content="Soroban is a smart contracts platform that is designed with purpose and built to perform. The Testnet has launched! Start experimenting now!"
         />
       </Head>
 

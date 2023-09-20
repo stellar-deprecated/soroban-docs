@@ -21,7 +21,7 @@ import StartChallengeButton from "../../src/components/atoms/start-challenge-but
 
 This challenge is designed for educational purposes and helps you understand how a dapp can be built and interacted with in a sandbox environment.
 
-This challenge will walk you through the step-by-step journey of creating and launching a liquidity pool dapp on Stellar, all while using Soroban in a sandbox environment. You will learn how to deploy smart contracts to a sandbox environment and how to interact with them through a web frontend. In this context, the term "ship" refers to finalizing the development process of your dapp, ensuring that it functions as expected, and is accessible for user interaction and testing through a hosted frontend. However, it's crucial to clarify that despite its functionality, the dapp is not promoted nor intended for deployment in a production-level setting on Futurenet.
+This challenge will walk you through the step-by-step journey of creating and launching a liquidity pool dapp on Stellar, all while using Soroban in a sandbox environment. You will learn how to deploy smart contracts to a sandbox environment and how to interact with them through a web frontend. In this context, the term "ship" refers to finalizing the development process of your dapp, ensuring that it functions as expected, and is accessible for user interaction and testing through a hosted frontend. However, it's crucial to clarify that despite its functionality, the dapp is not promoted nor intended for deployment in a production-level setting on Testnet.
 
 ## Checkpoint 0: 📦 Install 📚
 
@@ -144,7 +144,7 @@ Next, add some Standalone network lumens to your Freighter wallet by doing the f
 - Copy the address for your Freighter wallet.
 - Visit `http://localhost:8000/friendbot?addr=<your_address>`
 
-> Note: These are test lumens for use with your local network and cannot be used on Futurenet or Mainnet.
+> Note: These are test lumens for use with your local network and cannot be used on Testnet or Mainnet.
 
 ## Checkpoint 4: 🏦 Mint Tokens for the Liquidity Pool
 
@@ -160,7 +160,7 @@ You should see an updated balance in the account balance component.
 
 <img src={updatedBalances} width="40%" />
 
-> Note: These are test tokens for use with your local network and cannot be used on Futurenet or Mainnet.
+> Note: These are test tokens for use with your local network and cannot be used on Testnet or Mainnet.
 
 ## Checkpoint 5: 💰 Deposit into the Liquidity Pool
 
@@ -210,7 +210,7 @@ Once the transaction is confirmed, you should see updated balances on the fronte
 
 ## Checkpoint 8: 🚢 Ship It! 🚁
 
-Now that your dapp is fully functional locally, it's time to prepare it for deployment on Futurenet.
+Now that your dapp is fully functional locally, it's time to prepare it for deployment on Testnet.
 
 Stop the development server by pressing `ctrl+c` in the terminal where it is running.
 
@@ -220,14 +220,14 @@ If you are running docker, now is a good time to stop the Stellar and Soroban pr
 docker stop stellar soroban-preview
 ```
 
-Then, run the following commands to initialize the contracts on Futurenet:
+Then, run the following commands to initialize the contracts on Testnet:
 
 ```bash
 rm -rf .soroban
 ./initialize.sh futurenet
 ```
 
-> Note: This will remove the existing contracts and initialize new ones on Futurenet.
+> Note: This will remove the existing contracts and initialize new ones on Testnet.
 
 Next, revert the changes made to the contract network configs [earlier](#checkpoint-3--connect-the-frontend-to-the-backend).
 
@@ -238,7 +238,7 @@ Navigate to `frontend/src/contracts.ts` and change `const rpcUrl`:
 +const rpcUrl = 'https://rpc-futurenet.stellar.org'
 ```
 
-Then, change each contract network to Futurenet:
+Then, change each contract network to Testnet:
 
 ```diff
 -export const tokenAContract = new TokenA({ ...networksA.standalone, rpcUrl })
@@ -351,7 +351,7 @@ You can now visit the preview link to see your deployed dapp! 🎉
 
 <img src={futurenetDeployment} width="90%" />
 
-You must add Futurenet network lumens to your Freighter wallet to interact with the deployed example dapp. Visit https://laboratory.stellar.org/#account-creator?network=futurenet, and follow the instructions to create your Freighter account on Futurenet.
+You must add Testnet network lumens to your Freighter wallet to interact with the deployed example dapp. Visit https://laboratory.stellar.org/#account-creator?network=futurenet, and follow the instructions to create your Freighter account on Futurenet.
 
 ## Checkpoint 9: ✅ Complete the Challenge!
 

@@ -33,7 +33,7 @@ To run a local standalone network with the Stellar Quickstart Docker image, run 
     docker run --rm -it \
       -p 8000:8000 \
       --name stellar \
-      stellar/quickstart:soroban-dev@sha256:a6b03cf6b0433c99f2f799b719f0faadbb79684b1b763e7674ba749fb0f648ee \
+      stellar/quickstart:testing@sha256:1c98f895f8b69cc843eeaa5230d67044dbeb390a5529d51dd7762d8ff685c3f8 \
       --standalone \
       --enable-soroban-rpc
 
@@ -92,7 +92,7 @@ Running your own Futurenet node works much the same way as running a Quickstart 
     docker run --rm -it \
        -p 8000:8000 \
        --name stellar \
-       stellar/quickstart:soroban-dev@sha256:ed57f7a7683e3568ae401f5c6e93341a9f77d8ad41191bf752944d7898981e0c \
+       stellar/quickstart:testing@sha256:1c98f895f8b69cc843eeaa5230d67044dbeb390a5529d51dd7762d8ff685c3f8 \
        --futurenet \
        --enable-soroban-rpc
 
@@ -104,9 +104,9 @@ And you'll want to configure it for use with the `--network` flag in Soroban CLI
 
 Replace `futurenet` in that command with the name of your choice, if you want to leave the name `futurenet` available for use with a public RPC provider (see below). Or make clever use of `--global` configs for public providers and local configs (made with the undecorated `network add` command above) for local nodes.
 
-The `alice` identity suggested for your Standalone network will still work here, since it's just a public/private keypair, but you'll need to remember to fund it:
+The `alice` identity suggested for your Standalone network will still work here, since it's just a public/private keypair, but you'll need to remember to fund it for the Futurenet network:
 
-    curl "http://localhost:8000/friendbot?addr=$(soroban config identity address alice)"
+    curl "https://friendbot-futurenet.stellar.org/?addr=$(soroban config identity address alice)"
 
 Now you can replace `--network standalone` with `--network futurenet` (or whatever you named it) in all your commands that need a network, like the `deploy` and `invoke` shown above.
 

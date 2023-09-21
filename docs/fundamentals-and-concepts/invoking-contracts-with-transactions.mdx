@@ -36,7 +36,7 @@ Some (but not all yet) of the Stellar SDKs have functions built-in to handle mos
 
 :::tip
 
-The [`soroban-client`](https://stellar.github.io/js-soroban-client/) JavaScript SDK is a new library that can be used alongside the existing JavaScript SDKs for Stellar. All that needs to be done is to install it using your preferred package manager.
+The [`soroban-client`](https://stellar.github.io/js-soroban-client/) JavaScript SDK is a new library that can be used alongside the existing JavaScript SDKs for Stellar. All you need to do is install it using your preferred package manager.
 
 ```bash
 npm install --save soroban-client
@@ -259,7 +259,7 @@ else:
 
 ## XDR Usage
 
-Stellar supports invoking and deploying contracts with a new Operation named `InvokeHostFunctionOp`. The [`soroban-cli`] abstracts these details away from the user, but not all SDKs do yet. If you're building a dapp you'll probably find yourself building the XDR transaction to submit to the network.
+Stellar supports invoking and deploying contracts with a new operation named `InvokeHostFunctionOp`. The [`soroban-cli`] abstracts these details away from the user, but not all SDKs do yet. If you're building a dapp you'll probably find yourself building the XDR transaction to submit to the network.
 
 The `InvokeHostFunctionOp` can be used to perform the following Soroban operations:
 
@@ -401,7 +401,7 @@ The `hostFunction` in `InvokeHostFunctionOp` will be executed by the Soroban hos
 
 #### Authorization Data
 
-Soroban [authorization framework](../fundamentals-and-concepts/authorization.mdx)
+Soroban's [authorization framework](../fundamentals-and-concepts/authorization.mdx)
 provides a standardized way for passing authorization data to the contract
 invocations via `SorobanAuthorizationEntry` structures.
 
@@ -424,7 +424,7 @@ case SOROBAN_CREDENTIALS_ADDRESS:
 `SorobanAuthorizationEntry` contains a tree of invocations with `rootInvocation`
 as a root. This tree is authorized by a user specified in `credentials`.
 
-`SorobanAddressCredentials` have 2 options:
+`SorobanAddressCredentials` have two options:
 
 - `SOROBAN_CREDENTIALS_SOURCE_ACCOUNT` - this simply uses the signature of the
   transaction (or operation, if any) source account and hence doesn't require any
@@ -447,7 +447,7 @@ as a root. This tree is authorized by a user specified in `credentials`.
     `signatureExpirationLedger`, but it is no longer valid on
     `signatureExpirationLedger + 1`. It is recommended to keep this as small as
     viable, as it makes the transaction cheaper.
-  - `nonce` is an arbitrary value that is unique for all the signatures of
+  - `nonce` is an arbitrary value that is unique for all the signatures
     performed by `address` until `signatureExpirationLedger`. A good approach to
     generating this is to just use a random value.
   - `signatureArgs` - signature (or multiple signatures) that sign the 32-byte
@@ -482,14 +482,14 @@ struct SorobanAuthorizedContractFunction
 ```
 
 `SorobanAuthorizedInvocation` consists of the `function` that is being authorized
-(either contract function or a host function) and authorized sub-invocations
+(either contract function or a host function) and the authorized sub-invocations
 that `function` performs (if any).
 
 `SorobanAuthorizedFunction` has two variants:
 
 - `SOROBAN_AUTHORIZED_FUNCTION_TYPE_CONTRACT_FN` is a contract function that
-  includes the address of the contract, name of the function being invoked and
-  arguments of `require_auth`/`require_auth_for_args` call performed on behalf
+  includes the address of the contract, name of the function being invoked, and
+  arguments of the `require_auth`/`require_auth_for_args` call performed on behalf
   of the address. Note, that if `require_auth[_for_args]` wasn't called, there
   shouldn't be a `SorobanAuthorizedInvocation` entry in the transaction.
 - `SOROBAN_AUTHORIZED_FUNCTION_TYPE_CREATE_CONTRACT_HOST_FN` is authorization

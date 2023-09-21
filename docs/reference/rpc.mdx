@@ -100,13 +100,13 @@ And you'll want to configure it for use with the `--network` flag in Soroban CLI
 
     soroban config network add futurenet \
       --rpc-url "http://localhost:8000/soroban/rpc" \
-      --network-passphrase "Test SDF Future Network ; October 2022"
+      --network-passphrase "Test SDF Network ; September 2015"
 
 Replace `futurenet` in that command with the name of your choice, if you want to leave the name `futurenet` available for use with a public RPC provider (see below). Or make clever use of `--global` configs for public providers and local configs (made with the undecorated `network add` command above) for local nodes.
 
 The `alice` identity suggested for your Standalone network will still work here, since it's just a public/private keypair, but you'll need to remember to fund it for the Testnet network:
 
-    curl "https://friendbot-futurenet.stellar.org/?addr=$(soroban config identity address alice)"
+    curl "https://friendbot.stellar.org/?addr=$(soroban config identity address alice)"
 
 Now you can replace `--network standalone` with `--network futurenet` (or whatever you named it) in all your commands that need a network, like the `deploy` and `invoke` shown above.
 
@@ -211,12 +211,12 @@ helm template my-rpc stellar/soroban-rpc
 You can configure Soroban CLI to use remote RPC endpoint:
 
     soroban config network add --global futurenet \
-      --rpc-url https://rpc-futurenet.stellar.org:443 \
-      --network-passphrase 'Test SDF Future Network ; October 2022'
+      --rpc-url https://soroban-testnet.stellar.org:443 \
+      --network-passphrase 'Test SDF Network ; September 2015'
 
 And fund your accounts/identities with the publicly hosted Friendbot:
 
-    curl "https://friendbot-futurenet.stellar.org/?addr=$(soroban config identity address alice)"
+    curl "https://friendbot.stellar.org/?addr=$(soroban config identity address alice)"
 
 See the tip above about command expansion (the `$(…)` stuff) if you're not using a bash-based shell.
 

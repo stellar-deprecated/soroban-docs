@@ -126,7 +126,7 @@ Now let's open up `src/pages/index.astro` and add some code to call the contract
 +
 +const greeter = new Contract({
 +  ...networks.futurenet,
-+  rpcUrl: 'https://rpc-futurenet.stellar.org', // from https://soroban.stellar.org/docs/reference/rpc#public-rpc-providers
++  rpcUrl: 'https://soroban-testnet.stellar.org', // from https://soroban.stellar.org/docs/reference/rpc#public-rpc-providers
 +});
 +
 +const greeting = await greeter.hello({ to: 'Soroban' });
@@ -513,7 +513,7 @@ If you're still having problems, join our Discord (link above) or [open an issue
 
 ### All contract calls start throwing `403` errors
 
-This means that Futurenet is down, and you probably just need to wait a while and try again.
+This means that Testnet is down, and you probably just need to wait a while and try again.
 
 ## Wrapping up
 

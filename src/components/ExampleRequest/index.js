@@ -30,14 +30,14 @@ export default function ExampleRequest(props) {
 {`curl -X POST \\
 -H 'Content-Type: application/json' \\
 -d '${JSON.stringify(requestObject, null, 2)}' \\
-https://rpc-futurenet.stellar.org | jq`}
+https://soroban-testnet.stellar.org | jq`}
         </CodeBlock>
       </TabItem>
 
       <TabItem value="js">
         <CodeBlock language="js">
 {`let requestObject = ${JSON.stringify(requestObject, null, 2)}
-let res = await fetch('https://rpc-futurenet.stellar.org', {
+let res = await fetch('https://soroban-testnet.stellar.org', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify(requestObject),
@@ -50,7 +50,7 @@ console.log(json)`}
       <TabItem value="py">
         <CodeBlock language="python">
 {`import json, requests
-res = requests.post('https://rpc-futurenet.stellar.org', json=${JSON.stringify(requestObject, null, 4)})
+res = requests.post('https://soroban-testnet.stellar.org', json=${JSON.stringify(requestObject, null, 4)})
 print(json.dumps(res.json(), indent=2))`}
         </CodeBlock>
       </TabItem>

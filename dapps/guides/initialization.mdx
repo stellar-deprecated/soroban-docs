@@ -38,8 +38,8 @@ After building, you're ready to deploy the smart contracts to Testnet. To do thi
 soroban contract deploy \
  --wasm target/wasm32-unknown-unknown/release/soroban_token_contract.wasm \
  --source <ADMIN_ACCOUNT_SECRET_KEY> \
- --rpc-url https://rpc-futurenet.stellar.org:443 \
- --network-passphrase 'Test SDF Future Network ; October 2022'
+ --rpc-url https://soroban-testnet.stellar.org:443 \
+ --network-passphrase 'Test SDF Network ; September 2015'
 ```
 
 This command deploys the smart contracts to Testnet using the `soroban contract deploy` function.
@@ -52,8 +52,8 @@ With the contracts deployed, it's time to initialize the token contract:
 soroban contract invoke \
  --id <TOKEN_CONTRACT_ID> \
  --source-account <ADMIN_ACCOUNT_SECRET_KEY> \
- --rpc-url https://rpc-futurenet.stellar.org:443 \
- --network-passphrase 'Test SDF Future Network ; October 2022' \
+ --rpc-url https://soroban-testnet.stellar.org:443 \
+ --network-passphrase 'Test SDF Network ; September 2015' \
  -- initialize \
  --admin <ADMIN_PUBLIC_KEY> \
  --decimal 7 \
@@ -79,8 +79,8 @@ Lastly, you need to mint some tokens to the sender's account:
 soroban contract invoke \
  --id <TOKEN_CONTRACT_ID> \
  --source-account <ADMIN_ACCOUNT_SECRET_KEY> \
- --rpc-url https://rpc-futurenet.stellar.org:443 \
- --network-passphrase 'Test SDF Future Network ; October 2022' \
+ --rpc-url https://soroban-testnet.stellar.org:443 \
+ --network-passphrase 'Test SDF Network ; September 2015' \
  -- mint \
  --to <USER_PUBLIC_KEY> \
  --amount 1000000000
@@ -115,7 +115,7 @@ else
   SOROBAN_RPC_HOST="http://localhost:8000"
 fi
 
-SOROBAN_RPC_URL="https://rpc-futurenet.stellar.org"
+SOROBAN_RPC_URL="https://soroban-testnet.stellar.org"
 
 case "$1" in
 standalone)
@@ -125,8 +125,8 @@ standalone)
   ;;
 futurenet)
   echo "Using Testnet network"
-  SOROBAN_NETWORK_PASSPHRASE="Test SDF Future Network ; October 2022"
-  FRIENDBOT_URL="https://friendbot-futurenet.stellar.org/"
+  SOROBAN_NETWORK_PASSPHRASE="Test SDF Network ; September 2015"
+  FRIENDBOT_URL="https://friendbot.stellar.org/"
   ;;
 *)
   echo "Usage: $0 standalone|futurenet"

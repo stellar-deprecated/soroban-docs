@@ -921,7 +921,7 @@ test test::test ... ok
 
 Now that we have a working vault contract, we can deploy it to a network and interact with it.
 
-This section requires you to have a funded Keypair to use with Stellar's Futurenet. You can create and fund one using the [Stellar Laboratory](https://laboratory.stellar.org/#account-creator?network=futurenet).
+This section requires you to have a funded Keypair to use with Stellar's Testnet. You can create and fund one using the [Stellar Laboratory](https://laboratory.stellar.org/#account-creator?network=futurenet).
 
 Below you will find a series of commands that will help you build, deploy and interact with the vault and token contracts. You can use them to follow along as we walk through the process of building, deploying, and interacting with the contracts. It may behoove you to keep these commands in a `scripts` directory in your project. This way, you can easily run them from your terminal.
 
@@ -942,8 +942,8 @@ soroban contract build
 soroban contract deploy \
     --wasm soroban_token_contract.wasm \
     --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022'
+    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --network-passphrase 'Test SDF Network ; September 2015'
 ```
 
 </TabItem>
@@ -955,8 +955,8 @@ soroban contract invoke \
     --wasm soroban_token_contract.wasm \
     --id <TOKEN_CONTRACT_ID> \
     --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
+    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --network-passphrase 'Test SDF Network ; September 2015' \
     -- \
     initialize \
     --admin <USER_ADDRESS> \
@@ -974,8 +974,8 @@ soroban contract invoke \
     --wasm soroban_token_contract.wasm \
     --id <TOKEN_CONTRACT_ID> \
     --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
+    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --network-passphrase 'Test SDF Network ; September 2015' \
     -- \
     mint \
     --to <USER_OR_VAULT_ADDRESS> \
@@ -991,8 +991,8 @@ soroban contract invoke \
     --wasm soroban_token_contract.wasm \
     --id <TOKEN_CONTRACT_ID> \
     --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
+    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --network-passphrase 'Test SDF Network ; September 2015' \
     -- \
         balance \
     --id <USER_OR_VAULT_ADDRESS>
@@ -1014,8 +1014,8 @@ soroban contract install --wasm soroban_token_contract.wasm
 soroban contract deploy \
     --wasm target/wasm32-unknown-unknown/release/vault.wasm \
     --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022'
+    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --network-passphrase 'Test SDF Network ; September 2015'
 ```
 
 </TabItem>
@@ -1027,8 +1027,8 @@ soroban contract invoke \
     --wasm target/wasm32-unknown-unknown/release/vault.wasm \
     --id <VAULT_CONTRACT_ID> \
     --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
+    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --network-passphrase 'Test SDF Network ; September 2015' \
     -- \
     initialize \
     --token_wasm_hash 73593275ee3bcacc2aef8d641a1d5108618064bdfff84a826576b8caff395add \
@@ -1044,8 +1044,8 @@ soroban contract invoke \
     --wasm target/wasm32-unknown-unknown/release/vault.wasm \
     --id <VAULT_CONTRACT_ID> \
     --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
+    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --network-passphrase 'Test SDF Network ; September 2015' \
     -- \
     share_id
 ```
@@ -1059,8 +1059,8 @@ soroban contract invoke \
     --wasm target/wasm32-unknown-unknown/release/vault.wasm \
     --id <VAULT_CONTRACT_ID> \
     --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
+    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --network-passphrase 'Test SDF Network ; September 2015' \
     -- \
     deposit \
     --from <USER_ADDRESS> \
@@ -1076,8 +1076,8 @@ soroban contract invoke \
     --wasm target/wasm32-unknown-unknown/release/vault.wasm \
     --id <VAULT_CONTRACT_ID> \
     --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
+    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --network-passphrase 'Test SDF Network ; September 2015' \
     -- \
     get_rsrvs
 ```
@@ -1091,8 +1091,8 @@ soroban contract invoke \
     --wasm target/wasm32-unknown-unknown/release/vault.wasm \
     --id <VAULT_CONTRACT_ID> \
     --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
+    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --network-passphrase 'Test SDF Network ; September 2015' \
     -- \
     withdraw \
     --to <USER_ADDRESS> \
@@ -1116,8 +1116,8 @@ Next, we need to deploy the token contract. We can do this by running the `deplo
 soroban contract deploy \
     --wasm soroban_token_contract.wasm \
     --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022'
+    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --network-passphrase 'Test SDF Network ; September 2015'
 ```
 
 We should receive an output with the token contract ID. We will need this ID for the next step.
@@ -1141,8 +1141,8 @@ soroban contract invoke \
     --wasm soroban_token_contract.wasm \
     --id <TOKEN_CONTRACT_ID> \
     --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
+    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --network-passphrase 'Test SDF Network ; September 2015' \
     -- \
     initialize \
     --admin <USER_ADDRESS> \
@@ -1157,8 +1157,8 @@ Next, we need to deploy the vault contract. We can do this by running the `deplo
 soroban contract deploy \
     --wasm target/wasm32-unknown-unknown/release/vault.wasm \
     --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022'
+    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --network-passphrase 'Test SDF Network ; September 2015'
 ```
 
 We should receive an output with the vault contract ID. We will need this ID for the next step.
@@ -1212,8 +1212,8 @@ soroban contract invoke \
     --wasm target/wasm32-unknown-unknown/release/vault.wasm \
     --id <VAULT_CONTRACT_ID> \
     --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
+    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --network-passphrase 'Test SDF Network ; September 2015' \
     -- \
     initialize \
     --token_wasm_hash 73593275ee3bcacc2aef8d641a1d5108618064bdfff84a826576b8caff395add \
@@ -1245,8 +1245,8 @@ soroban contract invoke \
     --wasm soroban_token_contract.wasm \
     --id <TOKEN_CONTRACT_ID> \
     --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
+    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --network-passphrase 'Test SDF Network ; September 2015' \
     -- \
     mint \
     --to <USER_OR_VAULT_ADDRESS> \
@@ -1260,8 +1260,8 @@ soroban contract invoke \
     --wasm soroban_token_contract.wasm \
     --id <TOKEN_CONTRACT_ID> \
     --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
+    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --network-passphrase 'Test SDF Network ; September 2015' \
     -- \
         balance \
     --id <USER_ADDRESS>
@@ -1280,8 +1280,8 @@ soroban contract invoke \
     --wasm target/wasm32-unknown-unknown/release/vault.wasm \
     --id <VAULT_CONTRACT_ID> \
     --source <ACCOUNT_SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
+    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --network-passphrase 'Test SDF Network ; September 2015' \
     -- \
     deposit \
     --from <USER_ADDRESS> \
@@ -1295,8 +1295,8 @@ soroban contract invoke \
     --wasm target/wasm32-unknown-unknown/release/vault.wasm \
     --id <VAULT_CONTRACT_ID> \
     --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
+    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --network-passphrase 'Test SDF Network ; September 2015' \
     -- \
     get_rsrvs
 ```
@@ -1316,8 +1316,8 @@ soroban contract invoke \
     --wasm target/wasm32-unknown-unknown/release/vault.wasm \
     --id <VAULT_CONTRACT_ID> \
     --source <SECRET_KEY> \
-    --rpc-url https://rpc-futurenet.stellar.org:443 \
-    --network-passphrase 'Test SDF Future Network ; October 2022' \
+    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --network-passphrase 'Test SDF Network ; September 2015' \
     -- \
     withdraw \
     --to <USER_ADDRESS> \

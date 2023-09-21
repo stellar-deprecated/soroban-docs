@@ -2,6 +2,7 @@
 sidebar_position: 16
 title: Interacting with Soroban via Stellar
 description: Invoke and deploy smart contracts with the InvokeHostFunctionOp operation.
+toc_max_heading_level: 4
 ---
 
 <head>
@@ -23,7 +24,228 @@ description: Invoke and deploy smart contracts with the InvokeHostFunctionOp ope
   />
 </head>
 
-Stellar supports invoking and deploying contracts with a new Operation named `InvokeHostFunctionOp`. The [`soroban-cli`] abstracts these details away from the user, but SDKs do not yet and if you're building a dapp you'll probably find yourself building the XDR transaction to submit to the network.
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+## Example SDK Usage
+
+Some (but not all yet) of the Stellar SDKs have functions built-in to handle most of the process of building a Stellar transaction to interact with a Soroban smart contract. Below, we demonstrate in JavaScript and Python how to build and submit a Stellar transaction that will invoke an instance of the [increment example](../getting-started/storing-data) smart contract.
+
+<Tabs>
+<TabItem value="js" label="JavaScript">
+
+:::tip
+
+The [`soroban-client`](https://stellar.github.io/js-soroban-client/) JavaScript SDK is a new library that can be used alongside the existing JavaScript SDKs for Stellar. All that needs to be done is to install it using your preferred package manager.
+
+```bash
+npm install --save soroban-client
+```
+
+:::
+
+```js
+(async () => {
+    const { Keypair, Contract, Server, TransactionBuilder, Networks, BASE_FEE } = require('soroban-client')
+
+    // The source account will be used to sign and send the transaction.
+    // GCWY3M4VRW4NXJRI7IVAU3CC7XOPN6PRBG6I5M7TAOQNKZXLT3KAH362
+    const sourceKeypair = Keypair.fromSecret('SCQN3XGRO65BHNSWLSHYIR4B65AHLDUQ7YLHGIWQ4677AZFRS77TCZRB')
+
+    // Configure SorobanClient to use the `soroban-rpc` instance of your
+    // choosing.
+    const server = new Server('https://rpc-futurenet.stellar.org:443')
+
+    // Here we will use a deployed instance of the `increment` example contract.
+    const contractAddress = 'CBEOJUP5FU6KKOEZ7RMTSKZ7YLBS5D6LVATIGCESOGXSZEQ2UWQFKZW6'
+    const contract = new Contract(contractAddress)
+
+    // Transactions require a valid sequence number (which varies from one
+    // account to another). We fetch this sequence number from the RPC server.
+    const sourceAccount = await server.getAccount(sourceKeypair.publicKey())
+
+    // The transaction begins as pretty standard. The source account, minimum
+    // fee, and network passphrase are provided.
+    let builtTransaction = new TransactionBuilder(sourceAccount, {
+            fee: BASE_FEE,
+            networkPassphrase: Networks.FUTURENET,
+        })
+        // The invocation of the `increment` function of our contract is added
+        // to the transaction. Note: `increment` doesn't require any parameters,
+        // but many contract functions do. You would need to provide those here.
+        .addOperation(contract.call('increment'))
+        // This transaction will be valid for the next 30 seconds
+        .setTimeout(30)
+        .build()
+
+    // We use the RPC server to "prepare" the transaction. This simulating the
+    // transaction, discovering the storage footprint, and updating the
+    // transaction to include that footprint. If you know the footprint ahead of
+    // time, you could manually use `addFootprint` and skip this step.
+    let preparedTransaction = await server.prepareTransaction(builtTransaction)
+
+    // Sign the transaction with the source account's keypair.
+    preparedTransaction.sign(sourceKeypair)
+
+    // Let's see the base64-encoded XDR of the transaction we just built.
+    console.log(`Signed prepared transaction XDR: ${preparedTransaction.toEnvelope().toXDR('base64')}`)
+
+    // Submit the transaction to the Soroban-RPC server. The RPC server will
+    // then submit the transaction into the network for us. Then we will have to
+    // wait, polling `getTransaction` until the transaction completes.
+    try {
+        let sendResponse = await server.sendTransaction(preparedTransaction)
+        console.log(`Sent transaction: ${JSON.stringify(sendResponse)}`)
+
+        if (sendResponse.status === 'PENDING') {
+            let getResponse = await server.getTransaction(sendResponse.hash)
+            // Poll `getTransaction` until the status is not "NOT_FOUND"
+            while (getResponse.status === 'NOT_FOUND') {
+                console.log('Waiting for transaction confirmation...')
+                // See if the transaction is complete
+                getResponse = await server.getTransaction(sendResponse.hash)
+                // Wait one second
+                await new Promise(resolve => setTimeout(resolve, 1000))
+            }
+
+            console.log(`getTransaction response: ${JSON.stringify(getResponse)}`)
+
+            if (getResponse.status === 'SUCCESS') {
+                // Make sure the transaction's resultMetaXDR is not empty
+                if (!getResponse.resultMetaXdr) {
+                    throw 'Empty resultMetaXDR in getTransaction response'
+                }
+                // Find the return value from the contract and return it
+                let transactionMeta = getResponse.resultMetaXdr
+                let returnValue = transactionMeta.v3().sorobanMeta().returnValue()
+                console.log(`Transaction result: ${returnValue.value()}`)
+            } else {
+                throw `Transaction failed: ${getResponse.resultXdr}`
+            }
+        } else {
+            throw sendResponse.errorResultXdr
+        }
+    } catch (err) {
+        // Catch and report any errors we've thrown
+        console.log('Sending transaction failed')
+        console.log(JSON.stringify(err))
+    }
+})()
+```
+
+</TabItem>
+<TabItem value="py" label="Python">
+
+:::tip
+
+The [`py-stellar-base`](https://stellar-sdk.readthedocs.io/en/soroban/) Python SDK has implemented experimental support for interacting with Soroban smart contracts. You can install it from the `soroban` branch of the library's [GitHub repository](https://github.com/StellarCN/py-stellar-base/tree/soroban). Note: If you already use this SDK for interacting with the Stellar network, you may want to consider installing the `soroban` branch in a virtualenv of some sort.
+
+```bash
+pip install git+https://github.com/StellarCN/py-stellar-base.git@soroban
+```
+
+:::
+
+```py
+import time
+
+from stellar_sdk import Keypair, Network, SorobanServer, TransactionBuilder, xdr as stellar_xdr
+from stellar_sdk.exceptions import PrepareTransactionException
+from stellar_sdk.soroban_rpc import GetTransactionStatus, SendTransactionStatus
+
+# The source account will be used to sign and send the transaction.
+# GCWY3M4VRW4NXJRI7IVAU3CC7XOPN6PRBG6I5M7TAOQNKZXLT3KAH362
+source_keypair = Keypair.from_secret('SCQN3XGRO65BHNSWLSHYIR4B65AHLDUQ7YLHGIWQ4677AZFRS77TCZRB')
+
+# Configure SorobanClient to use the `soroban-rpc` instance of your choosing.
+soroban_server = SorobanServer('https://rpc-futurenet.stellar.org')
+
+# Here we will use a deployed instance of the `increment` example contract.
+contract_address = 'CBEOJUP5FU6KKOEZ7RMTSKZ7YLBS5D6LVATIGCESOGXSZEQ2UWQFKZW6'
+
+# Transactions require a valid sequence number (which varies from one account to
+# another). We fetch this sequence number from the RPC server.
+source_account = soroban_server.load_account(source_keypair.public_key)
+
+# The transaction begins as pretty standard. The source account, minimum fee,
+# and network passphrase are provided.
+built_transaction = (
+    TransactionBuilder(
+        source_account=source_account,
+        base_fee=100,
+        network_passphrase=Network.FUTURENET_NETWORK_PASSPHRASE,
+    )
+    # The invocation of the `increment` function of our contract is added to the
+    # transaction. Note: `increment` doesn't require any parameters, but many
+    # contract functions do. You would need to provide those here.
+    .append_invoke_contract_function_op(
+        contract_id=contract_address,
+        function_name="increment",
+        parameters=[],
+    )
+    # This transaction will be valid for the next 30 seconds
+    .set_timeout(30)
+    .build()
+)
+
+# We use the RPC server to "prepare" the transaction. This simulating the
+# transaction, discovering the storage footprint, and updating the transaction
+# to include that footprint. If you know the footprint ahead of time, you could
+# manually use `addFootprint` and skip this step.
+try:
+    prepared_transaction = soroban_server.prepare_transaction(built_transaction)
+except PrepareTransactionException as e:
+    print(f"Exception preparing transaction: {e}")
+    raise e
+
+# Sign the transaction with the source account's keypair.
+prepared_transaction.sign(source_keypair)
+
+# Let's see the base64-encoded XDR of the transaction we just built.
+print(f"Signed prepared transaction XDR: {prepared_transaction.to_xdr()}")
+
+# Submit the transaction to the Soroban-RPC server. The RPC server will then
+# submit the transaction into the network for us. Then we will have to wait,
+# polling `getTransaction` until the transaction completes.
+send_response = soroban_server.send_transaction(prepared_transaction)
+print(f"Sent transaction: {send_response}")
+
+if send_response.status != SendTransactionStatus.PENDING:
+    raise Exception("sending transaction failed")
+
+# Poll `getTransaction` until the status is not "NOT_FOUND"
+while True:
+    print("Waiting for transaction confirmation...")
+    # See if the transaction is complete
+    get_response = soroban_server.get_transaction(send_response.hash)
+    if get_response.status != GetTransactionStatus.NOT_FOUND:
+        break
+    # Wait one second
+    time.sleep(1)
+
+print(f"get_transaction response: {get_response}")
+
+if get_response.status == GetTransactionStatus.SUCCESS:
+    # Make sure the transaction's resultMetaXDR is not empty
+    assert get_response.result_meta_xdr is not None
+
+    # Find the return value from the contract and return it
+    transaction_meta = stellar_xdr.TransactionMeta.from_xdr(
+        get_response.result_meta_xdr
+    )
+    return_value = transaction_meta.v3.soroban_meta.return_value
+    output = return_value.u32.uint32
+    print(f"Transaction result: {output}")
+else:
+    print(f"Transaction failed: {get_response.result_xdr}")
+```
+
+</TabItem>
+</Tabs>
+
+## XDR Usage
+
+Stellar supports invoking and deploying contracts with a new Operation named `InvokeHostFunctionOp`. The [`soroban-cli`] abstracts these details away from the user, but not all SDKs do yet. If you're building a dapp you'll probably find yourself building the XDR transaction to submit to the network.
 
 The `InvokeHostFunctionOp` can be used to perform the following Soroban operations:
 
@@ -37,7 +259,7 @@ There is only a single `InvokeHostFunctionOp` allowed per transaction. Contracts
 should be used to perform multiple actions atomically, for example, to deploy
 a new contract and initialize it atomically.
 
-## InvokeHostFunctionOp
+### InvokeHostFunctionOp
 
 The XDR of `HostFunction` and `InvokeHostFunctionOp` below can be found
 [here][XDR].
@@ -64,7 +286,7 @@ struct InvokeHostFunctionOp
 };
 ```
 
-### Function
+#### Function
 
 The `hostFunction` in `InvokeHostFunctionOp` will be executed by the Soroban host environment. The supported functions are:
 
@@ -163,7 +385,7 @@ The `hostFunction` in `InvokeHostFunctionOp` will be executed by the Soroban hos
        Stellar asset. This is only supported when `executable == CONTRACT_EXECUTABLE_TOKEN`.
        Note, that the asset doesn't need to exist when this is applied, however the issuer of the asset will be the initial token administrator. Anyone can deploy asset contracts.
 
-### Authorization Data
+#### Authorization Data
 
 Soroban [authorization framework](../fundamentals-and-concepts/authorization.mdx)
 provides a standardized way for passing authorization data to the contract
@@ -268,7 +490,7 @@ details).
 [envelope-xdr]: https://github.com/stellar/stellar-xdr/blob/e372df9f677961aac04c5a4cc80a3667f310b29f/Stellar-transaction.x#L703
 [preflight-doc]: ../fundamentals-and-concepts/interacting-with-contracts.mdx#authorization
 
-#### Stellar Account Signatures
+##### Stellar Account Signatures
 
 `signatureArgs` format is user-defined for the [custom accounts], but it is
 protocol-defined for the Stellar accounts.
@@ -287,7 +509,7 @@ pub struct AccountEd25519Signature {
 [structures]: https://github.com/stellar/rs-soroban-env/blob/99d8c92cdc7e5cd0f5311df8f88d04658ecde7d2/soroban-env-host/src/native_contract/account_contract.rs#L51
 [custom accounts]: ../fundamentals-and-concepts/authorization.mdx#account-abstraction
 
-## Transaction resources
+### Transaction resources
 
 Every Soroban transaction has to have a `SorobanTransactionData` transaction
 [extension] populated. This is needed to compute the

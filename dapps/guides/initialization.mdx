@@ -32,17 +32,17 @@ make
 
 This action will compile the smart contracts and place them in the `token/target/wasm32-unknown-unknown/release` directory.
 
-After building, you're ready to deploy the smart contracts to Testnet. To do this, open a terminal in the `soroban-examples/token` directory and execute the following:
+After building, you're ready to deploy the smart contracts to Futurenet. To do this, open a terminal in the `soroban-examples/token` directory and execute the following:
 
 ```shell
 soroban contract deploy \
  --wasm target/wasm32-unknown-unknown/release/soroban_token_contract.wasm \
  --source <ADMIN_ACCOUNT_SECRET_KEY> \
  --rpc-url https://soroban-futurenet.stellar.org:443 \
- --network-passphrase 'Test SDF Network ; September 2015'
+ --network-passphrase 'Test SDF Future Network ; October 2022'
 ```
 
-This command deploys the smart contracts to Testnet using the `soroban contract deploy` function.
+This command deploys the smart contracts to Futurenet using the `soroban contract deploy` function.
 
 ## Initializing a Token Contract
 
@@ -53,7 +53,7 @@ soroban contract invoke \
  --id <TOKEN_CONTRACT_ID> \
  --source-account <ADMIN_ACCOUNT_SECRET_KEY> \
  --rpc-url https://soroban-futurenet.stellar.org:443 \
- --network-passphrase 'Test SDF Network ; September 2015' \
+ --network-passphrase 'Test SDF Future Network ; October 2022' \
  -- initialize \
  --admin <ADMIN_PUBLIC_KEY> \
  --decimal 7 \
@@ -80,7 +80,7 @@ soroban contract invoke \
  --id <TOKEN_CONTRACT_ID> \
  --source-account <ADMIN_ACCOUNT_SECRET_KEY> \
  --rpc-url https://soroban-futurenet.stellar.org:443 \
- --network-passphrase 'Test SDF Network ; September 2015' \
+ --network-passphrase 'Test SDF Future Network ; October 2022' \
  -- mint \
  --to <USER_PUBLIC_KEY> \
  --amount 1000000000
@@ -124,8 +124,8 @@ standalone)
   FRIENDBOT_URL="$SOROBAN_RPC_HOST/friendbot"
   ;;
 futurenet)
-  echo "Using Testnet network"
-  SOROBAN_NETWORK_PASSPHRASE="Test SDF Network ; September 2015"
+  echo "Using Futurenet network"
+  SOROBAN_NETWORK_PASSPHRASE="Test SDF Future Network ; October 2022"
   FRIENDBOT_URL="https://friendbot.stellar.org/"
   ;;
 *)

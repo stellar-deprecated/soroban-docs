@@ -17,7 +17,7 @@ import StartChallengeButton from "../../src/components/atoms/start-challenge-but
 
 <StartChallengeButton id={0} />
 
-This challenge will guide you through the process of building and shipping a crowdfunding dapp on Stellar using Soroban. You will learn how to deploy smart contracts to Testnet, and how to interact with them through a web frontend. In this context, the term "ship" refers to finalizing the development process of your dapp, ensuring that it functions as expected, and is accessible for user interaction and testing through a hosted frontend. However, it's crucial to clarify that despite its functionality, the dapp is not promoted nor intended for deployment in a production-level setting on Testnet. The challenge is designed for educational purposes, helping you understand how a dapp can be built and interacted with, with further customization and development, it has the potential to evolve into a full-fledged, ready-to-use crowdfunding solution.
+This challenge will guide you through the process of building and shipping a crowdfunding dapp on Stellar using Soroban. You will learn how to deploy smart contracts to Futurenet, and how to interact with them through a web frontend. In this context, the term "ship" refers to finalizing the development process of your dapp, ensuring that it functions as expected, and is accessible for user interaction and testing through a hosted frontend. However, it's crucial to clarify that despite its functionality, the dapp is not promoted nor intended for deployment in a production-level setting on Futurenet. The challenge is designed for educational purposes, helping you understand how a dapp can be built and interacted with, with further customization and development, it has the potential to evolve into a full-fledged, ready-to-use crowdfunding solution.
 
 ## Checkpoint 0: 📦 Install 📚
 
@@ -129,7 +129,7 @@ Next, add some Standalone network lumens to your Freighter wallet by doing the f
 - Copy the address for your freighter wallet.
 - Visit `http://localhost:8000/friendbot?addr=<your_address>`
 
-> Note: These are test lumens for use with your local network and cannot be used on Testnet or Mainnet
+> Note: These are test lumens for use with your local network and cannot be used on Futurenet or Mainnet
 
 ## Checkpoint 4: 🏦 Mint Tokens for the Crowdfunding Campaign
 
@@ -145,7 +145,7 @@ You should see an updated balance in the pledge component.
 
 <img src={updatedBalance} width="40%" />
 
-> Note: These are test tokens for use with your local network and cannot be used on Testnet or Mainnet
+> Note: These are test tokens for use with your local network and cannot be used on Futurenet or Mainnet
 
 ## Checkpoint 5: 💰 Fund the Crowdfunding Campaign
 
@@ -171,7 +171,7 @@ You should see an updated balance in the amount you have pledged in the pledge c
 
 ## Checkpoint 6: 🚢 Ship it! 🚁
 
-Now that your dapp is fully functional locally, next prepare it for deployment on Testnet.
+Now that your dapp is fully functional locally, next prepare it for deployment on Futurenet.
 
 Stop the development server by pressing `ctrl+c` in the terminal where it is running.
 
@@ -181,7 +181,7 @@ If you are running docker, now is a good time to stop the Stellar and Soroban pr
 docker stop stellar soroban-preview
 ```
 
-Then, run the following commands to initialize the contracts on Testnet:
+Then, run the following commands to initialize the contracts on Futurenet:
 
 ```sh
 npm run clean
@@ -196,7 +196,7 @@ npm run dev
 
 Now, open your browser and visit [http://localhost:3000](http://localhost:3000). 
 
-Ensure that you are connected to Testnet and you should be able to see the frontend of your dapp!
+Ensure that you are connected to Futurenet and you should be able to see the frontend of your dapp!
 
 Next, you will use the Vercel cli to complete our deployment.
 
@@ -235,7 +235,7 @@ You can now visit the preview link to see your deployed dapp! 🎉
 
 <img src={deployedDApp} width="90%" />
 
-You will need to add some Testnet network lumens to your Freighter wallet to interact with the deployed dapp. Visit [https://laboratory.stellar.org/#account-creator?network=futurenet](https://laboratory.stellar.org/#account-creator?network=futurenet), and follow the instructions to create your Freighter account on Testnet.
+You will need to add some Futurenet network lumens to your Freighter wallet to interact with the deployed dapp. Visit [https://laboratory.stellar.org/#account-creator?network=futurenet](https://laboratory.stellar.org/#account-creator?network=futurenet), and follow the instructions to create your Freighter account on Futurenet.
 
 ## Checkpoint 7: 💪 Pass the Challenge!
 
@@ -276,7 +276,7 @@ Invite a friend to try out your dapp and ask them to provide feedback!
 
 ## ⚔️ Side Quests
 
-🌐 Explore [Stellar Laboratory] to inspect your account assets on Testnet.
+🌐 Explore [Stellar Laboratory] to inspect your account assets on Futurenet.
 
 You should see something like this:
 
@@ -305,7 +305,7 @@ During this exercise you should be able to:
 
 - Clone the example repo (Crowdfund Dapp)
 - Choose your target amount and deadline
-- Deploy your contract to Testnet
+- Deploy your contract to Futurenet
 - Deploy the example web ui somewhere (e.g. netlify, vercel, surge, etc.)
 
 Then via the web UI, you should be able to:

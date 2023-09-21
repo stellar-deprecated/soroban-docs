@@ -66,7 +66,7 @@ Next, you will need to deploy the smart contracts to Testnet. To do this, open a
 soroban contract deploy \
     --wasm target/wasm32-unknown-unknown/release/soroban_token_contract.wasm \
     --source <ADMIN_ACCOUNT_SECRET_KEY> \
-    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --rpc-url https://soroban-futurenet.stellar.org:443 \
     --network-passphrase 'Test SDF Network ; September 2015'
 ```
 
@@ -76,7 +76,7 @@ This will return a contract id that we will need to use in the next step.
 soroban contract invoke \
     --id <TOKEN_CONTRACT_ID> \
     --source-account <ADMIN_ACCOUNT_SECRET_KEY> \
-    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --rpc-url https://soroban-futurenet.stellar.org:443 \
     --network-passphrase 'Test SDF Network ; September 2015' \
     -- initialize \
     --admin <ADMIN_PUBLIC_KEY> \
@@ -101,7 +101,7 @@ Next we will need to mint some tokens to your sender's account. To do this, run 
 soroban contract invoke \
     --id <TOKEN_CONTRACT_ID> \
     --source-account <ADMIN_ACCOUNT_SECRET_KEY> \
-    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --rpc-url https://soroban-futurenet.stellar.org:443 \
     --network-passphrase 'Test SDF Network ; September 2015' \
     -- mint \
     --to <USER_PUBLIC_KEY> \
@@ -201,7 +201,7 @@ You can also check the balance of an account with the soroban-cli by running the
  soroban contract invoke \
     --id <TOKEN_CONTRACT_ID> \
     --source-account <ANY_SECRET_KEY> \
-    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --rpc-url https://soroban-futurenet.stellar.org:443 \
     --network-passphrase 'Test SDF Network ; September 2015' \
     -- balance \
     --id <RECIPIENT_PUBLIC_KEY>

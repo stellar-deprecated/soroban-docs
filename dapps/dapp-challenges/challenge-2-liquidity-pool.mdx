@@ -96,7 +96,7 @@ For this step, you must change the existing contract configuration to suit a loc
 First, navigate to `frontend/src/contracts.ts` and change `const rpcUrl`:
 
 ```diff
--const rpcUrl = 'https://soroban-testnet.stellar.org'
+-const rpcUrl = 'https://soroban-futurenet.stellar.org'
 +const rpcUrl = 'http://localhost:8000/soroban/rpc'
 ```
 
@@ -235,7 +235,7 @@ Navigate to `frontend/src/contracts.ts` and change `const rpcUrl`:
 
 ```diff
 -const rpcUrl = 'http://localhost:8000/soroban/rpc'
-+const rpcUrl = 'https://soroban-testnet.stellar.org'
++const rpcUrl = 'https://soroban-futurenet.stellar.org'
 ```
 
 Then, change each contract network to Testnet:

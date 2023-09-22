@@ -11,16 +11,21 @@ Alternatively, you can use one of Soroban's [client SDKs](https://soroban.stella
 
 ## Run Your Own Instance
 
-[Download](https://hub.docker.com/r/stellar/quickstart) and run a local instance via [Docker Quickstart](https://github.com/stellar/quickstart) and run a standalone network or communicate with a live development [Futurenet] (and soon to come, Testnet and Mainnet).
+[Download](https://hub.docker.com/r/stellar/quickstart) and run a local instance via [Docker Quickstart](https://github.com/stellar/quickstart) and run a standalone network or communicate with a live development [Testnet].
 
 For local development, an RPC service can run on a standard laptop with 16GB of RAM and has minimal storage and CPU requirements.
 
 The Quickstart image is a single container that runs everything you need to test against a fully featured network. It contains:
 
-- Stellar Core – Node software that runs the network, coordinates consensus, and finalizes ledgers.
-- Soroban RPC server – JSON RPC server for interacting with Soroban contracts.
-- Horizon server – HTTP API for access ledger state and historical transactions.
-- Friendbot server – HTTP API for creating and funding new accounts on test networks.
+- [Stellar Core] - Node software that runs the network, coordinates consensus, and finalizes ledgers.
+- [Soroban RPC] server - JSON RPC server for interacting with Soroban contracts.
+- [Horizon server] - HTTP API for access ledger state and historical transactions.
+- [Friendbot server] - HTTP API for creating and funding new accounts on test networks.
+
+[Stellar Core]: https://github.com/stellar/stellar-core
+[Soroban RPC]: https://github.com/stellar/soroban-tools/tree/main/cmd/soroban-rpc
+[Horizon server]: https://github.com/stellar/go/tree/master/services/horizon
+[Friendbot server]: https://github.com/stellar/go/tree/master/services/friendbot
 
 :::info
 It's also possible to run a contract in the local sandbox environment without a network using just Soroban CLI. See [Run on Sandbox] for more details.
@@ -30,26 +35,34 @@ It's also possible to run a contract in the local sandbox environment without a 
 
 To run a local standalone network with the Stellar Quickstart Docker image, run the following command, double-checking that the `sha256` matches the latest on the [Releases](./releases.mdx) page:
 
-    docker run --rm -it \
-      -p 8000:8000 \
-      --name stellar \
-      stellar/quickstart:testing@sha256:1c98f895f8b69cc843eeaa5230d67044dbeb390a5529d51dd7762d8ff685c3f8 \
-      --standalone \
-      --enable-soroban-rpc
+```bash
+docker run --rm -it \
+    -p 8000:8000 \
+    --name stellar \
+    stellar/quickstart:testing@sha256:1c98f895f8b69cc843eeaa5230d67044dbeb390a5529d51dd7762d8ff685c3f8 \
+    --standalone \
+    --enable-soroban-rpc
+```
 
 Once the image is started you can check its status by querying the Horizon API:
 
-    curl "http://localhost:8000"
+```bash
+curl "http://localhost:8000"
+```
 
 You can interact with this local node using Soroban CLI. First, add it as a configured network:
 
-    soroban config network add standalone \
-      --rpc-url "http://localhost:8000/soroban/rpc" \
-      --network-passphrase "Standalone Network ; February 2017"
+```bash
+soroban config network add standalone \
+    --rpc-url "http://localhost:8000/soroban/rpc" \
+    --network-passphrase "Standalone Network ; February 2017"
+```
 
 Then generate a unique identity (public/private keypair) to use with it:
 
-    soroban config identity generate alice
+```bash
+soroban config identity generate alice
+```
 
 :::tip Test-only Identities
 It's a good practice to never use the same keys for testing and development that you use do for the public Stellar network. Generate new keys for testing and development and avoid ever using them for other purposes.
@@ -57,68 +70,112 @@ It's a good practice to never use the same keys for testing and development that
 
 Finally, fund your new account on the local sandbox environment by making a request to the local Friendbot:
 
-    curl "http://localhost:8000/friendbot?addr=$(soroban config identity address alice)"
+```bash
+curl "http://localhost:8000/friendbot?addr=$(soroban config identity address alice)"
+```
 
-:::tip Command Expansion `$(…)`
+:::tip Command Expansion `$(...)`
 This uses [command expansion](https://www.gnu.org/software/bash/manual/html_node/Command-Substitution.html), which only works with bash-compatible shells. If you are using Windows or some other shell, you will need to copy the output of `soroban config…` and paste it into the `curl` command, or figure out how command expansion works in your shell.
 :::
 
 Now that you have a configured network and a funded identity, you can use these within other Soroban CLI commands. For example, deploying a contract:
 
-    soroban contract deploy \
-        --wasm target/wasm32-unknown-unknown/release/[project_name].wasm \
-        --source alice \
-        --network standalone
+```bash
+soroban contract deploy \
+    --wasm target/wasm32-unknown-unknown/release/[project_name].wasm \
+    --source alice \
+    --network standalone
+```
 
 Or invoking a contract:
 
-    soroban contract invoke \
-        --id C… \
-        --source alice \
-        --network standalone \
-        -- \
-        hello \
-        --to friend
+```bash
+soroban contract invoke \
+    --id C... \
+    --source alice \
+    --network standalone \
+    -- \
+    hello \
+    --to friend
+```
 
 When you're done with your Standalone node, you can close it with <kbd>ctrl</kbd><kbd>c</kbd> (not <kbd>cmd</kbd>). This will fully remove the container (that's what the `--rm` option to the `docker` command does), which means you will need to re-deploy your contract and re-fund your identity next time you start it. If you work with local nodes often, you may want to create scripts to make these initialization steps easier. For example, see the [example dapp's `initialize.sh`](https://github.com/stellar/soroban-example-dapp/blob/abdac3afdb6c410cc426831ece93371c1a27347d/initialize.sh).
 
-[Futurenet]: futurenet.mdx
+[Testnet]: testnet
 [Run on Sandbox]: ../getting-started/hello-world#run-on-sandbox
 
-### Futurenet
+### Testnet
 
-Running your own Futurenet node works much the same way as running a Quickstart node, described above. You will need minor modifications for a few commands. First, you need `--futurenet` for the docker instance, rather than `--standalone`:
+Running your own Testnet node works much the same way as running a Quickstart node, described above. You will need minor modifications for a few commands. First, you need `--testnet` for the docker instance, rather than `--standalone`:
 
-    docker run --rm -it \
-       -p 8000:8000 \
-       --name stellar \
-       stellar/quickstart:testing@sha256:1c98f895f8b69cc843eeaa5230d67044dbeb390a5529d51dd7762d8ff685c3f8 \
-       --futurenet \
-       --enable-soroban-rpc
+```bash
+docker run --rm -it \
+    -p 8000:8000 \
+    --name stellar \
+    stellar/quickstart:testing@sha256:1c98f895f8b69cc843eeaa5230d67044dbeb390a5529d51dd7762d8ff685c3f8 \
+    --testnet \
+    --enable-soroban-rpc
+```
 
 And you'll want to configure it for use with the `--network` flag in Soroban CLI:
 
-    soroban config network add futurenet \
-      --rpc-url "http://localhost:8000/soroban/rpc" \
-      --network-passphrase "Test SDF Future Network ; October 2022"
+```bash
+soroban config network add testnet \
+    --rpc-url "http://localhost:8000/soroban/rpc" \
+    --network-passphrase "Test SDF Network ; September 2015"
+```
+
+Replace `testnet` in that command with the name of your choice, if you want to leave the name `testnet` available for use with a public RPC provider (see below). Or make clever use of `--global` configs for public providers and local configs (made with the undecorated `network add` command above) for local nodes.
+
+The `alice` identity suggested for your Standalone network will still work here, since it's just a public/private keypair, but you'll need to remember to fund it for the Testnet network:
+
+```bash
+curl "https://friendbot.stellar.org/?addr=$(soroban config identity address alice)"
+```
+
+Now you can replace `--network standalone` with `--network testnet` (or whatever you named it) in all your commands that need a network, like the `deploy` and `invoke` commands shown above.
+
+### Futurenet
+
+You can also develop your Soroban contracts against the Futurenet network. You may choose this if you want to test more bleeding edge features that haven't made it to the Testnet yet. Running your own Futurenet node works just like running a Testnet node, described above.
+
+```bash
+docker run --rm -it \
+    -p 8000:8000 \
+    --name stellar \
+    stellar/quickstart:soroban-dev \
+    --futurenet \
+    --enable-soroban-rpc
+```
+
+And you'll want to configure it for use with the `--network` flag in Soroban CLI:
+
+```bash
+soroban config network add futurenet \
+    --rpc-url "http://localhost:8000/soroban/rpc" \
+    --network-passphrase "Test SDF Future Network ; October 2022"
+```
 
 Replace `futurenet` in that command with the name of your choice, if you want to leave the name `futurenet` available for use with a public RPC provider (see below). Or make clever use of `--global` configs for public providers and local configs (made with the undecorated `network add` command above) for local nodes.
 
-The `alice` identity suggested for your Standalone network will still work here, since it's just a public/private keypair, but you'll need to remember to fund it for the Futurenet network:
+The `alice` identity suggested for your Standalone and Testnet networks will still work here, since it's just a public/private keypair, but you'll need to remember to fund it for the Futurenet network:
 
-    curl "https://friendbot-futurenet.stellar.org/?addr=$(soroban config identity address alice)"
+```bash
+curl "https://friendbot-futurenet.stellar.org/?addr=$(soroban config identity address alice)"
+```
 
-Now you can replace `--network standalone` with `--network futurenet` (or whatever you named it) in all your commands that need a network, like the `deploy` and `invoke` shown above.
+Now you can replace `--network standalone` with `--network futurenet` (or whatever you named it) in all your commands that need a network, like the `deploy` and `invoke` commands shown above.
 
 ## Public RPC Providers
 
-These providers host a publicly available RPC endpoint that you can connect to. The following currently support Futurenet (with more to come).
+These providers host a publicly available RPC endpoint that you can connect to. The following currently support Futurenet and Testnet (with more to come).
 
 ### Stellar Development Foundation (SDF)
 
-| Provider                      | Endpoint                            | Friendbot                                 |
-| :---------------------------- | ----------------------------------- | ----------------------------------------- |
-| [SDF](http://www.stellar.org) | `https://rpc-futurenet.stellar.org` | `https://friendbot-futurenet.stellar.org` |
+| Provider                      | Endpoint                              | Friendbot                                 | Network     |
+| :---------------------------- | ------------------------------------- | ----------------------------------------- | ----------- |
+| [SDF](http://www.stellar.org) | `https://rpc-futurenet.stellar.org`   | `https://friendbot-futurenet.stellar.org` | `Futurenet` |
+| [SDF](http://www.stellar.org) | `https://soroban-testnet.stellar.org` | `https://friendbot.stellar.org`           | `Testnet`   |
 
 ### Blockdaemon
 
@@ -137,103 +194,79 @@ You can apply to receive a 1-month free “Starter” tier, and up to five month
 
 If your target deployment environment includes Kubernetes infrastructure, you can utilize [soroban rpc helm chart](https://github.com/stellar/helm-charts/blob/main/charts/soroban-rpc) for an automated deployment on the cluster. Install the [Helm cli tool](https://helm.sh/docs/intro/install/), minimum of version 3 if you haven't already on your workstation. Next, add the Stellar repo to the helm client's list of repos, update it to the latest published versions:
 
-<CodeExample>
-
 ```bash
 helm repo add stellar https://helm.stellar.org/charts
 helm repo update stellar
 ```
 
-</CodeExample>
-
 Deploy rpc to kubernetes using the helm chart:
-
-<CodeExample>
 
 ```bash
 helm install my-rpc stellar/soroban-rpc \
 --namespace my-rpc-namespace-on-cluster \
---set global.image.sorobanRpc.tag=0.9.2 \
---set sorobanRpc.ingress.host=rpc-futurenet-dev.stellar.org \
+--set global.image.sorobanRpc.tag=20.0.0-rc3-39 \
+--set sorobanRpc.ingress.host=myrpc.example.org \
 --set sorobanRpc.persistence.enabled=true \
 --set sorobanRpc.persistence.storageClass=default \
 --set sorobanRpc.resources.limits.cpu=1 \
 --set sorobanRpc.resources.limits.memory=2560Mi
 ```
 
-</CodeExample>
-
 This example of helm chart usage, highlights some key aspects:
 
-- Set the `global.image.sorobanRpc.tag` to a tag from the [soroban rpc dockerhub repo](https://hub.docker.com/r/stellar/soroban-rpc) for the image version you want to run. Refer to [Soroban Releases](https://soroban.stellar.org/docs/reference/releases) to find the correct tag to use for the soroban release you are running.
+- Set the `global.image.sorobanRpc.tag` to a tag from the [soroban rpc dockerhub repo](https://hub.docker.com/r/stellar/soroban-rpc) for the image version you want to run. Refer to [the releases page](./releases) to find the correct tag to use for the soroban release you are running.
 
-- The Rpc server stores a revolving window of recent data from network ledgers to disk. The sizing of that data will vary depending on the network and it's transaction volumes, estimated range between 10 to 100 MB. To ensure rpc pod has consistent access to disk storage space and r/w throughput, this example demonstrates how to optionally enable helm chart deployment to use a PersistentVolumeClaim(PVC) of 100MB from `default` storage class on kubernetes by enabling persistence parameters:
+- The RPC server stores a revolving window of recent data from network ledgers to disk. The sizing of that data will vary depending on the network and it's transaction volumes, estimated range between 10 to 100 MB. To ensure the RPC pod has consistent access to disk storage space and read/write throughput, this example demonstrates how to optionally enable the helm chart deployment to use a `PersistentVolumeClaim` (PVC) of 100MB from `default` storage class on kubernetes by enabling these persistence parameters:
 
-    <CodeExample>
+```bash
+--set sorobanRpc.persistence.enabled=true
+--set sorobanRpc.persistence.storageClass=default
+```
 
-  ```bash
-  --set sorobanRpc.persistence.enabled=true
-  --set sorobanRpc.persistence.storageClass=default
-  ```
+By default, this is disabled (`sorobanRpc.persistence.enabled=false`) and the RPC deployment will use ephemeral pod storage via `emptyDir` which will likely be adequate for `futurenet` and `testnet` transaction volumes, but it's worth highlighting the trade-off, which is size limitations enforced from the cluster, most likely lower than 100MB.
 
-    </CodeExample>
+- Network presets are defined in [`values.yaml`](https://github.com/stellar/helm-charts/blob/main/charts/soroban-rpc/values.yaml), which currently sets network configuration specific to `futurenet`. You can override this default and use other "canned" `values.yaml` files which have been published for other networks. For example, there is a [`testnet-values.yaml`](https://github.com/stellar/helm-charts/blob/main/charts/soroban-rpc/testnet-values.yaml) file to configure deployment of RPC server with the `testnet` network. Include this `--values` parameter in your `helm install` your to specify the desired network:
 
-  By default `sorobanRpc.persistence.enabled=false` and the rpc deployment will use ephemeral pod storage via `emptyDir` which will likely be adequate for `futurenet` and `testnet` transaction volumes, but it's worth highlighting the trade-off, which is size limitations enforced from the cluster, most likely lower than 100MB.
+```bash
+--values https://raw.githubusercontent.com/stellar/helm-charts/main/charts/soroban-rpc/testnet-values.yaml
+```
 
-- Network presets are defined on [values.yaml](https://github.com/stellar/helm-charts/blob/main/charts/soroban-rpc/values.yaml), which currently sets network configuration specific to `futurenet`. You can override this default and use other 'canned' values.yaml files which have been published for other networks, for example, there is the [testnet-values.yaml](https://github.com/stellar/helm-charts/blob/main/charts/soroban-rpc/testnet-values.yaml) to configure deployment of rpc server with `testnet` network. Include this `--values` parameter in `helm install` to specify the desired network:
+- Configuring RPC to use other custom networks can be accomplished by downloading the [`values.yaml`](https://github.com/stellar/helm-charts/blob/main/charts/soroban-rpc/values.yaml) locally and updating settings under `sorobanRpc.sorobanRpcConfig` and `sorobanRpc.coreConfig`. This is applicable when needing to connect to specific networks other than the "canned" `values.yaml` files available, such as your own standalone network. Include the local `values.yaml` in `helm install`:
 
-    <CodeExample>
+```bash
+--values my-custom-values.yaml
+```
 
-  ```bash
-  --values https://raw.githubusercontent.com/stellar/helm-charts/main/charts/soroban-rpc/testnet-values.yaml
-  ```
+- Verify the `LimitRange` defaults in the target namespace in kubernetes for deployment. `LimitRange` is optional on the cluster config, if defined, ensure that the defaults provide at least minimum RPC server resource limits of `2.5Gi` of memory and `1` CPU. Otherwise, include the limits explicitly on the `helm install` command via the `sorobanRpc.resources.limits.*` parameters.
 
-    </CodeExample>
+```bash
+--set sorobanRpc.resources.limits.cpu=1
+--set sorobanRpc.resources.limits.memory=2560Mi
+```
 
-- Configuring rpc to use other custom networks can be accomplished by downloading the [values.yaml](https://github.com/stellar/helm-charts/blob/main/charts/soroban-rpc/values.yaml) locally and updating settings under `sorobanRpc.sorobanRpcConfig` and `sorobanRpc.coreConfig`. This is applicable for when needing to connect to specific networks other than the 'canned' values.yaml files available, such as your own standalone network. Include the local values.yaml in `helm install`:
-
-    <CodeExample>
-
-  ```bash
-  --values my-custom-values.yaml
-  ```
-
-    </CodeExample>
-
-- Verify the `LimitRange` defaults in the target namespace in kubernetes for deployment. `LimitRange` is optional on the cluster config, if defined, ensure that the defaults provide at least minimum rpc server resource limits of `2.5Gi` of memory and `1` cpu. Otherwise, include the limits explicitly on the helm install via the `sorobanRpc.resources.limits.*`.
-
-    <CodeExample>
-
-  ```bash
-  --set sorobanRpc.resources.limits.cpu=1
-  --set sorobanRpc.resources.limits.memory=2560Mi
-  ```
-
-    </CodeExample>
-
-If kubernetes is not an option, the manifests generated by the charts may still be good reference for showing how to configure and run soroban rpc as docker container. Just run the helm command with `template` to print the container config to screen:
-
-<CodeExample>
+If kubernetes is not an option, the manifests generated by the charts may still be a good reference for showing how to configure and run Soroban RPC as a docker container. Just run the `helm template` command to print the container configuration to screen:
 
 ```bash
 helm template my-rpc stellar/soroban-rpc
 ```
 
-</CodeExample>
-
 ## Use the RPC Instance
 
-You can configure Soroban CLI to use remote RPC endpoint:
+You can configure Soroban CLI to use a remote RPC endpoint:
 
-    soroban config network add --global futurenet \
-      --rpc-url https://rpc-futurenet.stellar.org:443 \
-      --network-passphrase 'Test SDF Future Network ; October 2022'
+```bash
+soroban config network add --global testnet \
+    --rpc-url https://soroban-testnet.stellar.org:443 \
+    --network-passphrase 'Test SDF Network ; September 2015'
+```
 
 And fund your accounts/identities with the publicly hosted Friendbot:
 
-    curl "https://friendbot-futurenet.stellar.org/?addr=$(soroban config identity address alice)"
+```bash
+curl "https://friendbot.stellar.org/?addr=$(soroban config identity address alice)"
+```
 
-See the tip above about command expansion (the `$(…)` stuff) if you're not using a bash-based shell.
+See the tip above about command expansion (that's the note about `$(...)`) if you're not using a bash-based shell.
 
 :::caution
 When interacting with the network in production you should run your own soroban-rpc or use a third party infrastructure provider.

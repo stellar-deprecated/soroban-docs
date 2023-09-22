@@ -63,7 +63,7 @@ npm install --save soroban-client
 
   // Configure SorobanClient to use the `soroban-rpc` instance of your
   // choosing.
-  const server = new Server("https://rpc-futurenet.stellar.org:443");
+  const server = new Server("https://soroban-testnet.stellar.org:443");
 
   // Here we will use a deployed instance of the `increment` example contract.
   const contractAddress =
@@ -78,7 +78,7 @@ npm install --save soroban-client
   // fee, and network passphrase are provided.
   let builtTransaction = new TransactionBuilder(sourceAccount, {
     fee: BASE_FEE,
-    networkPassphrase: Networks.FUTURENET,
+    networkPassphrase: Networks.TESTNET,
   })
     // The invocation of the `increment` function of our contract is added
     // to the transaction. Note: `increment` doesn't require any parameters,
@@ -172,7 +172,7 @@ from stellar_sdk.soroban_rpc import GetTransactionStatus, SendTransactionStatus
 source_keypair = Keypair.from_secret('SCQN3XGRO65BHNSWLSHYIR4B65AHLDUQ7YLHGIWQ4677AZFRS77TCZRB')
 
 # Configure SorobanClient to use the `soroban-rpc` instance of your choosing.
-soroban_server = SorobanServer('https://rpc-futurenet.stellar.org')
+soroban_server = SorobanServer('https://soroban-testnet.stellar.org')
 
 # Here we will use a deployed instance of the `increment` example contract.
 contract_address = 'CBEOJUP5FU6KKOEZ7RMTSKZ7YLBS5D6LVATIGCESOGXSZEQ2UWQFKZW6'
@@ -187,7 +187,7 @@ built_transaction = (
     TransactionBuilder(
         source_account=source_account,
         base_fee=100,
-        network_passphrase=Network.FUTURENET_NETWORK_PASSPHRASE,
+        network_passphrase=Network.TESTNET_NETWORK_PASSPHRASE,
     )
     # The invocation of the `increment` function of our contract is added to the
     # transaction. Note: `increment` doesn't require any parameters, but many

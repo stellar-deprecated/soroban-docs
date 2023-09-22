@@ -10,15 +10,15 @@ export default function Landing() {
       <Head>
         <meta
           name="description"
-          content="Soroban is a smart contracts platform that is designed with purpose and built to perform. The Futurenet has launched! Start experimenting now!"
+          content="Soroban is a smart contracts platform that is designed with purpose and built to perform. The Testnet has launched! Start experimenting now!"
         />
         <meta
           property="og:description"
-          content="Soroban is a smart contracts platform that is designed with purpose and built to perform. The Futurenet has launched! Start experimenting now!"
+          content="Soroban is a smart contracts platform that is designed with purpose and built to perform. The Testnet has launched! Start experimenting now!"
         />
         <meta
           name="twitter:description"
-          content="Soroban is a smart contracts platform that is designed with purpose and built to perform. The Futurenet has launched! Start experimenting now!"
+          content="Soroban is a smart contracts platform that is designed with purpose and built to perform. The Testnet has launched! Start experimenting now!"
         />
       </Head>
 
@@ -54,8 +54,7 @@ const Hero = () => (
       <div className="Hero__right">
         <p>
           A developer-friendly, Rust-based smart contracts platform designed for
-          scale and sensibility. Currently live on the test network
-          dubbed Futurenet, Soroban seamlessly integrates with and works
+          scale and sensibility. Currently live on Testnet, Soroban seamlessly integrates with and works
           alongside the existing Stellar blockchain.
         </p>
 
@@ -207,16 +206,16 @@ const GettingStarted = () => (
 
         <GettingStartedCard
           index="3."
-          title="Deploy to Futurenet"
-          subtitle="Deploy and invoke your contracts on the Futurenet testnet."
-          href="/docs/getting-started/deploy-to-futurenet"
+          title="Deploy to Testnet"
+          subtitle="Deploy and invoke your contracts on Testnet."
+          href="/docs/getting-started/deploy-to-testnet"
         />
 
         <GettingStartedCard
           index="4."
           title="Create an App"
           subtitle="Build a front-end app to interact with your Soroban contracts."
-          href="/docs/getting-started/deploy-to-futurenet"
+          href="/docs/getting-started/deploy-to-testnet"
         />
 
         <GettingStartedCard

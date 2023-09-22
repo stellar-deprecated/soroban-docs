@@ -69,7 +69,7 @@ Finally, fund your new account on the local sandbox environment by making a requ
 curl "http://localhost:8000/friendbot?addr=$(soroban config identity address alice)"
 ```
 
-:::tip Command Expansion `$(…)`
+:::tip Command Expansion `$(...)`
 This uses [command expansion](https://www.gnu.org/software/bash/manual/html_node/Command-Substitution.html), which only works with bash-compatible shells. If you are using Windows or some other shell, you will need to copy the output of `soroban config…` and paste it into the `curl` command, or figure out how command expansion works in your shell.
 :::
 

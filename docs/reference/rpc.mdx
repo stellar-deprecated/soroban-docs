@@ -17,10 +17,15 @@ For local development, an RPC service can run on a standard laptop with 16GB of 
 
 The Quickstart image is a single container that runs everything you need to test against a fully featured network. It contains:
 
-- Stellar Core - Node software that runs the network, coordinates consensus, and finalizes ledgers.
-- Soroban RPC server - JSON RPC server for interacting with Soroban contracts.
-- Horizon server - HTTP API for access ledger state and historical transactions.
-- Friendbot server - HTTP API for creating and funding new accounts on test networks.
+- [Stellar Core] - Node software that runs the network, coordinates consensus, and finalizes ledgers.
+- [Soroban RPC] server - JSON RPC server for interacting with Soroban contracts.
+- [Horizon server] - HTTP API for access ledger state and historical transactions.
+- [Friendbot server] - HTTP API for creating and funding new accounts on test networks.
+
+[Stellar Core]: https://github.com/stellar/stellar-core
+[Soroban RPC]: https://github.com/stellar/soroban-tools/tree/main/cmd/soroban-rpc
+[Horizon server]: https://github.com/stellar/go/tree/master/services/horizon
+[Friendbot server]: https://github.com/stellar/go/tree/master/services/friendbot
 
 :::info
 It's also possible to run a contract in the local sandbox environment without a network using just Soroban CLI. See [Run on Sandbox] for more details.

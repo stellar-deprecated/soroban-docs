@@ -38,7 +38,7 @@ After building, you're ready to deploy the smart contracts to Futurenet. To do t
 soroban contract deploy \
  --wasm target/wasm32-unknown-unknown/release/soroban_token_contract.wasm \
  --source <ADMIN_ACCOUNT_SECRET_KEY> \
- --rpc-url https://soroban-futurenet.stellar.org:443 \
+ --rpc-url https://rpc-futurenet.stellar.org:443 \
  --network-passphrase 'Test SDF Future Network ; October 2022'
 ```
 
@@ -52,7 +52,7 @@ With the contracts deployed, it's time to initialize the token contract:
 soroban contract invoke \
  --id <TOKEN_CONTRACT_ID> \
  --source-account <ADMIN_ACCOUNT_SECRET_KEY> \
- --rpc-url https://soroban-futurenet.stellar.org:443 \
+ --rpc-url https://rpc-futurenet.stellar.org:443 \
  --network-passphrase 'Test SDF Future Network ; October 2022' \
  -- initialize \
  --admin <ADMIN_PUBLIC_KEY> \
@@ -79,7 +79,7 @@ Lastly, you need to mint some tokens to the sender's account:
 soroban contract invoke \
  --id <TOKEN_CONTRACT_ID> \
  --source-account <ADMIN_ACCOUNT_SECRET_KEY> \
- --rpc-url https://soroban-futurenet.stellar.org:443 \
+ --rpc-url https://rpc-futurenet.stellar.org:443 \
  --network-passphrase 'Test SDF Future Network ; October 2022' \
  -- mint \
  --to <USER_PUBLIC_KEY> \

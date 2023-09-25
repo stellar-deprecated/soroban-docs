@@ -36,6 +36,8 @@ const config = {
         path: 'api',
         routeBasePath: 'api',
         sidebarPath: require.resolve('./sidebarsApi.js'),
+        editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
+        showLastUpdateTime: true,
       },
     ],
     [
@@ -45,6 +47,8 @@ const config = {
       path: 'dapps',
       routeBasePath: 'dapps',
       sidebarPath: require.resolve('./sidebarsDapps.js'),
+      editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
+      showLastUpdateTime: true,
     },
   ],
     require('./src/dev-server-plugin'),

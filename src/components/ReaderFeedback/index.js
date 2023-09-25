@@ -31,8 +31,8 @@ const ReaderFeedback = ({ pageId }) => {
       ) : (
         <>
           Did you find this page helpful?
-          <IconThumbsUp className="feedback_thumbsup" onClick={() => giveFeedback(1)} />
-          <IconThumbsDown className="feedback_thumbsdown" onClick={() => giveFeedback(0)} />
+          <IconThumbsUp className="feedback_thumbsup" alt="Like" onClick={() => giveFeedback(1)} />
+          <IconThumbsDown className="feedback_thumbsdown" alt="Dislike" onClick={() => giveFeedback(0)} />
         </>
       )}
     </div>

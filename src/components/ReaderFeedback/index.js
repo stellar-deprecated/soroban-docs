@@ -5,12 +5,12 @@ import IconThumbsUp from '/icons/thumbs-up.svg'
 import IconThumbsDown from '/icons/thumbs-down.svg'
 
 const ReaderFeedback = ({ pageId }) => {
+  const [feedbackGiven, setFeedbackGiven] = useState(false);
   const isBrowser = useIsBrowser();
   if (!isBrowser) {
     return null;
   }
 
-  const [feedbackGiven, setFeedbackGiven] = useState(false);
   const giveFeedback = (value) => {
     if (window.ga) {
       window.ga('send', {

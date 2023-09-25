@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import useIsBrowser from '@docusaurus/useIsBrowser'
+import useIsBrowser from '@docusaurus/useIsBrowser';
 
-import IconThumbsUp from '/icons/thumbs-up.svg'
-import IconThumbsDown from '/icons/thumbs-down.svg'
+import IconThumbsUp from '../../../static/icons/thumbs-up.svg';
+import IconThumbsDown from '../../../static/icons/thumbs-down.svg';
 
 const ReaderFeedback = ({ pageId }) => {
   const [feedbackGiven, setFeedbackGiven] = useState(false);
@@ -18,11 +18,11 @@ const ReaderFeedback = ({ pageId }) => {
         eventCategory: 'button',
         eventAction: 'feedback',
         eventLabel: pageId,
-        eventValue: value
+        eventValue: value,
       });
     }
     setFeedbackGiven(true);
-  }
+  };
 
   return (
     <div className="readerFeedback">
@@ -36,7 +36,7 @@ const ReaderFeedback = ({ pageId }) => {
         </>
       )}
     </div>
-  )
-}
+  );
+};
 
 export default ReaderFeedback;

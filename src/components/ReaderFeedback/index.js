@@ -17,7 +17,7 @@ const ReaderFeedback = ({ pageId }) => {
         hitType: 'event',
         eventCategory: 'button',
         eventAction: 'feedback',
-        eventLabel: label,
+        eventLabel: pageId,
         eventValue: value
       });
     }

@@ -13,6 +13,7 @@ const ReaderFeedback = ({ pageId }) => {
 
   const giveFeedback = (value) => {
     if (window.ga) {
+      console.log('i am sending the event to ga')
       window.ga('send', {
         hitType: 'event',
         eventCategory: 'button',
@@ -20,6 +21,8 @@ const ReaderFeedback = ({ pageId }) => {
         eventLabel: pageId,
         eventValue: value,
       });
+    } else {
+      console.log('window.ga is not available')
     }
     setFeedbackGiven(true);
   };

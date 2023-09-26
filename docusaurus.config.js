@@ -22,13 +22,13 @@ const config = {
   },
   plugins: [
     "docusaurus-plugin-sass",
-    [
-      '@docusaurus/plugin-google-analytics',
-      {
-        trackingID: 'UA-53373928-1',
-        anonymizeIP: true,
-      },
-    ],
+    // [
+    //   '@docusaurus/plugin-google-analytics',
+    //   {
+    //     trackingID: 'UA-53373928-1',
+    //     anonymizeIP: true,
+    //   },
+    // ],
     [
       '@docusaurus/plugin-content-docs',
       {
@@ -70,7 +70,7 @@ const config = {
           customCss: [require.resolve("./src/css/custom.scss")],
         },
         gtag: {
-          trackingID: "G-YE9KVSTERG",
+          trackingID: "G-VP7Z8PGMWQ",
           anonymizeIP: true,
         },
       }),

@@ -12,17 +12,17 @@ const ReaderFeedback = ({ pageId }) => {
   }
 
   const giveFeedback = (value) => {
-    if (window.ga) {
-      console.log('i am sending the event to ga')
-      window.ga('send', {
-        hitType: 'event',
-        eventCategory: 'button',
-        eventAction: 'feedback',
-        eventLabel: pageId,
-        eventValue: value,
+    if (window.gtag) {
+      console.log('i am sending the event to gtag')
+      window.gtag('send', 'feedback', {
+        hit_type: 'event',
+        event_category: 'button',
+        event_action: 'feedback',
+        event_label: pageId,
+        event_value: value,
       });
     } else {
-      console.log('window.ga is not available')
+      console.log('window.gtag is not available')
     }
     setFeedbackGiven(true);
   };

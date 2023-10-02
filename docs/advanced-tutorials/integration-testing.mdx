@@ -67,7 +67,7 @@ You can check out the following [workspace example](https://github.com/stellar/s
 
 ## Hybrid Approach
 
-It's possible to use a mix of the `wasm` and `native` approaches where some dependencies are loaded as wasm and others natively.
+When combining native imports with wasm imports in your integration testing, be cautious. This mix can lead to type redefinitions that are incompatible, potentially causing unforeseen challenges in your test environment
 
 ## Challenges with Type Definitions
 

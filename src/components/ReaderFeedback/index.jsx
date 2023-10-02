@@ -12,18 +12,6 @@ const ReaderFeedback = ({ pageId }) => {
   }
 
   const giveFeedback = (value) => {
-    if (window.gtag) {
-      console.log('i am sending the event to gtag')
-      window.gtag('send', 'feedback', {
-        hit_type: 'event',
-        event_category: 'button',
-        event_action: 'feedback',
-        event_label: pageId,
-        event_value: value,
-      });
-    } else {
-      console.log('window.gtag is not available')
-    }
     setFeedbackGiven(true);
   };
 
@@ -37,12 +25,12 @@ const ReaderFeedback = ({ pageId }) => {
           <IconThumbsUp
             className="feedback_thumbsup"
             alt="Like"
-            onClick={() => giveFeedback(1)}
+            onClick={giveFeedback}
           />
           <IconThumbsDown
             className="feedback_thumbsdown"
             alt="Dislike"
-            onClick={() => giveFeedback(0)}
+            onClick={giveFeedback}
           />
         </>
       )}

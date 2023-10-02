@@ -329,7 +329,7 @@ pub struct Adder;
 
 impl MathContract for Adder {
     fn add(&self, _env: Env, a: u32, b: u32) -> u32 {
-        add(a, b)
+        add(a, b).unwrap()
     }
 }
 

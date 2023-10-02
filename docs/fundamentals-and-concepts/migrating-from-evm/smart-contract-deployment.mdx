@@ -1123,18 +1123,10 @@ soroban contract deploy \
 We should receive an output with the token contract ID. We will need this ID for the next step.
 
 ```bash
-42b50b954e868b1255e20c9180ab53fb2112f035fb3dcff15b47bdd18ef05284
+CBYMG7OPIT67AG4S2FZU7LAYCXUSXEHRGHLDE6H26VCVWNOV7QUQTGNU
 ```
 
 Next we need to initialize the token contract. We can do this by running the `initialize_token.sh` script.
-
-It's important to note that `name` and `symbol` must be `Bytes` values. You can achieve this by converting a given value into its corresponding hex-encoded byte values.
-
-Here are some examples:
-
-USDC: `55534443`
-
-USD: `555344`
 
 ```bash
 soroban contract invoke \
@@ -1164,7 +1156,7 @@ soroban contract deploy \
 We should receive an output with the vault contract ID. We will need this ID for the next step.
 
 ```bash
-07829f515df7d320101a8643b685c82d16e15d92bd11a49d2623a8b93b28bfd8
+CBBPLE6TGYOMO5HUF2AMYLSYYXM2VYZVAVYI5QCCM5OCFRZPBE2XA53F
 ```
 
 Now we need to get the Wasm hash of the token contract. We can do this by running the `get_token_wasm_hash.sh` script.
@@ -1176,36 +1168,10 @@ soroban contract install --wasm soroban_token_contract.wasm
 We should receive the Wasm hash of the token contract.
 
 ```bash
-68f5c739b568664e3c4f4b7787958ce4ba527cc310fb0de0fea707dc1d6bd3c3
+6b7e4bfbf47157a12e24e564efc1f9ac237e7ae6d7056b6c2ab47178b9e7a510
 ```
 
-Now we need to initialize the vault contract. We can do this by running the `initialize_vault.sh` script.
-
-It's important to note that the token contract id will need to change formats for the call to work. We can convert the token contract id to the correct format by leveraging the [`js-soroban-client`](https://stellar.github.io/js-soroban-client/index.html).
-
-First, navigate to and clone the following [runkit](https://runkit.com/julian-dev28/646d1922af84810008c2a537).
-
-Then, replace `contractId` with your own vault contract id.
-
-```ts
-const StellarSdk = require("soroban-client");
-
-function getContractKey(contractId) {
-  const contractIdBytes = Buffer.from(contractId, "hex");
-  const contractKey = StellarSdk.StrKey.encodeContract(contractIdBytes);
-  return contractKey;
-}
-
-const contractId = <TOKEN_CONTRACT_ID>(
-  console.log("Contract Key: " + getContractKey(contractId))
-);
-```
-
-You should see an output similar to the following:
-
-```ts
-"Contract Key: CBBLKC4VJ2DIWESV4IGJDAFLKP5SCEXQGX5T3T7RLND33UMO6BJIJFMM";
-```
+Now we need to initialize the vault contract. We can do this by running the `initialize_vault.sh` script and passing in the token contract ID and token contract Wasm hash.
 
 ```bash
 soroban contract invoke \
@@ -1216,29 +1182,11 @@ soroban contract invoke \
     --network-passphrase 'Test SDF Network ; September 2015' \
     -- \
     initialize \
-    --token_wasm_hash 73593275ee3bcacc2aef8d641a1d5108618064bdfff84a826576b8caff395add \
+    --token_wasm_hash 6b7e4bfbf47157a12e24e564efc1f9ac237e7ae6d7056b6c2ab47178b9e7a510 \
     --token <TOKEN_CONTRACT_ADDRESS>
 ```
 
 After recieving the transaction has been submitted, we will mint some tokens to **both** our User Account and Vault Contract addresses. We can do this by running the `mint.sh` script.
-
-Similar to changing the token contract id, the vault contract will need to change formats for the call to work. We can convert the vault contract id to the correct format by repeating the steps above to convert the token contract id but this time with the vault contract id.
-
-```ts
-const StellarSdk = require("soroban-client");
-
-function getContractKey(contractId) {
-  const contractIdBytes = Buffer.from(contractId, "hex");
-  const contractKey = StellarSdk.StrKey.encodeContract(contractIdBytes);
-  return contractKey;
-}
-
-const contractId = <VAULT_CONTRACT_ID>(
-  console.log("Contract Key: " + getContractKey(contractId))
-);
-```
-
-Now we can run the `mint.sh` script with the correct vault contract address.
 
 ```bash
 soroban contract invoke \

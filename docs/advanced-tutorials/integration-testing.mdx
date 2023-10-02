@@ -1,0 +1,77 @@
+---
+sidebar_position: 10
+title: Integration Testing
+description: Integration Testing in Soroban
+---
+
+<head>
+  <title>Integration Testing in Soroban.</title>
+  <meta charSet="utf-8" />
+  <meta property="og:title" content="Integration Testing in Soroban." />
+  <meta
+    property="og:description"
+    content="Integration Testing in Soroban using the wasm and native ways."
+  />
+  <link
+    rel="canonical"
+    href="https://soroban.stellar.org/docs/fundamentals-and-concepts/integration-testing"
+  />
+</head>
+
+This document provides a practical guide to integration testing in Soroban, focusing on two primary approaches: the `wasm` way and the `native` way.
+
+We'll explore the ideal situations and benefits for each approach and discuss the challenges and solutions in dealing with type definitions and dependencies. 
+
+## The "wasm" Way
+
+When testing using the `wasm` way:
+
+1. The primary contract that you're testing is loaded natively.
+2. Dependencies of the primary contract are loaded as WebAssembly (`.wasm`).
+
+>**Note**: The primary contract can also be loaded as WebAssembly.
+
+### Ideal Situations for the wasm way:
+
+- Dependencies that aren't tightly coupled with the primary contract.
+- Dependencies not developed alongside the primary.
+- Situations where the source code of the dependency isn't available.
+- When you don't trust the source of the dependency.
+- Testing an older version or multiple versions of a dependency.
+
+### Benefits:
+
+- Verifies the exact behavior of any contract loaded as wasm.
+- Avoids complexities associated with importing contracts into rust/cargo projects.
+
+## The "native" Way
+
+When testing using the `native` way:
+
+1. Both the primary contract and its dependencies are compiled natively as part of the test-building process.
+
+>**Note**: This method requires access to the source code, and you'd need to import the dependency into the primary contract's Rust project.
+
+### Ideal Situations for the native way:
+
+- When dependencies are tightly coupled with the primary contract.
+- When both the primary contract and its dependencies are developed closely.
+- Testing against a single version of a dependency.
+
+### Benefits:
+
+- Enables step-through debugging across dependencies.
+- Facilitates the development of closely connected multi-contract products.
+
+## Hybrid Approach
+
+It's possible to use a mix of the `wasm` and `native` approaches where some dependencies are loaded as wasm and others natively.
+
+## Challenges with Type Definitions
+
+As evident from forum discussions, challenges arise when one contract attempts to utilize a struct from another contract. Directly importing the structure leads to a mismatch in the expected signature, causing type incompatibilities. This issue primarily stems from the mix of native and wasm imports, which results in type redefinition.
+
+A solution to maintain type-checking and compatibility is to implement shared structs in a third-party crate that can be referenced by both contracts. However, integrating multi-contracts remains a challenge in the Soroban framework, and developers are advised to keep an eye on official documentation and examples for updates and best practices.
+
+## Conclusion
+The best approach largely depends on your contract's requirements and the nature of its dependencies. You might have to experiment with both methods to see which one fits best for your specific situation. You can find an [workspace example](https://github.com/stellar/soroban-examples/tree/main/workspace) in the Soroban examples repository that demonstrates both approaches. 

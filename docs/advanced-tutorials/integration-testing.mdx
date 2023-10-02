@@ -73,7 +73,7 @@ When combining native imports with wasm imports in your integration testing, be 
 
 As evident from forum discussions, challenges arise when one contract attempts to utilize a struct from another contract. Directly importing the structure leads to a mismatch in the expected signature, causing type incompatibilities. This issue primarily stems from the mix of native and wasm imports, which results in type redefinition.
 
-A solution to maintain type-checking and compatibility is to implement shared structs in a third-party crate that can be referenced by both contracts. However, integrating multi-contracts remains a challenge in the Soroban framework, and developers are advised to keep an eye on official documentation and examples for updates and best practices.
+A solution to maintain type-checking and compatibility is to implement shared structs in a third-party crate that can be referenced by both contracts. However, integrating multi-contracts remains a challenge in Soroban, and developers are advised to keep an eye on official documentation and examples for updates and best practices.
 
 ## Conclusion
 

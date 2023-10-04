@@ -140,15 +140,15 @@ function InnerComponent({ id }: { id: number }) {
 
   useEffect(() => {
     if (activeChain) {
-      if (activeChain.name?.toString() !== "Testnet") {
-        alert("Please ensure that you are connected to Testnet");
+      if (activeChain.name?.toString() !== "Futurenet") {
+        alert("Please ensure that you are connected to Futurenet");
         setLoading(true);
       }
       if (activeChain.name?.toString() === undefined) {
-        alert("Please ensure that you are connected to Testnet");
+        alert("Please ensure that you are connected to Futurenet");
         setLoading(true);
       }
-      if (activeChain.name?.toString() === "Testnet" && address) {
+      if (activeChain.name?.toString() === "Futurenet" && address) {
         setLoading(false);
       }
     }

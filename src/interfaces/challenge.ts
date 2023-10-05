@@ -8,8 +8,22 @@ export interface UpdateProgressData {
   challengeId: number;
   challengeProgress: number;
   url?: string;
-  startDate: number;
+  startDate?: number;
   completedAt?: number;
+  contractId?: string;
+}
+
+export interface Ranking {
+  current: number;
+  total: number;
+}
+
+export interface Leaderboard {
+  userId: string;
+  ranking: Ranking;
+  totalValueLocked: number;
+  minutesSpent: number;
+  challengesCompleted: number;
 }
 
 export interface Challenge {
@@ -22,6 +36,7 @@ export interface Challenge {
 export interface ChallengeInfo extends Challenge {
   progress?: number;
   url?: string;
+  contractId?: string;
   startDate?: number;
   completedAt?: number;
   isCompleted?: boolean;
@@ -30,5 +45,6 @@ export interface ChallengeInfo extends Challenge {
 export interface UserProgress {
   userId: string;
   completedChallenges: number;
+  ranking: Ranking;
   challenges: ChallengeInfo[];
 }

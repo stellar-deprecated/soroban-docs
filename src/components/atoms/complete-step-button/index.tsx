@@ -5,9 +5,9 @@ import React, {
   useState,
 } from "react";
 import { toast } from "react-toastify";
-import { useSorobanReact } from "@soroban-react/core";
 import { useReward } from "react-rewards";
 import { AxiosResponse } from "axios";
+import useAuth from "../../../hooks/useAuth";
 import styles from "./styles.module.css";
 import UserChallengesContext, {
   UserChallengesContextProps,
@@ -32,6 +32,7 @@ interface CompleteStepButtonProps extends PropsWithChildren {
   id: number;
   progress: number;
   url?: string;
+  contractId?: string;
 }
 
 const milestoneToast = (
@@ -69,6 +70,7 @@ export default function CompleteStepButton({
   id,
   progress,
   url,
+  contractId,
 }: CompleteStepButtonProps) {
   const [challenge, setChallenge] = useState<ChallengeInfo | null>(null);
   const [state, setState] = useState<CompleteStepButtonState>({
@@ -79,7 +81,7 @@ export default function CompleteStepButton({
   const { data, updateProgress } = useContext<UserChallengesContextProps>(
     UserChallengesContext,
   );
-  const { address } = useSorobanReact();
+  const { address } = useAuth();
   const { reward, isAnimating } = useReward(
     `reward${id}-${progress}`,
     "confetti",
@@ -139,10 +141,11 @@ export default function CompleteStepButton({
       challengeProgress: progress,
       url,
       completedAt: Date.now(),
-      startDate: challenge.startDate,
+      startDate: challenge?.startDate,
+      contractId: challenge?.contractId,
     });
 
-    showToast(challenge.isPullRequestRequired ? passedToast : completedToast);
+    showToast(challenge?.isPullRequestRequired ? passedToast : completedToast);
     reward();
   };
 
@@ -163,7 +166,8 @@ export default function CompleteStepButton({
       userId: address,
       challengeId: id,
       challengeProgress: progress,
-      startDate: challenge.startDate,
+      startDate: challenge?.startDate,
+      contractId: challenge?.contractId || contractId,
     });
 
     showToast(milestoneToast);

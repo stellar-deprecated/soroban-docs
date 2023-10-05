@@ -14,6 +14,7 @@ import swapComplete from "../../static/img/swapComplete.png";
 import futurenetDeployment from "../../static/img/futurenetDeployment.png";
 import wdraw from "../../static/img/wdraw.png";
 import { ParentChallengeForm } from "../../src/components/atoms/challenge-form";
+import { ParentChallengeContractForm } from "../../src/components/atoms/challenge-contract-form";
 import CompleteStepButton from "../../src/components/atoms/complete-step-button";
 import StartChallengeButton from "../../src/components/atoms/start-challenge-button";
 
@@ -85,9 +86,7 @@ Done
 ...
 ```
 
-<CompleteStepButton id={2} progress={1}>
-  Mark smart contracts deployed
-</CompleteStepButton>
+<ParentChallengeContractForm id={2} progress={1} />
 
 ## Checkpoint 3: 🤝 Connect the Frontend to the Backend
 

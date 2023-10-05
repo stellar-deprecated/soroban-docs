@@ -146,7 +146,7 @@ export default function Dashboard() {
                   availableChallenges={availableChallenges}
                   userChallenges={userChallenges}
                   onRefresh={fetchUserChallenges}
-                  {...(address ? { onReset } : {})}
+                  {...(userChallenges.length ? { onReset } : {})}
                 />
               </TabItem>
               <TabItem value="Leaderboard">

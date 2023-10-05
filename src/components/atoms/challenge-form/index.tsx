@@ -5,7 +5,6 @@ import React, {
   ChangeEvent,
   FormEvent,
 } from "react";
-import { useSorobanReact } from "@soroban-react/core";
 import { SorobanEventsProvider } from "@soroban-react/events";
 import BrowserOnly from "@docusaurus/BrowserOnly";
 import styles from "./style.module.css";
@@ -14,6 +13,7 @@ import UserChallengesContext, {
   UserChallengesContextProps,
 } from "../../../store/user-challenges-context";
 import { getActiveChallenge } from "../../../utils/get-active-challenge";
+import useAuth from "../../../hooks/useAuth";
 
 interface ChallengeFormProps {
   id: number;
@@ -163,7 +163,8 @@ function InnerComponent({ id }: { id: number }) {
       </div>
     );
   }
-  // if user is logged in and connected to the right network, render the ChallengeForm
+  // if user is logged in and connected to the right network,
+  // render the ChallengeForm
   return <ChallengeForm address={address} id={id} />;
 }
 

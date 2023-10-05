@@ -36,6 +36,7 @@
     "react-rewards": "^2.0.4",
     "react-toastify": "^9.1.3",
     "sass": "^1.57.1",
+    "soroban-client": "^1.0.0-beta.2",
     "stellar-wallets-kit": "github:Creit-Tech/Stellar-Wallets-Kit"
   },
   "browserslist": {

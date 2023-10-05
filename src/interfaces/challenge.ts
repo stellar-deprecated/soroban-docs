@@ -11,6 +11,7 @@ export interface UpdateProgressData {
   startDate?: number;
   completedAt?: number;
   contractId?: string;
+  totalValueLocked?: number;
 }
 
 export interface Ranking {
@@ -40,6 +41,7 @@ export interface ChallengeInfo extends Challenge {
   startDate?: number;
   completedAt?: number;
   isCompleted?: boolean;
+  totalValueLocked?: number;
 }
 
 export interface UserProgress {

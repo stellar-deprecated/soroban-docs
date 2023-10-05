@@ -30,8 +30,6 @@ function ChallengeContractForm({ address, id }: ChallengeFormProps) {
   );
   const isSubmitBtnDisabled = !contractId || savedContractId === contractId;
 
-  // TODO add logic with TVL based on contractId here
-
   useEffect(() => {
     if (address) {
       const challenge = getActiveChallenge(data, id);

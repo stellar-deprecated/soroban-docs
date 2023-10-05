@@ -3,19 +3,31 @@ import styles from "./style.module.css";
 import { Challenge, ChallengeInfo } from "../../../interfaces/challenge";
 import { ChallengeCard } from "../challenge-card";
 import Switcher from "../UI/switcher";
+import ConfirmModal from "../confirm-modal";
 
 interface Props {
   availableChallenges: Challenge[];
   userChallenges: ChallengeInfo[];
   onRefresh: () => void;
+  onReset?: () => void;
 }
 
 export default function ChallengeList({
   availableChallenges,
   userChallenges,
   onRefresh,
+  onReset,
 }: Props) {
   const [onlyMine, setOnlyMine] = useState(false);
+  const [confirmReset, setConfirmReset] = useState(false);
+
+  const onResetClick = () => {
+    setConfirmReset(true);
+  };
+
+  const onCancelClick = () => {
+    setConfirmReset(false);
+  };
 
   const myChallanges = (
     <>
@@ -53,21 +65,32 @@ export default function ChallengeList({
   return (
     <>
       <div className={styles.listHeader}>
-        {userChallenges?.length > 0 ? (
-          <Switcher
-            id="challengesFilter"
-            labelText="Show my challenges"
-            onChange={(value: boolean) => setOnlyMine(value)}
-          />
-        ) : null}
-        <button className={styles.refreshBtn} onClick={onRefresh}>
-          Refresh
-        </button>
+        <div className={styles.dataControls}>
+          {userChallenges?.length > 0 ? (
+            <Switcher
+              id="challengesFilter"
+              labelText="Show my challenges"
+              onChange={(value: boolean) => setOnlyMine(value)}
+            />
+          ) : null}
+          <button className={styles.refreshBtn} onClick={onRefresh}>
+            Refresh
+          </button>
+        </div>
+        {onReset && (
+          <button className={styles.resetBtn} onClick={onResetClick}>
+            Reset
+          </button>
+        )}
       </div>
 
       <ul className={styles.challengeCards}>
         {onlyMine ? myChallanges : allChallenges}
       </ul>
+
+      {confirmReset && onReset && (
+        <ConfirmModal onCancel={onCancelClick} onReset={onReset} />
+      )}
     </>
   );
 }

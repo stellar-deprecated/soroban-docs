@@ -11,6 +11,7 @@ import styles from "./style.module.css";
 import {
   fetchInitialChallenges,
   fetchUserProgress,
+  resetUserProgress,
 } from "../../services/challenges";
 import useAuth from "../../hooks/useAuth";
 import DashboardHeader from "../../components/atoms/dashboard-header";
@@ -43,7 +44,7 @@ export default function Dashboard() {
       setTotalCompleted(result.data?.completedChallenges || 0);
       setRanking(result.data?.ranking || null);
     } catch (e) {
-      toast("Sometning went wrong! Please reload", {
+      toast("Something went wrong! Please reload", {
         type: "error",
         hideProgressBar: true,
         position: "top-center",
@@ -59,12 +60,28 @@ export default function Dashboard() {
       const result = await fetchLeaderboard(params);
       setLeaderboard(result?.data);
     } catch (e) {
-      toast("Sometning went wrong! Please reload", {
+      toast("Something went wrong! Please reload", {
         type: "error",
         hideProgressBar: true,
         position: "top-center",
         autoClose: 2000,
       });
+    }
+  };
+
+  const onReset = async () => {
+    try {
+      setIsLoading(true);
+      await resetUserProgress(address);
+    } catch (error) {
+      toast("Something went wrong! Please try again", {
+        type: "error",
+        hideProgressBar: true,
+        position: "top-center",
+        autoClose: 2000,
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -101,7 +118,7 @@ export default function Dashboard() {
         setIsLoading(false);
       } catch (error) {
         setIsLoading(false);
-        toast("Sometning went wrong! Please reload", {
+        toast("Something went wrong! Please reload", {
           type: "error",
           hideProgressBar: true,
           position: "top-center",
@@ -129,6 +146,7 @@ export default function Dashboard() {
                   availableChallenges={availableChallenges}
                   userChallenges={userChallenges}
                   onRefresh={fetchUserChallenges}
+                  {...(address ? { onReset } : {})}
                 />
               </TabItem>
               <TabItem value="Leaderboard">

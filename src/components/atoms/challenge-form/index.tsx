@@ -129,7 +129,7 @@ function InnerComponent({ id }: { id: number }) {
   if (loading) {
     return (
       <div style={{ fontWeight: "bold" }}>
-        Please connect to Testnet network.
+        Please connect to Testnet or Futurenet network.
         <br />
       </div>
     );

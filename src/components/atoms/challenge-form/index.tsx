@@ -123,36 +123,7 @@ function ChallengeForm({ address, id }: ChallengeFormProps) {
 }
 
 function InnerComponent({ id }: { id: number }) {
-  const { address, connect, activeChain } = useSorobanReact();
-  const addressString = address ? address.toString() : "No address";
-  const [loading, setLoading] = useState(true);
-
-  // Check if the user is connected and stored the status in local storage
-  useEffect(() => {
-    const isConnected = localStorage.getItem(`isConnected:${addressString}`);
-    if (isConnected === "true") {
-      setLoading(false);
-      connect(); // Call connect() to establish a connection if not already connected
-    } else {
-      setLoading(true);
-    }
-  }, [connect]);
-
-  useEffect(() => {
-    if (activeChain) {
-      if (activeChain.name?.toString() !== "Futurenet" || activeChain.name !=="Testnet" ) {
-        alert("Please ensure that you are connected to Futurenet or Testnet");
-        setLoading(true);
-      }
-      if (activeChain.name?.toString() === undefined) {
-        alert("Please ensure that you are connected to Futurenet or Testnet");
-        setLoading(true);
-      }
-      if (activeChain.name?.toString() === "Futurenet" && address || activeChain.name?.toString() === "Testnet" && address) {
-        setLoading(false);
-      }
-    }
-  }, [activeChain]);
+  const { loading, address } = useAuth();
 
   // if user is not logged in (address is undefined), render the Login button
   if (loading) {

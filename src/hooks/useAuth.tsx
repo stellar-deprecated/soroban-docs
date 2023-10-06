@@ -11,12 +11,7 @@ import { toast } from "react-toastify";
 import UserChallengesContext, {
   UserChallengesContextProps,
 } from "../store/user-challenges-context";
-
-export const FUTURENET_DETAILS = {
-  network: "FUTURENET",
-  networkUrl: "https://horizon-futurenet.stellar.org",
-  networkPassphrase: "Test SDF Future Network ; October 2022",
-};
+import { FUTURENET_DETAILS } from "../contants";
 
 const useAuth = () => {
   const { address, setAddress } = useContext<UserChallengesContextProps>(

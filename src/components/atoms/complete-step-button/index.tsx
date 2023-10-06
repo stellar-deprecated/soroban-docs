@@ -19,6 +19,7 @@ import {
   UpdateProgressData,
 } from "../../../interfaces/challenge";
 import { updateUserProgress } from "../../../services/challenges";
+import { getContractBalance } from "../../../utils/get-contract-balance";
 
 interface CompleteStepButtonState {
   isCompleted: boolean;
@@ -143,6 +144,7 @@ export default function CompleteStepButton({
       completedAt: Date.now(),
       startDate: challenge?.startDate,
       contractId: challenge?.contractId,
+      totalValueLocked: challenge?.totalValueLocked,
     });
 
     showToast(challenge?.isPullRequestRequired ? passedToast : completedToast);
@@ -153,6 +155,49 @@ export default function CompleteStepButton({
     if (state.isLastStep) {
       lastStepHandler();
       return;
+    }
+
+    let balance = 0;
+
+    // if funding step => get contract balance
+    if (progress === 2) {
+      if (challenge?.contractId) {
+        try {
+          const result = await getContractBalance(
+            challenge?.contractId,
+            address,
+          );
+          if (!result) {
+            toast("No locked balance found!", {
+              type: "error",
+              hideProgressBar: true,
+              position: "top-center",
+              autoClose: 2000,
+            });
+
+            return;
+          }
+
+          balance = result;
+        } catch (error) {
+          console.error(error);
+
+          toast("No locked balance found!", {
+            type: "error",
+            hideProgressBar: true,
+            position: "top-center",
+            autoClose: 2000,
+          });
+          return;
+        }
+      } else {
+        toast("No contract id found!", {
+          type: "error",
+          hideProgressBar: true,
+          position: "top-center",
+          autoClose: 2000,
+        });
+      }
     }
 
     setState((prevState: CompleteStepButtonState) => {
@@ -168,6 +213,7 @@ export default function CompleteStepButton({
       challengeProgress: progress,
       startDate: challenge?.startDate,
       contractId: challenge?.contractId || contractId,
+      totalValueLocked: challenge?.totalValueLocked || balance,
     });
 
     showToast(milestoneToast);

@@ -24,7 +24,7 @@ const Leaderboard: React.FC<Props> = ({ userId, list, onColumnClick }) => {
     setAsc(col === val ? !asc : false);
     onColumnClick({
       colName: val,
-      direction: nextAsc ? "asc" : "desc",
+      direction: nextAsc ? "desc" : "asc",
     });
     setCol(val);
   };

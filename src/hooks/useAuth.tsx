@@ -1,52 +1,90 @@
-import { useLayoutEffect, useState } from "react";
-import { useSorobanReact } from "@soroban-react/core";
+import { useContext, useMemo, useState } from "react";
+
+import {
+  ISupportedWallet,
+  StellarWalletsKit,
+  WalletNetwork,
+  WalletType,
+} from "stellar-wallets-kit";
+import { toast } from "react-toastify";
+
+import UserChallengesContext, {
+  UserChallengesContextProps,
+} from "../store/user-challenges-context";
+import { FUTURENET_DETAILS } from "../contants";
 
 const useAuth = () => {
-  const { address, connect, disconnect } = useSorobanReact();
-  const [isConnected, setIsConnected] = useState(false);
-  const addressString = address ? address.toString() : "No address";
+  const { address, setAddress } = useContext<UserChallengesContextProps>(
+    UserChallengesContext,
+  );
 
-  useLayoutEffect(() => {
-    if (address) {
-      localStorage.setItem(`isConnected:${address}`, "true");
-    }
-    const isConnectedFromStorage = localStorage.getItem(
-      `isConnected:${addressString}`,
-    );
-    setIsConnected(!!isConnectedFromStorage);
+  const [loading, setLoading] = useState(false);
+  const [selectedNetwork] = useState(FUTURENET_DETAILS);
 
-    if (isConnectedFromStorage) {
-      try {
-        connect();
-      } catch (error) {
-        console.error("Error during connection:", error);
-      }
-    }
-  }, [connect, address, addressString]);
+  const SWKKit = useMemo(
+    () =>
+      new StellarWalletsKit({
+        network: selectedNetwork.networkPassphrase as WalletNetwork,
+        selectedWallet: WalletType.FREIGHTER,
+      }),
+    [selectedNetwork],
+  );
 
-  const connectUser = async () => {
+  const disconnect = () => {
+    setAddress("");
+  };
+
+  const connect = async (type: ISupportedWallet["type"]) => {
     try {
-      await connect();
-      localStorage.setItem(`isConnected:${addressString}`, "true");
-      setIsConnected(true);
-    } catch (error) {
-      console.error("Error during connection:", error);
+      setLoading(true);
+      SWKKit.setWallet(type);
+      const publicKey = await SWKKit.getPublicKey();
+
+      SWKKit.setNetwork(WalletNetwork.FUTURENET);
+
+      // store to context
+      setAddress(publicKey as string);
+
+      setLoading(false);
+
+      return true;
+    } catch (e) {
+      console.error("Connection error", e);
+
+      toast("Connection error!", {
+        type: "error",
+        hideProgressBar: true,
+        position: "top-center",
+        autoClose: 2000,
+      });
+      return false;
     }
   };
 
-  const disconnectUser = async () => {
-    // TODO: Uncomment this when disconnect feature will be fully completed from @soroban-react/core side
-    // try {
-    //   await disconnect().then(() => {
-    //     localStorage.removeItem(`isConnected:${addressString}`);
-    //     setIsConnected(false);
-    //   });
-    // } catch (error) {
-    //   console.error("Error during disconnection:", error);
-    // }
+  const onConnectWallet = () => {
+    // See https://github.com/Creit-Tech/Stellar-Wallets-Kit/tree/main for more options
+    SWKKit.openModal({
+      allowedWallets: [
+        WalletType.ALBEDO,
+        WalletType.FREIGHTER,
+        WalletType.XBULL,
+        // TODO uncomment when working
+        // WalletType.RABET,
+        // WalletType.WALLET_CONNECT,
+      ],
+      onWalletSelected: async (option: ISupportedWallet) => {
+        await connect(option.type);
+      },
+    });
   };
 
-  return { address, isConnected, connectUser, disconnectUser };
+  return {
+    address,
+    isConnected: !!address,
+    loading,
+    connect: onConnectWallet,
+    disconnect,
+  };
 };
 
 export default useAuth;

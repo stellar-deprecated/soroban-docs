@@ -159,8 +159,8 @@ export default function CompleteStepButton({
 
     let balance = 0;
 
-    // if funding step => get contract balance
-    if (progress === 2) {
+    // if funding step => get contract balance (except payment for now)
+    if (progress === 2 && id !== 1) {
       if (challenge?.contractId) {
         try {
           const result = await getContractBalance(

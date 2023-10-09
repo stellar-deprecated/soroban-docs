@@ -225,7 +225,7 @@ export default function CompleteStepButton({
       <button
         type={type || "button"}
         className={styles.completeStepButton}
-        disabled={isButtonDisabled}
+        disabled={progress === 1 ? isDisabled : isButtonDisabled}
         onClick={completeStepHandler}
       >
         <span id={`reward${id}-${progress}`} />

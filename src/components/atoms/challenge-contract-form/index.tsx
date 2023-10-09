@@ -39,16 +39,14 @@ function ChallengeContractForm({ address, id }: ChallengeFormProps) {
   }, [address, savedContractId, data, id]);
 
   const changeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    const inputValue = event.target.value;
-
-    if (inputValue) {
-      setContractId(inputValue);
-    }
+    setContractId(event.target.value);
   };
 
   const blurHandler = () => {
     if (!contractId) {
       setFormError("Mandatory field");
+    } else {
+      setFormError(null);
     }
   };
 

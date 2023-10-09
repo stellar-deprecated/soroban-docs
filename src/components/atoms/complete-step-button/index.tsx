@@ -197,6 +197,7 @@ export default function CompleteStepButton({
           position: "top-center",
           autoClose: 2000,
         });
+        return;
       }
     }
 

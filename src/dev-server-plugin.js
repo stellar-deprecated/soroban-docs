@@ -1,3 +1,5 @@
+const webpack = require('webpack');
+
 module.exports = () => ({
   name: "dev-server-plugin",
 
@@ -7,10 +9,20 @@ module.exports = () => ({
         host: '0.0.0.0',
         client: {
           webSocketURL: {
-            port: 0
-          }
-        }
-      }
-    }
-  }
-})
+            port: 0,
+          },
+        },
+      },
+      resolve: {
+        fallback: {
+          path: false,
+        },
+      },
+      plugins: [
+        new webpack.ProvidePlugin({
+          process: 'process',
+        }),
+      ],
+    };
+  },
+});

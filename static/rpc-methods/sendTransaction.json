@@ -1,0 +1,49 @@
+{
+  "name": "sendTransaction",
+  "description": "Submit a real transaction to the Stellar network. This is the only way to make changes \"on-chain\".\n\n Unlike Horizon, this does not wait for transaction completion. It simply validates and enqueues the transaction. Clients should call getTransaction to learn about transaction success/failure. \n\nThis supports all transactions, not only smart contract-related transactions.",
+  "paramStructure": "by-name",
+  "params": [
+    {
+      "name": "transaction",
+      "description": "The signed transaction to broadcast (serialized in base64).",
+      "required": true,
+      "schema": {
+        "type": "string"
+      }
+    }
+  ],
+  "result": {
+    "name": "Response",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "hash": {
+          "type": "string",
+          "description": "The transaction hash (in an hex-encoded string)."
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the transaction by hash.",
+          "enum": [
+            "PENDING",
+            "DUPLICATE",
+            "TRY_AGAIN_LATER",
+            "ERROR"
+          ]
+        },
+        "latestLedger": {
+          "type": "string",
+          "description": "The latest ledger known to Soroban-RPC at the time it handled the `sendTransaction()` request."
+        },
+        "latestLedgerCloseTime": {
+          "type": "string",
+          "description": "The unix timestamp of the close time of the latest ledger known to Soroban-RPC at the time it handled the `sendTransaction()` request."
+        },
+        "errorResultXdr": {
+          "type": "string",
+          "description": "(optional) If the transaction status is `ERROR`, this will be a base64 encoded string of the raw TransactionResult XDR struct containing details on why stellar-core rejected the transaction."
+        }
+      }
+    }
+  }
+}

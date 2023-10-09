@@ -9,33 +9,64 @@ import styles from "./style.module.css";
 type Props = {
   userId?: string;
   list: LeaderboardI[];
-  onColumnClick: (params: LeaderboardParams) => void;
+  isLoading: boolean;
+  onLoad: (params: LeaderboardParams) => void;
 };
+
+const PAGE_SIZE = 10;
 
 const arrowDown = <span style={{ fontSize: "10px" }}>&#9660;</span>;
 const arrowUp = <span style={{ fontSize: "10px" }}>&#9650;</span>;
 
-const Leaderboard: React.FC<Props> = ({ userId, list, onColumnClick }) => {
+const Leaderboard: React.FC<Props> = ({ userId, list, isLoading, onLoad }) => {
   const [col, setCol] = useState<LeaderboardColumn | null>(null);
-  const [asc, setAsc] = useState(true);
+  const [isAsc, setIsAsc] = useState(false);
 
-  const onClick = (val: LeaderboardColumn) => {
-    const nextAsc = col === val ? !asc : false;
-    setAsc(col === val ? !asc : false);
-    onColumnClick({
+  const [pageNumber, setPageNumber] = useState(1);
+
+  const maxUsers = list[0]?.ranking.total;
+  const maxPage = maxUsers / PAGE_SIZE;
+
+  const onSort = (val: LeaderboardColumn) => {
+    // if click on current column ? change direction : set default direction
+    const nextAsc = col === val ? !isAsc : false;
+    setIsAsc(nextAsc);
+    onLoad({
       colName: val,
-      direction: nextAsc ? "desc" : "asc",
+      direction: nextAsc ? "asc" : "desc",
     });
     setCol(val);
+    setPageNumber(1);
   };
 
   const onReset = () => {
-    setAsc(true);
+    setIsAsc(true);
     setCol(null);
-    onColumnClick({});
+    onLoad({});
+    setPageNumber(1);
   };
 
-  const arrow = asc ? arrowDown : arrowUp;
+  const onNext = () => {
+    const nextPageNumber = pageNumber + 1;
+    setPageNumber(nextPageNumber);
+    onLoad({
+      pageNumber: nextPageNumber,
+      ...(col ? { colName: col } : {}),
+      direction: isAsc ? "asc" : "desc",
+    });
+  };
+
+  const onPrev = () => {
+    const nextPageNumber = pageNumber - 1;
+    setPageNumber(nextPageNumber);
+    onLoad({
+      pageNumber: nextPageNumber,
+      ...(col ? { colName: col } : {}),
+      direction: isAsc ? "asc" : "desc",
+    });
+  };
+
+  const arrow = !isAsc ? arrowDown : arrowUp;
 
   return (
     <div className={styles.leaderboard}>
@@ -47,63 +78,90 @@ const Leaderboard: React.FC<Props> = ({ userId, list, onColumnClick }) => {
             </th>
             <th
               className={styles.leadTableHeadColumn}
-              onClick={() => onClick(LeaderboardColumn.TotalValueLocked)}
+              onClick={() => onSort(LeaderboardColumn.TotalValueLocked)}
             >
               TVL, $ {col === LeaderboardColumn.TotalValueLocked ? arrow : null}
             </th>
+            <th className={styles.leadTableHeadColumn}>Address</th>
             <th
               className={styles.leadTableHeadColumn}
-              onClick={() => onClick(LeaderboardColumn.ChallengesCompleted)}
+              onClick={() => onSort(LeaderboardColumn.ChallengesCompleted)}
             >
               Number of challenges{" "}
               {col === LeaderboardColumn.ChallengesCompleted ? arrow : null}
             </th>
             <th
               className={styles.leadTableHeadColumn}
-              onClick={() => onClick(LeaderboardColumn.MinutesSpent)}
+              onClick={() => onSort(LeaderboardColumn.MinutesSpent)}
             >
               Minutes spent{" "}
               {col === LeaderboardColumn.MinutesSpent ? arrow : null}
             </th>
           </tr>
         </thead>
-        <tbody className={styles.leadTableBody}>
-          {list.map((item) => {
-            const isCurrent = userId === item.userId;
-            return (
-              <tr
-                key={item.userId}
-                className={`${styles.leadTableBodyRow} ${
-                  isCurrent ? styles.userRow : ""
-                }`}
-              >
-                <td
-                  className={`${styles.rankingCell} ${
-                    isCurrent ? styles.userRankingCell : ""
+        {isLoading ? null : (
+          <tbody className={styles.leadTableBody}>
+            {list.map((item) => {
+              const isCurrent = userId === item.userId;
+              return (
+                <tr
+                  key={item.userId}
+                  className={`${styles.leadTableBodyRow} ${
+                    isCurrent ? styles.userRow : ""
                   }`}
                 >
-                  <div
-                    className={`${styles.rankingCellNum} ${
-                      isCurrent ? styles.userRankingCellNum : ""
+                  <td
+                    className={`${styles.rankingCell} ${
+                      isCurrent ? styles.userRankingCell : ""
                     }`}
                   >
-                    {item.ranking.current}
-                  </div>
-                  {isCurrent ? (
-                    <>
-                      you are here!
-                      <img src="/icons/icon-star-yellow.svg" alt="Star icon" />
-                    </>
-                  ) : null}
-                </td>
-                <td>{item.totalValueLocked}</td>
-                <td>{item.challengesCompleted}</td>
-                <td>{item.minutesSpent}</td>
-              </tr>
-            );
-          })}
-        </tbody>
+                    <div
+                      className={`${styles.rankingCellNum} ${
+                        isCurrent ? styles.userRankingCellNum : ""
+                      }`}
+                    >
+                      {item.ranking.current}
+                    </div>
+                    {isCurrent ? (
+                      <>
+                        you are here!
+                        <img
+                          src="/icons/icon-star-yellow.svg"
+                          alt="Star icon"
+                        />
+                      </>
+                    ) : null}
+                  </td>
+                  <td>{item.totalValueLocked}</td>
+                  <td title={item.userId}>{`${item.userId.slice(
+                    0,
+                    4,
+                  )}...${item.userId.slice(-4)}`}</td>
+                  <td>{item.challengesCompleted}</td>
+                  <td>{item.minutesSpent}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        )}
       </table>
+      {isLoading ? <div className={styles.loading}>Loading</div> : null}
+      <div className={styles.paginationBlock}>
+        <button
+          className={styles.paginationButton}
+          disabled={pageNumber === 1 || isLoading}
+          onClick={onPrev}
+        >
+          Prev
+        </button>
+        <button
+          className={styles.paginationButton}
+          disabled={pageNumber === maxPage || isLoading}
+          onClick={onNext}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };

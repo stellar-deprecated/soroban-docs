@@ -35,6 +35,8 @@ export default function Dashboard() {
   const [totalCompleted, setTotalCompleted] = useState<number>(0);
   const [ranking, setRanking] = useState<Ranking | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLeaderboardLoading, setIsLeaderboardLoading] =
+    useState<boolean>(false);
 
   const fetchUserChallenges = async () => {
     setIsLoading(true);
@@ -57,6 +59,7 @@ export default function Dashboard() {
 
   const fetchOnlyLeaderboard = async (params: LeaderboardParams) => {
     try {
+      setIsLeaderboardLoading(true);
       const result = await fetchLeaderboard(params);
       setLeaderboard(result?.data);
     } catch (e) {
@@ -66,6 +69,8 @@ export default function Dashboard() {
         position: "top-center",
         autoClose: 2000,
       });
+    } finally {
+      setIsLeaderboardLoading(false);
     }
   };
 
@@ -153,7 +158,8 @@ export default function Dashboard() {
                 <Leaderboard
                   userId={address}
                   list={leaderboard}
-                  onColumnClick={fetchOnlyLeaderboard}
+                  onLoad={fetchOnlyLeaderboard}
+                  isLoading={isLeaderboardLoading}
                 />
               </TabItem>
             </Tabs>

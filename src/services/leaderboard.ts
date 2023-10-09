@@ -10,11 +10,13 @@ export enum LeaderboardColumn {
 export type LeaderboardParams = {
   colName?: LeaderboardColumn;
   direction?: "asc" | "desc";
+  pageNumber?: number;
 };
 
 export const fetchLeaderboard = async ({
   colName,
   direction = "asc",
+  pageNumber,
 }: LeaderboardParams) => {
   return await httpClient.get<Leaderboard[]>("/leaderboard", {
     params: {
@@ -23,6 +25,7 @@ export const fetchLeaderboard = async ({
             sort: `${colName},${direction}`,
           }
         : {}),
+      ...(pageNumber ? { pageNumber } : {}),
     },
   });
 };

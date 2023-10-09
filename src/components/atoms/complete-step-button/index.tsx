@@ -213,7 +213,7 @@ export default function CompleteStepButton({
       challengeId: id,
       challengeProgress: progress,
       startDate: challenge?.startDate,
-      contractId: challenge?.contractId || contractId,
+      contractId: contractId || challenge?.contractId,
       totalValueLocked: challenge?.totalValueLocked || balance,
     });
 

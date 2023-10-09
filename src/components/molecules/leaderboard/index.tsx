@@ -76,13 +76,13 @@ const Leaderboard: React.FC<Props> = ({ userId, list, isLoading, onLoad }) => {
             <th className={styles.leadTableHeadColumn} onClick={onReset}>
               Place
             </th>
+            <th className={styles.leadTableHeadColumn}>Address</th>
             <th
               className={styles.leadTableHeadColumn}
               onClick={() => onSort(LeaderboardColumn.TotalValueLocked)}
             >
               TVL, $ {col === LeaderboardColumn.TotalValueLocked ? arrow : null}
             </th>
-            <th className={styles.leadTableHeadColumn}>Address</th>
             <th
               className={styles.leadTableHeadColumn}
               onClick={() => onSort(LeaderboardColumn.ChallengesCompleted)}
@@ -132,11 +132,11 @@ const Leaderboard: React.FC<Props> = ({ userId, list, isLoading, onLoad }) => {
                       </>
                     ) : null}
                   </td>
-                  <td>{item.totalValueLocked}</td>
                   <td title={item.userId}>{`${item.userId.slice(
                     0,
                     4,
                   )}...${item.userId.slice(-4)}`}</td>
+                  <td>{item.totalValueLocked}</td>
                   <td>{item.challengesCompleted}</td>
                   <td>{item.minutesSpent}</td>
                 </tr>

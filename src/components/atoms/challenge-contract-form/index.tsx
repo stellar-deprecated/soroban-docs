@@ -54,7 +54,7 @@ function ChallengeContractForm({ address, id }: ChallengeFormProps) {
     return (
       <>
         <strong>
-          Start the challenge to track your progress and submit ContractId.
+          Connect your wallet to track your progress and submit ContractId.
         </strong>
         <br />
       </>

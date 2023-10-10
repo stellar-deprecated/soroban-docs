@@ -132,10 +132,7 @@ const Leaderboard: React.FC<Props> = ({ userId, list, isLoading, onLoad }) => {
                       </>
                     ) : null}
                   </td>
-                  <td title={item.userId}>{`${item.userId.slice(
-                    0,
-                    4,
-                  )}...${item.userId.slice(-4)}`}</td>
+                  <td title={item.userId}>{`${item.userId}`}</td>
                   <td>{item.totalValueLocked}</td>
                   <td>{item.challengesCompleted}</td>
                   <td>{item.minutesSpent}</td>

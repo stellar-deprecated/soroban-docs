@@ -85,7 +85,7 @@ export default function StartChallengeButton({
       onClick={isConnected ? startChallenge : connect}
       disabled={isStarted || isLoading}
     >
-      {isConnected ? "Start Challenge" : "Connect"}
+      {isConnected ? "Start Challenge" : "Connect Wallet"}
     </button>
   );
 }

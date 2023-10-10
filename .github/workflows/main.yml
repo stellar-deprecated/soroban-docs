@@ -22,8 +22,11 @@ jobs:
           cache: "yarn"
           cache-dependency-path: "**/yarn.lock"
 
+      - name: Set up Git to use HTTPS
+        run: git remote set-url origin https://github.com/Creit-Tech/xBull-Wallet-Connect.git
+
       - name: Install App Dependencies
-        run: yarn
+        run: yarn --prefer-offline
 
       - name: Check MDX
         run: yarn check:mdx

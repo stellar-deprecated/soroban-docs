@@ -28,10 +28,6 @@ jobs:
         run: |
           git config --global url."https://x-access-token:${GH_TOKEN}@github.com/".insteadOf "git@github.com:"
 
-      - name: Set up Git to use HTTPS
-        run: git remote set-url origin https://github.com/Creit-Tech/xBull-Wallet-Connect.git
-
-          
       - name: Install App Dependencies
         run: yarn
 

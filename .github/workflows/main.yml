@@ -19,14 +19,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "18"
-          cache: "yarn"
-          cache-dependency-path: "**/yarn.lock"
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
 
-      - name: Set up Git to use HTTPS
-        run: git remote set-url origin https://github.com/Creit-Tech/Stellar-Wallets-Kit.git
-        
       - name: Install App Dependencies
-        run: yarn --prefer-offline
+        run: npm install
 
       - name: Check MDX
         run: yarn check:mdx

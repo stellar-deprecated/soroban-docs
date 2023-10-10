@@ -18,21 +18,15 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
-          cache: 'yarn'
-          cache-dependency-path: '**/yarn.lock'
-
-      - name: Set up Git to use HTTPS with GITHUB_TOKEN
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config --global url."https://x-access-token:${GH_TOKEN}@github.com/".insteadOf "git@github.com:"
+          node-version: '18'
+          cache: 'npm'  
+          cache-dependency-path: '**/package-lock.json'
 
       - name: Install App Dependencies
-        run: yarn --prefer-offline
+        run: npm ci  
 
       - name: Check MDX
-        run: yarn check:mdx
+        run: npm run check:mdx  
 
       - name: Build app
-        run: yarn build
+        run: npm run build 

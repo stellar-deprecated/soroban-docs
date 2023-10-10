@@ -23,8 +23,8 @@ jobs:
           cache-dependency-path: "**/yarn.lock"
 
       - name: Set up Git to use HTTPS
-        run: git remote set-url origin https://github.com/Creit-Tech/xBull-Wallet-Connect.git
-
+        run: git remote set-url origin https://github.com/Creit-Tech/Stellar-Wallets-Kit.git
+        
       - name: Install App Dependencies
         run: yarn --prefer-offline
 

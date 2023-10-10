@@ -26,7 +26,7 @@ jobs:
         run: npm install
 
       - name: Check MDX
-        run: yarn check:mdx
+        run: npm run check:mdx
 
       - name: Build app
-        run: yarn build
+        run: npm run build

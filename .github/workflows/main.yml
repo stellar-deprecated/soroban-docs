@@ -2,7 +2,7 @@ name: Format MDX and Lint
 
 on:
   pull_request:
-    branches:    
+    branches:
       - main
 
   workflow_dispatch:
@@ -18,15 +18,15 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          cache: 'npm'  
-          cache-dependency-path: '**/package-lock.json'
+          node-version: "18"
+          cache: "yarn"
+          cache-dependency-path: "**/yarn.lock"
 
       - name: Install App Dependencies
-        run: npm install  
+        run: yarn
 
       - name: Check MDX
-        run: npm run check:mdx  
+        run: yarn check:mdx
 
       - name: Build app
-        run: npm run build 
+        run: yarn build

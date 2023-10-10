@@ -137,8 +137,11 @@ export default function Dashboard() {
   return (
     <Layout>
       <div className={styles.dashboard}>
-        {isConnected && address && ranking ? (
-          <DashboardHeader totalCompleted={totalCompleted} ranking={ranking} />
+        {isConnected && address ? (
+          <DashboardHeader
+            totalCompleted={totalCompleted}
+            ranking={ranking || 0} // Set ranking to 0 if it's not available
+          />
         ) : null}
 
         <div className={styles.dashboardContent}>

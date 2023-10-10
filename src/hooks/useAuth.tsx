@@ -1,53 +1,51 @@
-import { useContext, useMemo, useState } from "react";
-
-import {
-  ISupportedWallet,
-  StellarWalletsKit,
-  WalletNetwork,
-  WalletType,
-} from "stellar-wallets-kit";
+import { useContext, useState } from "react";
 import { toast } from "react-toastify";
-
 import UserChallengesContext, {
   UserChallengesContextProps,
 } from "../store/user-challenges-context";
-import { FUTURENET_DETAILS } from "../contants";
+
+// Import the Freighter library
+import { isConnected, setAllowed, getPublicKey } from "@stellar/freighter-api";
 
 const useAuth = () => {
   const { address, setAddress } = useContext<UserChallengesContextProps>(
-    UserChallengesContext,
+    UserChallengesContext
   );
 
   const [loading, setLoading] = useState(false);
-  const [selectedNetwork] = useState(FUTURENET_DETAILS);
-
-  const SWKKit = useMemo(
-    () =>
-      new StellarWalletsKit({
-        network: selectedNetwork.networkPassphrase as WalletNetwork,
-        selectedWallet: WalletType.FREIGHTER,
-      }),
-    [selectedNetwork],
-  );
 
   const disconnect = () => {
     setAddress("");
   };
 
-  const connect = async (type: ISupportedWallet["type"]) => {
+  const connect = async () => {
     try {
       setLoading(true);
-      SWKKit.setWallet(type);
-      const publicKey = await SWKKit.getPublicKey();
 
-      SWKKit.setNetwork(WalletNetwork.FUTURENET);
+      // Check if the user has Freighter installed
+      if (await isConnected()) {
+        // Prompt the user for authorization if needed
+        await setAllowed();
 
-      // store to context
-      setAddress(publicKey as string);
+        // Retrieve the user's public key
+        const publicKey = await getPublicKey();
 
-      setLoading(false);
+        // Store the user's public key in the context
+        setAddress(publicKey);
 
-      return true;
+        setLoading(false);
+
+        return true;
+      } else {
+        // Handle the case where Freighter is not installed
+        toast("Freighter is not installed!", {
+          type: "error",
+          hideProgressBar: true,
+          position: "top-center",
+          autoClose: 2000,
+        });
+        return false;
+      }
     } catch (e) {
       console.error("Connection error", e);
 
@@ -61,28 +59,16 @@ const useAuth = () => {
     }
   };
 
-  const onConnectWallet = () => {
-    // See https://github.com/Creit-Tech/Stellar-Wallets-Kit/tree/main for more options
-    SWKKit.openModal({
-      allowedWallets: [
-        WalletType.ALBEDO,
-        WalletType.FREIGHTER,
-        WalletType.XBULL,
-        // TODO uncomment when working
-        // WalletType.RABET,
-        // WalletType.WALLET_CONNECT,
-      ],
-      onWalletSelected: async (option: ISupportedWallet) => {
-        await connect(option.type);
-      },
-    });
+  const onConnectFreighter = () => {
+    // Call the connect function to initiate the Freighter connection
+    connect();
   };
 
   return {
     address,
     isConnected: !!address,
     loading,
-    connect: onConnectWallet,
+    connect: onConnectFreighter,
     disconnect,
   };
 };

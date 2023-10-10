@@ -19,14 +19,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "18"
-          cache: "npm"
-          cache-dependency-path: "**/package-lock.json"
+          cache: "yarn"
+          cache-dependency-path: "**/yarn.lock"
 
       - name: Install App Dependencies
-        run: npm install
+        run: yarn --prefer-offline
 
       - name: Check MDX
-        run: npm run check:mdx
+        run: yarn check:mdx
 
       - name: Build app
-        run: npm run build
+        run: yarn build

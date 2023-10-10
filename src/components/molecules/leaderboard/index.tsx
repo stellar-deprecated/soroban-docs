@@ -73,7 +73,7 @@ const Leaderboard: React.FC<Props> = ({ userId, list, isLoading, onLoad }) => {
       <table className={styles.leadTable}>
         <thead className={styles.leadTableHead}>
           <tr>
-            <th className={styles.leadTableHeadColumn} onClick={onReset}>
+            <th className={styles.leadTableHeadColumnPlace} onClick={onReset}>
               Place
             </th>
             <th className={styles.leadTableHeadColumn}>Address</th>

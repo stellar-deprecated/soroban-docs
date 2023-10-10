@@ -23,7 +23,7 @@ jobs:
           cache-dependency-path: '**/package-lock.json'
 
       - name: Install App Dependencies
-        run: npm ci  
+        run: npm install  
 
       - name: Check MDX
         run: npm run check:mdx  

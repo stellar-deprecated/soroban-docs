@@ -30,7 +30,7 @@
               "type": "array"
             },
             "topics": {
-              "description": "(optional) List of topic filters. If omitted, query for all events. If multiple filters are specified, events will be included if they match any of the filters. Maximum 5 filters are allowed per request.\n\n- A `TopicFilter` is `SegmentMatcher[]`\n\n    - The list can be 1-4 SegmentMatchers long.\n\n- A `SegmentMatcher` is one of the following:\n\n    - For an exact segment match, a string containing base64-encoded ScVal\n\n    - For a wildcard single-segment match, the string \"*\", matches exactly one segment.\n\n- Examples of matching token transfer events. Events are emitted here: [rs-soroban-env/event.rs at 924d86cacd58b8a162344bfe0ab37d9668f5d629](https://github.com/stellar/rs-soroban-env/blob/924d86cacd58b8a162344bfe0ab37d9668f5d629/soroban-env-host/src/native_contract/token/event.rs#L21-L33). I've decoded the base64-encoded ScVals for easier reading (both the symbols and addresses). In real usage, the `ScSymbol(\"transfer\").toXdr().toString(\"base64\")`, and `ScBinary(pubkeyBytes).toXdr().toString(\"base64\")`, would be base64 encoded strings for exact matches. For example:\n\n    - `[ScSymbol(\"transfer\"), \"*\", \"*\"]`\n\n        - Matches any token transfer events\n\n    - `[ScSymbol(\"transfer\"), \"*\", \"GABC...123\"]`\n\n        - Matches any token transfer events to recipient: GABC...123\n\n    - `[ScSymbol(\"transfer\"), \"GDEF...456\", \"GABC...123\"]`\n\n        - Matches only token transfers from GDEF...456 to GABC...123.",
+              "description": "(optional) List of topic filters. If omitted, query for all events. If multiple filters are specified, events will be included if they match any of the filters. Maximum 5 filters are allowed per request.\n\n- A `TopicFilter` is `SegmentMatcher[]`\n\n    - The list can be 1-4 SegmentMatchers long.\n\n- A `SegmentMatcher` is one of the following:\n\n    - For an exact segment match, a string containing base64-encoded ScVal\n\n    - For a wildcard single-segment match, the string \"*\", matches exactly one segment.\n\n- Examples of matching token transfer events. Events are emitted here: [rs-soroban-env/event.rs @ `924d86c`](https://github.com/stellar/rs-soroban-env/blob/924d86cacd58b8a162344bfe0ab37d9668f5d629/soroban-env-host/src/native_contract/token/event.rs#L21-L33). I've decoded the base64-encoded ScVals for easier reading (both the symbols and addresses). In real usage, the `ScSymbol(\"transfer\").toXdr().toString(\"base64\")`, and `ScBinary(pubkeyBytes).toXdr().toString(\"base64\")`, would be base64 encoded strings for exact matches. For example:\n\n    - `[ScSymbol(\"transfer\"), \"*\", \"*\"]`\n\n        - Matches any token transfer events\n\n    - `[ScSymbol(\"transfer\"), \"*\", \"GABC...123\"]`\n\n        - Matches any token transfer events to recipient: GABC...123\n\n    - `[ScSymbol(\"transfer\"), \"GDEF...456\", \"GABC...123\"]`\n\n        - Matches only token transfers from GDEF...456 to GABC...123.",
               "required": false,
               "type": "array"
             }
@@ -66,15 +66,15 @@
                   },
                   "ledgerClosedAt": {
                     "type": "string",
-                    "description": "ISO8601 timestamp of the ledger closing time"
+                    "description": "[ISO-8601](https://www.iso.org/iso-8601-date-and-time-format.html) timestamp of the ledger closing time"
                   },
                   "contractId": {
                     "type": "string",
-                    "description": "ID of the emitting contract."
+                    "description": "StrKey ID (`C...`) of the emitting contract ([SEP-23](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0023.md#specification))."
                   },
                   "id": {
                     "type": "string",
-                    "description": "Unique identifier for this event.\n\n- The event's unique id field is based on a [`toid` from Horizon](https://github.com/stellar/go/blob/master/toid/main.go) as used in Horizon's /effects endpoint.\n\n- https://github.com/stellar/go/blob/master/services/horizon/internal/db2/history/effect.go#L58\n\n- Specifically, it is a string containing:\n\n- bigint(32 bit ledger sequence + 20 bit txn number + 12 bit operation) + `<hyphen>` + number for the event within the operation.\n\n- For example:\n\n    - 1234-1"
+                    "description": "Unique identifier for this event.\n\n- The event's unique id field is based on a [`toid` from Horizon](https://github.com/stellar/go/blob/master/toid/main.go) as used in Horizon's /effects endpoint.\n\n- https://github.com/stellar/go/blob/master/services/horizon/internal/db2/history/effect.go#L58\n\n- Specifically, it is a string containing:\n\n- bigint(32 bit ledger sequence + 20 bit txn number + 12 bit operation) + `<hyphen>` + number for the event within the operation.\n\n- For example: `1234-1`"
                   },
                   "pagingToken": {
                     "type": "string",

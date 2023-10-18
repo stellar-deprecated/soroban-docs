@@ -1,11 +1,11 @@
 ---
 sidebar_position: 6
-title: RPC
+title: RPC Usage
 ---
 
 The RPC service allows you to communicate directly with Soroban via a [JSON RPC interface](https://soroban.stellar.org/api/).
 
-For example, you can build an application and have it [send a transaction](https://soroban.stellar.org/api/methods/sendTransaction), [get ledger](https://soroban.stellar.org/api/methods/getLedgerEntry) and [event data](https://soroban.stellar.org/api/methods/getEvents) or [simulate transactions](https://soroban.stellar.org/api/methods/simulateTransaction).
+For example, you can build an application and have it [send a transaction](https://soroban.stellar.org/api/methods/sendTransaction), [get ledger](https://soroban.stellar.org/api/methods/getLedgerEntries) and [event data](https://soroban.stellar.org/api/methods/getEvents) or [simulate transactions](https://soroban.stellar.org/api/methods/simulateTransaction).
 
 Alternatively, you can use one of Soroban's [client SDKs](https://soroban.stellar.org/docs/category/sdks) such as the [js-soroban-client](https://soroban.stellar.org/docs/reference/sdks/js), which will need to communicate with an RPC instance to access the network.
 
@@ -168,27 +168,7 @@ Now you can replace `--network standalone` with `--network futurenet` (or whatev
 
 ## Public RPC Providers
 
-These providers host a publicly available RPC endpoint that you can connect to. The following currently support Futurenet and Testnet (with more to come).
-
-### Stellar Development Foundation (SDF)
-
-| Provider                      | Endpoint                              | Friendbot                                 | Network     |
-| :---------------------------- | ------------------------------------- | ----------------------------------------- | ----------- |
-| [SDF](http://www.stellar.org) | `https://rpc-futurenet.stellar.org`   | `https://friendbot-futurenet.stellar.org` | `Futurenet` |
-| [SDF](http://www.stellar.org) | `https://soroban-testnet.stellar.org` | `https://friendbot.stellar.org`           | `Testnet`   |
-
-### Blockdaemon
-
-| Provider                                                 | Endpoint                                             | Friendbot |
-| :------------------------------------------------------- | ---------------------------------------------------- | --------- |
-| [Blockdaemon](https://www.blockdaemon.com/apply/soroban) | [Sign Up](https://www.blockdaemon.com/apply/soroban) | N/A       |
-
-You can signup to join the waitlist for Blockdaemon's RPC endpoint on Mainnet.
-
-Blockdaemon offers access to an institutional-grade RPC endpoint that will support Soroban's Mainnet. As one of the largest independent blockchain infrastructure providers, Blockdaemon provides institutional-grade
-SLAs, 99.9% uptime, 24/7 support, and decentralized data centers with SOC2-compliance.
-
-You can apply to receive a 1-month free “Starter” tier, and up to five months at the reduced price.
+RPC providers are available with hosted instances for all stages of development and production. The [Provider Directory](rpc-list.mdx) contains links to currently available infrastructure providers.
 
 ## Deploy your own RPC instance
 

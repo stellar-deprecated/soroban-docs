@@ -1,3 +1,5 @@
+const webpack = require('webpack');
+
 module.exports = () => ({
   name: "dev-server-plugin",
 
@@ -20,6 +22,16 @@ module.exports = () => ({
           },
         },
       },
+      resolve: {
+        fallback: {
+          path: false,
+        },
+      },
+      plugins: [
+        new webpack.ProvidePlugin({
+          process: 'process',
+        }),
+      ],
     };
   },
 });

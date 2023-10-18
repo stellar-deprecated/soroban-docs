@@ -2121,9 +2121,14 @@
   integrity sha512-5aUkncDMmx0SvVlZD4rld5snGKt3mc0Gno1Jik3Pp31HUmpgrkRUD3ZZekEOqB9mDKadZhQZNNsS0jhyuXaayw==
 
 "@stellar/freighter-api@^1.4.0":
-  version "1.5.1"
-  resolved "https://registry.npmjs.org/@stellar/freighter-api/-/freighter-api-1.5.1.tgz"
-  integrity sha512-WEnKEqd+xVLnOq6bJv+fLXod8JQyPjzpOKTpH4g7tG9MM1fmXzD3y2SXJlpCIw8kVqtiC4ynWOlSWX+TKO7KiQ==
+  version "1.6.0"
+  resolved "https://registry.npmjs.org/@stellar/freighter-api/-/freighter-api-1.6.0.tgz"
+  integrity sha512-Z6CRY+3+whzMspda6PiHEc4Rs9tdQkHLin9FopdnHhij/FEEAK+IiuF8Ki2ROcQweXdazb8N237aSim10s+Zgw==
+
+"@stellar/freighter-api@^1.6.1":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@stellar/freighter-api/-/freighter-api-1.6.1.tgz#f61d74b8aef2d461d9a1f443ad660c42ad1b49b4"
+  integrity sha512-8XjwQ0cSjwZai4N+C6ZKq5tljTZrxj99lgYoyMwWCiQP3MbcHUngGNIuQ1xX1iKF1EhTT/86HRsDeRm61mB6tg==
 
 "@stellar/prettier-config@^1.0.1":
   version "1.0.1"
@@ -2807,6 +2812,11 @@
   resolved "https://registry.npmjs.org/@xtuc/long/-/long-4.2.2.tgz"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
+abab@^2.0.6:
+  version "2.0.6"
+  resolved "https://registry.npmjs.org/abab/-/abab-2.0.6.tgz"
+  integrity sha512-j2afSsaIENvHZN2B8GOpF566vZ5WVk5opAiMTvWgaQT8DkbOqsTfvNAvHoRGU2zzP8cPoqys+xHTRDWW8L+/BA==
+
 abbrev@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/abbrev/-/abbrev-2.0.0.tgz"
@@ -3281,10 +3291,10 @@ big.js@^5.2.2:
   resolved "https://registry.npmjs.org/big.js/-/big.js-5.2.2.tgz"
   integrity sha512-vyL2OymJxmarO8gxMr0mhChsO9QGwhynfuu4+MHTAW6czfq9humCB7rKpUjDd9YUiDPU4mzpyupFSvOClAwbmQ==
 
-bignumber.js@^9.1.1:
-  version "9.1.1"
-  resolved "https://registry.npmjs.org/bignumber.js/-/bignumber.js-9.1.1.tgz"
-  integrity sha512-pHm4LsMJ6lzgNGVfZHjMoO8sdoRhOzOH4MLmY65Jg70bpxCKu5iOHNJyfF6OyvYw7t8Fpf35RuzUyqnQsj8Vig==
+bignumber.js@^9.1.1, bignumber.js@^9.1.2:
+  version "9.1.2"
+  resolved "https://registry.npmjs.org/bignumber.js/-/bignumber.js-9.1.2.tgz"
+  integrity sha512-2/mKyZH9K85bzOEfhXDBFZTGd1CTs+5IHpeFQo9luiBG7hghdC851Pj2WAhb6E3R6b9tZj/XKhbg4fum+Kepug==
 
 binary-extensions@^2.0.0:
   version "2.2.0"
@@ -6184,7 +6194,7 @@ iconv-lite@0.4.24:
   dependencies:
     safer-buffer ">= 2.1.2 < 3"
 
-iconv-lite@0.6:
+iconv-lite@0.6, iconv-lite@^0.6.3:
   version "0.6.3"
   resolved "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.6.3.tgz"
   integrity sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==
@@ -6706,6 +6716,11 @@ js-xdr@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/js-xdr/-/js-xdr-2.0.0.tgz"
   integrity sha512-4mctWHR47ejNcfpE8/Xl3l2wYqO1Qy09d1pveZRmarUz2BcuU/M8grzadxV6PoN/X0ywOb6cy6117qYUWkfeBA==
+
+js-xdr@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.npmjs.org/js-xdr/-/js-xdr-3.0.0.tgz"
+  integrity sha512-tSt6UKJ2L7t+yaQURGkHo9kop9qnVbChTlCu62zNiDbDZQoZb/YjUj2iFJ3lgelhfg9p5bhO2o/QX+g36TPsSQ==
 
 js-yaml@^3.13.1:
   version "3.14.1"
@@ -7614,9 +7629,9 @@ node-forge@^1:
   integrity sha512-dPEtOeMvF9VMcYV/1Wb8CPoVAXtp6MKMlcbAt4ddqmGqUJ6fQZFXkNZNkNlfevtNkGtaSoXf/vNNNSvgrdXwtA==
 
 node-gyp-build@^4.6.0:
-  version "4.6.0"
-  resolved "https://registry.npmjs.org/node-gyp-build/-/node-gyp-build-4.6.0.tgz"
-  integrity sha512-NTZVKn9IylLwUzaKjkas1e4u2DLNcV4rdYagA4PWdPwW87Bi7z+BznyKSRwS/761tV/lzCGXplWsiaMjLqP2zQ==
+  version "4.6.1"
+  resolved "https://registry.npmjs.org/node-gyp-build/-/node-gyp-build-4.6.1.tgz"
+  integrity sha512-24vnklJmyRS8ViBNI8KbtK/r/DmXQMRiOMXTNz2nrTnAYUwjmEEbnnpB/+kt+yWRv73bPsSPRFddrcIbAxSiMQ==
 
 node-releases@^2.0.12:
   version "2.0.13"
@@ -9442,6 +9457,17 @@ soroban-client@0.8.1:
     toml "^3.0.0"
     urijs "^1.19.1"
 
+soroban-client@^1.0.0-beta.2:
+  version "1.0.0-beta.2"
+  resolved "https://registry.npmjs.org/soroban-client/-/soroban-client-1.0.0-beta.2.tgz"
+  integrity sha512-v5h3yvef7HkUD3H26w33NUEgRXcPiOSDWEsVzMloaxsprs3N002tXJHvFF+Uw1eYt50Uk6bvqBgvkLwX10VENw==
+  dependencies:
+    axios "^1.4.0"
+    bignumber.js "^9.1.1"
+    buffer "^6.0.3"
+    stellar-base v10.0.0-beta.1
+    urijs "^1.19.1"
+
 sort-css-media-queries@2.1.0:
   version "2.1.0"
   resolved "https://registry.npmjs.org/sort-css-media-queries/-/sort-css-media-queries-2.1.0.tgz"
@@ -9451,6 +9477,15 @@ sort-css-media-queries@2.1.0:
   version "1.0.2"
   resolved "https://registry.npmjs.org/source-map-js/-/source-map-js-1.0.2.tgz"
   integrity sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==
+
+source-map-loader@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.npmjs.org/source-map-loader/-/source-map-loader-4.0.1.tgz"
+  integrity sha512-oqXpzDIByKONVY8g1NUPOTQhe0UTU5bWUl32GSkqK2LjJj0HmwTMVKxcUip0RgAYhY1mqgOxjbQM48a0mmeNfA==
+  dependencies:
+    abab "^2.0.6"
+    iconv-lite "^0.6.3"
+    source-map-js "^1.0.2"
 
 source-map-support@~0.5.20:
   version "0.5.21"
@@ -9557,6 +9592,20 @@ stellar-base@9.0.0-soroban.3:
     crypto-browserify "^3.12.0"
     js-xdr "^2.0.0"
     lodash "^4.17.21"
+    sha.js "^2.3.6"
+    tweetnacl "^1.0.3"
+  optionalDependencies:
+    sodium-native "^4.0.1"
+
+stellar-base@v10.0.0-beta.1:
+  version "10.0.0-beta.1"
+  resolved "https://registry.npmjs.org/stellar-base/-/stellar-base-10.0.0-beta.1.tgz"
+  integrity sha512-zXC5AsbUsLi57JruyeIMv23s3iUxq/P2ZFrSJ+FerLIZjSAjY8EDs4zwY4LCuu7swUu46Lm8GK6sqxUZCPekHw==
+  dependencies:
+    base32.js "^0.1.0"
+    bignumber.js "^9.1.2"
+    buffer "^6.0.3"
+    js-xdr "^3.0.0"
     sha.js "^2.3.6"
     tweetnacl "^1.0.3"
   optionalDependencies:

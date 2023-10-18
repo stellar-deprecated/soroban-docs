@@ -3,7 +3,7 @@
     "target": "ES6",
     "baseUrl": "./src",
     "jsx": "react",
-    "moduleResolution" : "NodeNext",
+    "moduleResolution": "NodeNext"
   },
   "exclude": ["node_modules", "**/node_modules/*"],
   "extends": "@stellar/tsconfig"

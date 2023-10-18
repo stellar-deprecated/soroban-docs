@@ -3,7 +3,7 @@ import React from "react";
 
 const CodeBlock = require('@theme/CodeBlock').default;
 
-export const RpcMethod = ({ method }) => {
-    const rpcMethod = require(`@site/static/rpc-methods/${method}.json`);
+export const RpcMethod = (param: { method:string; }) => {
+    const rpcMethod = require(`@site/static/rpc-methods/${param.method}.json`);
     return (<Method method={rpcMethod} components={{CodeBlock}}/>);
 };

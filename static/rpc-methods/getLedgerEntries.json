@@ -34,8 +34,12 @@
                     "description": "The current value of the given ledger entry (serialized in a base64 string)"
                   },
                   "lastModifiedLedgerSeq": {
-                    "type": "number",
-                    "description": "The current latest ledger observed by the node when this response was generated."
+                    "type": "string",
+                    "description": "The ledger sequence number of the last time this entry was updated."
+                  },
+                  "expirationLedgerSeq": {
+                    "type": "string",
+                    "description": "The ledger sequence number after which the ledger entry would expire. This field exists only for ContractCodeEntry and ContractDataEntry ledger entries (optional)."
                   }
                 }
               }

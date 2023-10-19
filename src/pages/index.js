@@ -215,7 +215,7 @@ const GettingStarted = () => (
           index="4."
           title="Create an App"
           subtitle="Build a front-end app to interact with your Soroban contracts."
-          href="/docs/getting-started/deploy-to-testnet"
+          href="/docs/getting-started/create-an-app"
         />
 
         <GettingStartedCard

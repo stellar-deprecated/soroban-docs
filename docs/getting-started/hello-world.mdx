@@ -376,11 +376,11 @@ soroban contract invoke ... -- hello --help
 
 ### Diagnostic Events
 
-You will also notice here (and with any other contract run in the sandbox environment) some diagnostic output will be displayed on the screen. This is because `soroban-cli` automatically sets the diagnostic level to "Debug" for contracts running in the sandbox.
+You will also notice here (and with any other contract run in the sandbox environment) that some diagnostic output will be displayed on the screen. This is because the `soroban-cli` automatically sets the diagnostic level to "Debug" for contracts running in the sandbox.
 
 Here, we'll see two diagnostic events were emitted by our contract invocation:
 
-1. First is a `fn_call` diagnostic event. It tells you the _kind_ of event, the contract ID which will be called, the name of the function being called, and a vector of the arguments passed to the function. A (greatly simplified) version of this event's body would look like this:
+1. First is a `fn_call` diagnostic event. It tells you the _kind_ of event, the contract ID that will be called, the name of the function being called, and a vector of the arguments passed to the function. A (greatly simplified) version of this event's body would look like this:
 
 ```
 {

@@ -63,11 +63,15 @@ Note that we copied the Cargo.toml file. That's because we're going to need some
 In the root `Cargo.toml`:
 
 - remove the `[package]`, `[lib]`, `[features]`, and `[dev_dependencies]` sections
-- keep the `[release.*]` stuff
+- keep the `[profile.release*]` stuff
 - replace the line `[dependencies]` with `[workspace.dependencies]`
-- add a `[workspace]` section
+- add a `[workspace]` section (see below for specific values)
 
-In the project-specific `Cargo.toml`, keep roughly the opposite sections, and use the dependency versions as specified in the workspace root. It all ends up looking like this:
+In the contract-specific `Cargo.toml`:
+- remove the `[profile.release*]` stuff
+- set the dependency versions to use the workspace versions (see example below)
+
+It all ends up looking like this:
 
 <Tabs>
 <TabItem value="soroban-tutorial/Cargo.toml" label="Cargo.toml">
@@ -134,7 +138,7 @@ All tests should pass.
 
 ## Code
 
-Rather than initializing this contract with `cargo new`, let's copy the `hello-soroban` project:
+Rather than initializing the new contract with `cargo new`, let's copy the `hello-soroban` project:
 
 ```bash
 cp -r contracts/hello-soroban contracts/incrementor
@@ -199,12 +203,12 @@ Follow along in your `contracts/incrementor/src/lib.rs` file.
 
 ### Contract Data Keys
 
-Contract data is associated with a key. The key is the value that can be used at
+Contract data is associated with a key. The key can be used at
 a later time to lookup the value.
 
 `Symbol` is a short (up to 32 characters long) string type with limited
 character space (only `a-zA-z0-9_` characters are allowed). Identifiers like
-contract function names are represented by `Symbol`s.
+contract function names and contract data keys are represented by `Symbol`s.
 
 The `symbol_short!()` macro is a convenient way to pre-compute short symbols up to 9 characters in length at compile time using `Symbol::short`. It generates a compile-time constant that adheres to the valid character set of letters (a-zA-Z), numbers (0-9), and underscores (\_). If a symbol exceeds the 9-character limit, `Symbol::new` should be utilized for creating symbols at runtime.
 
@@ -231,6 +235,11 @@ If no value is currently stored, the value given to `unwrap_or(...)` is returned
 Values stored as contract data and retrieved are transmitted from [the environment](../fundamentals-and-concepts/environment-concepts.mdx) and expanded into the type specified. In this case a `u32`. If the value can be expanded, the type returned will be a `u32`. Otherwise, if a developer caused it to be some other type, a panic would occur at the unwrap.
 
 The `set()` function stores the new count value against the key, replacing the existing value.
+```rust
+env.storage()
+    .instance()
+    .set(&COUNTER, &count);
+```
 
 ### Managing Contract Data Lifetimes with `bump()`
 

@@ -515,7 +515,6 @@ For deployments expecting 1000-10000+ requests per second to Soroban RPC, we rec
 
 For all deployments, we recommend at least 10GB of disk/storage space.
 
-
 ## Use the RPC Instance
 
 You can configure Soroban CLI to use a remote RPC endpoint:
@@ -562,12 +561,12 @@ curl --location 'http://localhost:8000' \
 You should get back an HTTP 200 status response if the instance is healthy:
 
 ```json
-{ 
-   "jsonrpc":"2.0",
-   "id":2,
-    "result":{
-       "status":"healthy"
-    }
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "result": {
+    "status": "healthy"
+  }
 }
 ```
 
@@ -589,18 +588,18 @@ docker.io/stellar/system-test:soroban-preview11 \
 Make sure you configure the system test correctly:
 
 - Use a published [system test tag](https://hub.docker.com/r/stellar/system-test/tags) which aligns with the deployed Soroban RPC release version. For each release, there will be two tags published for different CPU architectures. Make sure to use the tag that matches your host machine's CPU architecture:
-    - `docker.io/stellar/system-test:<release name>` for machines with AMD/Intel based CPUs
-    - `docker.io/stellar/system-test:<release name>-arm64` for machines with ARM CPUs
+  - `docker.io/stellar/system-test:<release name>` for machines with AMD/Intel based CPUs
+  - `docker.io/stellar/system-test:<release name>-arm64` for machines with ARM CPUs
 - Set `--TargetNetworkRPCURL` to your RPC HTTP URL
 - Set `--TargetNetworkPassphrase` to the same network your RPC instance is connected to:
-    - `"Test SDF Network ; September 2015"` for testnet
-    - `"Test SDF Future Network ; October 2022"` for futurenet
+  - `"Test SDF Network ; September 2015"` for testnet
+  - `"Test SDF Future Network ; October 2022"` for futurenet
 - Set `--SorobanExamplesGitHash` to the corresponding release tag on the [Soroban Examples repo](https://github.com/stellar/soroban-examples/tags)
 - Create and fund an account to be used for test purposes on the same network your RPC instance is connected to
-    - This account needs a small XLM balance to submit Soroban transactions
-    - Tests can be run repeatedly with the same account
-    - Set `--TargetNetworkTestAccountPublic` to the `Strkey` encoded public key of the account
-    - Set `--TargetNetworkTestAccountSecret` to the `Strkey` encoded secret for the account
+  - This account needs a small XLM balance to submit Soroban transactions
+  - Tests can be run repeatedly with the same account
+  - Set `--TargetNetworkTestAccountPublic` to the `Strkey` encoded public key of the account
+  - Set `--TargetNetworkTestAccountSecret` to the `Strkey` encoded secret for the account
 
 ## Monitor the RPC Instance
 
@@ -620,6 +619,7 @@ We also expose metrics related to Soroban RPC (prefixed by `soroban_rpc`). There
 - `soroban_rpc_db_round_trip_time_seconds` - time required to run `SELECT 1` query in the DATABASE
 
 Soroban RPC also provides logging to console for:
+
 - Startup activity
 - Ingesting, applying, and closing ledgers
 - Handling JSON RPC requests

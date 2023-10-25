@@ -22,13 +22,6 @@ const config = {
   },
   plugins: [
     "docusaurus-plugin-sass",
-    // [
-    //   '@docusaurus/plugin-google-analytics',
-    //   {
-    //     trackingID: 'UA-53373928-1',
-    //     anonymizeIP: true,
-    //   },
-    // ],
     [
       '@docusaurus/plugin-content-docs',
       {

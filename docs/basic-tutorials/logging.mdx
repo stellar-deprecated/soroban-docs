@@ -31,7 +31,7 @@ Logs in contracts are only visible in tests, or when executing contracts using
 
 :::tip
 
-Logs are no a substitute for step-through debugging. Rust tests for Soroban can
+Logs are not a substitute for step-through debugging. Rust tests for Soroban can
 be step-through debugged in your Rust-enabled IDE. See [testing] for more
 details.
 
@@ -180,7 +180,7 @@ fn test() {
 
     client.hello(&symbol_short!("Dev"));
 
-    let logs = env.logger().all();
+    let logs = env.logs().all();
     assert_eq!(logs, std::vec!["Hello Symbol(Dev)"]);
     std::println!("{}", logs.join("\n"));
 }
@@ -222,7 +222,7 @@ let words = client.hello(&symbol_short!("Dev"));
 Logs are available in tests via the environment.
 
 ```rust
-let logs = env.logger().all();
+let logs = env.logs().all();
 ```
 
 They can asserted on like any other value.

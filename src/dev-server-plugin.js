@@ -1,16 +1,37 @@
+const webpack = require('webpack');
+
 module.exports = () => ({
   name: "dev-server-plugin",
 
-  configureWebpack() {
+  configureWebpack(config) {
+    config.module.rules.push({
+      test: /\.(js|mjs|jsx)$/,
+      enforce: "pre",
+      loader: require.resolve("source-map-loader"),
+      resolve: {
+        fullySpecified: false,
+      },
+    });
+
     return {
       devServer: {
-        host: '0.0.0.0',
+        host: "0.0.0.0",
         client: {
           webSocketURL: {
-            port: 0
-          }
-        }
-      }
-    }
-  }
-})
+            port: 0,
+          },
+        },
+      },
+      resolve: {
+        fallback: {
+          path: false,
+        },
+      },
+      plugins: [
+        new webpack.ProvidePlugin({
+          process: 'process',
+        }),
+      ],
+    };
+  },
+});

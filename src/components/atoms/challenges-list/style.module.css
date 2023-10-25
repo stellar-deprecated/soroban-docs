@@ -14,6 +14,11 @@
 
 .listHeader {
   display: flex;
+  justify-content: space-between;
+}
+
+.dataControls {
+  display: flex;
 }
 
 .refreshBtn {
@@ -21,9 +26,23 @@
   font-weight: 500;
   font-family: var(--ifm-font-family-base);
   background-color: transparent;
-  color: #369EA7;
+  color: #369ea7;
   border-radius: 4px;
-  border: 1px solid #369EA7;
+  border: 1px solid #369ea7;
+  padding: 12px 8px;
+  line-height: 0.8;
+  width: max-content;
+  cursor: pointer;
+}
+
+.resetBtn {
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--ifm-font-family-base);
+  background-color: transparent;
+  color: #df0101;
+  border-radius: 4px;
+  border: 1px solid #df0101;
   padding: 12px 8px;
   line-height: 0.8;
   width: max-content;

@@ -5,7 +5,6 @@ import React, {
   ChangeEvent,
   FormEvent,
 } from "react";
-import { useSorobanReact } from "@soroban-react/core";
 import { SorobanEventsProvider } from "@soroban-react/events";
 import BrowserOnly from "@docusaurus/BrowserOnly";
 import styles from "./style.module.css";
@@ -14,6 +13,7 @@ import UserChallengesContext, {
   UserChallengesContextProps,
 } from "../../../store/user-challenges-context";
 import { getActiveChallenge } from "../../../utils/get-active-challenge";
+import useAuth from "../../../hooks/useAuth";
 
 interface ChallengeFormProps {
   id: number;
@@ -123,54 +123,26 @@ function ChallengeForm({ address, id }: ChallengeFormProps) {
 }
 
 function InnerComponent({ id }: { id: number }) {
-  const { address, connect, activeChain } = useSorobanReact();
-  const addressString = address ? address.toString() : "No address";
-  const [loading, setLoading] = useState(true);
-
-  // Check if the user is connected and stored the status in local storage
-  useEffect(() => {
-    const isConnected = localStorage.getItem(`isConnected:${addressString}`);
-    if (isConnected === "true") {
-      setLoading(false);
-      connect(); // Call connect() to establish a connection if not already connected
-    } else {
-      setLoading(true);
-    }
-  }, [connect]);
-
-  useEffect(() => {
-    if (activeChain) {
-      if (activeChain.name?.toString() !== "Testnet") {
-        alert("Please ensure that you are connected to Testnet");
-        setLoading(true);
-      }
-      if (activeChain.name?.toString() === undefined) {
-        alert("Please ensure that you are connected to Testnet");
-        setLoading(true);
-      }
-      if (activeChain.name?.toString() === "Testnet" && address) {
-        setLoading(false);
-      }
-    }
-  }, [activeChain]);
+  const { loading, address } = useAuth();
 
   // if user is not logged in (address is undefined), render the Login button
   if (loading) {
     return (
       <div style={{ fontWeight: "bold" }}>
-        Please connect to Testnet network.
+        Please connect to Testnet or Futurenet network.
         <br />
       </div>
     );
   }
-  // if user is logged in and connected to the right network, render the ChallengeForm
+  // if user is logged in and connected to the right network,
+  // render the ChallengeForm
   return <ChallengeForm address={address} id={id} />;
 }
 
 export function ParentChallengeForm({ id }: { id: number }) {
   return (
     <SorobanEventsProvider>
-      <BrowserOnly fallback={<div>Please connect to Testnet network.</div>}>
+      <BrowserOnly fallback={<div>Please connect to Testnet or Futurenet network.</div>}>
         {() => <InnerComponent id={id} />}
       </BrowserOnly>
     </SorobanEventsProvider>

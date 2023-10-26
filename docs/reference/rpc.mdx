@@ -33,13 +33,13 @@ It's also possible to run a contract in the local sandbox environment without a 
 
 ### Standalone
 
-To run a local standalone network with the Stellar Quickstart Docker image, run the following command, double-checking that the `sha256` matches the latest on the [Releases](./releases.mdx) page:
+To run a local standalone network with the Stellar Quickstart Docker image, run the following command:
 
 ```bash
 docker run --rm -it \
     -p 8000:8000 \
     --name stellar \
-    stellar/quickstart:testing@sha256:1c98f895f8b69cc843eeaa5230d67044dbeb390a5529d51dd7762d8ff685c3f8 \
+    stellar/quickstart:testing \
     --standalone \
     --enable-soroban-rpc
 ```
@@ -112,7 +112,7 @@ Running your own Testnet node works much the same way as running a Quickstart no
 docker run --rm -it \
     -p 8000:8000 \
     --name stellar \
-    stellar/quickstart:testing@sha256:1c98f895f8b69cc843eeaa5230d67044dbeb390a5529d51dd7762d8ff685c3f8 \
+    stellar/quickstart:testing \
     --testnet \
     --enable-soroban-rpc
 ```

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import useIsBrowser from '@docusaurus/useIsBrowser';
 
-import IconThumbsUp from '../../../static/icons/thumbs-up.svg';
-import IconThumbsDown from '../../../static/icons/thumbs-down.svg';
+import IconThumbsUp from '@site/static/icons/thumbs-up.svg';
+import IconThumbsDown from '@site/static/icons/thumbs-down.svg';
 
 const ReaderFeedback = ({ pageId }) => {
   const [feedbackGiven, setFeedbackGiven] = useState(false);

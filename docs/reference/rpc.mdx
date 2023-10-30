@@ -269,7 +269,7 @@ Here's how to run the [soroban-rpc docker image](https://hub.docker.com/r/stella
 docker pull stellar/soroban-rpc:20.0.0-rc3-39
 ```
 
-2. Create a configuration file for [Stellar Core](https://github.com/stellar/stellar-core). Here is a sample configuration file for testnet:
+2. Create a configuration file for [Stellar Core](https://github.com/stellar/stellar-core). Here is a sample configuration file for Testnet:
 
 ```toml
 HTTP_PORT=11626
@@ -306,7 +306,7 @@ ADDRESS="core-testnet3.stellar.org"
 HISTORY="curl -sf http://history.stellar.org/prd/core-testnet/core_testnet_003/{0} -o {1}"
 ```
 
-3. Run the image, making sure to [mount a volume](https://docs.docker.com/storage/volumes/) to your container where the above configuration is stored. An example for testnet:
+3. Run the image, making sure to [mount a volume](https://docs.docker.com/storage/volumes/) to your container where the above configuration is stored. An example for Testnet:
 
 ```bash
 docker run -p 8001:8001 -p 8000:8000 \
@@ -584,7 +584,7 @@ You should get back an HTTP 200 status response if the instance is healthy:
 
 ### System Test Docker Image
 
-This test will compile, deploy, and invoke example contracts to the network which your RPC instance is connected to. Here is an example for verifying your instance if it is connected to testnet:
+This test will compile, deploy, and invoke example contracts to the network which your RPC instance is connected to. Here is an example for verifying your instance if it is connected to Testnet:
 
 ```bash
 docker run --rm -t --name e2e_test \
@@ -604,8 +604,8 @@ Make sure you configure the system test correctly:
   - `docker.io/stellar/system-test:<release name>-arm64` for machines with ARM CPUs
 - Set `--TargetNetworkRPCURL` to your RPC HTTP URL
 - Set `--TargetNetworkPassphrase` to the same network your RPC instance is connected to:
-  - `"Test SDF Network ; September 2015"` for testnet
-  - `"Test SDF Future Network ; October 2022"` for futurenet
+  - `"Test SDF Network ; September 2015"` for Testnet
+  - `"Test SDF Future Network ; October 2022"` for Futurenet
 - Set `--SorobanExamplesGitHash` to the corresponding release tag on the [Soroban Examples repo](https://github.com/stellar/soroban-examples/tags)
 - Create and fund an account to be used for test purposes on the same network your RPC instance is connected to
   - This account needs a small XLM balance to submit Soroban transactions

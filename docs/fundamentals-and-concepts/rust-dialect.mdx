@@ -59,7 +59,7 @@ All standard I/O facilities and access to the operating system that a typical Ru
 
 No operating system, nor any simulation thereof, is present in the contract sandbox. Again, the repertoire of host objects and host functions is intended to replace and largely obviate the need for such facilities from the standard library.
 
-This restriction arises from the fact that contracts need to run with _stronger_ guarantees than those made by typical operating-system APIs. Specifically contracts must perform I/O with all-or-nothing, transactional semantics (relative to their successful execution or failure) as well as serializable consistency. This eliminating most APIs that would relate to typical file I/O. Furthermore contracts must be isolated from all sources of nondeterminism such as networking or process control, which eliminating most of the remaining APIs. Once files, networking and process control are gone, there simply isn't enough left in the standard operating system I/O facililties to bother trying to provide them.
+This restriction arises from the fact that contracts need to run with _stronger_ guarantees than those made by typical operating-system APIs. Specifically contracts must perform I/O with all-or-nothing, transactional semantics (relative to their successful execution or failure) as well as serializable consistency. This eliminates most APIs that would relate to typical file I/O. Furthermore contracts must be isolated from all sources of nondeterminism such as networking or process control, which eliminates most of the remaining APIs. Once files, networking and process control are gone, there simply isn't enough left in the standard operating system I/O facililties to bother trying to provide them.
 
 ## No multithreading
 

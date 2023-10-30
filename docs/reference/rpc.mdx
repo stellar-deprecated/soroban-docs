@@ -32,7 +32,9 @@ The Quickstart image with the RPC service can run on a standard laptop with 8GB 
 [Friendbot server]: https://github.com/stellar/go/tree/master/services/friendbot
 
 :::info
+
 It's also possible to run a contract in the local sandbox environment without a network using just Soroban CLI. See [Run on Sandbox] for more details.
+
 :::
 
 ### Standalone
@@ -69,7 +71,9 @@ soroban config identity generate alice
 ```
 
 :::tip Test-only Identities
+
 It's a good practice to never use the same keys for testing and development that you use do for the public Stellar network. Generate new keys for testing and development and avoid ever using them for other purposes.
+
 :::
 
 Finally, fund your new account on the local sandbox environment by making a request to the local Friendbot:
@@ -79,7 +83,9 @@ curl "http://localhost:8000/friendbot?addr=$(soroban config identity address ali
 ```
 
 :::tip Command Expansion `$(...)`
+
 This uses [command expansion](https://www.gnu.org/software/bash/manual/html_node/Command-Substitution.html), which only works with bash-compatible shells. If you are using Windows or some other shell, you will need to copy the output of `soroban config…` and paste it into the `curl` command, or figure out how command expansion works in your shell.
+
 :::
 
 Now that you have a configured network and a funded identity, you can use these within other Soroban CLI commands. For example, deploying a contract:
@@ -250,7 +256,9 @@ helm template my-rpc stellar/soroban-rpc
 If using Kubernetes is not an option, this is the preferred way to deploy your own RPC instance.
 
 :::caution
+
 Although we have a [Quickstart Image](https://github.com/stellar/quickstart), it's for local development and testing only. It is not suitable for production-grade deployments.
+
 :::
 
 Here's how to run the [soroban-rpc docker image](https://hub.docker.com/r/stellar/soroban-rpc):
@@ -536,7 +544,9 @@ curl "https://friendbot.stellar.org/?addr=$(soroban config identity address alic
 See the tip above about command expansion (that's the note about `$(...)`) if you're not using a bash-based shell.
 
 :::caution
+
 When interacting with the network in production you should run your own soroban-rpc or use a third party infrastructure provider.
+
 :::
 
 ## Verify the RPC Instance

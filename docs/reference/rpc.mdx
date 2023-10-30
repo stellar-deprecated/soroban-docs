@@ -592,8 +592,8 @@ docker.io/stellar/system-test:soroban-preview11 \
 --VerboseOutput true \
 --TargetNetworkRPCURL <your rpc url here> \
 --TargetNetworkPassphrase "Test SDF Network ; September 2015" \
---TargetNetworkTestAccountSecret <your test account strkey encoded key here > \
---TargetNetworkTestAccountPublic <your test account strkey encoded pubkey here> \
+--TargetNetworkTestAccountSecret <your test account StrKey encoded key here > \
+--TargetNetworkTestAccountPublic <your test account StrKey encoded pubkey here> \
 --SorobanExamplesGitHash v20.0.0-rc2
 ```
 
@@ -610,8 +610,8 @@ Make sure you configure the system test correctly:
 - Create and fund an account to be used for test purposes on the same network your RPC instance is connected to
   - This account needs a small XLM balance to submit Soroban transactions
   - Tests can be run repeatedly with the same account
-  - Set `--TargetNetworkTestAccountPublic` to the `Strkey` encoded public key of the account
-  - Set `--TargetNetworkTestAccountSecret` to the `Strkey` encoded secret for the account
+  - Set `--TargetNetworkTestAccountPublic` to the `StrKey` encoded public key of the account
+  - Set `--TargetNetworkTestAccountSecret` to the `StrKey` encoded secret for the account
 
 ## Monitor the RPC Instance
 

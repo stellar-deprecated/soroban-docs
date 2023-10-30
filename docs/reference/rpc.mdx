@@ -232,7 +232,7 @@ By default, this is disabled (`sorobanRpc.persistence.enabled=false`) and the RP
 --values my-custom-values.yaml
 ```
 
-- Verify the `LimitRange` defaults in the target namespace in kubernetes for deployment. `LimitRange` is optional on the cluster config. If defined, ensure that the defaults provide at least minimum RPC server resource limits of `2.5Gi` of memory and `1` CPU. Otherwise, include the limits explicitly on the `helm install` command via the `sorobanRpc.resources.limits.*` parameters:
+- Verify the `LimitRange` defaults in the target namespace in Kubernetes for deployment. `LimitRange` is optional on the cluster config. If defined, ensure that the defaults provide at least minimum RPC server resource limits of `2.5Gi` of memory and `1` CPU. Otherwise, include the limits explicitly on the `helm install` command via the `sorobanRpc.resources.limits.*` parameters:
 
 ```bash
 --set sorobanRpc.resources.limits.cpu=1

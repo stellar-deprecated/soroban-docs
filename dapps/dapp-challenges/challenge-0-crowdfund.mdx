@@ -203,37 +203,22 @@ You should see an updated balance reflecting the amount you have pledged in the 
 
 ## Checkpoint 4: 🚢 Ship it! 🚁
 
-Now that your dapp is fully functional, next prepare it for a new deployment on Futurenet, this time with a hosted frontend.
+Now that your dapp is fully functional, its time to prepare it for a new deployment on Futurenet, this time with a hosted frontend.
+This section requires that you have a [Vercel account] and the Vercel cli installed.
 
-Then, run the following commands to initialize the contracts on Futurenet:
-
-```sh
-npm run reset
-```
-
-Then run the dev server again:
-
-```sh
-npm run dev
-```
-
-Now, open your browser and visit [http://localhost:3000](http://localhost:3000).
-
-Ensure that you are connected to Futurenet and you should be able to see the frontend of your dapp!
-
-Next, you will need to remove unneccessary files for the the deployment. Run the following command to remove the `target` directory:
+You will need to remove unneccessary files to save space for the the deployment. Run the following command to remove the `target` directory:
 
 ```sh
 rm -rf target
 ```
 
-Next, you will use the Vercel cli to complete our deployment.
+>Note: You can build this directory again by running `soroban contract build`
 
-> Note: If you don’t already have a [Vercel account], you will need to create one and link it to your GitHub account.
+Next, you will use the Vercel cli to complete your deployment.
 
 [Vercel account]: https://vercel.com/login
 
-First install the Vercel cli:
+If you don't have the Vercel cli installed, run the following command to install it:
 
 ```sh
 npm i --global vercel

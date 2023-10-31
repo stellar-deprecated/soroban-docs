@@ -23,19 +23,14 @@ const config = {
   plugins: [
     "docusaurus-plugin-sass",
     [
-      '@docusaurus/plugin-google-analytics',
-      {
-        trackingID: 'UA-53373928-1',
-        anonymizeIP: true,
-      },
-    ],
-    [
       '@docusaurus/plugin-content-docs',
       {
         id: 'api',
         path: 'api',
         routeBasePath: 'api',
         sidebarPath: require.resolve('./sidebarsApi.js'),
+        editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
+        showLastUpdateTime: true,
       },
     ],
     [
@@ -45,6 +40,8 @@ const config = {
       path: 'dapps',
       routeBasePath: 'dapps',
       sidebarPath: require.resolve('./sidebarsDapps.js'),
+      editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
+      showLastUpdateTime: true,
     },
   ],
     require('./src/dev-server-plugin'),
@@ -64,6 +61,10 @@ const config = {
         },
         theme: {
           customCss: [require.resolve("./src/css/custom.scss")],
+        },
+        gtag: {
+          trackingID: "G-YE9KVSTERG",
+          anonymizeIP: true,
         },
       }),
     ],

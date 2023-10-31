@@ -26,7 +26,7 @@ import {RpcMethod} from "@site/src/components/RpcMethod";
         "key": "AAAAB+qfy4GuVKKfazvyk4R9P9fpo2n9HICsr+xqvVcTF+DC",
         "xdr": "AAAABwAAAADqn8uBrlSin2s78pOEfT/X6aNp/RyArK/sar1XExfgwgAAAAphIGNvbnRyYWN0AAA=",
         "lastModifiedLedgerSeq": "13",
-        "expirationLedgerSeq": "95"
+        "liveUntilLedgerSeq": "95"
       }
     ],
     "latestLedger": "179436"
@@ -214,14 +214,14 @@ print(
 ##### JavaScript
 
 ```javascript
-const { xdr } = require("soroban-client")
+const { Address, xdr } = require("soroban-client");
+
 function getLedgerKeyContractCode(contractId) {
   let ledgerKey = xdr.LedgerKey.contractData(
     new xdr.LedgerKeyContractData({
-      contract: xdr.ScAddress.scAddressTypeContract(contractId),
+      contract: new Address(contractId).toScAddress(),
       key: new xdr.ScVal.scvLedgerKeyContractInstance(),
-      durability: xdr.ContractDataDurability.persistent(),
-      bodyType: xdr.ContractEntryBodyType.dataEntry(),
+      durability: xdr.ContractDataDurability.persistent()
     })
   );
 
@@ -230,7 +230,7 @@ function getLedgerKeyContractCode(contractId) {
 
 console.log(
   getLedgerKeyContractCode(
-    "af9a2527e3b3b5571d63b0246ba32b7d31a5323766df7c60dfc0b3e3ba6fdf23"
+    "CA3D5KRYM6CB7OWQ6TWYRR3Z4T7GNZLKERYNZGGA5SOAOPIFY6YQGAXE"
   )
 )
 // OUTPUT: AAAABq+aJSfjs7VXHWOwJGujK30xpTI3Zt98YN/As+O6b98jAAAAFA==
@@ -304,30 +304,19 @@ print(
 ##### JavaScript
 
 ```javascript
-const { xdr } = require("soroban-client")
+const { xdr } = require("soroban-client");
 
 function getLedgerKeyWasmId(contractCodeLedgerEntryData) {
-
-  let entry = xdr.LedgerEntryData.fromXDR(
+  const entry = xdr.LedgerEntryData.fromXDR(
     contractCodeLedgerEntryData,
     "base64"
   );
 
-  let instance = new xdr.ScContractInstance({
-    executable: entry.contractData()
-      .body()
-      .value()
-      .val()
-  });
+  const instance = entry.contractData().val().instance();
 
   let ledgerKey = xdr.LedgerKey.contractCode(
     new xdr.LedgerKeyContractCode({
-      hash: xdr.ContractExecutable.contractExecutableWasm(instance.executable())
-        .wasmHash()
-        .instance()
-        .executable()
-        .wasmHash(),
-      bodyType: xdr.ContractEntryBodyType.dataEntry()
+      hash: instance.wasmHash()
     })
   );
 
@@ -368,7 +357,7 @@ And the response we get contains (even more) `LedgerEntryData` that we can decod
         "key": "AAAAB2QWKBCU9yGjzDJNxaEZpxEB6A8XsD2S/lKK/sViOLiC",
         "xdr": "AAAABwAAAABkFigQlPcho8wyTcWhGacRAegPF7A9kv5Siv7FYji4ggAAAlQAYXNtAQAAAAEPA2ACfn4BfmABfgF+YAAAAgcBAXYBRwAAAwQDAQICBQMBABEGGQN/AUGAgMAAC38AQYWAwAALfwBBkIDAAAsHMQUGbWVtb3J5AgAFaGVsbG8AAQFfAAMKX19kYXRhX2VuZAMBC19faGVhcF9iYXNlAwIK4QID1gIDAn8CfgF/I4CAgIAAQSBrIgEkgICAgAACQAJAIACnQf8BcSICQQ5GDQAgAkHKAEcNAQtCACEDQXshAgNAAkACQAJAAkAgAkUNAEIBIQQgAkGFgMCAAGotAAAiBUHfAEYNAyAFrSEEIAVBUGpBCkkNAiAFQb9/akEaSQ0BAkAgBUGff2pBGk8NACAEQkV8IQQMBAsQgoCAgAAACyABIAA3AwggASADQgiGQg6ENwMAQQAhAgNAAkAgAkEQRw0AQQAhAgJAA0AgAkEQRg0BIAFBEGogAmogASACaikDADcDACACQQhqIQIMAAsLIAFBEGqtQiCGQgSEQoSAgIAgEICAgIAAIQQgAUEgaiSAgICAACAEDwsgAUEQaiACakICNwMAIAJBCGohAgwACwsgBEJLfCEEDAELIARCUnwhBAsgAkEBaiECIAQgA0IGhoQhAwwACwsAAAsEAAAACwIACwsOAQBBgIDAAAsFSGVsbG8AHhFjb250cmFjdGVudm1ldGF2MAAAAAAAAAAUAAAAJQBDDmNvbnRyYWN0c3BlY3YwAAAAAAAAAAAAAAAFaGVsbG8AAAAAAAABAAAAAAAAAAJ0bwAAAAAAEQAAAAEAAAPqAAAAEQ==",
         "lastModifiedLedgerSeq": "75206",
-        "expirationLedgerSeq": "320384"
+        "liveUntilLedgerSeq": "320384"
       }
     ],
     "latestLedger": "262384"

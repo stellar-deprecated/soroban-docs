@@ -203,8 +203,16 @@ You should see an updated balance reflecting the amount you have pledged in the 
 
 ## Checkpoint 4: 🚢 Ship it! 🚁
 
-Now that your dapp is fully functional, its time to prepare it for a new deployment on Futurenet, this time with a hosted frontend.
+Now that your dapp is fully functional, its time to deploy it to a production environment. In this step, you will learn how to deploy your dapp to Vercel.
 This section requires that you have a [Vercel account] and the Vercel cli installed.
+
+If you don't have the Vercel cli installed, run the following command to install it globally:
+
+```sh
+npm i --global vercel
+```
+
+[Vercel account]: https://vercel.com/login
 
 You will need to remove unneccessary files to save space for the the deployment. Run the following command to remove the `target` directory:
 
@@ -216,15 +224,7 @@ rm -rf target
 
 Next, you will use the Vercel cli to complete your deployment.
 
-[Vercel account]: https://vercel.com/login
-
-If you don't have the Vercel cli installed, run the following command to install it:
-
-```sh
-npm i --global vercel
-```
-
-Then, run the following command to deploy your dapp:
+Run the following command to deploy your dapp:
 
 ```sh
 npx vercel --prod

@@ -69,6 +69,7 @@ In the root `Cargo.toml`:
 - add a `[workspace]` section (see below for specific values)
 
 In the contract-specific `Cargo.toml`:
+
 - remove the `[profile.release*]` stuff
 - set the dependency versions to use the workspace versions (see example below)
 
@@ -236,6 +237,7 @@ If no value is currently stored, the value given to `unwrap_or(...)` is returned
 Values stored as contract data and retrieved are transmitted from [the environment](../fundamentals-and-concepts/environment-concepts.mdx) and expanded into the type specified. In this case a `u32`. If the value can be expanded, the type returned will be a `u32`. Otherwise, if a developer caused it to be some other type, a panic would occur at the unwrap.
 
 The `set()` function stores the new count value against the key, replacing the existing value.
+
 ```rust
 env.storage()
     .instance()

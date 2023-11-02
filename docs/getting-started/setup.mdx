@@ -187,8 +187,10 @@ curl "https://friendbot.stellar.org/?addr=$(soroban config identity address alic
 ```
 
 :::tip Command Expansion `$(…)`
+
 This uses [command expansion](https://www.gnu.org/software/bash/manual/html_node/Command-Substitution.html), which only works with bash-compatible shells. If you are using Windows or some other shell, you will need to copy the output of `soroban config…` and paste it into the `curl` command, or figure out how command expansion works in your shell.
+
 :::
 
 [Rust]: https://www.rust-lang.org/
-[Soroban CLI]: setup#install-the-soroban-cli
+[Soroban CLI]: setup.mdx#install-the-soroban-cli

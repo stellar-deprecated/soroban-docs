@@ -52,7 +52,9 @@ echo "C...[your contract id here]" > .soroban/hello-id
 Using the code we wrote in [Write a Contract](hello-world.mdx#write-a-contract) and the resulting `.wasm` file we built in [Build](hello-world.mdx#build), run the following command to invoke the `hello` function.
 
 :::info
+
 In the background, the CLI is making RPC calls. For information on that checkout out the [RPC](../reference/rpc.mdx) reference page.
+
 :::
 
 Here we're setting the `to` argument to `RPC`. This again makes use of command expansion `$(…)`; see the note about that in the [Configure an Identity](setup#configure-an-identity) section of Setup.
@@ -73,7 +75,9 @@ The following output should appear.
 ["Hello", "RPC"]
 ```
 
-:::info The `--` double-dash is required!
+:::info
+
+The `--` double-dash is required!
 
 This is a general [CLI pattern](https://unix.stackexchange.com/questions/11376/what-does-double-dash-mean) used by other commands like [cargo run](https://doc.rust-lang.org/cargo/commands/cargo-run.html). Everything after the `--`, sometimes called [slop](https://github.com/clap-rs/clap/issues/971), is passed to a child process. In this case, `soroban contract invoke` builds an _implicit CLI_ on-the-fly for the `hello` method in your contract. It can do this because Soroban SDK embeds your contract's schema / interface types right in the `.wasm` file that gets deployed on-chain. You can also try:
 

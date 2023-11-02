@@ -1,7 +1,7 @@
 ---
 sidebar_position: 3
 title: 2. Deploy to Testnet
-description: Deploy smart contract to a live test network.
+description: Deploy a smart contract to a live test network.
 ---
 
 <head>
@@ -28,7 +28,7 @@ To recap what we've done so far, in [Setup](setup):
 - configured the soroban-cli to communicate with the Soroban Testnet via RPC
 - and configured an identity to sign transactions
 
-In [Hello World](hello-world) we wrote a simple contract, and now we are ready to deploy that contract to Testnet, and interact with it.
+In [Hello World](hello-world.mdx) we wrote a simple contract, and now we are ready to deploy that contract to Testnet, and interact with it.
 
 ## Deploy
 
@@ -49,7 +49,7 @@ echo "C...[your contract id here]" > .soroban/hello-id
 
 ## Interact
 
-Using the code we wrote in [Write a Contract](hello-world#write-a-contract) and the resulting `.wasm` file we built in [Build](hello-world#build), run the following command to invoke the `hello` function.
+Using the code we wrote in [Write a Contract](hello-world.mdx#write-a-contract) and the resulting `.wasm` file we built in [Build](hello-world.mdx#build), run the following command to invoke the `hello` function.
 
 :::info
 In the background, the CLI is making RPC calls. For information on that checkout out the [RPC](../reference/rpc.mdx) reference page.
@@ -74,6 +74,7 @@ The following output should appear.
 ```
 
 :::info The `--` double-dash is required!
+
 This is a general [CLI pattern](https://unix.stackexchange.com/questions/11376/what-does-double-dash-mean) used by other commands like [cargo run](https://doc.rust-lang.org/cargo/commands/cargo-run.html). Everything after the `--`, sometimes called [slop](https://github.com/clap-rs/clap/issues/971), is passed to a child process. In this case, `soroban contract invoke` builds an _implicit CLI_ on-the-fly for the `hello` method in your contract. It can do this because Soroban SDK embeds your contract's schema / interface types right in the `.wasm` file that gets deployed on-chain. You can also try:
 
     soroban contract invoke ... -- --help

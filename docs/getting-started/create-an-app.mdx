@@ -16,7 +16,7 @@ Let's get started.
 
 You're going to need [Node.js](https://nodejs.org/en/download/package-manager/) v18.14.1 or greater. If you haven't yet, install it now.
 
-Then we want to initialize the current directory, `soroban-tutorial`, as an Astro project, but Astro doesn't like that. It wants to create a new directory. So let's go ahead and do that, then move all the contents of the new directory into it's parent directory. From the original `soroban-tutorial` directory, run:
+Then we want to initialize the current directory, `soroban-tutorial`, as an Astro project, but Astro doesn't like that. It wants to create a new directory. So let's go ahead and do that, then move all the contents of the new directory into its parent directory. From the original `soroban-tutorial` directory, run:
 
 ```bash
 npm create astro@4.0.1 soroban-tutorial -- --template basics --install --no-git --typescript strictest
@@ -311,7 +311,7 @@ Current value: <strong id="current-value" aria-live="polite">???</strong><br />
 
   const incrementor = new Contract({
     ...networks.testnet,
-    rpcUrl: "https://soroban-testnet.stellar.org", // from https://soroban.stellar.org/docs/reference/rpc#public-rpc-providers
+    rpcUrl: "https://soroban-testnet.stellar.org", // from https://soroban.stellar.org/docs/reference/rpc-list#sdf-futurenet-and-testnet-only
   });
 
   const button = document.querySelector("[data-increment]");

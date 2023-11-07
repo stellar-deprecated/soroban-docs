@@ -63,7 +63,7 @@ The `initialize.sh` script performs following actions:
 
 For this section, you'll need to configure parameters to initialize `donation` and `oracle` contracts.
 
-You'll start with `donation` contract.
+You'll start with `donation` contract:
 
 - First, Open `initialize.sh`:
 
@@ -80,7 +80,7 @@ You'll start with `donation` contract.
   --recipient <YOUR_WALLET> \
   ```
 
-Now is the time for the `oracle` contract.
+Now for the `oracle` contract:
 
 - Find the following part of `initialize.sh`:
 
@@ -98,16 +98,17 @@ Now is the time for the `oracle` contract.
    --relayer <RELAYER_ADDRESS>
   ```
 
-  - `<OWNER_ADDRESS>` - the address that will become the owner of the contract. This could be your address. Only the contract owner will be able to change the `epoch_interval` and `relayer`;
-  - `<TIME_IS_SECONDS>` - frequency (in seconds) of price updates;
-  - `<RELAYER_ADDRESS>` - address of the wallet that will update the price (in the backend, in the CRON task). It is better to create a separate wallet for this (with test tokens);
+Here is a description of each parameter:
 
+  - `<OWNER_ADDRESS>` - the address that will become the owner of the contract. This could be your address. Only the contract owner will be able to change the `epoch_interval` and `relayer`
+  - `<TIME_IS_SECONDS>` - frequency (in seconds) of price updates
+  - `<RELAYER_ADDRESS>` - address of the wallet that will update the price (in the backend, in the CRON task). It is suggested to create a dedicated wallet for this ([be sure to fund with test Lumens](https://laboratory.stellar.org/#account-creator?network=futurenet))
 
 ## Checkpoint 2: 🎬 Deploy Smart Contracts
 
 Now that you ths initialization script setup it's time to deploy the smart contracts to a Sandbox environment. Deploying a smart contract in a production setting involves submitting the contract code to the blockchain's main network ( Mainnet ), where it becomes part of the chain's immutable ledger. Deploying smart contracts to a Sandbox environment simulates that process without actually affecting Mainnet. When you deploy the smart contracts, you'll instead deploy to Futurenet, a test network with more cutting-edge features that have not yet been implemented in the Mainnet.
 
-In your terminal, load the contracts and initialize them in the Sandbox environment by running the following commands:
+To build and deploy the contracts in a Sandbox environment, as well as to compile the TypeScript bindings, run the following command in your terminal:
 
 ```sh
 npm run setup
@@ -151,13 +152,25 @@ Please, save your deployed contract ID, you will need it to complete the challen
 
 ### 4. ⏯️ Create a CRON task
 
-A CRON task is a scheduled operation performed at specified intervals, functioning as a customizable backend service. Here, you will be run a CRON task to update the BTC price within the Oracle contract.
+A CRON task is a scheduled operation performed at specified intervals, functioning as a customizable backend service. Here, you will be run a CRON task to update the BTC price within the Oracle contract. Data can be fetched from an API and set to the contract using the `set_price` function, in this case, the tutorial will use the [CryptoPrice API](https://api-ninjas.com/api/cryptoprice). This is a free API that provides real-time cryptocurrency prices, and it is used in this tutorial for demonstration purposes only. You are free to use any pricefeed API of your choice.
 
-The function is already implemented in the `cron-script.ts` file. You will need to specify the following parameters:
+The function that updates the price is already implemented in the `cron-script.ts` file. To retreive the data from the pricefeed, you will need to specify the following parameters:
 
 - Secret key of wallet (relayer) that will fetch BTC price from API and set it to smart contract;
 - Contract address of deployed Oracle Contract;
 - `API_KEY` from https://api-ninjas.com/api/cryptoprice (for free).
+
+Here is an example of a filled `cron-script.ts` file:
+
+```ts
+const API_NINJA_KEY = "xSuoJa0icEhaQzk3IdomNWFmXK0qNG8lNZofYwJ4";
+
+const sourceSecretKey = "SBDLGM7RKXU6WYM2DRDIBULWAG7I6QDO3AONLERKWZPDDPQMMQ26F7TM";
+const sourceKeypair = SorobanClient.Keypair.fromSecret(sourceSecretKey);
+const sourcePublicKey = sourceKeypair.publicKey();
+
+const contractId = "CBDRRNXD2UETJJL376B2VT3RS22YPF4NPWRDCMSBZAIQGWJIUM3U7552";
+```
 
 To run the CRON task, navigate to the `cron` directory and run:
 
@@ -166,19 +179,47 @@ npm install
 node cron-script.ts
 ```
 
+Once the CRON task is running, it will fetch the BTC price from the API and set it to the contract every 15 minutes.
+
+Here is an example of the output:
+
+```sh
+$ node cron-script.ts
+node cron-script.ts     
+
+Running a task every 15 minutes
+Current Time:  2023-11-07T02:45:00.050Z
+lastEpochNr  1
+lastEpochPrice  3486726000
+deltaTimestamp  655
+Need to update the value
+fetched priceData  3487176999
+[updatePairPrice] Transaction hash: f5875b6f74a922f05cc1e487404a13db578f264f3b0768685c5d0af08625b571
+value set!
+```
+
+You can specify the frequency of the CRON task by changing the `cron.schedule` parameter in the `cron-script.ts` file.
+
+For example, to run the task every 5 minutes, change the parameter to:
+```ts
+cron.schedule("*/5 * * * *", async () => {
+  ...
+});
+```
+
 ## Checkpoint 3: 🤝 Connect the Frontend to the Backend
 
-Now that you have the smart contracts deployed, it's time to check out the frontend of your dapp.
+Now that you have the smart contracts deployed, and the cron job running, it's time to check out the frontend of your dapp.
 
-First, start the development server:
+From the top level directory run the following command to start the development server:
 
 ```sh
 npm run dev
 ```
 
-Now open your browser and visit [http://localhost:3000](http://localhost:3000). You should be able to see the frontend of your dapp.
+Now, open your browser and visit [http://localhost:5173](http://localhost:5173). You should be able to see the frontend of your dapp.
 
-> Note: Follow the instructions below and ensure that you have funded your wallet address that you intend to use from browser, otherwise the dapp display will be blank and a 'Account not found' will be printed on browser's console only. If you are using Freighter, be sure that you have properly configured the Freighter Wallet by following the instructions [here](../guides/wallets#connect-a-wallet-freighter).
+> Note: Follow the instructions below and ensure that you have funded your wallet address that you intend to use from browser. If you are using Freighter, be sure that you have properly configured the Freighter Wallet by following the instructions [here](../guides/wallets#connect-a-wallet-freighter).
 
 Now that you have the frontend running, it's time to connect it with your smart contracts.
 
@@ -186,9 +227,9 @@ You will need to add some Futurenet network lumens to your wallet to interact wi
 
 > Note: These are test lumens for use with Futurenet and cannot be used on Mainnet
 
-## Checkpoint 4: 🌟 Powering the Campaign
+## Checkpoint 13: 🧿 Oracle Insights: Unveiling Price Feeds
 
-Fuel the vision! In this step, you will learn how to mint tokens and fund the crowdfunding campaign.
+Gaze into the crystal ball of APIs and retrive the price feed from the all connected internet. Data at your fingertips, at one time an abyss but pioneers have paved the way for many to cross. Here we reach into the realm of off-chain data and pull out the price of BTC. In this section, you will mint tokens and deposit Bitcoin (BTC) into the donation contract. The conversion to USD will utilize the oracle price feed to ensure your donation is aligned with the current BTC to USD conversion rate.
 
 <Tabs defaultValue="mint" values={[
     {label: '🏦 Mint Tokens', value: 'mint'},

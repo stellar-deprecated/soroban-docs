@@ -81,7 +81,9 @@ const greeting = await greeter.hello({ to: 'Soroban' });
 Then the greeting is displayed in the first `<h1>` tag:
 
 ```typescript title="src/pages/index.astro"
-<h1><span class="text-gradient">{greeting.join(' ')}</span></h1>
+<h1>
+  <span class="text-gradient">{greeting.join(" ")}</span>
+</h1>
 ```
 
 Now start the dev server:

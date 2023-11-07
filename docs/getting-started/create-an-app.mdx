@@ -16,34 +16,29 @@ Let's get started.
 
 You're going to need [Node.js](https://nodejs.org/en/download/package-manager/) v18.14.1 or greater. If you haven't yet, install it now.
 
-Then we want to initialize the current directory, `soroban-tutorial`, as an Astro project, but Astro doesn't like that. It wants to create a new directory. So let's go ahead and do that, then move all the contents of the new directory into its parent directory. From the original `soroban-tutorial` directory, run:
+There are several project organization strategies, but we find it to be the simplest to have Node-specific web app code live right alongside the Rust-specific smart contract code, at the root of an Astro project.
 
-```bash
-npm create astro@4.0.1 soroban-tutorial -- --template basics --install --no-git --typescript strictest
+Astro's project initializer allows us to pass in a `template` argument. If we use our tutorial repository as a template, it will create a project that includes our `hello-soroban` and `incrementor` contracts, a Cargo.toml for the workspace, and npm scripts to generate the appropriate typescript clients to interact with the contracts.
+
+So let's go ahead and do that. From `soroban-tutorial`'s parent directory, run:
+
+```sh
+npm create astro@latest astro-soroban-tutorial -- --template AhaLabs/soroban-tutorial-project#template --no-git --no-install --typescript strictest
 ```
 
-This will take a little while, as the `--install` option automatically installs the dependencies. Once it's done, let's move the contents of the new nested folder into the project root. Other project organization strategies are possible, but we find that it causes no problems to have the Node-specific web app stuff live right alongside the Rust-specific smart contract stuff and that keeping it all in the root just makes things simpler.
+The template provides all we need for a new project. However, since we already did the work of deploying our contracts to Testnet, and storing their ids in the `.soroban` directory, let's copy those files over to our new project so that we can reuse them. From the parent directory of both `astro-soroban-tutorial` and `soroban-tutorial`, run:
 
 ```bash
-mv soroban-tutorial/* .
-mv soroban-tutorial/.vscode .
-cat soroban-tutorial/.gitignore >> .gitignore
-rm soroban-tutorial/.gitignore
-rmdir soroban-tutorial
+cp -r ./soroban-tutorial/.soroban ./astro-soroban-tutorial
 ```
 
-This is a good time to commit your changes so that later on, you can clearly see the differences between what came from Astro's `basics` template and the Soroban-specific stuff we're going to add.
-
-```bash
-git add .
-git commit -m "Initialize Astro project"
-```
+We will be working from the `astro-soroban-tutorial` directory for the rest of this tutorial, so it is safe to delete the original `soroban-tutorial` if you want: `rm -rf soroban-tutorial`.
 
 ## Generate an NPM package for the Hello World contract
 
-Before we even open the new frontend files, let's generate an NPM package for the Hello World contract. This is our suggested way to interact with contracts from frontends. These generated libraries work with any JavaScript project (not a specific UI like React), and make it easy to work with some of the trickiest bits of Soroban, like encoding [XDR](https://soroban.stellar.org/docs/fundamentals-and-concepts/fully-typed-contracts).
+Before we even open the new frontend files, let's generate an NPM package for the Hello Soroban contract. This is our suggested way to interact with contracts from frontends. These generated libraries work with any JavaScript project (not a specific UI like React), and make it easy to work with some of the trickiest bits of Soroban, like encoding [XDR](https://soroban.stellar.org/docs/fundamentals-and-concepts/fully-typed-contracts).
 
-This is going to use the CLI command `soroban contract bindings typescript`:
+This is going to use the CLI command `soroban contract bindings typescript`. From the `astro-soroban-tutorial` directory, run
 
 ```bash
 soroban contract bindings typescript \
@@ -52,45 +47,41 @@ soroban contract bindings typescript \
   --output-dir node_modules/hello-soroban-client
 ```
 
-We attempt to keep the code in these generated libraries readable, so go ahead and look around. Open up the new `hello-soroban-client` directory in your editor. If you've built or contributed to Node projects, it will all look familiar. You'll see a `package.json` file, a `src` directory, a `tsconfig.json`, and even a README. The README is a great place to start. Go ahead and give it a read.
+:::note
+
+The template includes an npm script that wraps this CLI command which may be more convenient to use: `npm run bindings:hello`.
+
+:::
+
+We attempt to keep the code in these generated libraries readable, so go ahead and look around. Open up the new `node_modules/hello-soroban-client` directory in your editor. If you've built or contributed to Node projects, it will all look familiar. You'll see a `package.json` file, a `src` directory, a `tsconfig.json`, and even a README. The README is a great place to start. Go ahead and give it a read.
 
 As it says, when using local libraries, we've had the [most success](https://github.com/stellar/soroban-example-dapp/pull/117#discussion_r1232873560) when generating them directly into the `node_modules` folder, and leaving them out of the `dependencies` section. Yes, this is surprising, but it works the best.
 
-Let's update the `package.json` in your `soroban-tutorial` project with a `postinstall` script to make sure the generated library stays up-to-date:
+The template adds several scripts in the `package.json` file, including a `postinstall` script that calls `bindings:hello` after every install to make sure that the generated library stays up-to-date.
 
-```diff title="package.json"
-  "scripts": {
-    ...
--   "astro": "astro"
-+   "astro": "astro",
-+   "postinstall": "soroban contract bindings typescript --network testnet --contract-id $(cat .soroban/hello-id) --output-dir node_modules/hello-soroban-client"
-  }
-```
+Let's run `npm install` now to make sure that all of our dependencies are installed, and note that the `postinstall` script will also run.
 
 ### Call the contract from the frontend
 
-Now let's open up `src/pages/index.astro` and add some code to call the contract. We'll start by importing the generated library:
+Now let's open up `src/pages/index.astro` and take a look at the code that calls the hello-soroban contract using the generated library:
 
-```diff title="src/pages/index.astro"
+```typescript title="src/pages/index.astro"
  ---
- import Layout from '../layouts/Layout.astro';
- import Card from '../components/Card.astro';
-+import { Contract, networks } from 'hello-soroban-client';
-+
-+const greeter = new Contract({
-+  ...networks.testnet,
-+  rpcUrl: 'https://soroban-testnet.stellar.org', // from https://soroban.stellar.org/docs/reference/rpc#public-rpc-providers
-+});
-+
-+const greeting = await greeter.hello({ to: 'Soroban' });
+import { Contract, networks } from 'hello-soroban-client';
+
+const greeter = new Contract({
+  ...networks.testnet,
+  rpcUrl: 'https://soroban-testnet.stellar.org', // from https://soroban.stellar.org/docs/reference/rpc#public-rpc-providers
+});
+
+const greeting = await greeter.hello({ to: 'Soroban' });
  ---
 ```
 
-Then find the `<h1>` tag and replace its contents with the greeting:
+Then the greeting is displayed in the first `<h1>` tag:
 
-```diff title="src/pages/index.astro"
--<h1>Welcome to <span class="text-gradient">Astro</span></h1>
-+<h1><span class="text-gradient">{greeting.join(' ')}</span></h1>
+```typescript title="src/pages/index.astro"
+<h1><span class="text-gradient">{greeting.join(' ')}</span></h1>
 ```
 
 Now start the dev server:
@@ -136,25 +127,15 @@ Once it's installed, open it up by clicking the extension icon. If this is your 
 
 Go to Settings (the gear icon) → Preferences and toggle the switch to Enable Experimental Mode. Then go back to its home screen and select "Test Net" from the top-right dropdown. Finally, if it shows the message that your Stellar address is not funded, go ahead and click the "Fund with Friendbot" button.
 
-Now you're all set up to use Freighter as a user, and you can add it to your app.
+Now you're all set up to use Freighter as a user, and you can use it in your app.
 
-### Add Freighter
+### Use Freighter
 
 We're going to add a "Connect" button to the page that opens Freighter and prompts the user to give your web page permission to use Freighter. Once they grant this permission, the "Connect" button will be replaced with a message saying, "Signed in as [their public key]".
 
-First, add [@stellar/freighter-api](https://www.npmjs.com/package/@stellar/freighter-api) as a dependency:
+First, double check that [@stellar/freighter-api](https://www.npmjs.com/package/@stellar/freighter-api) is in package.json as a dependency.
 
-```bash
-npm install @stellar/freighter-api
-```
-
-Then we need to work around a bug in NPM—adding a new dependency with `npm install [new dependency]` doesn't run the `postinstall` hook, the way that `npm install` does. But it does run the cleanup logic that removes "incorrect" folders like `node_modules/hello-soroban-client`. So you either need to run `npm i` (a shortcut for `npm install`), or `postinstall` directly:
-
-```bash
-npm run postinstall
-```
-
-Now let's add a new component to the `src/components` directory called `ConnectFreighter.astro` with the following contents:
+Take a look at the `ConnectFreighter` component in the `src/components` directory:
 
 ```html title="src/components/ConnectFreighter.astro"
 <div id="freighter-wrap" class="wrap" aria-live="polite">
@@ -220,40 +201,6 @@ You can read more about this in [Astro's page about client-side scripts](https:/
 
 The code itself here is pretty self-explanatory. We import a few methods from `@stellar/freighter-api` to check if the user is logged in. If they already are, then `isAllowed` returns `true`. If it's been more than a day since they've used the Freighter extension, then the `publicKey` will be blank, so we tell them to unlock Freighter and refresh the page. If `isAllowed` and the `publicKey` both look good, we replace the contents of the `div` with the signed-in message, replacing the button. Otherwise, we add a click handler to the button to prompt the user to connect Freighter with `setAllowed`. Once they do, we again replace the contents of the `div` with the signed-in message. The [`aria` stuff](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Live_Regions) ensures that screen readers will read the new contents when they're updated.
 
-Before we add this to our index page, let's make the buttons look better. Open `layouts/Layout.astro` and look for the `<style>` tag. You'll see this one has an `is:global` attribute, which tells Astro to treat it as normal CSS, rather than scoping it to only the current component. That's exactly what we want for buttons. Paste these styles in there:
-
-<!-- prettier-ignore-start -->
-<!-- Astro uses tabs. It's not worth fighting or mentioning, let's just make the pasted code look good with the rest-->
-```css title="layouts/Layout.astro"
-button {
-	border: 1px solid rgb(var(--accent));
-	background-color: #23262d;
-	background-image: none;
-	background-size: 400%;
-	border-radius: 7px;
-	color: white;
-	cursor: pointer;
-	font-size: inherit;
-	padding: 0.5rem 1rem;
-	background-position: 100%;
-	transition: background-position 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-}
-button:is(:hover, :focus-within) {
-	color: black;
-	background-position: 0;
-	background-size: 400%;
-	background-image: var(--accent-gradient);
-}
-button:is(:disabled) {
-	color: white;
-	background: var(--accent-light);
-	cursor: not-allowed;
-}
-```
-<!-- prettier-ignore-end -->
-
-This copies the styles from the `Card` components that Astro included in the template.
-
 Now we can import the component in the frontmatter of `pages/index.astro`:
 
 ```diff title="pages/index.astro"
@@ -284,21 +231,22 @@ Now you're ready to sign the call to `increment`!
 
 ### Call `increment`
 
-We're going to generate a contract client for the incrementor contract with a similar command to the one we used before. Let's move the `hello` bindings generation to its own script, add one for incrementor, and call them both from `postinstall` using a double ampersand ([&&](https://stackoverflow.com/a/25669618/249801)):
+We're going to generate a client for the incrementor contract with a similar command to the one we used before. Let's add a script for generating a client for the incrementor to `package.json`, and call them both from `postinstall` using a double ampersand ([&&](https://stackoverflow.com/a/25669618/249801)):
 
-```json title="package.json"
-"bindings:hello": "soroban contract bindings typescript --network testnet --contract-id $(cat .soroban/hello-id) --output-dir node_modules/hello-soroban-client",
-"bindings:incrementor": "soroban contract bindings typescript --network testnet --contract-id $(cat .soroban/incrementor-id) --output-dir node_modules/incrementor-client",
-"postinstall": "npm run bindings:hello && npm run bindings:incrementor"
+```diff title="package.json"
+ "bindings:hello": "soroban contract bindings typescript --network testnet --contract-id $(cat .soroban/hello-id) --output-dir node_modules/hello-soroban-client",
++"bindings:incrementor": "soroban contract bindings typescript --network testnet --contract-id $(cat .soroban/incrementor-id) --output-dir node_modules/incrementor-client",
+-"postinstall": "if [ ! -d .soroban ]; then npm run setup; fi && npm run bindings:hello"
++"postinstall": "if [ ! -d .soroban ]; then npm run setup; fi && npm run bindings:hello && npm run bindings:incrementor"
 ```
 
-Now reinstall dependencies to also run `postinstall`:
+Reinstall the dependencies to also run `postinstall`:
 
 ```bash
 npm i
 ```
 
-Now we can import from `incrementor-client` and start using it. We'll again create a new Astro component. Create a new file at `src/components/Counter.astro` with the following contents:
+Now we can import from `incrementor-client` and start using in a new Astro component. Add a new file at `src/components/Counter.astro` with the following contents:
 
 ```html title="src/components/Counter.astro"
 <strong>Incrementor</strong><br />
@@ -340,36 +288,6 @@ This should be somewhat familiar by now. We have a `script` that, thanks to Astr
 
 Also, notice that you don't need to manually specify Freighter as the wallet in the call to `increment`. This may change in the future, but while Freighter is the only game in town, these generated libraries automatically use it. If you want to override this behavior, you can pass a `wallet` option; check the latest `Wallet` interface in [the template source](https://github.com/stellar/soroban-tools/blob/main/cmd/crates/soroban-spec-typescript/src/project_template/src/method-options.ts) for details.
 
-Let's add styles for `visually-hidden` and `loading` class. In `layouts/Layout.astro`, add the following to the end of the `style` tag:
-
-<!-- prettier-ignore-start -->
-<!-- Astro uses tabs. It's not worth fighting or mentioning, let's just make the pasted code look good with the rest-->
-```css title="layouts/Layout.astro"
-button:is(:disabled).loading {
-	background: linear-gradient(-45deg, #ffffff44, #ffffff22);
-	background-size: 200%;
-	animation: loading-gradient 4s linear infinite;
-}
-@keyframes loading-gradient {
-	0% {
-		background-position: 0% 50%;
-	}
-	100% {
-		background-position: -200% 50%;
-	}
-}
-.visually-hidden {
-	clip: rect(0 0 0 0);
-	clip-path: inset(50%);
-	height: 1px;
-	overflow: hidden;
-	position: absolute;
-	white-space: nowrap;
-	width: 1px;
-}
-```
-<!-- prettier-ignore-end -->
-
 Now let's use this component. In `pages/index.astro`, first import it:
 
 ```diff title="pages/index.astro"
@@ -398,11 +316,11 @@ There's obviously some functionality missing, though. For example, that `???` is
 
 Before you try to update it, let's streamline the process around building, deploying, and generating clients for contracts.
 
-## Streamline the dev process with some script cleanup
+## Streamlining the dev process
 
-Right now, the `postinstall` script assumes that you already have a `.soroban` directory with contract IDs inside. When other collaborators try to help you out, this will be frustrating. You can harness the `scripts` section in the `package.json` to make this project easier to work with. This will also make it easier for you to make changes to the contracts and then work with those changes in the frontend.
+There are several other scripts added to package.json that have been added to make this project easier to work with. Let's take a look at those scripts now.
 
-First, let's add a `clean` script that removes the `.soroban` directory to make it easy to go back to how collaborators will experience this repository when they first clone it. We'll also remove the `node_modules/.vite` directory, which is where Astro caches its build artifacts ([Vite](https://vitejs.dev/) is a build tool [used by Astro](https://docs.astro.build/en/reference/configuration-reference/#vite)). Add the following to the `scripts` section of `package.json`:
+First, let's look at the `clean` script which removes the `.soroban` directory to make it easy to go back to how collaborators will experience this repository when they first clone it. It will also remove the `node_modules/.vite` directory, which is where Astro caches its build artifacts ([Vite](https://vitejs.dev/) is a build tool [used by Astro](https://docs.astro.build/en/reference/configuration-reference/#vite)).
 
 ```json title="package.json"
 "scripts": {
@@ -411,7 +329,7 @@ First, let's add a `clean` script that removes the `.soroban` directory to make 
 }
 ```
 
-Next, let's add a `setup` script that builds your contracts, then checks if the `.soroban` folder is present, and if not, creates and funds the `alice` identity and deploys your contracts. This is a lot for a single NPM script, so we've broken it into a few to make it a little more legible. Add the following to the `scripts` section of `package.json`:
+Next, let's look at the `setup` script which builds your contracts, then checks if the `.soroban` folder is present, and if not, creates and funds the `alice` identity and deploys your contracts. This is a lot for a single NPM script, so we've broken it into a few to make it a little more legible.
 
 ```json title="package.json"
   "scripts": {
@@ -425,7 +343,7 @@ Next, let's add a `setup` script that builds your contracts, then checks if the 
   }
 ```
 
-Finally, let's add a `reset` that calls both in order:
+Finally, let's there is a `reset` script that calls both in order:
 
 ```json title="package.json"
 "scripts": {
@@ -437,7 +355,7 @@ Finally, let's add a `reset` that calls both in order:
 
 Now anytime you make changes to your contracts, you can run `npm run reset` to build the new contracts, deploy them, and install dependencies. And, of course, installing dependencies will run `postinstall`, which will also regenerate the contract client libraries directly to the `node_modules` folder.
 
-You can also update the `postinstall` script to check for the existence of `.soroban` and automatically `npm run setup` if it's not found:
+The `postinstall` script also checks for the existence of `.soroban` and automatically runs `npm run setup` if it's not found:
 
 ```json title="package.json"
   "postinstall": "if [ ! -d .soroban ]; then npm run setup; fi && npm run bindings:hello && npm run bindings:incrementor",
@@ -459,6 +377,15 @@ If you want to take it a bit further and make sure you understand all the pieces
 Sometimes things go wrong. As a first step when troubleshooting, you may want to [clone our tutorial repository](https://github.com/AhaLabs/soroban-tutorial-project) and see if the problem happens there, too. If it happens there, too, then it may be a temporary problem with the Soroban network.
 
 Here are some common issues and how to fix them.
+
+### Contract client libraries are removed when adding new dependencies
+
+When adding new dependencies to your project via `npm`, you may run into a issue where `npm install [new dependency]` doesn't run the `postinstall` hook the way that `npm install` does. But it does run the cleanup logic, which will remove "incorrect" folders. It considers our contract client libraries (e.g. `node_modules/hello-soroban-client`) "incorrect", since they're not in the dependencies in `package.json`. So you either need to run `npm i` (a shortcut for `npm install`), or `postinstall` directly to make sure that they are re-built:
+
+```bash
+npm run postinstall
+
+```
 
 ### Call to `hello` fails
 

@@ -20,19 +20,21 @@ import TabItem from "@theme/TabItem";
 
 <StartChallengeButton id={0} />
 
-This challenge will guide you through the process of building and shipping a crowdfunding dapp on Stellar using Soroban. You will learn how to deploy smart contracts to Futurenet, and how to interact with them through a web frontend. In this context, the term "ship" refers to finalizing the development process of your dapp, ensuring that it functions as expected, and is accessible for user interaction and testing through a hosted frontend. However, it's crucial to clarify that despite its functionality, the dapp is not promoted nor intended for deployment in a production-level setting on Futurenet. The challenge is designed for educational purposes, helping you understand how a dapp can be built and interacted with, with further customization and development, it has the potential to evolve into a full-fledged, ready-to-use crowdfunding solution.
+This challenge will guide you through the process of building and shipping a crowdfunding dapp on Stellar using Soroban. Unlike traditional crowdfunding applications, crowdfunding dapps (decentralized applications) provide the means for users to pledge funds to a crowdfund campaign directly from their digital wallets, without the need for intermediaries.
+
+In this challenge, you will learn how to deploy smart contracts to Futurenet, and how to interact with them through a web frontend. In this context, the term "ship" refers to finalizing the development process of your dapp, ensuring that it functions as expected, and is accessible for user interaction and testing through a hosted frontend. However, it's crucial to clarify that despite its functionality, the dapp is not promoted nor intended for deployment in a production-level setting on Futurenet. The challenge is designed for educational purposes, helping you understand how a dapp can be built and interacted with, with further customization and development, it has the potential to evolve into a full-fledged, ready-to-use crowdfunding solution.
 
 ## Checkpoint 0: 📦 Install 📚
 
-Start by installing the required dependencies.
+Start by installing the required dependencies. You'll also want to be sure you have the most updated version of Rust installed.
 
 Required:
 
-- `soroban-cli alias`: [Download Soroban Alias](https://github.com/stellar/soroban-example-dapp#install-dependencies)
+- `soroban-cli alias` (installed in the next step)
 - `Node` v18: [Download Node](https://nodejs.org/en/download/)
 - `Freighter Wallet`: [Freighter Wallet](https://freighter.app/)
 
-First, clone the Soroban Dapps Challenge repo and check out the `crowdfund` branch:
+First, clone the Soroban Dapps Challenge repo and check out the `crowdfund` branch, which contains the code for the crowdfund smart contract that powers this dapp:
 
 ```sh
 git clone https://github.com/stellar/soroban-dapps-challenge.git
@@ -46,9 +48,11 @@ Then, install soroban-cli alias by running the following command:
 cargo install_soroban
 ```
 
+Soroban CLI is the command line interface to Soroban. It allows you to build, deploy, and interact with smart contracts; configure identities; generate key pairs; manage networks; and more. The soroban-cli (alias) that is used in this challenge is a pinned version of the soroban-cli that is used in the Soroban Dapps Challenge. This ensures that the challenge is reproducible and that all participants are using the same version of Soroban.
+
 ## Checkpoint 1: 🎬 Deploy Smart Contracts
 
-Now that you have the Crowdfund branch checked out, it's time to deploy the smart contracts to a Sandbox environment.
+Now that you have the Crowdfund branch checked out, it's time to deploy the smart contracts to a Sandbox environment. Deploying a smart contract in a production setting involves submitting the contract code to the blockchain's main network ( Mainnet ), where it becomes part of the chain's immutable ledger. Deploying smart contracts to a Sandbox environment simulates that process without actually affecting Mainnet. When you deploy the smart contracts, you'll instead deploy to Futurenet, a test network with more cutting-edge features that have not yet been implemented in the Mainnet.
 
 In your terminal, load the contracts and initialize them in the Sandbox environment by running the following commands:
 
@@ -72,9 +76,11 @@ Done
 ...
 ```
 
+The contract ID is a unique identifier for a smart contract deployed on a blockchain. This contract ID is used to interact with and reference the smart contract, allowing users to invoke functions from the smart contract, send transactions, or otherwise interact with the smart contract's functionalities and data stored on the blockchain.
+
 :::caution
 
-Please, save your deployed contract ID, you will need it to complete the challenge.
+Please, save your deployed contract ID. You will need it to complete the challenge.
 
 :::
 
@@ -82,7 +88,7 @@ Please, save your deployed contract ID, you will need it to complete the challen
 
 ## Checkpoint 2: 🤝 Connect the Frontend to the Backend
 
-Now that you have the smart contracts deployed, it's time to check out the frontend of your dapp.
+Now that you have deployed the smart contract, it's time to check out the frontend of your dapp. The frontend is the browser interface where contributors to your crowdfund campaign will connect their digital wallets and pledge assets to the campaign's cause.
 
 First, start the development server:
 
@@ -94,7 +100,7 @@ Now open your browser and visit [http://localhost:3000](http://localhost:3000). 
 
 > Note: Follow the instructions below and ensure that you have funded your wallet address that you intend to use from browser, otherwise the dapp display will be blank and a 'Account not found' will be printed on browser's console only. If you are using Freighter, be sure that you have properly configured the Freighter Wallet by following the instructions [here](../guides/wallets#connect-a-wallet-freighter).
 
-Now that you have the frontend running, it's time to connect it with your smart contracts.
+Now that you have the frontend running, it's time to connect it with the backend, your smart contract, that defines the rules and logic of the crowdfund campaign, including the function for accepting contributions. If you want to dig into the specifics of the contract, take a look at the video walkthrough of the contract code [here](https://youtu.be/vTz0CQYnMRQ?t=260&feature=shared).
 
 You will need to add some Futurenet network lumens to your wallet to interact with the dapp. Visit https://laboratory.stellar.org/#account-creator?network=futurenet, and follow the instructions to create and or fund an account on Futurenet.
 
@@ -102,7 +108,7 @@ You will need to add some Futurenet network lumens to your wallet to interact wi
 
 ## Checkpoint 3: 🌟 Powering the Campaign
 
-Fuel the vision! In this step, you will learn how to mint tokens and fund the crowdfunding campaign.
+Fuel the vision! In this step, you will learn how to mint tokens and fund the crowdfunding campaign. Minting tokens in a crowdfund dapp, while not always required, serves as a bootstrapping mechanism for the campaign, allowing the campaign to be funded with the minted tokens.
 
 <Tabs defaultValue="mint" values={[
     {label: '🏦 Mint Tokens', value: 'mint'},
@@ -221,6 +227,7 @@ rm -rf target
 
 >Note: You can build this directory again by running `soroban contract build` in the `contracts/abundance` directory.
 
+
 Next, you will use the Vercel cli to complete your deployment.
 
 Run the following command to deploy your dapp:
@@ -265,15 +272,15 @@ Join [our Community in Discord](https://discord.gg/stellardev) in case you have 
 
 ## Checkpoint 6: ✅ Check your work!
 
-In order to successfully complete this challenge, your work needs to be checked. Please, follow this steps:
+In order to successfully complete this challenge, your work needs to be checked. Please, follow the steps below:
 
 1. Fork [the challenge repository](https://github.com/stellar/soroban-dapps-challenge/fork).
-2. Fill `crowdfund/challenge/output.txt` file with your wallet address. Filled file should look like:
+2. Fill the `crowdfund/challenge/output.txt` file with your wallet address. The filled file should look as follows:
 
 ```sh
 Public Key: GBSXUXZSA2VEXN5VGOWE5ODAJLC575JCMWRJ4FFRDWSTRCJ123456789
 ```
-3. Create a Pull Request to the `stellar/soroban-dapps-challenge/crowdfund` branch. When the PR will be created, CI actions will check the `crowdfund/challenge/output.txt` file data and update your progress.
+3. Create a Pull Request to the `stellar/soroban-dapps-challenge/crowdfund` branch. When the PR is created, CI actions will check the `crowdfund/challenge/output.txt` file data and update your progress.
 4. Wait for the CI/CD pipeline results.
 5. Fix errors if present:
 

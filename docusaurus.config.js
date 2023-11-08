@@ -35,15 +35,26 @@ const config = {
     ],
     [
       '@docusaurus/plugin-content-docs',
-    {
-      id: 'dapps',
-      path: 'dapps',
-      routeBasePath: 'dapps',
-      sidebarPath: require.resolve('./sidebarsDapps.js'),
-      editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
-      showLastUpdateTime: true,
-    },
-  ],
+      {
+        id: 'dapps',
+        path: 'dapps',
+        routeBasePath: 'dapps',
+        sidebarPath: require.resolve('./sidebarsDapps.js'),
+        editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
+        showLastUpdateTime: true,
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'guides',
+        path: 'guides',
+        routeBasePath: 'guides',
+        sidebarPath: require.resolve('./sidebarsGuides.js'),
+        editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
+        showLastUpdateTime: true,
+      },
+    ],
     require('./src/dev-server-plugin'),
     require('./src/analytics-module')
   ],
@@ -105,6 +116,11 @@ const config = {
           {
             to: '/dapps',
             label: 'Dapps',
+            position: 'left'
+          },
+          {
+            to: '/guides',
+            label: 'Guides',
             position: 'left'
           },
           {

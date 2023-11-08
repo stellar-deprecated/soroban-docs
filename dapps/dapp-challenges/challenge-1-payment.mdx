@@ -40,11 +40,11 @@ Before you begin, ensure you have the following installed on your system. You'll
 - `Yarn` (v1.22.5 or newer): [Install Yarn](https://yarnpkg.com/getting-started/install)
 - `Freighter Wallet`: [Freighter Wallet](https://freighter.app/)
 
-Node and Yarn are package managers that let you... during the dapp development process. Freighter is the wallet you will integrate into your payment dapp.
+Node and Yarn are package managers that let you install and manage dependencies during the dapp development process. Freighter is the wallet you will integrate into your payment dapp.
 
 ## Checkpoint 1: 🚀 Clone the Repository
 
-Clone and set up the Soroban Dapps Challenge repository, which contains the Soroban Payment Dapp files. Then run yarn to...
+Clone and set up the Soroban Dapps Challenge repository, which contains the Soroban Payment Dapp files. Then run yarn to install the dependencies.
 
 ```bash
 git clone https://github.com/stellar/soroban-dapps-challenge.git
@@ -55,9 +55,13 @@ yarn
 
 ## Checkpoint 2: 🎬 Deploy Smart Contracts
 
-For this step you will need to clone and deploy the Soroban token smart contract from the Soroban Examples repository. This Soroban token smart contract, broken into several smaller modules (as is the custom for complex smart contracts like this one), enables you to... If you are curious about the specific functionality contained in these modules, feel free to take a look at their code.
+For this step you will need to clone and deploy the Soroban token smart contract from the [Soroban Examples repository](https://github.com/stellar/soroban-examples/tree/v20.0.0-rc2/token). This Soroban token smart contract, broken into several smaller modules (as is the custom for complex smart contracts like this one), enables you to create and manage tokens on Soroban.
 
 The Soroban token is a custom token that will be used to facilitate payments in the Payment Dapp. Tokens are essentially programmable assets on a blockchain, and smart contracts provide the automation and rules for these tokens. They allow for predefined conditions and actions related to the tokens, such as issuance, transfer, and more complex functions, ensuring the execution of these operations without the need for intermediaries. In the case of this Payment Dapp, you will use the Soroban token to initialize and mint "Demo Token" assets, or DT, that you can then use to make payments via the Payment Dapp.
+
+:::info
+Soroban Tokens are not the same as [Stellar Asset Contracts](https://soroban.stellar.org/docs/advanced-tutorials/stellar-asset-contract) which allow users to use their Stellar native asset balances in Soroban. If you are curious about the mechanics of Soroban Tokens and Stellar Asset Contracts, you can read more about them in the [Soroban Token Playground](https://token-playground.gitbook.io/guide/).
+:::
 
 In a new terminal window, follow the steps below to build and deploy the token smart contract:
 
@@ -243,7 +247,7 @@ Review the transaction details to ensure accuracy and then click "Sign with Frei
 Once signed, click "Submit Payment." The transaction will be submitted to the network.
 <img src={submit_pmt} alt="submit payment" className="image-style_reg"/>
 
-The Payment Dapp will show a confirmation message once the transaction has been successfully submitted. This includes...[result XDR code?], which can be copied and saved for your reference.
+The Payment Dapp will show a confirmation message once the transaction has been successfully submitted. This includes the XDR response, which can be decoded using [stellar laboratory](https://laboratory.stellar.org/#xdr-viewer?type=TransactionResult&network=futurenet).
 <img src={end} alt="end" className="image-style_reg"/>
 
 You can now check the balance of the receiving account to ensure that the transaction was successful.

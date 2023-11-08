@@ -314,7 +314,7 @@ Next you will pull in the project settings locally by running the following comm
 vercel pull
 ```
 
-Follow the answers to the prompts below to ensure that your local project is correctly linked to the correct Vercel project:
+Follow the answers to the prompts below to ensure that your local project is correctly linked to the target Vercel project:
 
 ```bash
 ? Set up “~/Documents/GitHub/test/soroban-dapps-challenge”? [Y/n] y
@@ -355,7 +355,7 @@ Next, you will need to edit the `settings` section in `.vercel/project.json` to 
 Next, run the following command to build your dapp:
 
 ```bash
-vercel build
+vercel build --prod
 ```
 
 What does the `vercel build` command do? It builds your dapp for production, which means that it optimizes your code for performance and creates an optimized production build of your dapp in the `.vercel/output` directory. This is the directory that you will deploy to Vercel.
@@ -375,7 +375,7 @@ webpack compiled in 12408 ms (be8ba6cc95f4aec4d07b)
 Next, you will deploy your dapp to Vercel by running the following command:
 
 ```bash
-vercel --prebuilt
+vercel deploy --prebuilt --prod
 ```
 
 Using the `--prebuilt` flag tells Vercel to deploy the the build outputs in `.vercel/output` that you created in the previous step.
@@ -391,11 +391,13 @@ Once the deployment is complete, you should see something similar to the followi
 
 You can now visit the preview link to see your deployed dapp! 🎉
 
+Remember, you must add Futurenet network lumens to your Freighter wallet to interact with the deployed example dapp. Visit https://laboratory.stellar.org/#account-creator?network=futurenet, and follow the instructions to create your Freighter account on Futurenet.
+
 ## Checkpoint 6: ✅ Complete the Challenge!
 
 Now it's time to submit your work!
 
-Submit your `Preview` URL from the previous step to the challenge form to pass the challenge!
+Submit your `Preview` URL from the previous step into the challenge form to pass the challenge!
 
 <ParentChallengeForm id={1} />
 

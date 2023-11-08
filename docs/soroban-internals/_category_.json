@@ -1,6 +1,6 @@
 {
   "position": 50,
-  "label": "Fundamentals and Concepts",
+  "label": "Soroban Internals",
   "link": {
     "type": "generated-index"
   }

@@ -41,7 +41,7 @@ git commit -m "Initialize Astro project"
 
 ## Generate an NPM package for the Hello World contract
 
-Before we even open the new frontend files, let's generate an NPM package for the Hello World contract. This is our suggested way to interact with contracts from frontends. These generated libraries work with any JavaScript project (not a specific UI like React), and make it easy to work with some of the trickiest bits of Soroban, like encoding [XDR](https://soroban.stellar.org/docs/fundamentals-and-concepts/fully-typed-contracts).
+Before we even open the new frontend files, let's generate an NPM package for the Hello World contract. This is our suggested way to interact with contracts from frontends. These generated libraries work with any JavaScript project (not a specific UI like React), and make it easy to work with some of the trickiest bits of Soroban, like encoding [XDR](https://soroban.stellar.org/docs/soroban-internals/fully-typed-contracts).
 
 This is going to use the CLI command `soroban contract bindings typescript`:
 
@@ -464,7 +464,7 @@ Here are some common issues and how to fix them.
 
 Sometimes the call to `hello` can start failing. You can obviously stub out the call and define `greeting` some other way to troubleshoot.
 
-One of the common problems here is that the contract [expires](../fundamentals-and-concepts/state-expiration.mdx). To check if this is the problem, you can re-run `npm run reset`.
+One of the common problems here is that the contract [expires](../soroban-internals/state-expiration.mdx). To check if this is the problem, you can re-run `npm run reset`.
 
 If you're still having problems, join our Discord (link above) or [open an issue in GitHub](https://github.com/stellar/soroban-docs/issues/new/choose).
 
@@ -483,6 +483,6 @@ Looking at `git diff` will be a great way to remember all the interesting things
 
 At this point, you've seen a full end-to-end example of building on Soroban! What's next? You choose! You can:
 
-- See more complex example contracts in the [Basic Tutorials](/docs/category/basic-tutorials) and [Advanced Tutorials](/docs/category/advanced-tutorials) sections.
-- Learn more about the [fundamentals and concepts](/docs/category/fundamentals-and-concepts) of Soroban.
+- See more complex example contracts in the [Basic Tutorials](/docs/category/tutorials) and [Advanced Tutorials](/docs/category/tutorials) sections.
+- Learn more about the [fundamentals and concepts](/docs/category/soroban-internals) of Soroban.
 - Check out a more full-featured [example app](https://github.com/stellar/soroban-example-dapp), which uses React rather than vanilla JavaScript and Next.js rather than Astro. This app also has a more complex setup & initialization process, with the option of using a [locally-hosted RPC node](../reference/rpc.mdx).

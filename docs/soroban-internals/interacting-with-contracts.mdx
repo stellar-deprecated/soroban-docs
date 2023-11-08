@@ -14,7 +14,7 @@ description: Interact with smart contracts.
   />
   <link
     rel="canonical"
-    href="https://soroban.stellar.org/docs/fundamentals-and-concepts/interacting-with-contracts"
+    href="https://soroban.stellar.org/docs/soroban-internals/interacting-with-contracts"
   />
 </head>
 
@@ -105,7 +105,7 @@ Since host objects are immutable, there is limited risk to passing a shared refe
 
 ### Footprint
 
-As mentioned in the [persisting data](../fundamentals-and-concepts/persisting-data.mdx) section, a contract can only load or store `CONTRACT_DATA` entries that are declared in a _footprint_ associated with its invocation.
+As mentioned in the [persisting data](../soroban-internals/persisting-data.mdx) section, a contract can only load or store `CONTRACT_DATA` entries that are declared in a _footprint_ associated with its invocation.
 
 A footprint is a set of ledger keys, each marked as either read-only or read-write. Read-only keys are available to the transaction for reading; read-write keys are available for reading, writing, or both.
 

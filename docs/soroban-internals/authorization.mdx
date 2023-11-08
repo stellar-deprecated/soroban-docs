@@ -14,7 +14,7 @@ description: Smart contract authorization.
   />
   <link
     rel="canonical"
-    href="https://soroban.stellar.org/docs/fundamentals-and-concepts/authorization"
+    href="https://soroban.stellar.org/docs/soroban-internals/authorization"
   />
 </head>
 
@@ -105,7 +105,7 @@ for this authorization are defined by the `Address` and are enforced by the
 Soroban host. Replay protection is also implemented in the host, i.e., there is
 normally no need for a contract to manage its own nonces.
 
-[auth example]: ../basic-tutorials/auth.mdx
+[auth example]: ../tutorials/auth.mdx
 
 #### Authorizing Sub-contract Calls
 
@@ -119,7 +119,7 @@ Contracts don't need to do anything special to benefit from this feature. Just
 calling a sub-contract that calls `require_auth` will ensure that the
 sub-contract call has been properly authorized.
 
-[timelock example]: ../advanced-tutorials/timelock.mdx
+[timelock example]: ../tutorials/timelock.mdx
 
 #### When to `require_auth`
 
@@ -149,7 +149,7 @@ even have different authorization contexts (customized via arguments in
 `require_auth_for_args`). [Atomic swap] is an example that deals with
 authorization of two `Address`es.
 
-[Atomic swap]: ../advanced-tutorials/atomic-swap.mdx
+[Atomic swap]: ../tutorials/atomic-swap.mdx
 
 Note though, that contracts that deal with multiple authorized `Address`es need
 a bit more complex support on the client side (to collect and attach the proper
@@ -251,7 +251,7 @@ called).
 
 For the exact interface and more details, see the [custom account example].
 
-[custom account example]: ../advanced-tutorials/custom-account.mdx
+[custom account example]: ../tutorials/custom-account.mdx
 
 ### Advanced Concepts
 

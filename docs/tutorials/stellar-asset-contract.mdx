@@ -17,7 +17,7 @@ tags:
   />
   <link
     rel="canonical"
-    href="https://soroban.stellar.org/docs/advanced-tutorials/stellar-asset-contract"
+    href="https://soroban.stellar.org/docs/tutorials/stellar-asset-contract"
   />
 </head>
 
@@ -53,7 +53,7 @@ smart contract developers to get started on Stellar.
 For every 'classic' asset exactly one respective Stellar Asset Contract can be
 deployed. It can be deployed using the `InvokeHostFunctionOp` with
 `HOST_FUNCTION_TYPE_CREATE_CONTRACT` and `CONTRACT_ID_FROM_ASSET` specified
-[here](../fundamentals-and-concepts/invoking-contracts-with-transactions). The resulting token will have a
+[here](../soroban-internals/invoking-contracts-with-transactions). The resulting token will have a
 deterministic identifier, which will be the sha256 hash of
 `HashIDPreimage::ENVELOPE_TYPE_CONTRACT_ID_FROM_ASSET` xdr specified [here][contract_id].
 
@@ -126,8 +126,8 @@ about `AUTH_REQUIRED_FLAG` [here](https://developers.stellar.org/docs/issuing-as
 
 ## Authorization semantics
 
-See the [authorization overview](../fundamentals-and-concepts/authorization.mdx) and
-[auth example](../basic-tutorials/auth.mdx) for general information about authorization in
+See the [authorization overview](../soroban-internals/authorization.mdx) and
+[auth example](../tutorials/auth.mdx) for general information about authorization in
 Soroban.
 
 The token contract contains three kinds of operations that follow the token

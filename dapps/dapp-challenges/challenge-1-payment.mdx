@@ -296,6 +296,12 @@ First install the Vercel cli:
 npm i --global vercel
 ```
 
+Then, remove any existing `.vercel` directory in your project to ensure that you are starting with a clean slate:
+
+```bash
+rm -rf .vercel
+```
+
 Next, you will need to create a new project on vercel. To do this, run the following command:
 
 ```bash
@@ -383,10 +389,8 @@ Using the `--prebuilt` flag tells Vercel to deploy the the build outputs in `.ve
 Once the deployment is complete, you should see something similar to the following output:
 
 ```bash
-🔍  Inspect: https://vercel.com/julian-dev28/pmt-dapp/5janJtPxvFRNiuLSZd8LhZ7zM5Em [1s]
-✅  Preview: https://soroban-react-payment-78q2o5jlf-julian-dev28.vercel.app [1s]
-📝  Deployed to production. Run `vercel --prod` to overwrite later (https://vercel.link/2F).
-💡  To change the domain or build command, go to https://vercel.com/julian-dev28/pmt-dapp/settings
+🔍  Inspect: https://vercel.com/julian-dev28/soroban-react-payment/9PwV2DvuXJ3FWag7eLbjqNAhCeCu [2s]
+✅  Production: https://soroban-react-payment-ahtko9qd1-julian-dev28.vercel.app [2s]
 ```
 
 You can now visit the preview link to see your deployed dapp! 🎉
@@ -397,7 +401,7 @@ Remember, you must add Futurenet network lumens to your Freighter wallet to inte
 
 Now it's time to submit your work!
 
-Submit your `Preview` URL from the previous step into the challenge form to pass the challenge!
+Submit your `Production` URL from the previous step into the challenge form to pass the challenge!
 
 <ParentChallengeForm id={1} />
 

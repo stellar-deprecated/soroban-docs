@@ -100,9 +100,9 @@ Now for the `oracle` contract:
 
 Here is a description of each parameter:
 
-  - `<OWNER_ADDRESS>` - the address that will become the owner of the contract. This could be your address. Only the contract owner will be able to change the `epoch_interval` and `relayer`
-  - `<TIME_IS_SECONDS>` - frequency (in seconds) of price updates
-  - `<RELAYER_ADDRESS>` - address of the wallet that will update the price (in the backend, in the CRON task). It is suggested to create a dedicated wallet for this ([be sure to fund with test Lumens](https://laboratory.stellar.org/#account-creator?network=futurenet))
+- `<OWNER_ADDRESS>` - the address that will become the owner of the contract. This could be your address. Only the contract owner will be able to change the `epoch_interval` and `relayer`
+- `<TIME_IS_SECONDS>` - frequency (in seconds) of price updates
+- `<RELAYER_ADDRESS>` - address of the wallet that will update the price (in the backend, in the CRON task). It is suggested to create a dedicated wallet for this ([be sure to fund with test Lumens](https://laboratory.stellar.org/#account-creator?network=futurenet))
 
 ## Checkpoint 2: 🎬 Deploy Smart Contracts
 
@@ -150,7 +150,7 @@ Please, save your deployed contract ID, you will need it to complete the challen
 
 <ParentChallengeContractForm id={0} progress={1} />
 
-### 4. ⏯️ Create a CRON task
+## Checkpoint 3: ⏯️ Create a CRON task
 
 A CRON task is a scheduled operation performed at specified intervals, functioning as a customizable backend service. Here, you will be run a CRON task to update the BTC price within the Oracle contract. Data can be fetched from an API and set to the contract using the `set_price` function, in this case, the tutorial will use the [CryptoPrice API](https://api-ninjas.com/api/cryptoprice). This is a free API that provides real-time cryptocurrency prices, and it is used in this tutorial for demonstration purposes only. You are free to use any pricefeed API of your choice.
 
@@ -184,9 +184,6 @@ Once the CRON task is running, it will fetch the BTC price from the API and set 
 Here is an example of the output:
 
 ```sh
-$ node cron-script.ts
-node cron-script.ts     
-
 Running a task every 15 minutes
 Current Time:  2023-11-07T02:45:00.050Z
 lastEpochNr  1
@@ -207,7 +204,7 @@ cron.schedule("*/5 * * * *", async () => {
 });
 ```
 
-## Checkpoint 3: 🤝 Connect the Frontend to the Backend
+## Checkpoint 4: 🤝 Connect the Frontend to the Backend
 
 Now that you have the smart contracts deployed, and the cron job running, it's time to check out the frontend of your dapp.
 
@@ -227,7 +224,7 @@ You will need to add some Futurenet network lumens to your wallet to interact wi
 
 > Note: These are test lumens for use with Futurenet and cannot be used on Mainnet
 
-## Checkpoint 13: 🧿 Oracle Insights: Unveiling Price Feeds
+## Checkpoint 5: 🧿 Oracle Insights
 
 Gaze into the crystal ball of APIs and retrive the price feed from the all connected internet. Data at your fingertips, at one time an abyss but pioneers have paved the way for many to cross. Here we reach into the realm of off-chain data and pull out the price of BTC. In this section, you will mint tokens and deposit Bitcoin (BTC) into the donation contract. The conversion to USD will utilize the oracle price feed to ensure your donation is aligned with the current BTC to USD conversion rate.
 
@@ -328,7 +325,7 @@ You should see an updated balance reflecting the amount you have pledged in the 
   Funding completed
 </CompleteStepButton>
 
-## Checkpoint 5: 🚢 Ship it! 🚁
+## Checkpoint 6: 🚢 Ship it! 🚁
 
 Now that your dapp is fully functional, its time to deploy it to a production environment. In this step, you will learn how to deploy your dapp to Vercel, a cloud platform for static sites that offers a quick and effective way to deploy the frontend of your dapp. This section requires that you have a [Vercel account] and the Vercel cli installed. 
 
@@ -376,7 +373,7 @@ You can now visit the preview link to see your deployed dapp! 🎉
 <img src={deployedDApp} width="90%" />
 
 
-## Checkpoint 6: 💪 Pass the Challenge!
+## Checkpoint 7: 💪 Pass the Challenge!
 
 Submit your public url to the challenge form and proceed to the next step to check your work.
 
@@ -390,7 +387,7 @@ Join [our Community in Discord](https://discord.gg/stellardev) in case you have 
 
 :::
 
-## Checkpoint 7: ✅ Check your work!
+## Checkpoint 8: ✅ Check your work!
 
 In order to successfully complete this challenge, your work needs to be checked. Please, follow this steps:
 

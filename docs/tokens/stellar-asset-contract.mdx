@@ -1,10 +1,7 @@
 ---
-sidebar_position: 2
+sidebar_position: 20
 title: Stellar Asset Contract
 description: Use Stellar assets on Soroban.
-tags:
-  - tutorial
-  - advanced
 ---
 
 <head>
@@ -17,7 +14,7 @@ tags:
   />
   <link
     rel="canonical"
-    href="https://soroban.stellar.org/docs/tutorials/stellar-asset-contract"
+    href="https://soroban.stellar.org/docs/tokens/stellar-asset-contract"
   />
 </head>
 
@@ -44,7 +41,7 @@ assets. For this reason, we introduced the Stellar Asset Contract, or SAC for
 short, which allows users to use their Stellar account and trustline balances in
 Soroban.
 
-The SAC implements the [token interface](../reference/interfaces/token-interface), which is similar to the
+The SAC implements the [token interface](token-interface.mdx), which is similar to the
 widely used ERC-20 token standard. This should make it easier for existing
 smart contract developers to get started on Stellar.
 
@@ -131,7 +128,7 @@ See the [authorization overview](../soroban-internals/authorization.mdx) and
 Soroban.
 
 The token contract contains three kinds of operations that follow the token
-[interface](../reference/interfaces/token-interface#code):
+[interface](token-interface.mdx#code):
 
 - getters, such as `balance`, which do not change the state of the contract
 - unprivileged mutators, such as `incr_allow` and `xfer`, which change the state
@@ -182,9 +179,9 @@ impl MyContract {
 See the full examples that utilize the token contract in various ways for more
 details:
 
-- [Timelock](timelock.mdx) and [single offer](single-offer-sale.mdx) move token
+- [Timelock](../tutorials/timelock.mdx) and [single offer](../tutorials/single-offer-sale.mdx) move token
   via `xfer` to and from the contract
-- [Atomic swap](atomic-swap.mdx) uses `incr_allow` to transfer token on behalf
+- [Atomic swap](../tutorials/atomic-swap.mdx) uses `incr_allow` to transfer token on behalf
   of the user
 
 Notice, that these examples don't do anything to support SAC specifically.
@@ -207,6 +204,6 @@ implementation.
 ## Contract Interface
 
 This interface can be found in the [SDK]. It extends the common
-[token interface](tokens.mdx).
+[token interface](token-interface.mdx).
 
 [SDK]: https://github.com/stellar/rs-soroban-sdk/blob/v20.0.0-rc2/soroban-sdk/src/token.rs

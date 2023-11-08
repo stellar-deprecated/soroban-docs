@@ -152,7 +152,7 @@ expirationLedger that is large enough.
 only operation in a transaction. The transaction also needs to populate
 `SorobanTransactionData` transaction extension explained
 [here](../fundamentals-and-concepts/invoking-contracts-with-transactions.mdx#transaction-resources). To fill
-out `SorobanResources`, use preflight mentioned in the provided link, or make
+out `SorobanResources`, use the transaction simulation mentioned in the provided link, or make
 sure `readBytes` includes the key and entry size of every entry in the
 `readOnly` set.
 
@@ -189,7 +189,7 @@ parameter and is subject to be updated (likely increased) via network upgrades.
 operation in a transaction. The transaction also needs to populate
 `SorobanTransactionData` transaction extension explained
 [here](../fundamentals-and-concepts/invoking-contracts-with-transactions.mdx#transaction-resources). To fill
-out `SorobanResources`, use preflight mentioned in the provided link, or make
+out `SorobanResources`, use the transaction simulation mentioned in the provided link, or make
 sure `writeBytes` includes the key and entry size of every entry in the
 `readWrite` set and make sure `extendedMetaDataSizeBytes` is at least double of
 `writeBytes`.
@@ -204,7 +204,7 @@ We've done our best to build tooling around state expiration in both the Soroban
 
 Both restoring and bumping the expiration of ledger entries follows a three-step process regardless of their nature (contract data, instances, etc.):
 
-1. **Identify the ledger entries**. This usually means acquiring them from a Soroban RPC server as part of your initial transaction simulation (see the [preflight docs](https://soroban.stellar.org/docs/fundamentals-and-concepts/interacting-with-contracts#preflight) and the [`simulateTransaction`](https://soroban.stellar.org/api/methods/simulateTransaction) method).
+1. **Identify the ledger entries**. This usually means acquiring them from a Soroban RPC server as part of your initial transaction simulation (see the [transaction simulation docs](https://soroban.stellar.org/docs/fundamentals-and-concepts/interacting-with-contracts#transaction-simulation) and the [`simulateTransaction`](https://soroban.stellar.org/api/methods/simulateTransaction) RPC method).
 
 2. **Prepare your operation**. This means describing the ledger entries within the corresponding operation (i.e. `bumpFootprintOp` or `restoreFootprintOp`) and its ledger footprint (the `SorobanTransactionData` field), then simulating it to fill out fee and resource usage information (when restoring, you usually have simulation results already).
 

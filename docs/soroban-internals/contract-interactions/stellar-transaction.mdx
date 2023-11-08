@@ -1,6 +1,6 @@
 ---
-sidebar_position: 140
-title: Interacting with Soroban via Stellar
+sidebar_position: 30
+title: Stellar Transaction
 description: Invoke and deploy smart contracts with the InvokeHostFunctionOp operation.
 toc_max_heading_level: 4
 ---
@@ -20,7 +20,7 @@ toc_max_heading_level: 4
   />
   <link
     rel="canonical"
-    href="https://soroban.stellar.org/docs/soroban-internals/invoking-contracts-with-transactions"
+    href="https://soroban.stellar.org/docs/soroban-internals/contract-interactions/stellar-transaction"
   />
 </head>
 
@@ -265,7 +265,7 @@ The `InvokeHostFunctionOp` can be used to perform the following Soroban operatio
 
 - Invoke contract functions.
 - Upload Wasm of the new contracts.
-- Deploy new contracts using the uploaded Wasm or built-in implementations (this currently includes only the [token contract](../tokens/stellar-asset-contract.mdx)).
+- Deploy new contracts using the uploaded Wasm or built-in implementations (this currently includes only the [token contract](../../tokens/stellar-asset-contract.mdx)).
 
 [`soroban-cli`]: ../getting-started/setup#install-the-soroban-cli
 
@@ -401,7 +401,7 @@ The `hostFunction` in `InvokeHostFunctionOp` will be executed by the Soroban hos
 
 #### Authorization Data
 
-Soroban's [authorization framework](../soroban-internals/authorization.mdx)
+Soroban's [authorization framework](../authorization.mdx)
 provides a standardized way for passing authorization data to the contract
 invocations via `SorobanAuthorizationEntry` structures.
 
@@ -502,7 +502,7 @@ recording auth mode in Soroban's `simulateTransaction` mechanism (see the [docs]
 details).
 
 [envelope-xdr]: https://github.com/stellar/stellar-xdr/blob/e372df9f677961aac04c5a4cc80a3667f310b29f/Stellar-transaction.x#L703
-[simulate-transaction-doc]: ../soroban-internals/interacting-with-contracts.mdx#authorization
+[simulate-transaction-doc]: transaction-simulation.mdx#authorization
 
 ##### Stellar Account Signatures
 
@@ -521,13 +521,13 @@ pub struct AccountEd25519Signature {
 ```
 
 [structures]: https://github.com/stellar/rs-soroban-env/blob/99d8c92cdc7e5cd0f5311df8f88d04658ecde7d2/soroban-env-host/src/native_contract/account_contract.rs#L51
-[custom accounts]: ../soroban-internals/authorization.mdx#account-abstraction
+[custom accounts]: ../authorization.mdx#account-abstraction
 
 ### Transaction resources
 
 Every Soroban transaction has to have a `SorobanTransactionData` transaction
 [extension] populated. This is needed to compute the
-[Soroban resource fee](../soroban-internals/fees-and-metering.mdx).
+[Soroban resource fee](../fees-and-metering.mdx).
 
 [extension]: https://github.com/stellar/stellar-xdr/blob/c2e702c70951ff59a1eff257f08cf38d47210e5f/Stellar-transaction.x#L874
 
@@ -559,7 +559,7 @@ struct SorobanTransactionData
 This data comprises two parts: Soroban resources and the `refundableFee`. The
 `refundableFee` is the portion of the transaction fee eligible for refund. It
 includes the fees for the contract events emitted by the transaction, the return
-value of the host function invocation, and fees for the [ledger space rent](./state-expiration.mdx).
+value of the host function invocation, and fees for the [ledger space rent](../state-expiration.mdx).
 
 The `SorobanResources` structure includes the ledger footprint and the resource
 values, which together determine the resource consumption limit and the
@@ -567,4 +567,4 @@ resource fee. The footprint must contain the `LedgerKey`s that will be read
 and/or written.
 
 The simplest method to determine the values in `SorobanResources` and
-`refundableFee` is to use the [`simulateTransaction` mechanism](../soroban-internals/interacting-with-contracts.mdx#transaction-simulation).
+`refundableFee` is to use the [`simulateTransaction` mechanism](transaction-simulation.mdx).

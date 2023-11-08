@@ -58,7 +58,7 @@ Some parameters may contribute to multiple fee components. For example, the tran
 
 The implementation details for fee computation are provided by the following [library](https://github.com/stellar/rs-soroban-env/blob/main/soroban-env-host/src/fees.rs). This library is used by the protocol to compute the fees and thus can be considered canonical. The resource fee rates may be updated based on network validator consensus.
 
-The best way to find the required fees for any Soroban transaction is to use the [`simulateTransaction` mechanism](./interacting-with-contracts.mdx#transaction-simulation).
+The best way to find the required fees for any Soroban transaction is to use the [`simulateTransaction` mechanism](contract-interactions/transaction-simulation.mdx).
 
 The fee rates are currently defined for the Testnet as follows:
 

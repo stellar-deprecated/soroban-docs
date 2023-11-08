@@ -50,7 +50,7 @@ smart contract developers to get started on Stellar.
 For every 'classic' asset exactly one respective Stellar Asset Contract can be
 deployed. It can be deployed using the `InvokeHostFunctionOp` with
 `HOST_FUNCTION_TYPE_CREATE_CONTRACT` and `CONTRACT_ID_FROM_ASSET` specified
-[here](../soroban-internals/invoking-contracts-with-transactions). The resulting token will have a
+[here](../soroban-internals/contract-interactions/stellar-transaction.mdx). The resulting token will have a
 deterministic identifier, which will be the sha256 hash of
 `HashIDPreimage::ENVELOPE_TYPE_CONTRACT_ID_FROM_ASSET` xdr specified [here][contract_id].
 

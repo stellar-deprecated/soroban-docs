@@ -380,13 +380,39 @@ Sometimes things go wrong. As a first step when troubleshooting, you may want to
 
 Here are some common issues and how to fix them.
 
+### Issues with the generated contract clients
+
+If you see any issues with the generated contract client code, there is a chance that the version of the `soroban-cli` you're using is incompatible with this tutorial. We have also noticed that in some releases, the binary that is uploaded to the github release was not updated, which affects the binary that is downloaded with `cargo install`.
+
+In this case, it is best to try to build the binary locally from the release branch of `soroban-tools`:
+
+- clone the [soroban-tools](https://github.com/stellar/soroban-tools) repo if you haven't already
+- checkout the most recent release: `git checkout release/$(git tag --sort=creatordate | tail -1)`
+- build the binary: `cargo build`
+- in your `astro-soroban-tutorial` project's `package.json` file, update all of the uses of the `soroban` command to the locally binary that you just built:
+
+```diff title="package.json"
+-    "create_deployer": "soroban config identity generate alice && soroban config identity fund alice --network testnet",
+-    "deploy:hello": "soroban contract deploy --wasm target/wasm32-unknown-unknown/release/hello_soroban.wasm --source alice --network testnet > .soroban/hello-id",
+-    "setup": "soroban contract build && if [ ! -d .soroban ]; then npm run create_deployer && npm run deploy:hello; fi",
++    "create_deployer": "<path to your soroban-tools directory>/target/debug/soroban config identity generate alice && ../../soroban-tools/target/debug/soroban config identity fund alice --network testnet",
++    "deploy:hello": "<path to your soroban-tools directory>/target/debug/soroban contract deploy --wasm target/wasm32-unknown-unknown/release/hello_soroban.wasm --source alice --network testnet > .soroban/hello-id",
++    "setup": "<path to your soroban-tools directory>/target/debug/soroban contract build && if [ ! -d .soroban ]; then npm run create_deployer && npm run deploy:hello; fi",
+     "clean": "rm -rf .soroban node_modules/.vite",
+     "reset": "npm run clean && npm run setup",
+-    "bindings:hello": "soroban contract bindings typescript --network testnet --contract-id $(cat .soroban/hello-id) --output-dir node_modules/hello-soroban-client",
++    "bindings:hello": "<path to your soroban-tools directory>/target/debug/soroban contract bindings typescript --network testnet --contract-id $(cat .soroban/hello-id) --output-dir node_modules/hello-soroban-client",
+     "postinstall": "if [ ! -d .soroban ]; then npm run setup; fi && npm run bindings:hello"
+```
+
+- run `npm i` to re-generate the contract client libraries using your local `soroban-cli` version
+
 ### Contract client libraries are removed when adding new dependencies
 
 When adding new dependencies to your project via `npm`, you may run into a issue where `npm install [new dependency]` doesn't run the `postinstall` hook the way that `npm install` does. But it does run the cleanup logic, which will remove "incorrect" folders. It considers our contract client libraries (e.g. `node_modules/hello-soroban-client`) "incorrect", since they're not in the dependencies in `package.json`. So you either need to run `npm i` (a shortcut for `npm install`), or `postinstall` directly to make sure that they are re-built:
 
 ```bash
 npm run postinstall
-
 ```
 
 ### Call to `hello` fails

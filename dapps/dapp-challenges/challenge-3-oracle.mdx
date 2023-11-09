@@ -9,17 +9,10 @@ import oracle_home from "../../static/img/oracle_home.png";
 import oracle_mintBal from "../../static/img/oracle_mintBal.png";
 import oracle_approve from "../../static/img/oracle_approve.png";
 import oracle_mint from "../../static/img/oracle_mint.png";
-
-import mint_tokens from "../../static/img/mint_tokens.png";
-import approveTokenMint from "../../static/img/approveTokenMint.png";
-import updatedBalances from "../../static/img/updatedBalances.png";
-import deposit50 from "../../static/img/deposit50.png";
-import updatedBalances50 from "../../static/img/updatedBalances50.png";
-import swap from "../../static/img/swap.png";
-import swapComplete from "../../static/img/swapComplete.png";
-import futurenetDeployment from "../../static/img/futurenetDeployment.png";
-import wdraw from "../../static/img/wdraw.png";
-
+import oracle_calculate from "../../static/img/oracle_calculate.png";
+import oracle_balance_contract from "../../static/img/oracle_balance_contract.png";
+import oracle_balance_user from "../../static/img/oracle_balance_user.png";
+import oracle_deployed from "../../static/img/oracle_deployed.png";
 import { ParentChallengeForm } from "../../src/components/atoms/challenge-form";
 import { ParentChallengeContractForm } from "../../src/components/atoms/challenge-contract-form";
 import CompleteStepButton from "../../src/components/atoms/complete-step-button";
@@ -30,7 +23,7 @@ import TabItem from "@theme/TabItem";
 
 <StartChallengeButton id={3} />
 
-This challenge will guide you through the process of building and shipping a oracle dapp on Stellar using Soroban. Oracle dapps (decentralized applications) provide the means for users to access real-world data and information from external sources and bring it on-chain. 
+This challenge will guide you through the process of building and shipping an oracle dapp on Stellar using Soroban. Oracle dapps (decentralized applications) provide the means for users to access real-world data and information from external sources and bring it on-chain. 
 
 In this challenge, you will learn how to deploy smart contracts to Futurenet, and how to interact with them through a web frontend. In this context, the term "ship" refers to finalizing the development process of your dapp, ensuring that it functions as expected, and is accessible for user interaction and testing through a hosted frontend. However, it's crucial to clarify that despite its functionality, the dapp is not promoted nor intended for deployment in a production-level setting on Futurenet. The challenge is designed for educational purposes, helping you understand how a dapp can be built and interacted with, with further customization and development, it has the potential to evolve into a full-fledged, ready-to-use oracle solution.
 
@@ -40,8 +33,8 @@ Start by installing the required dependencies.
 
 Required:
 
-- `soroban-cli alias` (installed in the next step)
-- `Node` v18: [Download Node](https://nodejs.org/en/download/)
+- `soroban-cli` 20.0.0-rc.4.1: [Install Soroban CLI](../../docs/getting-started/setup#install-the-soroban-cli)
+- `Node` >=v18: [Download Node](https://nodejs.org/en/download/)
 - `Freighter Wallet`: [Freighter Wallet](https://freighter.app/)
 
 First, clone the Soroban Dapps Challenge repo and check out the `oracle` branch, which contains the code for the oracle smart contract that powers this dapp:
@@ -52,13 +45,14 @@ cd soroban-dapps-challenge
 git checkout oracle
 ```
 
-Then, install soroban-cli alias by running the following command:
-
+:::tip
+If you haven' t already installed the soroban-cli , you can do so by running the following command:
 ```sh
-cargo install_soroban
+cargo install --locked --version 20.0.0-rc.4.1 soroban-cli
 ```
+:::
 
-Soroban CLI is the command line interface to Soroban. It allows you to build, deploy, and interact with smart contracts; configure identities; generate key pairs; manage networks; and more. The soroban-cli (alias) that is used in this challenge is a pinned version of the soroban-cli that is used in the Soroban Dapps Challenge. This ensures that the challenge is reproducible and that all participants are using the same version of Soroban.
+Soroban CLI is the command line interface to Soroban. It allows you to build, deploy, and interact with smart contracts; configure identities; generate key pairs; manage networks; and more.
 
 ## Checkpoint 1: 📝 Setup the `initialize.sh` Script
 
@@ -83,7 +77,7 @@ You'll start with `donation` contract:
   echo "Initialize the DONATION contract"
   ```
 
-- For the `--recipient` parameter, specify the wallet address that will be used to withdraw money from the donation contract. This could be your address.
+- For the `--recipient` parameter, specify the wallet address that will be used to withdraw money from the donation contract. This may be your address.
 
   ```sh
   initialize\
@@ -110,7 +104,7 @@ Now for the `oracle` contract:
 
 Here is a description of each parameter:
 
-- `<OWNER_ADDRESS>` - the address that will become the owner of the contract. This could be your address. Only the contract owner will be able to change the `epoch_interval` and `relayer`
+- `<OWNER_ADDRESS>` - the address that will become the owner of the contract. This may be your address. Only the contract owner will be able to change the `epoch_interval` and `relayer`
 - `<TIME_IS_SECONDS>` - frequency (in seconds) of price updates
 - `<RELAYER_ADDRESS>` - address of the wallet that will update the price (in the backend, in the CRON task). It is suggested to create a dedicated wallet for this ([be sure to fund with test Lumens](https://laboratory.stellar.org/#account-creator?network=futurenet))
 
@@ -200,7 +194,7 @@ lastEpochNr  0
 deltaTimestamp  1699403400
 Need to update the value
 fetched priceData  3531576000
-[updatePairPrice] Transaction hash: https://futurenet.steexp.com/5c68dd1eb6df7a926fa8fda3a3cd187d2855b74ceaa41469f69b33f81930c33a
+[updatePairPrice] View Transaction: https://futurenet.steexp.com/tx/5c68dd1eb6df7a926fa8fda3a3cd187d2855b74ceaa41469f69b33f81930c33a
 [updatePairPrice] response.status:  SUCCESS
 value set!
 ```
@@ -308,16 +302,16 @@ You should see an updated balance in the account balance component.
 
 #### Deposit into the Donation Contract
 
-Open the frontend, enter the desired token amounts, and click the "Deposit" button. You should see a popup from Freighter asking you to sign the transaction.
+Open the frontend, enter the amount of BTC in USD that you would like to donate, then click the "Calculate" button. You should see the amount of BTC that you need to deposit in order to donate the specified amount in USD. For example, if you enter 35923.82 USD, you should see 1 BTC.
 
-<img src={deposit50} width="75%" />
+<img src={oracle_calculate} alt="connect" className="image-style_reg" />
 </TabItem>
 
 <TabItem value="approveTxDeposit">
 
 #### Approve Transaction
 
-Click on "Approve" and wait for the transaction to be confirmed. Once the transaction is confirmed, you should see your balances updated.
+Click on "Approve" and wait for the transaction to be confirmed.
 
 </TabItem>
 
@@ -325,9 +319,10 @@ Click on "Approve" and wait for the transaction to be confirmed. Once the transa
 
 #### Check Updated Balance
 
-You should see an updated balance in the amounts you have deposited in the account and reserve balance components, respectively. Following the example, you should see 50 USDC, 50 BTC, and 50 POOL.
+Once the transaction is confirmed, you should see the contract and your wallet balances update in the `Donate` and `Mint BTC Tokens` tabs, respectively.
 
-<img src={updatedBalances50} width="40%" />
+<img src={oracle_balance_contract} alt="connect" className="image-style_reg" />
+<img src={oracle_balance_user} alt="connect" className="image-style_reg" />
 
 </TabItem>
 
@@ -463,6 +458,8 @@ Please, save your production url, you will need it to complete the challenge.
 :::
 
 You can now visit the preview link to see your deployed dapp! 🎉
+
+<img src={oracle_deployed} alt="connect" className="image-style_reg" />
 
 Remember, you must add Futurenet network lumens to your Freighter wallet to interact with the deployed example dapp. Visit https://laboratory.stellar.org/#account-creator?network=futurenet, and follow the instructions to create your Freighter account on Futurenet.
 

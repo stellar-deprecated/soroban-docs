@@ -28,7 +28,7 @@ import './styles.css';
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
-<StartChallengeButton id={0} />
+<StartChallengeButton id={3} />
 
 This challenge will guide you through the process of building and shipping a oracle dapp on Stellar using Soroban. Oracle dapps (decentralized applications) provide the means for users to access real-world data and information from external sources and bring it on-chain. 
 
@@ -152,13 +152,13 @@ Done
 ...
 ```
 
-:::caution
+:::tip
 
 Please, save your deployed contract ID, you will need it to complete the challenge.
 
 :::
 
-<ParentChallengeContractForm id={0} progress={1} />
+<ParentChallengeContractForm id={3} progress={1} />
 
 ## Checkpoint 3: ⏯️ Create a CRON task
 
@@ -337,48 +337,117 @@ You should see an updated balance in the amounts you have deposited in the accou
 
 > Note: These are test tokens for use with Futurenet and cannot be used on Mainnet.
 
-<CompleteStepButton id={0} progress={2}>
+<CompleteStepButton id={3} progress={2}>
   Funding completed
 </CompleteStepButton>
 
 ## Checkpoint 6: 🚢 Ship it! 🚁
 
-Now that your dapp is fully functional, its time to deploy it to a production environment. In this step, you will learn how to deploy your dapp to Vercel, a cloud platform for static sites that offers a quick and effective way to deploy the frontend of your dapp. This section requires that you have a [Vercel account] and the Vercel cli installed. 
+In this step, you will deploy your dapp to a hosting platform so that it can be accessed by anyone with an internet connection. You can use any hosting platform you like, but for demonstration purposes, this section will use [Vercel](https://vercel.com/). Vercel is a cloud platform for static sites and serverless functions that offers a free tier for developers. It also has a built-in integration with GitHub, which makes it easy to deploy your dapp directly from your GitHub repository.
 
-If you don't have the Vercel cli installed, run the following command to install it globally:
-
-```sh
-npm i --global vercel
-```
+If you dont already have a [Vercel account], you will need to create one and link it to your GitHub account.
 
 [Vercel account]: https://vercel.com/login
 
-Next, you will need to remove the `target` directory to save space for the the deployment. Run the following command to remove the `target` directory:
+First install the Vercel cli:
 
-```sh
-rm -rf target
+```bash
+npm i --global vercel
 ```
 
->Note: You can build this directory again by running `soroban contract build` in the `contracts/abundance` directory.
+Then, remove any existing `.vercel` directory in your project to ensure that you are starting with a clean slate:
 
-Next, you will use the Vercel cli to complete your deployment.
-
-Run the following command to deploy your dapp:
-
-```sh
-npx vercel --prod
+```bash
+rm -rf .vercel
 ```
 
-Then, continue through the prompts (you will not need to modify any settings) until you reach the completion prompt similar to the following:
+Next, you will need to create a new project on vercel. To do this, run the following command:
 
-```sh
-Vercel CLI 30.1.1
-🔗  Linked to julian-dev28/soroban-example-dapp (created .vercel)
-🔍  Inspect: https://vercel.com/julian-dev28/soroban-example-dapp/C1YZVQSqh6WcyR1uvxz8q2tW1tjD [2s]
-✅  Production: https://soroban-example-dapp-rho.vercel.app [42s]
+```bash
+vercel project add <PROJECT_NAME>
 ```
 
-:::caution
+For example:
+
+```bash
+vercel project add oracle
+```
+
+Next you will pull in the project settings locally by running the following command:
+
+```bash
+vercel pull
+```
+
+Follow the answers to the prompts below to ensure that your local project is correctly linked to the target Vercel project:
+
+```bash
+? Set up “~/Documents/GitHub/test/soroban-dapps-challenge”? [Y/n] y
+? Which scope should contain your project? <VERCEL_UNAME>
+? Link to existing project? [y/N] y
+? What’s the name of your existing project? <PROJECT_NAME>
+```
+
+After following the prompts, you should see something similar to the following output:
+
+```bash
+...
+🔗  Linked to julian-dev28/oracle (created .vercel)
+> Downloading `development` Environment Variables for Project oracle
+✅  Created .vercel/.env.development.local file  [92ms]
+
+> Downloading project settings
+✅  Downloaded project settings to ~/Documents/GitHub/test/soroban-dapps-challenge/.vercel/project.json [1ms]
+```
+
+Next, you will need to edit the `settings` section in `.vercel/project.json` to ensure that the `installCommand` is set to `npm i`:
+
+```diff
+  "settings": {
+    "createdAt": 1699390700432,
+    "framework": null,
+    "devCommand": null,
+-   "installCommand": null,
++   "installCommand": "npm i",
+    "buildCommand": null,
+    "outputDirectory": null,
+    "rootDirectory": null,
+    "directoryListing": false,
+    "nodeVersion": "18.x"
+  }
+```
+
+Next, run the following command to build your dapp:
+
+```bash
+vercel build --prod
+```
+
+What does the `vercel build` command do? It builds your dapp for production, which means that it optimizes your code for performance and creates an optimized production build of your dapp in the `.vercel/output` directory. This is the directory that you will deploy to Vercel.
+
+The output of the `vercel build` command should look something like this:
+
+```bash
+..
+$ webpack --config config/webpack.prod.js
+asset 8a7edf3024865247d470.js 1.73 MiB [emitted] [immutable] [minimized] (name: index) 1 related asset
+...
+webpack compiled in 12408 ms (be8ba6cc95f4aec4d07b)
+✨  Done in 13.16s.
+✅  Build Completed in .vercel/output [14s]
+```
+
+Next, you will deploy your dapp to Vercel by running the following command:
+
+```bash
+vercel deploy --prebuilt --prod
+```
+
+Using the `--prebuilt` flag tells Vercel to deploy the the build outputs in `.vercel/output` that you created in the previous step.
+
+Once the deployment is complete, you should see something similar to the following output:
+
+:::tip
 
 Please, save your production url, you will need it to complete the challenge.
 
@@ -391,7 +460,7 @@ You can now visit the preview link to see your deployed dapp! 🎉
 
 Submit your public url to the challenge form and proceed to the next step to check your work.
 
-<ParentChallengeForm id={0} />
+<ParentChallengeForm id={3} />
 
 <br />
 

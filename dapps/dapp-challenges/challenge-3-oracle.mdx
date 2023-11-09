@@ -214,6 +214,8 @@ cron.schedule("*/5 * * * *", async () => {
 });
 ```
 
+It's important to note that since the price feed is dependent on the CRON task, the price will not update until the CRON task has run at least once. Futhermore, the CRON task will need to keep running in order to keep the price feed updated. You can host the task on your localhost or on a server such as [Vercel](https://vercel.com/docs/cron-jobs). For this example, the CRON task is hosted on local host.
+
 ## Checkpoint 4: 🤝 Connect the Frontend to the Backend
 
 Now that you have the smart contracts deployed, and the cron job running, it's time to check out the frontend of your dapp.
@@ -428,13 +430,15 @@ What does the `vercel build` command do? It builds your dapp for production, whi
 The output of the `vercel build` command should look something like this:
 
 ```bash
+$ vite build
 ..
-$ webpack --config config/webpack.prod.js
-asset 8a7edf3024865247d470.js 1.73 MiB [emitted] [immutable] [minimized] (name: index) 1 related asset
+dist/assets/index-91e5a562.js                                                               490.69 kB │ gzip: 139.50 kB
+dist/assets/ModelViewer-fde23dd9.browser.esm-c08cdb2e.js                                    826.05 kB │ gzip: 231.17 kB
+dist/assets/index-46cc9288.js                                                             3,107.82 kB │ gzip: 888.20 kB
 ...
-webpack compiled in 12408 ms (be8ba6cc95f4aec4d07b)
-✨  Done in 13.16s.
-✅  Build Completed in .vercel/output [14s]
+✓ built in 11.72s
+✨  Done in 12.14s.
+✅  Build Completed in .vercel/output [19s]
 ```
 
 Next, you will deploy your dapp to Vercel by running the following command:
@@ -447,6 +451,11 @@ Using the `--prebuilt` flag tells Vercel to deploy the the build outputs in `.ve
 
 Once the deployment is complete, you should see something similar to the following output:
 
+```bash
+🔍  Inspect: https://vercel.com/julian-dev28/oracle2/Fk7RKb3H4RX1d1kBtHukgppRcv2m [9s]
+✅  Production: https://oracle2-3lrfgjzq9-julian-dev28.vercel.app [9s]
+```
+
 :::tip
 
 Please, save your production url, you will need it to complete the challenge.
@@ -455,10 +464,14 @@ Please, save your production url, you will need it to complete the challenge.
 
 You can now visit the preview link to see your deployed dapp! 🎉
 
+Remember, you must add Futurenet network lumens to your Freighter wallet to interact with the deployed example dapp. Visit https://laboratory.stellar.org/#account-creator?network=futurenet, and follow the instructions to create your Freighter account on Futurenet.
+
 
 ## Checkpoint 7: 💪 Pass the Challenge!
 
-Submit your public url to the challenge form and proceed to the next step to check your work.
+Now it's time to submit your work!
+
+Submit your `Production` URL from the previous step into the challenge form to pass the checkpoint!
 
 <ParentChallengeForm id={3} />
 

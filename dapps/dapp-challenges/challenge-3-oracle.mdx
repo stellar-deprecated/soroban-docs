@@ -504,47 +504,31 @@ Invite a friend to try out your dapp and ask them to provide feedback!
 
 ## ⚔️ Side Quests
 
-🌐 Explore [Stellar Laboratory] to inspect your account assets on Futurenet.
+🪬 Add a new feature to your dapp (e.g. add a new pricefeed, add a new token, etc.)
 
-You should see something like this:
+🌐 Extend your dapp's functionality by allowing users to query and interact with historic oracle data directly through the user interface.
 
-```json
-  "balances": [
-    {
-      "balance": "100.0000000",
-      "limit": "922337203685.4775807",
-      "buying_liabilities": "0.0000000",
-      "selling_liabilities": "0.0000000",
-      "last_modified_ledger": 148108,
-      "is_authorized": true,
-      "is_authorized_to_maintain_liabilities": true,
-      "asset_type": "credit_alphanum4",
-      "asset_code": "ABND",
-      "asset_issuer": "GBUGENT4FK4Y6FZNZEEGVZJLCHKNES23FRVOPPOI62RUF4WRSNOTSZV4"
-    },
-  ]
-```
+💡 Develop a function to respond to a significant BTC price change.
 
-[Stellar Laboratory]: https://laboratory.stellar.org/#explorer?network=futurenet
 
 ## 📚 User Workflows Checklist
 
 During this exercise you should be able to:
 
 - Clone the example repo (Oracle Dapp)
-- Choose your target amount and deadline
+- Set the correct parameters in the `initialize.sh` script
 - Deploy your contract to Futurenet
 - Deploy the example web ui somewhere (e.g. netlify, vercel, surge, etc.)
 
 Then via the web UI, you should be able to:
 
 - Connect your wallet
-- See your current balance(s)
-- See the current fundraising status (total amount & time remaining)
-- See allowed assets
-- Deposit an allowed asset
-- See your deposit(s) appear on the page as the transactions are confirmed.
-- "Live"-Update the page with the total amount with the new amount
+- See the BTC to USD conversion rate
+- See your current balance
+- See the contract balance
+- Mint an asset
+- Deposit an asset
+- See your deposit(s) appear on the page as the transactions are confirmed
 
 ## 🛡️🗡️ Take On More Challenges
 

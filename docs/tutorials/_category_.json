@@ -2,6 +2,7 @@
   "position": 30,
   "label": "Tutorials",
   "link": {
-    "type": "generated-index"
+    "type": "doc",
+    "id": "tutorials/index"
   }
 }

@@ -25,6 +25,17 @@ const config = {
     [
       '@docusaurus/plugin-content-docs',
       {
+        id: 'guides',
+        path: 'guides',
+        routeBasePath: 'guides',
+        sidebarPath: require.resolve('./sidebarsGuides.js'),
+        editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
+        showLastUpdateTime: true,
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
         id: 'api',
         path: 'api',
         routeBasePath: 'api',
@@ -58,6 +69,8 @@ const config = {
           breadcrumbs: true,
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
+          // sidebarItemsGenerator: require('./src/sidebar-docs-generator'),
+          // exclude: ['**/guides/*.mdx'],
         },
         theme: {
           customCss: [require.resolve("./src/css/custom.scss")],
@@ -105,6 +118,11 @@ const config = {
           {
             to: '/dapps',
             label: 'Dapps',
+            position: 'left'
+          },
+          {
+            to: '/guides',
+            label: 'Guides',
             position: 'left'
           },
           {

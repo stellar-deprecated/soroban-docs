@@ -8,32 +8,6 @@ With two smart contracts deployed to a public network, you can now create a web 
 
 ## Initialize a frontend toolchain
 
-You can build a Soroban app with any frontend toolchain or integrate it into any existing full-stack app. For this tutorial, we're going to use [Astro](https://astro.build/). Astro works with React, Vue, Svelte, any other UI library, or no UI library at all. In this tutorial, we're not using a UI library. The Soroban-specific parts of this tutorial will be similar no matter what frontend toolchain you use.
-
-If you're new to frontend, don't worry. We won't go too deep. But it will be useful for you to see and experience the frontend development process used by Soroban apps. We'll cover the relevant bits of JavaScript and Astro, but teaching all of frontend development and Astro is beyond the scope of this tutorial.
-
-Let's get started.
-
-You're going to need [Node.js](https://nodejs.org/en/download/package-manager/) v18.14.1 or greater. If you haven't yet, install it now.
-
-There are several project organization strategies, but we find it to be the simplest to have Node-specific web app code live right alongside the Rust-specific smart contract code, at the root of an Astro project.
-
-Astro's project initializer allows us to pass in a `template` argument. If we use our tutorial repository as a template, it will create a project that includes our `hello-soroban` and `incrementor` contracts, a Cargo.toml for the workspace, and npm scripts to generate the appropriate typescript clients to interact with the contracts.
-
-So let's go ahead and do that. From `soroban-tutorial`'s parent directory, run:
-
-```sh
-npm create astro@latest astro-soroban-tutorial -- --template AhaLabs/soroban-tutorial-project#template --no-git --no-install --typescript strictest
-```
-
-The template provides all we need for a new project. However, since we already did the work of deploying our contracts to Testnet, and storing their ids in the `.soroban` directory, let's copy those files over to our new project so that we can reuse them. From the parent directory of both `astro-soroban-tutorial` and `soroban-tutorial`, run:
-
-```bash
-cp -r ./soroban-tutorial/.soroban ./astro-soroban-tutorial
-```
-
-We will be working from the `astro-soroban-tutorial` directory for the rest of this tutorial, so it is safe to delete the original `soroban-tutorial` if you want: `rm -rf soroban-tutorial`.
-
 ## Generate an NPM package for the Hello World contract
 
 Before we even open the new frontend files, let's generate an NPM package for the Hello Soroban contract. This is our suggested way to interact with contracts from frontends. These generated libraries work with any JavaScript project (not a specific UI like React), and make it easy to work with some of the trickiest bits of Soroban, like encoding [XDR](https://soroban.stellar.org/docs/fundamentals-and-concepts/fully-typed-contracts).

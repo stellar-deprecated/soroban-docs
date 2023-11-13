@@ -3,6 +3,7 @@ sidebar_position: 6
 title: 5. Wrapping up
 description: Make a frontend web app that interacts with your smart contracts.
 ---
+
 ## Streamlining the dev process
 
 There are several other scripts in package.json to make this project easier to work with. Let's take a look at those scripts now.
@@ -29,9 +30,10 @@ Next, let's look at the `setup` script which builds your contracts, then checks 
   }
 ```
 
-Let's make sure to add scripts for deploying the incrementor contract, and generating its JavaScript contract client. 
+Let's make sure to add scripts for deploying the incrementor contract, and generating its JavaScript contract client.
 
 Create a `deploy:incrementor` script, and call it from the `deploy` script:
+
 ```diff title=package.json
     "deploy:hello": "soroban contract deploy --wasm target/wasm32-unknown-unknown/release/hello_soroban.wasm --source alice --network testnet > .soroban/hello-id",
 +   "deploy:incrementor": "soroban contract deploy --wasm target/wasm32-unknown-unknown/release/incrementor.wasm --source alice --network testnet > .soroban/incrementor-id;",
@@ -133,6 +135,7 @@ This means that Testnet is down, and you probably just need to wait a while and 
 ## Wrapping up
 
 We did a lot in this tutorial, so let's take a moment to summarize.
+
 - We learned how to use the `soroban-cli` tool to deploy and interact with Soroban contracts
 - We created an Astro project capable of deploying Soroban contracts and interacting with them in a web app
 - We added Astro components and learned how their `script` and `style` tags work

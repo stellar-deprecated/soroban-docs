@@ -46,7 +46,7 @@ So let's go ahead and do that:
 npm create astro@latest astro-soroban-tutorial -- --template AhaLabs/soroban-tutorial-project#template --no-git --no-install --typescript strictest
 ```
 
-Let's take a brief tour of the `astro-soroban-tutorial` project that we just created. 
+Let's take a brief tour of the `astro-soroban-tutorial` project that we just created.
 
 There are several project organization strategies, but we find it to be the simplest to have Node-specific web app code live right alongside the Rust-specific smart contract code, at the root of an Astro project.
 
@@ -73,7 +73,8 @@ There are several project organization strategies, but we find it to be the simp
 ```
 
 ### Contracts
-The `contracts` directory is where our Soroban contracts live. Each contract will have it's own sub-directory with source code, test code and a `Cargo.toml` file. 
+
+The `contracts` directory is where our Soroban contracts live. Each contract will have it's own sub-directory with source code, test code and a `Cargo.toml` file.
 
 ```toml title="contracts/hello-soroban/Cargo.toml"
 [package]
@@ -109,11 +110,12 @@ The `testutils` are automatically enabled inside [Rust unit tests] inside the sa
 
 ### Astro files
 
-The boiler plate Astro web app files live in the `src` directory. This includes  the Astro components, layouts, and pages. We'll look at these pieces a bit closer later in this tutorial.
+The boiler plate Astro web app files live in the `src` directory. This includes the Astro components, layouts, and pages. We'll look at these pieces a bit closer later in this tutorial.
 
 As expected for a JavaScript web app, there is also a `package.json` file with JavaScript dependencies and scripts. We'll take a closer look at some of the scripts in that file later in the tutorial.
 
 ### Rust Workspace
+
 There is also a `Cargo.toml` file at the root of the project to configure the Rust workspace for the full project. This is where workspace dependencies and profiles are defined, most notably the `soroban-sdk`.
 
 :::caution
@@ -121,7 +123,6 @@ There is also a `Cargo.toml` file at the root of the project to configure the Ru
 The `soroban-sdk` is in early development. Report issues [here](https://github.com/stellar/rs-soroban-sdk/issues/new/choose).
 
 :::
-
 
 #### Configuring the `release` Profile
 

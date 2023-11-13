@@ -84,8 +84,10 @@ Take a look at the `ConnectFreighter` component in the `src/components` director
     <button
       style="display: none"
       data-freighter-connect
-      aria-controls="freighter-wrap">Connect</button
+      aria-controls="freighter-wrap"
     >
+      Connect
+    </button>
   </div>
 </div>
 
@@ -176,7 +178,6 @@ Then open the page and click the "Connect" button. You should see Freighter pop 
 
 Now you're ready to sign the call to `increment`!
 
-
 ### Call `increment`
 
 We're going to generate a client for the incrementor contract with a similar command to the one we used before. Let's add a script for generating a client for the incrementor to `package.json`, and call them both from `postinstall` using a double ampersand ([&&](https://stackoverflow.com/a/25669618/249801)):
@@ -262,11 +263,11 @@ Check the page; if you're still running your dev server, it should have already 
 
 There's obviously some functionality missing, though. For example, that `???` is a bummer. But our `incrementor` contract doesn't give us a way to query the current value without also updating it.
 
-
 ## Summary
 
 In this section:
--  we learned that deployment is a two-step process, and deployed our new incrementor contract to Testnet
+
+- we learned that deployment is a two-step process, and deployed our new incrementor contract to Testnet
 - installed a Freighter wallet to our browser
 - and set our project up to be able to connect to the Freighter browser extension through a "Connect" button
 - created a script in package.json to generate the incrementor contract client

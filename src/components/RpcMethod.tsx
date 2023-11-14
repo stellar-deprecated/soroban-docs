@@ -5,7 +5,7 @@ const CodeBlock = require('@theme/CodeBlock').default;
 
 export const RpcMethod = (param: { method:string; }) => {
     const rpcMethod = require(`@site/static/rpc-methods/${param.method}.json`);
-    const wholeThing = require('@site/static/openrpc.json');
+    const wholeThing = require('@site/openrpc/restart/derefed-openrpc.json');
     console.log(wholeThing)
-    return (<Method method={wholeThing.methods.getEvents} components={{CodeBlock}}/>);
+    return (<Method method={wholeThing.methods[0]} components={{CodeBlock}}/>);
 };

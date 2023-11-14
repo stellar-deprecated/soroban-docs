@@ -32,120 +32,32 @@
   "methods": [
     {
       "name": "getEvents",
+      "summary": "returns contract events",
       "description": "Clients can request a filtered list of events emitted by a given ledger range.\n\nSoroban-RPC will support querying within a maximum 24 hours of recent ledgers.\n\nNote, this could be used by the client to only prompt a refresh when there is a new ledger with relevant events. It should also be used by backend Dapp components to \"ingest\" events into their own database for querying and serving.\n\nIf making multiple requests, clients should deduplicate any events received, based on the event's unique id field. This prevents double-processing in the case of duplicate events being received.\n\nBy default soroban-rpc retains the most recent 24 hours of events.",
       "paramStructure": "by-name",
       "params": [
         {
-          "name": "startLedger",
-          "description": "Stringified ledger sequence number to fetch events after (inclusive). This method will return an error if `startLedger` is less than the oldest ledger stored in this node, or greater than the latest ledger seen by this node. If a cursor is included in the request, `startLedger` must be omitted.",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
+          "$ref": "#/components/contentDescriptors/StartLedger"
         },
         {
-          "name": "filters",
-          "description": "List of filters for the returned events. Events matching any of the filters are included. To match a filter, an event must match both a contractId and a topic. Maximum 5 filters are allowed per request.",
-          "required": false,
-          "schema": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "type": {
-                  "description": "A comma separated list of event types (`system`, `contract`, or `diagnostic`) used to filter events. If omitted, all event types are included.",
-                  "type": "string"
-                },
-                "contractIds": {
-                  "description": "(optional) List of contract ids to query for events. If omitted, return events for all contracts. Maximum 5 contract IDs are allowed per request.",
-                  "type": "array"
-                },
-                "topics": {
-                  "description": "(optional) List of topic filters. If omitted, query for all events. If multiple filters are specified, events will be included if they match any of the filters. Maximum 5 filters are allowed per request.\n\n- A `TopicFilter` is `SegmentMatcher[]`\n\n    - The list can be 1-4 SegmentMatchers long.\n\n- A `SegmentMatcher` is one of the following:\n\n    - For an exact segment match, a string containing base64-encoded ScVal\n\n    - For a wildcard single-segment match, the string \"*\", matches exactly one segment.\n\n- Examples of matching token transfer events. Events are emitted here: [rs-soroban-env/event.rs @ `924d86c`](https://github.com/stellar/rs-soroban-env/blob/924d86cacd58b8a162344bfe0ab37d9668f5d629/soroban-env-host/src/native_contract/token/event.rs#L21-L33). I've decoded the base64-encoded ScVals for easier reading (both the symbols and addresses). In real usage, the `ScSymbol(\"transfer\").toXdr().toString(\"base64\")`, and `ScBinary(pubkeyBytes).toXdr().toString(\"base64\")`, would be base64 encoded strings for exact matches. For example:\n\n    - `[ScSymbol(\"transfer\"), \"*\", \"*\"]`\n\n        - Matches any token transfer events\n\n    - `[ScSymbol(\"transfer\"), \"*\", \"GABC...123\"]`\n\n        - Matches any token transfer events to recipient: GABC...123\n\n    - `[ScSymbol(\"transfer\"), \"GDEF...456\", \"GABC...123\"]`\n\n        - Matches only token transfers from GDEF...456 to GABC...123.",
-                  "type": "array"
-                }
-              },
-              "required": []
-            }
-          }
+          "$ref": "#/components/contentDescriptors/EventFilters"
         },
         {
-          "name": "pagination",
-          "description": "See \"[Pagination](../pagination)\"",
-          "required": false,
-          "schema": {
-            "type": "object",
-            "properties": {
-              "cursor": {
-                "description": "A string ID that points to a specific location in a collection of responses and is pulled from the paging_token value of a record. When a cursor is provided Soroban-RPC will not include the element whose id matches the cursor in the response. Only elements which appear _after_ the cursor are included.",
-                "type": "string"
-              },
-              "limit": {
-                "description": "The maximum number of records returned. The limit for [getEvents](https://soroban.stellar.org/api/methods/getEvents) can range from 1 to 10000 - an upper limit that is hardcoded in Soroban-RPC for performance reasons. If this argument isn't designated, it defaults to 100.",
-                "type": "number"
-              }
-            },
-            "required": []
-          }
+          "$ref": "#/components/contentDescriptors/Pagination"
         }
       ],
       "result": {
-        "name": "Response",
+        "name": "getEventsResult",
         "schema": {
           "type": "object",
           "properties": {
             "latestLedger": {
-              "type": "string",
-              "description": "Stringified-number of the current latest ledger observed by the node when this response was generated."
+              "$ref": "#/components/schemas/LatestLedger"
             },
             "events": {
               "type": "array",
               "items": {
-                "properties": {
-                  "": {
-                    "type": "object",
-                    "properties": {
-                      "ledger": {
-                        "type": "string",
-                        "description": "Stringified sequence number of the ledger."
-                      },
-                      "ledgerClosedAt": {
-                        "type": "string",
-                        "description": "[ISO-8601](https://www.iso.org/iso-8601-date-and-time-format.html) timestamp of the ledger closing time"
-                      },
-                      "contractId": {
-                        "type": "string",
-                        "description": "StrKey ID (`C...`) of the emitting contract ([SEP-23](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0023.md#specification))."
-                      },
-                      "id": {
-                        "type": "string",
-                        "description": "Unique identifier for this event.\n\n- The event's unique id field is based on a [`toid` from Horizon](https://github.com/stellar/go/blob/master/toid/main.go) as used in Horizon's /effects endpoint.\n\n- https://github.com/stellar/go/blob/master/services/horizon/internal/db2/history/effect.go#L58\n\n- Specifically, it is a string containing:\n\n- bigint(32 bit ledger sequence + 20 bit txn number + 12 bit operation) + `<hyphen>` + number for the event within the operation.\n\n- For example: `1234-1`"
-                      },
-                      "pagingToken": {
-                        "type": "string",
-                        "description": "Duplicate of `id` field, but in the standard place for pagination tokens."
-                      },
-                      "inSuccessfulContractCall": {
-                        "type": "boolean",
-                        "description": "If true the event was emitted during a successful contract call."
-                      },
-                      "topic": {
-                        "type": "array",
-                        "description": "List containing the topic this event was emitted with."
-                      },
-                      "value": {
-                        "type": "object",
-                        "description": "List containing the topic this event was emitted with.",
-                        "properties": {
-                          "xdr": {
-                            "type": "string",
-                            "description": "The emitted body value of the event (serialized in a base64 string)."
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
+                "$ref": "#/components/schemas/Event"
               }
             }
           }
@@ -154,11 +66,12 @@
     },
     {
       "name": "getHealth",
+      "summary": "returns node health",
       "description": "General node health check.",
       "paramStructure": "by-name",
       "params": [],
       "result": {
-        "name": "Response",
+        "name": "getHealthResult",
         "schema": {
           "type": "object",
           "properties": {
@@ -172,11 +85,12 @@
     },
     {
       "name": "getLatestLedger",
+      "summary": "returns latest known ledger",
       "description": "For finding out the current latest known ledger of this node. This is a subset of the ledger info from Horizon.",
       "paramStructure": "by-name",
       "params": [],
       "result": {
-        "name": "Response",
+        "name": "getLatestLedgerResult",
         "schema": {
           "type": "object",
           "properties": {
@@ -197,6 +111,7 @@
     },
     {
       "name": "getLedgerEntries",
+      "summary": "returns ledger entries",
       "description": "For reading the current value of ledger entries directly.\n\nAllows you to directly inspect the current state of a contract, a contract's code, or any other ledger entry. This is a backup way to access your contract data which may not be available via events or `simulateTransaction`.\n\nTo fetch contract wasm byte-code, use the ContractCode ledger entry key.",
       "paramStructure": "by-name",
       "params": [
@@ -226,7 +141,8 @@
     },
     {
       "name": "getNetwork",
-      "description": "General info about the currently configured network.",
+      "summary": "returns network config",
+      "description": "General information about the currently configured network. This response will contain all the information needed to successfully submit transactions to the network this node serves.",
       "paramStructure": "by-name",
       "params": [],
       "result": {
@@ -252,7 +168,7 @@
     },
     {
       "name": "getTransaction",
-      "summary": "The getTransaction method provides details about the specified transaction.",
+      "summary": "returns transaction details",
       "description": "The getTransaction method provides details about the specified transaction. Clients are expected to periodically query this method to ascertain when a transaction has been successfully recorded on the blockchain. The soroban-rpc system maintains a restricted history of recently processed transactions, with the default retention window set at 1440 ledgers, approximately equivalent to a 2-hour timeframe. For private soroban-rpc instances, it is possible to modify the retention window value by adjusting the transaction-retention-window configuration setting. For comprehensive debugging needs that extend beyond the 2-hour timeframe, it is advisable to retrieve transaction information from Horizon, as it provides a lasting and persistent record.",
       "paramStructure": "by-name",
       "params": [
@@ -323,7 +239,7 @@
     },
     {
       "name": "sendTransaction",
-      "summary": "Submit a real transaction to the Stellar network.",
+      "summary": "submits a transaction",
       "description": "Submit a real transaction to the Stellar network. This is the only way to make changes on-chain.\n\n Unlike Horizon, this does not wait for transaction completion. It simply validates and enqueues the transaction. Clients should call `getTransaction` to learn about transaction success/failure.\n\nThis supports all transactions, not only smart contract-related transactions.",
       "paramStructure": "by-name",
       "params": [
@@ -374,7 +290,7 @@
     },
     {
       "name": "simulateTransaction",
-      "summary": "Submit a trial contract invocation to simulate how it would be executed by the network.",
+      "summary": "submits a trial contract invocation transaction",
       "description": "Submit a trial contract invocation to simulate how it would be executed by the network. This endpoint calculates the effective transaction data, required authorizations, and minimal resource fee. It provides a way to test and analyze the potential outcomes of a transaction without actually submitting it to the network.",
       "paramStructure": "by-name",
       "params": [
@@ -476,6 +392,29 @@
   ],
   "components": {
     "contentDescriptors": {
+      "Pagination": {
+        "name": "pagination",
+        "required": false,
+        "description": "Pagination in soroban-rpc is similar to pagination in Horizon.",
+        "schema": {
+          "$ref": "#/components/schemas/PaginationOptions"
+        }
+      },
+      "StartLedger": {
+        "name": "startLedger",
+        "required": true,
+        "description": "Stringified ledger sequence number to fetch events after (inclusive). This method will return an error if `startLedger` is less than the oldest ledger stored in this node, or greater than the latest ledger seen by this node. If a cursor is included in the request, `startLedger` must be omitted.",
+        "schema": {
+          "$ref": "#/components/schemas/LedgerNumber"
+        }
+      },
+      "EventFilters": {
+        "name": "filters",
+        "description": "List of filters for the returned events. Events matching any of the filters are included. To match a filter, an event must match both a contractId and a topic. Maximum 5 filters are allowed per request.",
+        "schema": {
+          "$ref": "#/components/schemas/EventFilters"
+        }
+      },
       "TransactionHash": {
         "name": "hash",
         "required": true,
@@ -492,6 +431,149 @@
       }
     },
     "schemas": {
+      "Boolean": {
+        "type": "boolean"
+      },
+      "PaginationOptions": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "A string ID that points to a specific location in a collection of responses and is pulled from the `paging_token` value of a record. When a cursor is provided Soroban-RPC will _not_ include the element whose id matches the cursor in the response. Only elements which appear _after_ the cursor are included."
+          },
+          "limit": {
+            "type": "number",
+            "description": "The maximum number of records returned. The limit for [getEvents](https://soroban.stellar.org/api/getEvents) can range from 1 to 10000 - an upper limit that is hardcoded in Soroban-RPC for performance reasons. If this argument isn't designated, it defaults to 100."
+          }
+        },
+        "required": []
+      },
+      "EventFilters": {
+        "type": "array",
+        "maxItems": 5,
+        "items": {
+          "$ref": "#/components/schemas/EventFilter"
+        }
+      },
+      "EventFilter": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/EventFilterType"
+          },
+          "contractIds": {
+            "$ref": "#/components/schemas/ContractIds"
+          },
+          "topics": {
+            "$ref": "#/components/schemas/TopicFilters"
+          }
+        },
+        "required": []
+      },
+      "EventFilterType": {
+        "title": "type",
+        "type": "string",
+        "description": "A comma separated list of event types (system, contract, or diagnostic) used to filter events. If omitted, all event types are included."
+      },
+      "Event": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/EventType"
+          },
+          "ledger": {
+            "description": "Stringified sequence number of the ledger in which this event was emitted.",
+            "$ref": "#/components/schemas/LedgerNumber"
+          },
+          "ledgerClosedAt": {
+            "type": "string",
+            "description": "[ISO-8601](https://www.iso.org/iso-8601-date-and-time-format.html) timestamp of the ledger closing time"
+          },
+          "contractId": {
+            "description": "StrKey representation of the contract address that emitted this event.",
+            "$ref": "#/components/schemas/ContractId"
+          },
+          "id": {
+            "$ref": "#/components/schemas/EventId"
+          },
+          "pagingToken": {
+            "description": "Duplicate of `id` field, but in the standard place for pagination tokens.",
+            "$ref": "#/components/schemas/EventId"
+          },
+          "inSuccessfulContractCall": {
+            "description": "If true the event was emitted during a successful contract call.",
+            "$ref": "#/components/schemas/Boolean"
+          },
+          "topic": {
+            "type": "array",
+            "description": "List containing the topic this event was emitted with.",
+            "$ref": "#/components/schemas/TopicFilter"
+          },
+          "value": {
+            "$ref": "#/components/schemas/EventValue"
+          }
+        }
+      },
+      "EventType": {
+        "title": "type",
+        "description": "The type of event emission.",
+        "type": "string",
+        "enum": [ "contract", "diagnostic", "system" ]
+      },
+      "EventId": {
+        "description": "Unique identifier for this event.\n\n- The event's unique id field is based on a [`toid` from Horizon](https://github.com/stellar/go/blob/master/toid/main.go) as used in Horizon's /effects endpoint.\n\n- https://github.com/stellar/go/blob/master/services/horizon/internal/db2/history/effect.go#L58\n\n- Specifically, it is a string containing:\n\n- bigint(32 bit ledger sequence + 20 bit txn number + 12 bit operation) + `<hyphen>` + number for the event within the operation.\n\n- For example: `1234-1`",
+        "type": "string"
+      },
+      "EventXdr": {
+        "description": "The emitted body value of the event (serialized in a base64 string).",
+        "type": "string"
+      },
+      "EventValue": {
+        "description": "The data the event was broadcasting in the emitted event.",
+        "type": "object",
+        "properties": {
+          "xdr": {
+            "$ref": "#/components/schemas/EventXdr"
+          }
+        }
+      },
+      "ContractId": {
+        "title": "contractId",
+        "description": "A StrKey representation of a contract address (`C...`). ([SEP-23](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0023.md#specification)).",
+        "type": "string"
+      },
+      "ContractIds": {
+        "title": "contractIds",
+        "type": "array",
+        "description": "(optional) List of contract IDs to query for events. If omitted, return events for all contracts. Maximum 5 contract IDs are allowed per request.",
+        "maxItems": 5,
+        "items": {
+          "$ref": "#/components/schemas/ContractId"
+        }
+      },
+      "TopicFilters": {
+        "title": "topics",
+        "type": "array",
+        "description": "List of topic filters. If omitted, query for all events. If multiple filters are specified, events will be included if they match any of the filters. Maximum 5 filters are allowed per request.",
+        "maxItems": 5,
+        "items": {
+          "$ref": "#/components/schemas/TopicFilter"
+        }
+      },
+      "SegmentMatcher": {
+        "title": "SegmentMatcher",
+        "type": "string",
+        "description": "A `SegmentMatcher` is one of the following:\n\n- For an exact segment match, a string containing a base64-encoded ScVal\n\n- For a wildcard single-segment match, the string \"*\", matches exactly one segment."
+      },
+      "TopicFilter": {
+        "type": "array",
+        "description": "A `TopicFilter` is `SegmentMatcher[]`\n\n- The list can be 1-4 `SegmentMatchers` long.",
+        "minItems": 1,
+        "maxItems": 4,
+        "items": {
+          "$ref": "#/components/schemas/SegmentMatcher"
+        }
+      },
       "TransactionHash": {
         "title": "hash",
         "description": "Transaction hash, as a hex-encoded string",

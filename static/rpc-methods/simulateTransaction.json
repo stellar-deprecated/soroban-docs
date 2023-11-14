@@ -1,11 +1,13 @@
 {
   "name": "simulateTransaction",
-  "description": "Submit a trial contract invocation to simulate how it would be executed by the network. This endpoint calculates the effective transaction data, required authorizations, and minimal resource fee. It provides a way to test and analyze the potential outcomes of a transaction without actually submitting it to the network.",
+  "summary": "Submit a trial contract invocation to simulate how it would be executed by the network.",
+  "description": "This endpoint calculates the effective transaction data, required authorizations, and minimal resource fee. It provides a way to test and analyze the potential outcomes of a transaction without actually submitting it to the network.",
   "paramStructure": "by-name",
   "params": [
     {
       "name": "transaction",
-      "description": "The transaction to be simulated (serialized in base64)",
+      "summary": "The transaction to be simulated (serialized in base64)",
+      "description": "The transaction to be simulated (serialized in base64). In order for the RPC server to successfully simulate a Stellar transaction, the provided transaction must contain only a single operation of the type `invokeHostFunction`.",
       "required": true,
       "schema": {
         "type": "string"
@@ -13,10 +15,19 @@
     }
   ],
   "result": {
-    "name": "Response",
+    "name": "Simulation Response",
+    "summary": "The response will include the anticipated affects the given transaction will have on the network.",
+    "description": "The response will include the anticipated affects the given transaction will have on the network. Additionally, information needed to build, sign, and actually submit the transaction will be provided.",
     "schema": {
       "type": "object",
+      "required": [
+        "latestLedger"
+      ],
       "properties": {
+        "latestLedger": {
+          "type": "string",
+          "description": "Stringified number - Current latest closed ledger (LCL) observed by the node when this response was generated. Always present."
+        },
         "minResourceFee": {
           "type": "string",
           "description": "(optional) Stringified number - Recommended minimum resource fee to add when submitting the transaction. This fee is to be added on top of the [Stellar network fee](https://developers.stellar.org/docs/encyclopedia/fees-surge-pricing-fee-strategies#network-fees-on-stellar). Not present in case of error."
@@ -39,18 +50,17 @@
           "type": "array",
           "description": "(optional) - This array will only have one element: the result for the Host Function invocation. Only present on successful simulation (i.e. no error) of `InvokeHostFunction` operations.",
           "items": {
+            "type": "object",
             "properties": {
-              "": {
-                "type": "object",
-                "properties": {
-                  "xdr": {
-                    "type": "string",
-                    "description": "Serialized base64 string - return value of the Host Function call."
-                  },
-                  "auth": {
-                    "type": "array",
-                    "description": "Array of serialized base64 strings - Per-address authorizations recorded when simulating this Host Function call."
-                  }
+              "xdr": {
+                "type": "string",
+                "description": "Serialized base64 string - return value of the Host Function call."
+              },
+              "auth": {
+                "type": "array",
+                "description": "Array of serialized base64 strings - Per-address authorizations recorded when simulating this Host Function call.",
+                "items": {
+                  "type": "string"
                 }
               }
             }
@@ -77,10 +87,6 @@
               "description": "Serialized base64 string - The recommended Soroban Transaction Data to use when submitting the `RestoreFootprint` operation."
             }
           }
-        },
-        "latestLedger": {
-          "type": "string",
-          "description": "Stringified number - Current latest closed ledger (LCL) observed by the node when this response was generated. Always present."
         },
         "error": {
           "type": "string",

@@ -1,0 +1,5 @@
+{
+  "latestLedger": {
+    "type": "string"
+  }
+}

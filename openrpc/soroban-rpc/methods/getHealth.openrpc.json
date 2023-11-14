@@ -1,0 +1,36 @@
+{
+    "openrpc": "1.2.4",
+    "info": {
+        "version": "0.9.4",
+        "title": "Soroban RPC",
+        "description": "A public discussion about the design of soroban-rpc."
+    },
+    "methods": [
+        {
+            "name": "getHealth",
+            "summary": "General node health check.",
+            "params": [],
+            "result": {
+                "name": "Node health",
+                "description": "\"healthy\"",
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "examples": [
+                {
+                    "name": "getHealthRequestExample",
+                    "description": "Example request to the `getHealth` method.",
+                    "params": [],
+                    "result": {
+                        "name": "getHealthResultExample",
+                        "description": "Example result from the `getHealth` method.",
+                        "value": {
+                            "status": "healthy"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

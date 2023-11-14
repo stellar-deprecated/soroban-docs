@@ -8,7 +8,10 @@
       "description": "Array containing the keys of the ledger entries you wish to retrieve. (an array of serialized base64 strings)",
       "required": true,
       "schema": {
-        "type": "array"
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
       }
     }
   ],
@@ -17,40 +20,39 @@
     "schema": {
       "type": "object",
       "properties": {
+        "latestLedger": {
+          "type": "number",
+          "description": "The current latest ledger observed by the node when this response was generated."
+        },
         "entries": {
           "type": "array",
           "description": "Hash of the latest ledger as a hex-encoded string",
           "items": {
+            "type": "object",
             "properties": {
-              "": {
-                "type": "object",
-                "properties": {
-                  "key": {
-                    "type": "string",
-                    "description": "The key of the ledger entry (serialized in a base64 string)"
-                  },
-                  "xdr": {
-                    "type": "string",
-                    "description": "The current value of the given ledger entry (serialized in a base64 string)"
-                  },
-                  "lastModifiedLedgerSeq": {
-                    "type": "string",
-                    "description": "The ledger sequence number of the last time this entry was updated."
-                  },
-                  "liveUntilLedgerSeq": {
-                    "type": "string",
-                    "description": "The ledger sequence number after which the ledger entry would expire. This field exists only for ContractCodeEntry and ContractDataEntry ledger entries (optional)."
-                  }
-                }
+              "key": {
+                "type": "string",
+                "description": "The key of the ledger entry (serialized in a base64 string)"
+              },
+              "xdr": {
+                "type": "string",
+                "description": "The current value of the given ledger entry (serialized in a base64 string)"
+              },
+              "lastModifiedLedgerSeq": {
+                "type": "string",
+                "description": "The ledger sequence number of the last time this entry was updated."
+              },
+              "liveUntilLedgerSeq": {
+                "type": "string",
+                "description": "The ledger sequence number after which the ledger entry would expire. This field exists only for ContractCodeEntry and ContractDataEntry ledger entries (optional)."
               }
             }
           }
-        },
-        "latestLedger": {
-          "type": "number",
-          "description": "The current latest ledger observed by the node when this response was generated."
         }
-      }
+      },
+      "required": [
+        "latestLedger"
+      ]
     }
   }
 }

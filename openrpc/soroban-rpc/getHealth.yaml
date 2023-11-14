@@ -1,0 +1,8 @@
+- name: getHealth
+  summary: General node health check.
+  params: []
+  result:
+    name: Node health
+    schema:
+      title: Node health
+      type: string

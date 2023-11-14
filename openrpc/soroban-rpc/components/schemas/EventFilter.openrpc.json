@@ -1,0 +1,45 @@
+{
+    "openrpc": "1.2.4",
+    "info": {
+        "version": "0.9.4",
+        "title": "Soroban RPC",
+        "description": "A public discussion about the design of soroban-rpc."
+    },
+    "methods": [],
+    "components": {
+        "schemas": {
+            "EventFilter": {
+                "type": "object",
+                "title": "EventFilter",
+                "required": [],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "system",
+                            "contract",
+                            "diagnostic"
+                        ],
+                        "description": "A comma separated list of event types (`system`, `contract`, or `diagnostic`) used to filter events. If omitted, all event types are included."
+                    },
+                    "contractIds": {
+                        "type": "array",
+                        "description": "List of contract ids to query for events. If omitted, return events for all contracts. Maximum 5 contract IDs are allowed per request.",
+                        "maxItems": 5,
+                        "items": {
+                            "type": "string",
+                            "description": "A contract ID, as a hex-encoded string"
+                        }
+                    },
+                    "topics": {
+                        "type": "array",
+                        "description": "List of topic filters. If omitted, query for all events. If multiple filters are specified, events will be included if they match any of the filters. Maximum 5 filters are allowed per request.\n- A `TopicFilter` is `SegmentMatcher[]`\n  - The list can be 1-4 `SegmentMatcher`s long.\n- A `SegmentMatcher` is one of the following:\n  - For an exact segment match, a string containing base64-encoded ScVal\n  - For a wildcard single-segment match, the string \"*\" matches exactly one segment.\n- Examples of matching token transfer events. Events are emitted here: [rs-soroban-env/event.rs at 924d86cacd58b8a162344bfe0ab37d9668f5d629](https://github.com/stellar/rs-soroban-env/blob/924d86cacd58b8a162344bfe0ab37d9668f5d629/soroban-env-host/src/native_contract/token/event.rs#L21-L33). I've decoded the base64-encoded ScVals for easier reading (both the symbols and addresses). In real usage, the `ScSymbol(\"transfer\").toXdr().toString(\"base64\")`, and `ScBinary(pubkeyBytes).toXdr().toString(\"base64\")`, would be base64 encoded strings for exact matches. For example:\n  - `[ScSymbol(\"transfer\"), \"*\", \"*\"]`\n    - Matches any token transfer events\n  - `[ScSymbol(\"transfer\"), \"*\", \"GABC...123\"]`\n    - Matches any token transfer events to recipient: `GABC...123`\n  - `[ScSymbol(\"transfer\"), \"GDEF...456\", \"GABC...123\"]`\n    - Matches only token transfers from `GDEF...456` to `GABC...123`",
+                        "items": {
+                            "$ref": "#/components/schemas/TopicFilter"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

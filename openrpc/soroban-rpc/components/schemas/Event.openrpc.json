@@ -1,0 +1,60 @@
+{
+    "openrpc": "1.2.4",
+    "info": {
+        "version": "0.9.4",
+        "title": "Soroban RPC",
+        "description": "A public discussion about the design of soroban-rpc."
+    },
+    "methods": [],
+    "components": {
+        "schemas": {
+            "Event": {
+                "type": "object",
+                "title": "Event",
+                "properties": {
+                    "ledger": {
+                        "type": "string",
+                        "description": "String-ified sequence number of the ledger."
+                    },
+                    "ledgerClosedAt": {
+                        "type": "string",
+                        "description": "ISO8601 timestamp of the ledger closing time."
+                    },
+                    "contractId": {
+                        "type": "string",
+                        "description": "ID of the emitting contract."
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier for this event.\n- The event's unique id field is based on a [`toid` from Horizon](https://github.com/stellar/go/blob/master/toid/main.go) as used in Horizon's `/effects` endpoint.\n- https://github.com/stellar/go/blob/master/services/horizon/internal/db2/history/effect.go#L58\n- Specifically, it is a string containing:\n  - bigint(32 bit ledger sequence + 20 bit txn number + 12 bit operation) + `<hyphen>` + number for the event within the operation.\n  - For example:\n    - 1234-1"
+                    },
+                    "pagingToken": {
+                        "type": "string",
+                        "description": "Duplicate of `id` field, but in the standard place for pagination tokens."
+                    },
+                    "inSuccessfulContractCall": {
+                        "type": "boolean",
+                        "description": "If true the event was emitted during a successful contract call."
+                    },
+                    "topic": {
+                        "type": "array",
+                        "description": "List containing the topic this event was emitted with.",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "value": {
+                        "type": "object",
+                        "description": "List containing the topic this event was emitted with.",
+                        "properties": {
+                            "xdr": {
+                                "type": "string",
+                                "description": "The emitted body value of the event (serialized in a base64 string)."
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

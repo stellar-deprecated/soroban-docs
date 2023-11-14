@@ -1,0 +1,23 @@
+{
+    "openrpc": "1.2.4",
+    "info": {
+        "version": "0.9.4",
+        "title": "Soroban RPC",
+        "description": "A public discussion about the design of soroban-rpc."
+    },
+    "methods": [],
+    "components": {
+        "schemas": {
+            "SegmentMatcher": {
+                "type": "array",
+                "description": "The list can be 1-4 `SegmentMatcher`s long.",
+                "minItems": 1,
+                "maxItems": 4,
+                "items": {
+                    "type": "string",
+                    "description": "For an exact segment match, a string containing base64-encoded ScVal. For a wildcard single-segment match, the string \"*\", matches exactly one segment."
+                }
+            }
+        }
+    }
+}

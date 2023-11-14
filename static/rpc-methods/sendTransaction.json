@@ -43,7 +43,13 @@
           "type": "string",
           "description": "(optional) If the transaction status is `ERROR`, this will be a base64 encoded string of the raw TransactionResult XDR struct containing details on why stellar-core rejected the transaction."
         }
-      }
+      },
+      "required": [
+        "hash",
+        "status",
+        "latestLedger",
+        "latestLedgerCloseTime"
+      ]
     }
   }
 }

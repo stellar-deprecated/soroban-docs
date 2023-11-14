@@ -8,10 +8,6 @@
     "schema": {
       "type": "object",
       "properties": {
-        "friendbotUrl": {
-          "type": "string",
-          "description": "(optional) The URL of this network's \"friendbot\" faucet"
-        },
         "passphrase": {
           "type": "string",
           "description": "Network passphrase configured"
@@ -19,8 +15,16 @@
         "protocolVersion": {
           "type": "string",
           "description": "Protocol version of the latest ledger"
+        },
+        "friendbotUrl": {
+          "type": "string",
+          "description": "(optional) The URL of this network's \"friendbot\" faucet"
         }
-      }
+      },
+      "required": [
+        "passphrase",
+        "protocolVersion"
+      ]
     }
   }
 }

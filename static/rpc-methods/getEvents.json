@@ -18,30 +18,43 @@
       "schema": {
         "type": "array",
         "items": {
+          "type": "object",
           "properties": {
             "type": {
               "description": "A comma separated list of event types (`system`, `contract`, or `diagnostic`) used to filter events. If omitted, all event types are included.",
-              "required": false,
               "type": "string"
             },
             "contractIds": {
               "description": "(optional) List of contract ids to query for events. If omitted, return events for all contracts. Maximum 5 contract IDs are allowed per request.",
-              "required": false,
               "type": "array"
             },
             "topics": {
               "description": "(optional) List of topic filters. If omitted, query for all events. If multiple filters are specified, events will be included if they match any of the filters. Maximum 5 filters are allowed per request.\n\n- A `TopicFilter` is `SegmentMatcher[]`\n\n    - The list can be 1-4 SegmentMatchers long.\n\n- A `SegmentMatcher` is one of the following:\n\n    - For an exact segment match, a string containing base64-encoded ScVal\n\n    - For a wildcard single-segment match, the string \"*\", matches exactly one segment.\n\n- Examples of matching token transfer events. Events are emitted here: [rs-soroban-env/event.rs @ `924d86c`](https://github.com/stellar/rs-soroban-env/blob/924d86cacd58b8a162344bfe0ab37d9668f5d629/soroban-env-host/src/native_contract/token/event.rs#L21-L33). I've decoded the base64-encoded ScVals for easier reading (both the symbols and addresses). In real usage, the `ScSymbol(\"transfer\").toXdr().toString(\"base64\")`, and `ScBinary(pubkeyBytes).toXdr().toString(\"base64\")`, would be base64 encoded strings for exact matches. For example:\n\n    - `[ScSymbol(\"transfer\"), \"*\", \"*\"]`\n\n        - Matches any token transfer events\n\n    - `[ScSymbol(\"transfer\"), \"*\", \"GABC...123\"]`\n\n        - Matches any token transfer events to recipient: GABC...123\n\n    - `[ScSymbol(\"transfer\"), \"GDEF...456\", \"GABC...123\"]`\n\n        - Matches only token transfers from GDEF...456 to GABC...123.",
-              "required": false,
               "type": "array"
             }
-          }
+          },
+          "required": []
         }
       }
     },
     {
       "name": "pagination",
       "description": "See \"[Pagination](../pagination)\"",
-      "required": false
+      "required": false,
+      "schema": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "description": "A string ID that points to a specific location in a collection of responses and is pulled from the paging_token value of a record. When a cursor is provided Soroban-RPC will not include the element whose id matches the cursor in the response. Only elements which appear _after_ the cursor are included.",
+            "type": "string"
+          },
+          "limit": {
+            "description": "The maximum number of records returned. The limit for [getEvents](https://soroban.stellar.org/api/methods/getEvents) can range from 1 to 10000 - an upper limit that is hardcoded in Soroban-RPC for performance reasons. If this argument isn't designated, it defaults to 100.",
+            "type": "number"
+          }
+        },
+        "required": []
+      }
     }
   ],
   "result": {
@@ -56,47 +69,43 @@
         "events": {
           "type": "array",
           "items": {
+            "type": "object",
             "properties": {
-              "": {
+              "ledger": {
+                "type": "string",
+                "description": "Stringified sequence number of the ledger."
+              },
+              "ledgerClosedAt": {
+                "type": "string",
+                "description": "[ISO-8601](https://www.iso.org/iso-8601-date-and-time-format.html) timestamp of the ledger closing time"
+              },
+              "contractId": {
+                "type": "string",
+                "description": "StrKey ID (`C...`) of the emitting contract ([SEP-23](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0023.md#specification))."
+              },
+              "id": {
+                "type": "string",
+                "description": "Unique identifier for this event.\n\n- The event's unique id field is based on a [`toid` from Horizon](https://github.com/stellar/go/blob/master/toid/main.go) as used in Horizon's /effects endpoint.\n\n- https://github.com/stellar/go/blob/master/services/horizon/internal/db2/history/effect.go#L58\n\n- Specifically, it is a string containing:\n\n- bigint(32 bit ledger sequence + 20 bit txn number + 12 bit operation) + `<hyphen>` + number for the event within the operation.\n\n- For example: `1234-1`"
+              },
+              "pagingToken": {
+                "type": "string",
+                "description": "Duplicate of `id` field, but in the standard place for pagination tokens."
+              },
+              "inSuccessfulContractCall": {
+                "type": "boolean",
+                "description": "If true the event was emitted during a successful contract call."
+              },
+              "topic": {
+                "type": "array",
+                "description": "List containing the topic this event was emitted with."
+              },
+              "value": {
                 "type": "object",
+                "description": "List containing the topic this event was emitted with.",
                 "properties": {
-                  "ledger": {
+                  "xdr": {
                     "type": "string",
-                    "description": "Stringified sequence number of the ledger."
-                  },
-                  "ledgerClosedAt": {
-                    "type": "string",
-                    "description": "[ISO-8601](https://www.iso.org/iso-8601-date-and-time-format.html) timestamp of the ledger closing time"
-                  },
-                  "contractId": {
-                    "type": "string",
-                    "description": "StrKey ID (`C...`) of the emitting contract ([SEP-23](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0023.md#specification))."
-                  },
-                  "id": {
-                    "type": "string",
-                    "description": "Unique identifier for this event.\n\n- The event's unique id field is based on a [`toid` from Horizon](https://github.com/stellar/go/blob/master/toid/main.go) as used in Horizon's /effects endpoint.\n\n- https://github.com/stellar/go/blob/master/services/horizon/internal/db2/history/effect.go#L58\n\n- Specifically, it is a string containing:\n\n- bigint(32 bit ledger sequence + 20 bit txn number + 12 bit operation) + `<hyphen>` + number for the event within the operation.\n\n- For example: `1234-1`"
-                  },
-                  "pagingToken": {
-                    "type": "string",
-                    "description": "Duplicate of `id` field, but in the standard place for pagination tokens."
-                  },
-                  "inSuccessfulContractCall": {
-                    "type": "boolean",
-                    "description": "If true the event was emitted during a successful contract call."
-                  },
-                  "topic": {
-                    "type": "array",
-                    "description": "List containing the topic this event was emitted with."
-                  },
-                  "value": {
-                    "type": "object",
-                    "description": "List containing the topic this event was emitted with.",
-                    "properties": {
-                      "xdr": {
-                        "type": "string",
-                        "description": "The emitted body value of the event (serialized in a base64 string)."
-                      }
-                    }
+                    "description": "The emitted body value of the event (serialized in a base64 string)."
                   }
                 }
               }

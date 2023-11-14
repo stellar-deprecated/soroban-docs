@@ -1,0 +1,20 @@
+{
+    "openrpc": "1.2.4",
+    "info": {
+        "version": "0.9.4",
+        "title": "Soroban RPC",
+        "description": "A public discussion about the design of soroban-rpc."
+    },
+    "methods": [],
+    "components": {
+        "schemas": {
+            "LatestLedger": {
+                "name": "Latest ledger",
+                "description": "Stringified-number of the current latest ledger observed by the node when this response was generated.",
+                "schema": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

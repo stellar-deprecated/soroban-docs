@@ -189,7 +189,7 @@ We're going to generate a client for the incrementor contract with a similar com
 +"postinstall": "if [ ! -d .soroban ]; then npm run setup; fi && npm run bindings:hello && npm run bindings:incrementor"
 ```
 
-Reinstall the dependencies to also run `postinstall`:
+Let's reinstall the dependencies. Remember that `npm i` will also run our `postinstall` script, which re-generates our contract client libraries.
 
 ```bash
 npm i

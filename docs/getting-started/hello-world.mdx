@@ -140,20 +140,6 @@ codegen-units = 1
 lto = true
 ```
 
-#### Configuring the `release-with-logs` Profile
-
-Configuring a `release-with-logs` profile can be useful if you need to build a `.wasm` file that has logs enabled for printing debug logs when using the [`soroban-cli`]. Note that this is not necessary to access debug logs in tests or to use a step-through-debugger.
-
-Add the following to your `Cargo.toml` and use the `release-with-logs` profile when you need logs.
-
-```toml title=Cargo.toml
-[profile.release-with-logs]
-inherits = "release"
-debug-assertions = true
-```
-
-See the [logging example](../basic-tutorials/logging.mdx) for more information about how to log.
-
 ## Hello Soroban Contract
 
 Now that we have our project created, let's take a look a the hello-soroban contract in `/contracts/hello-soroban/src/lib.rs` in more depth.

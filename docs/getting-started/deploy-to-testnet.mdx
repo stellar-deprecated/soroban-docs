@@ -75,7 +75,7 @@ soroban contract bindings typescript \
 
 :::note
 
-The template includes an npm script that wraps this CLI command which may be more convenient to use: `npm run bindings:hello`.
+This again makes use of [command expansion](https://www.gnu.org/software/bash/manual/html_node/Command-Substitution.html), which only works with bash-compatible shells. If you are using Windows or some other shell, you will need to copy the output of `soroban config…` and paste it into the `curl` command, or figure out how command expansion works in your shell.
 
 :::
 
@@ -83,9 +83,9 @@ We attempt to keep the code in these generated libraries readable, so go ahead a
 
 As it says, when using local libraries, we've had the [most success](https://github.com/stellar/soroban-example-dapp/pull/117#discussion_r1232873560) when generating them directly into the `node_modules` folder, and leaving them out of the `dependencies` section. Yes, this is surprising, but it works the best.
 
-The template included several scripts in the root `package.json` file, including a `postinstall` script that calls `bindings:hello` after every install to make sure that the generated library stays up-to-date.
+The template added several scripts in the root `package.json` file, including a script that wraps the `soroban contract bindings typescript` command into `npm run bindings:hello`. There is also a `postinstall` script that calls `bindings:hello` after every install to make sure that the generated library stays up-to-date. This means you won't need to manually run the `soroban contract bindings typescript` command again.
 
-Let's run `npm install` now to make sure that all of our dependencies are installed, and note that the `postinstall` script will also run. This means you won't need to manually run the `soroban contract bindings typescript` command again.
+Let's run `npm install` now to make sure that all of our dependencies are installed.
 
 ### Call the contract from the frontend
 
@@ -141,11 +141,11 @@ npm run build
 
 Then check the `dist` folder. You'll see that it built an HTML and CSS file, but no JavaScript. And if you look at the HTML file, you'll see a static "Hello Soroban" in the `<h1>`.
 
-During the build, Astro made a single call to your contract, then injected the static result into the page. This is great for contract methods that don't change, but probably won't work for most contract methods. Let's integrate with the `incrementor` contract to see how to handle interactive methods in Astro.
+During the build, Astro made a single call to your contract, then injected the static result into the page. This is great for contract methods that don't change, but probably won't work for most contract methods. In the next section we'll create a new contract that has interactive methods, so we can explore how to handle that with Astro.
 
 ### Call the contract with `soroban-cli`
 
-To call the `hello` method on our `hello-soroban` contract, run the following with the `to` argument set to "RPC". This again makes use of command expansion `$(…)`; see the note about that in the [Configure an Identity](setup#configure-an-identity) section of Setup.
+To call the `hello` method on our `hello-soroban` contract, run the following with the `to` argument set to "RPC".
 
 ```bash
 soroban contract invoke \

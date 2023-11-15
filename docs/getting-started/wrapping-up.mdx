@@ -70,6 +70,8 @@ The `postinstall` script also checks for the existence of `.soroban` and automat
 
 ## Take it further
 
+There's obviously some functionality missing in this app. For example, that `???` is a bummer. But our `incrementor` contract doesn't give us a way to query the current value without also updating it.
+
 If you want to take it a bit further and make sure you understand all the pieces here, try the following:
 
 - Make a `src/contracts.ts` file and move the `new Contract({ ... })` logic into those files.

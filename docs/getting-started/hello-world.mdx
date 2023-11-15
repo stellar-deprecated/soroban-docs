@@ -43,7 +43,7 @@ Astro's project initializer allows us to pass in a `template` argument. If we us
 So let's go ahead and do that:
 
 ```sh
-npm create astro@latest astro-soroban-tutorial -- --template AhaLabs/soroban-tutorial-project#template --no-git --no-install --typescript strictest
+npm create astro@latest astro-soroban-tutorial -- --template AhaLabs/soroban-tutorial-project#template --no-install --typescript strictest
 ```
 
 Let's take a brief tour of the `astro-soroban-tutorial` project that we just created.
@@ -74,7 +74,7 @@ There are several project organization strategies, but we find it to be the simp
 
 ### Contracts
 
-The `contracts` directory is where our Soroban contracts live. Each contract will have it's own sub-directory with source code, test code and a `Cargo.toml` file.
+The `contracts` directory is where our Soroban contracts live. Each contract will have its own sub-directory with source code, test code and a `Cargo.toml` file.
 
 ```toml title="contracts/hello-soroban/Cargo.toml"
 [package]
@@ -110,7 +110,7 @@ The `testutils` are automatically enabled inside [Rust unit tests] inside the sa
 
 ### Astro files
 
-The boiler plate Astro web app files live in the `src` directory. This includes the Astro components, layouts, and pages. We'll look at these pieces a bit closer later in this tutorial.
+The boilerplate Astro web app files live in the `src` directory. This includes the Astro components, layouts, and pages. We'll look at these pieces a bit closer later in this tutorial.
 
 As expected for a JavaScript web app, there is also a `package.json` file with JavaScript dependencies and scripts. We'll take a closer look at some of the scripts in that file later in the tutorial.
 
@@ -358,7 +358,7 @@ Building optimized contracts is only necessary when deploying to a network with 
 
 In this section, we wrote a simple contract that can be deployed to a Soroban network.
 
-Next we'll learn to deploy the hello-soroban contract to Soroban's Testnet network and interact with it over RPC using the CLI.
+Next we'll learn to deploy the hello-soroban contract to Soroban's Testnet network and interact with it over RPC from both a JavaScript web app as well as from the CLI.
 
 [Rust unit tests]: https://doc.rust-lang.org/rust-by-example/testing/unit_testing.html
 [`soroban-cli`]: setup.mdx#install-the-soroban-cli

@@ -83,9 +83,9 @@ We attempt to keep the code in these generated libraries readable, so go ahead a
 
 As it says, when using local libraries, we've had the [most success](https://github.com/stellar/soroban-example-dapp/pull/117#discussion_r1232873560) when generating them directly into the `node_modules` folder, and leaving them out of the `dependencies` section. Yes, this is surprising, but it works the best.
 
-The template adds several scripts in the `package.json` file, including a `postinstall` script that calls `bindings:hello` after every install to make sure that the generated library stays up-to-date.
+The template included several scripts in the root `package.json` file, including a `postinstall` script that calls `bindings:hello` after every install to make sure that the generated library stays up-to-date.
 
-Let's run `npm install` now to make sure that all of our dependencies are installed, and note that the `postinstall` script will also run.
+Let's run `npm install` now to make sure that all of our dependencies are installed, and note that the `postinstall` script will also run. This means you won't need to manually run the `soroban contract bindings typescript` command again.
 
 ### Call the contract from the frontend
 

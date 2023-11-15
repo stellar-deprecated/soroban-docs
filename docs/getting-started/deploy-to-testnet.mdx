@@ -133,6 +133,8 @@ This is part of Astro's philosophy: the frontend should ship with as few assets 
 
 When using the development server with `npm run dev`, it runs the frontmatter code on the server, and injects the resulting values into the page on the client.
 
+In this case, our `greeter.hello({ to: 'Soroban' });` method is making an RPC call on the server, and the response from that call is being injected onto our index page where we put `{greeting.join(' ')}`. For information about RPC calls, checkout out the [RPC](../reference/rpc.mdx) reference page.
+
 You can try building to see this more dramatically:
 
 ```bash
@@ -154,19 +156,13 @@ soroban contract invoke \
   --network testnet \
   -- \
   hello \
-  --to RPC
+  --to CLI
 ```
-
-:::info
-
-In the background, the CLI is making RPC calls. For information on that checkout out the [RPC](../reference/rpc.mdx) reference page.
-
-:::
 
 The following output should appear.
 
 ```json
-["Hello", "RPC"]
+["Hello", "CLI"]
 ```
 
 :::info

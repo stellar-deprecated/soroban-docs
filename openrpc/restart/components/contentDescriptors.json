@@ -1,9 +1,0 @@
-{
-  "latestLedger": {
-    "name": "latestLedger",
-    "description": "The latest ledger known to Soroban RPC at the time it handled the request.",
-    "schema": {
-      "$ref": "./schemas.json#latestLedger"
-    }
-  }
-}

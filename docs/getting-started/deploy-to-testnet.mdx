@@ -55,16 +55,52 @@ echo "C...[your contract id here]" > .soroban/hello-id
 
 Now that we have our contract deployed to Testnet, we can interact with it! This tutorial will go over two ways to interact with Soroban contracts:
 
-- interacting via the generated JavaScript contract clients in a web app
 - interacting with the contract directly via the `soroban-cli`
+- interacting via the generated JavaScript contract clients in a web app
 
-We'll start with taking at look at interacting with the contracts from our new Astro web app, using generated JavaScript clients.
+We'll start with taking a look at interacting with the contract from the `soroban-cli` and then go on to generate JavaScript clients for our contract so that we can interact with it from the Astro web app.
+
+### Call the contract with `soroban-cli`
+
+To call the `hello` method on our `hello-soroban` contract, run the following with the `to` argument set to "CLI".
+
+```bash
+soroban contract invoke \
+  --id $(cat .soroban/hello-id) \
+  --source alice \
+  --network testnet \
+  -- \
+  hello \
+  --to CLI
+```
+
+The following output should appear.
+
+```json
+["Hello", "CLI"]
+```
+
+In the background, the CLI is making RPC calls to the Soroban network. For information on that checkout out the [RPC](../reference/rpc.mdx) reference page.
+
+:::info
+
+The `--` double-dash is required!
+
+This is a general [CLI pattern](https://unix.stackexchange.com/questions/11376/what-does-double-dash-mean) used by other commands like [cargo run](https://doc.rust-lang.org/cargo/commands/cargo-run.html). Everything after the `--`, sometimes called [slop](https://github.com/clap-rs/clap/issues/971), is passed to a child process. In this case, `soroban contract invoke` builds an _implicit CLI_ on-the-fly for the `hello` method in your contract. It can do this because Soroban SDK embeds your contract's schema / interface types right in the `.wasm` file that gets deployed on-chain. You can also try:
+
+    soroban contract invoke ... -- --help
+
+and
+
+    soroban contract invoke ... -- hello --help
+
+:::
 
 ### Generate an NPM package for the Hello Soroban contract
 
-To start, we'll need to generate an NPM package for the Hello Soroban contract. This is our suggested way to interact with contracts from frontends. These generated libraries work with any JavaScript project (not a specific UI like React), and make it easy to work with some of the trickiest bits of Soroban, like encoding [XDR](https://soroban.stellar.org/docs/fundamentals-and-concepts/fully-typed-contracts).
+Our suggested way to interact with contracts from frontends is to generate an NPM package for the contracts. These generated libraries work with any JavaScript project (not a specific UI like React), and make it easy to work with some of the trickiest bits of Soroban, like encoding [XDR](https://soroban.stellar.org/docs/fundamentals-and-concepts/fully-typed-contracts).
 
-This is going to use the CLI command `soroban contract bindings typescript`. From the `astro-soroban-tutorial` directory, run
+To generate a client library for our `hello-soroban` contract, we are going to use the CLI command `soroban contract bindings typescript`. From the `astro-soroban-tutorial` directory, run
 
 ```bash
 soroban contract bindings typescript \
@@ -75,7 +111,7 @@ soroban contract bindings typescript \
 
 :::note
 
-This again makes use of [command expansion](https://www.gnu.org/software/bash/manual/html_node/Command-Substitution.html), which only works with bash-compatible shells. If you are using Windows or some other shell, you will need to copy the output of `soroban config…` and paste it into the `curl` command, or figure out how command expansion works in your shell.
+This again makes use of [command expansion](https://www.gnu.org/software/bash/manual/html_node/Command-Substitution.html), which only works with bash-compatible shells. If you are using Windows or some other shell, you will need to copy the contract id from `.soroban/hello-id` and paste it into this command, or figure out how command expansion works in your shell.
 
 :::
 
@@ -133,7 +169,7 @@ This is part of Astro's philosophy: the frontend should ship with as few assets 
 
 When using the development server with `npm run dev`, it runs the frontmatter code on the server, and injects the resulting values into the page on the client.
 
-In this case, our `greeter.hello({ to: 'Soroban' });` method is making an RPC call on the server, and the response from that call is being injected onto our index page where we put `{greeting.join(' ')}`. For information about RPC calls, checkout out the [RPC](../reference/rpc.mdx) reference page.
+In this case, our `greeter.hello({ to: 'Soroban' });` method is making an RPC call on the server, and the response from that call is being injected onto our index page where we put `{greeting.join(' ')}`.
 
 You can try building to see this more dramatically:
 
@@ -145,45 +181,12 @@ Then check the `dist` folder. You'll see that it built an HTML and CSS file, but
 
 During the build, Astro made a single call to your contract, then injected the static result into the page. This is great for contract methods that don't change, but probably won't work for most contract methods. In the next section we'll create a new contract that has interactive methods, so we can explore how to handle that with Astro.
 
-### Call the contract with `soroban-cli`
-
-To call the `hello` method on our `hello-soroban` contract, run the following with the `to` argument set to "RPC".
-
-```bash
-soroban contract invoke \
-  --id $(cat .soroban/hello-id) \
-  --source alice \
-  --network testnet \
-  -- \
-  hello \
-  --to CLI
-```
-
-The following output should appear.
-
-```json
-["Hello", "CLI"]
-```
-
-:::info
-
-The `--` double-dash is required!
-
-This is a general [CLI pattern](https://unix.stackexchange.com/questions/11376/what-does-double-dash-mean) used by other commands like [cargo run](https://doc.rust-lang.org/cargo/commands/cargo-run.html). Everything after the `--`, sometimes called [slop](https://github.com/clap-rs/clap/issues/971), is passed to a child process. In this case, `soroban contract invoke` builds an _implicit CLI_ on-the-fly for the `hello` method in your contract. It can do this because Soroban SDK embeds your contract's schema / interface types right in the `.wasm` file that gets deployed on-chain. You can also try:
-
-    soroban contract invoke ... -- --help
-
-and
-
-    soroban contract invoke ... -- hello --help
-
-:::
-
 ## Summary
 
 In this lesson, we learned how to:
 
 - deploy a contract to Testnet
-- interact with a deployed contract
+- interact with a deployed contract from `soroban-cli`
+- generate an NPM client library for our contract and interact with it from the frontend app
 
 Next we'll add a new contract to this project, which will show off a little bit of Soroban's storage capabilities.

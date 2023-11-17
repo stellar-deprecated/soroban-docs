@@ -38,7 +38,7 @@ Let's get started.
 
 You're going to need [Node.js](https://nodejs.org/en/download/package-manager/) v18.14.1 or greater. If you haven't yet, install it now.
 
-Astro's project initializer allows us to pass in a `template` argument. If we use our tutorial repository as a template, it will create a project that includes a `hello-soroban` contract, a Cargo.toml for our Rust workspace, and npm scripts to generate the appropriate typescript client library to interact with the contract.
+Astro's project initializer allows us to pass in a `template` argument. If we use our tutorial repository as a template, it will create a project that includes a `hello-soroban` contract, a `Cargo.toml` for our Rust workspace, and npm scripts to generate the appropriate TypeScript client library to interact with the contract.
 
 So let's go ahead and do that:
 
@@ -98,7 +98,7 @@ testutils = ["soroban-sdk/testutils"]
 
 We need to set the `crate-type` to `"cdylib"` in order to build the contract.
 
-The dependencies are managed through the Rust workspace's Cargo.toml file at the root of the project, which we will take a closer look at below.
+The dependencies are managed through the Rust workspace's `Cargo.toml` file at the root of the project, which we will take a closer look at below.
 
 The `features` list includes a `testutils` feature, which will cause additional test utilities to be generated for calling the contract in tests.
 

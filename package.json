@@ -13,24 +13,33 @@
     "format:mdx": "prettier --prose-wrap preserve --write \"docs/**/*.{md,mdx}\"",
     "check:mdx": "prettier --prose-wrap preserve --check \"docs/**/*.{md,mdx}\"",
     "lint:fix": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix",
-    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\""
+    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
+    "postinstall": "patch-package"
   },
   "dependencies": {
+    "@apidevtools/json-schema-ref-parser": "^11.1.0",
     "@docusaurus/core": "^2.2.0",
     "@docusaurus/preset-classic": "^2.2.0",
     "@docusaurus/theme-mermaid": "^2.4.1",
     "@mdx-js/react": "^1.6.22",
     "@metamask/open-rpc-docs-react": "^0.1.2",
+    "@open-rpc/meta-schema": "^1.14.6",
+    "@open-rpc/schema-utils-js": "^1.16.1",
     "@soroban-react/chains": "^5.3.12",
     "@soroban-react/core": "^5.3.12",
     "@soroban-react/events": "^5.3.12",
     "@soroban-react/freighter": "^5.3.12",
     "@soroban-react/types": "^5.3.12",
+    "@stellar/freighter-api": "^1.6.1",
+    "ajv": "^8.12.0",
     "axios": "^1.4.0",
     "clsx": "^1.2.1",
+    "dereference-json-schema": "^0.2.1",
     "docusaurus-plugin-sass": "^0.2.2",
     "mdx-mermaid": "^1.3.2",
     "mermaid": "^9.3.0",
+    "patch-package": "^8.0.0",
+    "postinstall-postinstall": "^2.1.0",
     "prism-react-renderer": "^1.3.5",
     "process": "^0.11.10",
     "react": "^17.0.2",
@@ -38,8 +47,7 @@
     "react-rewards": "^2.0.4",
     "react-toastify": "^9.1.3",
     "sass": "^1.57.1",
-    "soroban-client": "^1.0.0-beta.2",
-    "@stellar/freighter-api": "^1.6.1"
+    "soroban-client": "^1.0.0-beta.2"
   },
   "browserslist": {
     "production": [

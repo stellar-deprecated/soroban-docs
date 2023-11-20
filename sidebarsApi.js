@@ -20,12 +20,12 @@ module.exports = {
     },
     {
       type: 'category',
-      label: 'Request/Response Methods',
+      label: 'Methods',
       collapsible: true,
       collapsed: false,
       link: {
         type: 'generated-index',
-        title: 'Request/Response Methods',
+        title: 'Methods',
         slug: 'methods',
       },
       items: [

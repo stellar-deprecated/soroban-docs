@@ -193,29 +193,29 @@ const GettingStarted = () => (
         <GettingStartedCard
           index="1."
           title="Hello World"
-          subtitle="Create your first Soroban contract."
+          subtitle="Create your first Soroban project with a smart contract and front-end app."
           href="/docs/getting-started/hello-world"
         />
 
         <GettingStartedCard
           index="2."
-          title="Storing Data"
-          subtitle="Write a simple Soroban contract that stores and retrieves data."
-          href="/docs/getting-started/storing-data"
-        />
-
-        <GettingStartedCard
-          index="3."
           title="Deploy to Testnet"
           subtitle="Deploy and invoke your contracts on Testnet."
           href="/docs/getting-started/deploy-to-testnet"
         />
 
         <GettingStartedCard
+          index="3."
+          title="Storing Data"
+          subtitle="Write a simple Soroban contract that stores and retrieves data."
+          href="/docs/getting-started/storing-data"
+        />
+
+        <GettingStartedCard
           index="4."
           title="Create an App"
-          subtitle="Build a front-end app to interact with your Soroban contracts."
-          href="/docs/getting-started/create-an-app"
+          subtitle="Expand your front-end app to interact with more complex Soroban contracts."
+          href="/docs/getting-started/deploy-incrementor"
         />
 
         <GettingStartedCard

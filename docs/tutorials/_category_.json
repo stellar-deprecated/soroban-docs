@@ -4,5 +4,6 @@
   "link": {
     "type": "doc",
     "id": "tutorials/index"
-  }
+  },
+  "collapsible": false
 }

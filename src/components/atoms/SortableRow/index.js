@@ -1,7 +1,6 @@
 import React from "react"
 
 const SortableRow = (props) => {
-    console.log('SortableRow props', props)
     return (
         <tr>
             <td>{props.title}</td>

@@ -9,7 +9,6 @@ import styles from './style.module.css'
 
 function DocCardListForCurrentSidebarCategory({className}) {
   const category = useCurrentSidebarCategory();
-  console.log(category)
   return category.label === 'Tutorials'
     ? <FilterableDocCardList items={category.items} className={className} />
     : category.label === 'Guides'
@@ -80,7 +79,6 @@ function FilterableDocCardList(props) {
 }
 
 export default function DocCardList(props) {
-  console.log('nonFilterableDocCardList props', props)
   const {items, className} = props;
   if (!items) {
     return <DocCardListForCurrentSidebarCategory {...props} />;

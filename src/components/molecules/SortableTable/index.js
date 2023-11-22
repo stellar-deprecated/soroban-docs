@@ -5,7 +5,6 @@ const arrowDown = <span style={{ fontSize: "10px" }}>&#9660;</span>;
 const arrowUp = <span style={{ fontSize: "10px" }}>&#9650;</span>;
 
 const SortableTable = (props) => {
-    console.log('SortableTable props', props)
     const [isAscending, setIsAscending] = useState(false);
     const [sortColumn, setSortColumn] = useState(null)
 

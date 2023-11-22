@@ -47,7 +47,6 @@ function EditMetaRow({
 }
 export default function DocItemFooter() {
   const {metadata} = useDoc();
-  console.log('metadata', metadata)
   const {editUrl, lastUpdatedAt, formattedLastUpdatedAt, lastUpdatedBy, tags} =
     metadata;
   const canDisplayTagsRow = tags.length > 0;

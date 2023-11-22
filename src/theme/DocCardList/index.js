@@ -9,9 +9,44 @@ import styles from './style.module.css'
 
 function DocCardListForCurrentSidebarCategory({className}) {
   const category = useCurrentSidebarCategory();
+  console.log(category)
   return category.label === 'Tutorials'
     ? <FilterableDocCardList items={category.items} className={className} />
+    : category.label === 'Guides'
+    ? <GuidesDocList items={category.items} className={className} />
     : <DocCardList items={category.items} className={className} />;
+}
+
+function GuidesDocList(props) {
+  const {items, className} = props;
+
+  // return (
+  //   <section className={clsx('row', className)}>
+  //     {items.map((item, index) => {
+  //       if (item.type === 'category') {
+  //         return (
+  //           <h2>{item.label}</h2>
+  //         )
+  //       }}
+  //     )}
+  //   </section>
+  // );
+  return (
+    <div className={clsx('row', className)}>
+      {items.map((item, index) => {
+        if (item.type === 'category') {
+          return (
+            <section className={clsx('col', 'col--6', 'margin-bottom--lg', className)}>
+              <h2>{item.label}</h2>
+              {item.items.map((item, index) =>
+                <p className='margin-bottom--sm'><a href={item.href}>{item.label}</a></p>
+              )}
+            </section>
+          )
+        }
+      })}
+    </div>
+  )
 }
 
 function FilterableDocCardList(props) {
@@ -45,6 +80,7 @@ function FilterableDocCardList(props) {
 }
 
 export default function DocCardList(props) {
+  console.log('nonFilterableDocCardList props', props)
   const {items, className} = props;
   if (!items) {
     return <DocCardListForCurrentSidebarCategory {...props} />;

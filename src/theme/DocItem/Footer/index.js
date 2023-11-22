@@ -5,6 +5,7 @@ import {useDoc} from '@docusaurus/theme-common/internal';
 import LastUpdated from '@theme/LastUpdated';
 import EditThisPage from '@theme/EditThisPage';
 import TagsListInline from '@theme/TagsListInline';
+import DocCardList from '@theme/DocCardList';
 
 import ReaderFeedback from '@site/src/components/ReaderFeedback';
 import styles from './styles.module.css';
@@ -46,16 +47,19 @@ function EditMetaRow({
 }
 export default function DocItemFooter() {
   const {metadata} = useDoc();
+  console.log('metadata', metadata)
   const {editUrl, lastUpdatedAt, formattedLastUpdatedAt, lastUpdatedBy, tags} =
     metadata;
   const canDisplayTagsRow = tags.length > 0;
   const canDisplayEditMetaRow = !!(editUrl || lastUpdatedAt || lastUpdatedBy);
   const canDisplayFooter = canDisplayTagsRow || canDisplayEditMetaRow;
+  const canDisplayDocCardsOnGuide = metadata.permalink.startsWith('/guides')
   if (!canDisplayFooter) {
     return null;
   }
   return (
     <>
+      {canDisplayDocCardsOnGuide && <div className='margin-top--lg'><DocCardList /></div>}
       <ReaderFeedback pageId={metadata.unversionedId} />
       <footer
         className={clsx(ThemeClassNames.docs.docFooter, 'docusaurus-mt-lg')}>

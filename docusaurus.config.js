@@ -29,6 +29,7 @@ const config = {
         path: 'guides',
         routeBasePath: 'guides',
         sidebarPath: require.resolve('./sidebarsGuides.js'),
+        sidebarItemsGenerator: require('./src/sidebar-docs-generator'),
         editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
         showLastUpdateTime: true,
       },
@@ -88,7 +89,8 @@ const config = {
       image: 'img/meta.png',
       docs: {
         sidebar: {
-          autoCollapseCategories: false
+          autoCollapseCategories: false,
+          // hideable: true,
         }
       },
       navbar: {

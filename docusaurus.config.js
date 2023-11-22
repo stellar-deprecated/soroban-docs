@@ -71,7 +71,6 @@ const config = {
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
           sidebarItemsGenerator: require('./src/sidebar-docs-generator'),
-          // exclude: ['**/guides/*.mdx'],
         },
         theme: {
           customCss: [require.resolve("./src/css/custom.scss")],

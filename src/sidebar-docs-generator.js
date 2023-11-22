@@ -17,22 +17,19 @@ module.exports = async ({ defaultSidebarItemsGenerator, ...args }) => {
             }
         })
     } else if (args.version.contentPath.endsWith('guides')) {
+        /**
+         * Adds the `hide_table_of_contents` directive to each of the "Guides"
+         * docs so that the page width isn't shrunk down.
+         *
+         * @todo For whatever reason, this doesn't appear to work like the
+         * sidebar class name does (above). For now, make sure to manually add
+         * `hide_table_of_contents: true` to the front matter of each guide doc.
+         */
         args.docs.map((doc) =>
             doc.frontMatter.hide_table_of_contents = true
         )
     }
 
-    // const docs = args.docs.filter((doc) => !doc.id.startsWith('tutorials'))
-    // const docs = args.docs
-    // if (args.version.contentPath.endsWith('guides')) {
-    //     args.docs.map((doc) => console.log(doc.frontMatter))
-    // }
     const sidebarItems = await defaultSidebarItemsGenerator({ ...args })
-    // console.log('sidebarItems', sidebarItems)
-    // sidebarItems.map((item) => {
-    //     if (item.id && item.id.startsWith('tutorials')) {
-    //         item.className = 'sidebar-item-hidden'
-    //     }
-    // })
     return sidebarItems
 }

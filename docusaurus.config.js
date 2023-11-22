@@ -29,7 +29,7 @@ const config = {
         path: 'guides',
         routeBasePath: 'guides',
         sidebarPath: require.resolve('./sidebarsGuides.js'),
-        sidebarItemsGenerator: require('./src/sidebar-docs-generator'),
+        sidebarItemsGenerator: require('./src/sidebar-generator'),
         editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
         showLastUpdateTime: true,
       },
@@ -70,7 +70,7 @@ const config = {
           breadcrumbs: true,
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
-          sidebarItemsGenerator: require('./src/sidebar-docs-generator'),
+          sidebarItemsGenerator: require('./src/sidebar-generator'),
         },
         theme: {
           customCss: [require.resolve("./src/css/custom.scss")],

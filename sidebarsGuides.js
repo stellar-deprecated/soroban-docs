@@ -5,7 +5,7 @@ module.exports = {
         label: 'Guides',
         link: {
           type: 'doc',
-          id: 'index',
+          id: 'README',
         },
         items: [
           {

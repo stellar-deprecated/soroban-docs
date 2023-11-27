@@ -12,7 +12,7 @@ description: Write a smart contract that stores and retrieves data.
   />
   <meta
     property="og:description"
-    content="Write a simple contract that stores and retrieves data, reorganize your projects as a multi-contract project using Cargo Workspaces, and learn about different kinds of storage."
+    content="Write a simple contract that stores and retrieves data, and learn about different kinds of storage."
   />
   <link
     rel="canonical"
@@ -20,16 +20,19 @@ description: Write a smart contract that stores and retrieves data.
   />
 </head>
 
-Now that we've built a basic Hello World example to see the rough structure of Soroban contracts, we'll write a simple contract that stores and retrieves data. This will help you see the basics of Soroban's storage system. We'll also organize the two contracts as one combined project using a Cargo Workspace, which is a common pattern for Soroban projects.
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Now that we've worked through a basic Hello World example to see the rough structure of Soroban contracts, we'll write a simple contract that stores and retrieves data. This will help you see the basics of Soroban's storage system. We'll also organize the two contracts as one combined project using a Cargo Workspace, which is a common pattern for Soroban projects.
 
 This is going to follow along with the [increment example](https://github.com/stellar/soroban-examples/tree/v20.0.0-rc2/increment), which has a single function that increments an internal counter and returns the value. If you want to see a working example, [try it in
 GitPod](https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v20.0.0-rc2).
 
-This tutorial assumes that you've already completed the previous steps in Getting Started: [Setup](setup.mdx), [Hello World](hello-world.mdx), [Deploy to Testnet](deploy-to-testnet.mdx), and [Multi-Contract Projects](multi-contract-projects.mdx).
+This tutorial assumes that you've already completed the previous steps in Getting Started: [Setup](./setup.mdx), [Hello World](./hello-world.mdx), and [Deploy to Testnet](./deploy-to-testnet.mdx).
 
-## Code
+## Creating an Incrementor contract
 
-Rather than initializing the new contract with `cargo new`, let's copy the `hello-soroban` project:
+The basic structure of our new contract will be similar to the hello-soroban contract, so let's copy that directory and use that as a starting point. From the root of the `astro-soroban-tutorial` project, run:
 
 ```bash
 cp -r contracts/hello-soroban contracts/incrementor
@@ -161,13 +164,15 @@ fn increment() {
 }
 ```
 
-This uses the same concepts described in the Hello World example.
+This uses the same concepts described in the Hello Soroban example.
 
 Make sure it passes:
 
-    cargo test
+```bash
+cargo test
+```
 
-You'll see that this runs tests for the whole workspace; both the Hello World contract and the new Incrementor.
+You'll see that this runs tests for the whole workspace; both the Hello Soroban contract and the new Incrementor one.
 
 If you want to see the output of the `log!` call, run the tests with `--nocapture`:
 
@@ -189,18 +194,8 @@ test test::incrementor ... ok
 
 Can you figure out how to add `get_current_value` function to the contract? What about `decrement` or `reset` functions?
 
-## Commit your changes
-
-Looking at your git diff will be interesting now. It's probably kind of noisy if you just run `git status` or `git diff` right away, but once you `git add .`, git will understand the _renames_ (aka "moves") of all the old `hello-soroban` files better.
-
-Go ahead and commit it.
-
-```bash
-git commit -m "add incrementor contract"
-```
-
 ## Summary
 
-In this section, we added a new contract to this project, reorganizing the project as a multi-contract project using Cargo Workspaces. The new contract made use of Soroban's storage capabilities to store and retrieve data. We also learned about the different kinds of storage and how to manage their lifetimes.
+In this section, we added a new contract to this project that made use of Soroban's storage capabilities to store and retrieve data. We also learned about the different kinds of storage and how to manage their lifetimes.
 
-Next we'll learn a bit more about deploying contracts to Soroban's Testnet network and interact with our incrementor contract using the CLI.
+Next we'll learn a bit more about deploying contracts to Soroban's Testnet network and interact with our incrementor contract.

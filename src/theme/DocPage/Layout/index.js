@@ -7,10 +7,8 @@ import DocPageLayoutMain from '@theme/DocPage/Layout/Main';
 import styles from './styles.module.css';
 export default function DocPageLayout({children}) {
   const sidebar = useDocsSidebar();
-  // console.log('DocPage/Layout sidebar', sidebar)
   const isGuidesPage = sidebar && 'name' in sidebar && sidebar.name === 'guidesSidebar'
   const [hiddenSidebarContainer, setHiddenSidebarContainer] = useState(isGuidesPage);
-  // console.log('DocPage/Layout children', children)
   return (
     <Layout wrapperClassName={styles.docsWrapper}>
       <BackToTopButton />

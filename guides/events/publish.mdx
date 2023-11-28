@@ -3,4 +3,33 @@ title: Publish events from a Rust contract
 hide_table_of_contents: true
 ---
 
-Send them far and wide!
+An event can contain up to 4 topics, alongside the data it is publishing. The `data` can be any value or type you want. However, the topics must not contain:
+
+- `Vec`
+- `Map`
+- `Bytes` or `BytesN` longer than 32 bytes
+- `contracttype`
+
+```rust
+// This function does nothing beside publishing events. Topics we are using are
+// some `u32` integers for the sake of simplicity here.
+pub fn events_function(env: Env) {
+    // A symbol will be our `data` we want published
+    my_data = Symbol::new(&env, "data_to_publish");
+
+    // an event with 0 topics
+    env.events().publish((), my_data.clone());
+
+    // an event with 1 topics
+    env.events().publish((1u32), my_data.clone());
+
+    // an event with 2 topics
+    env.events().publish((1u32, 2u32), my_data.clone());
+
+    // an event with 3 topics
+    env.events().publish((1u32, 2u32, 3u32), my_data.clone());
+
+    // an event with 4 topics
+    env.events().publish((1u32, 2u32, 3u32, 4u32), my_data.clone());
+}
+```

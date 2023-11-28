@@ -12,7 +12,7 @@ module.exports = async ({ defaultSidebarItemsGenerator, ...args }) => {
          * those items are not displayed in the sidebar.
          */
         args.docs.map((doc) => {
-            if (doc.id === 'tutorials/index') {
+            if (doc.id === 'tutorials/README') {
                 doc.frontMatter.sidebar_class_name = "sidebar-category-items-hidden"
             }
         })

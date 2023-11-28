@@ -18,10 +18,7 @@ description: Use Stellar assets on Soroban.
   />
 </head>
 
-# Stellar Asset Contract
-
-The Stellar Asset Contract is an implementation of [CAP-46-6 Smart Contract
-Standardized Asset].
+The Stellar Asset Contract is an implementation of [CAP-46-6 Smart Contract Standardized Asset].
 
 [CAP-46-6 Smart Contract Standardized Asset]: https://stellar.org/protocol/cap-46-06
 
@@ -47,7 +44,7 @@ smart contract developers to get started on Stellar.
 
 ## Deployment
 
-For every 'classic' asset exactly one respective Stellar Asset Contract can be
+For every Stellar asset exactly one respective Stellar Asset Contract can be
 deployed. It can be deployed using the `InvokeHostFunctionOp` with
 `HOST_FUNCTION_TYPE_CREATE_CONTRACT` and `CONTRACT_ID_FROM_ASSET` specified
 [here](../soroban-internals/contract-interactions/stellar-transaction.mdx). The resulting token will have a

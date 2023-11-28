@@ -58,7 +58,12 @@ export default function DocItemFooter() {
   }
   return (
     <>
-      {canDisplayDocCardsOnGuide && <div className='margin-top--lg'><h3>More guides in this category:</h3><DocCardList /></div>}
+      {canDisplayDocCardsOnGuide &&
+        <div className='margin-top--lg'>
+          {metadata.permalink !== '/guides/' && <h3>Guides in this category:</h3>}
+          <DocCardList />
+        </div>
+      }
       <ReaderFeedback pageId={metadata.unversionedId} />
       <footer
         className={clsx(ThemeClassNames.docs.docFooter, 'docusaurus-mt-lg')}>

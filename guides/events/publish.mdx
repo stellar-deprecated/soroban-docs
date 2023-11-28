@@ -20,8 +20,9 @@ pub fn events_function(env: Env) {
     // an event with 0 topics
     env.events().publish((), my_data.clone());
 
-    // an event with 1 topics
-    env.events().publish((1u32), my_data.clone());
+    // an event with 1 topic (Notice the extra comma after the topic in the
+    // tuple? That comma is required in Rust to make a one-element tuple)
+    env.events().publish((1u32,), my_data.clone());
 
     // an event with 2 topics
     env.events().publish((1u32, 2u32), my_data.clone());

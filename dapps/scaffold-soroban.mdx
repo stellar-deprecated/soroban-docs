@@ -6,7 +6,7 @@ description: Dive into the simple implementations of Soroban dapps to understand
 
 ## Demonstrative Soroban Dapps
 
-import ReactPlayer from 'react-player'
+import ReactPlayer from "react-player";
 
 The **Soroban** team has invested considerable effort into contract implementation. They’ve built CLI’s and libraries, enabling contract builders to create and invoke using Rust, which forms the “backend” of Soroban. However, the “frontend”, which involves JS client libraries, required attention.
 
@@ -17,30 +17,41 @@ During the Soroban Hackathon, we recognized that while the frontend libraries we
 To tackle this, the **Wallet Engineering** team, in collaboration with the Soroban team, has decided to launch “Scaffold Soroban”, a collection of demo dapps. These dapps demonstrate basic functionalities in a structured, easy-to-follow manner, primarily focusing on how to construct/deploy Soroban contract invocations.
 
 ## Dapp Demos
+
 For easy accessibility, we have compiled the dapps into a [single repository](https://github.com/stellar/scaffold-soroban), which contains the following dapps:
 
 ### [1. Payment Dapp](https://github.com/stellar/soroban-react-payment)
 
-
 This dapp mirrors the Soroban payment flow in Freighter by using the wallet’s Soroban token balances to invoke the `xfer` method on the token’s contract.
 
 See the [demo](https://github.com/stellar/soroban-react-payment/releases/tag/v1.0.0)
-<ReactPlayer controls url='https://user-images.githubusercontent.com/6789586/244450707-2ca53a9c-7493-47a1-aee6-cb126d6e32f8.mp4' />
 
+<ReactPlayer
+  controls
+  url="https://user-images.githubusercontent.com/6789586/244450707-2ca53a9c-7493-47a1-aee6-cb126d6e32f8.mp4"
+/>
 
 ### [2. Mint Token Dapp](https://github.com/stellar/soroban-react-mint-token)
 
 This dapp allows a token admin to mint tokens by using the admin account to invoke the `mint` method on the token’s contract.
 
 See the [demo](https://github.com/stellar/soroban-react-mint-token/releases/tag/v1.0.0)
-<ReactPlayer controls url='https://user-images.githubusercontent.com/6886006/246495488-1b02da2c-5119-47c6-ab38-fbaa73a26f12.mov' />
+
+<ReactPlayer
+  controls
+  url="https://user-images.githubusercontent.com/6886006/246495488-1b02da2c-5119-47c6-ab38-fbaa73a26f12.mov"
+/>
 
 ### [3. Atomic Swap Dapp](https://github.com/stellar/soroban-react-atomic-swap)
 
 This dapp demonstrates a simplified swap between two tokens by using the wallet’s Soroban token balances to invoke the `swap` method on the atomic swap contract.
 
 See the [demo](https://github.com/stellar/soroban-react-atomic-swap/releases/tag/v1.0.0)
-<ReactPlayer controls url='https://user-images.githubusercontent.com/6886006/258894451-19f4363b-e6e3-4d32-973a-6d99fd0d9847.mov' />
+
+<ReactPlayer
+  controls
+  url="https://user-images.githubusercontent.com/6886006/258894451-19f4363b-e6e3-4d32-973a-6d99fd0d9847.mov"
+/>
 
 ## How To Explore the Dapps on Scaffold-Soroban
 

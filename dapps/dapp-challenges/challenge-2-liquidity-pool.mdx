@@ -70,7 +70,6 @@ cargo install_soroban
 
 Soroban CLI is the command line interface to Soroban. It allows you to build, deploy, and interact with smart contracts, configure identities, generate key pairs, manage networks, and more. The soroban-cli (alias) that is used in this challenge is a pinned version of the soroban-cli that is used in the Soroban Dapps Challenge. This ensures that the challenge is reproducible and that all participants are using the same version of Soroban.
 
-
 ## Checkpoint 1: 🎬 Deploy Smart Contracts
 
 Now that you have the Crowdfund branch checked out, it's time to deploy the smart contracts to a Sandbox environment. Deploying a smart contract in a production setting involves submitting the contract code to the blockchain's main network ( Mainnet ), where it becomes part of the chain's immutable ledger. Deploying smart contracts to a Sandbox environment simulates that process without actually affecting Mainnet. When you deploy the smart contracts, you'll instead deploy to Futurenet, a test network with more cutting-edge features that have not yet been implemented in the Mainnet.
@@ -130,7 +129,6 @@ You will need to add some Futurenet network lumens to your wallet to interact wi
 ## Checkpoint 3: 🌊 Dive into the Liquidity Pool
 
 Embark on a tidal journey! In this step you will mint, deposit, swap, and withdraw tokens from the liquidity pool.
-
 
 <Tabs defaultValue="mintTokens" values={[
     {label: '🏦 Mint Tokens', value: 'mintTokens'},
@@ -308,7 +306,8 @@ Once the transaction is confirmed, you should see updated balances on the fronte
 </CompleteStepButton>
 
 ## Checkpoint 4: 🚢 Ship It! 🚁
-Now that your dapp is fully functional, its time to deploy it to a production environment. In this step, you will learn how to deploy your dapp to Vercel, a cloud platform for static sites that offers a quick and effective way to deploy the frontend of your dapp. This section requires that you have a [Vercel account] and the Vercel cli installed. 
+
+Now that your dapp is fully functional, its time to deploy it to a production environment. In this step, you will learn how to deploy your dapp to Vercel, a cloud platform for static sites that offers a quick and effective way to deploy the frontend of your dapp. This section requires that you have a [Vercel account] and the Vercel cli installed.
 
 [Vercel account]: https://vercel.com/login
 
@@ -318,7 +317,7 @@ First, you will remove the target directory, as it is not used by Vercel to depl
 rm -rf target
 ```
 
->Note: You can build this directory again by running `soroban contract build` in the `contracts/abundance` directory.
+> Note: You can build this directory again by running `soroban contract build` in the `contracts/abundance` directory.
 
 Next, you must move your `.soroban` directory to the frontend directory.
 
@@ -355,13 +354,14 @@ Then, remove any existing `.vercel` directory in your project to ensure that you
 ```bash
 rm -rf .vercel
 ```
+
 Then, run the following command to deploy your example dapp:
 
 ```bash
 vercel --prod
 ```
 
-Vercel will prompt you to link your local project to a new Vercel project. 
+Vercel will prompt you to link your local project to a new Vercel project.
 Follow the answers to the prompts below to ensure that your local project is correctly linked to a new Vercel project:
 
 ```bash

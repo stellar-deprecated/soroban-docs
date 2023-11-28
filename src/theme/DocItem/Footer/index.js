@@ -59,7 +59,7 @@ export default function DocItemFooter() {
   return (
     <>
       {canDisplayDocCardsOnGuide &&
-        <div className='margin-top--xl'>
+        <div className={clsx(metadata.permalink === '/guides/' ? 'margin-top--lg' : 'margin-top--xl')}>
           {metadata.permalink !== '/guides/' && <h3>Guides in this category:</h3>}
           <DocCardList />
         </div>

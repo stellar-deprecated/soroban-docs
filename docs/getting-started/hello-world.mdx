@@ -153,7 +153,6 @@ debug-assertions = true
 ```
 
 [Rust unit tests]: https://doc.rust-lang.org/rust-by-example/testing/unit_testing.html
-[Rust integration tests]: https://doc.rust-lang.org/rust-by-example/testing/integration_testing.html
 [`soroban-cli`]: setup.mdx#install-the-soroban-cli
 
 ## Write a Contract
@@ -315,9 +314,6 @@ The first time you run the tests you may see output in the terminal of cargo com
 
 :::
 
-[Rust unit test]: https://doc.rust-lang.org/rust-by-example/testing/unit_testing.html
-[Rust integration test]: https://doc.rust-lang.org/rust-by-example/testing/integration_testing.html
-
 ## Build
 
 To build a Soroban contract to deploy or run, use the `soroban contract build` command.
@@ -354,7 +350,9 @@ Then build an optimized `.wasm` file:
 This will optimize and output a new `hello_soroban.optimized.wasm` file in the same location as the input `.wasm`.
 
 :::tip
-Building optimized contracts is only necessary when deploying to a network with fees or when analyzing and profiling a contract to get it as small as possible. If you're just starting out writing a contract, these steps are not necessary. See [Build] for details on how to build for development.
+
+Building optimized contracts is only necessary when deploying to a network with fees or when analyzing and profiling a contract to get it as small as possible. If you're just starting out writing a contract, these steps are not necessary. See [Build](#build) for details on how to build for development.
+
 :::
 
 ## Commit to version control

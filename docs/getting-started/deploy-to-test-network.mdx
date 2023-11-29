@@ -1,6 +1,6 @@
 ---
 sidebar_position: 3
-title: 2. Deploy to Testnet
+title: 2. Deploy to Test Network
 description: Deploy a smart contract to a live test network.
 ---
 
@@ -17,22 +17,28 @@ description: Deploy a smart contract to a live test network.
   />
   <link
     rel="canonical"
-    href="https://soroban.stellar.org/docs/getting-started/deploy-to-testnet"
+    href="https://soroban.stellar.org/docs/getting-started/deploy-to-test-network"
   />
 </head>
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 To recap what we've done so far, in [Setup](setup.mdx):
 
 - we set up our local environment to write Rust smart contracts
 - installed the soroban-cli
-- configured the soroban-cli to communicate with the Soroban Testnet via RPC
+- configured the soroban-cli to communicate with a test Stellar network via RPC
 - and configured an identity to sign transactions
 
-In [Hello World](hello-world.mdx) we wrote a simple contract, and now we are ready to deploy that contract to Testnet, and interact with it.
+In [Hello World](hello-world.mdx) we wrote a simple contract, and now we are ready to deploy that contract to a test network, and interact with it.
 
 ## Deploy
 
 To deploy your Hello Soroban contract, run the following command:
+
+<Tabs groupId="test-networks">
+<TabItem value="testnet" label="Testnet">
 
 ```bash
 soroban contract deploy \
@@ -40,6 +46,19 @@ soroban contract deploy \
   --source alice \
   --network testnet
 ```
+
+</TabItem>
+<TabItem value="standalone" label="Standalone">
+
+```bash
+soroban contract deploy \
+  --wasm target/wasm32-unknown-unknown/release/hello_soroban.wasm \
+  --source alice \
+  --network standalone
+```
+
+</TabItem>
+</Tabs>
 
 This returns the ID of the contract, starting with a `C`. Let's put it somewhere semi-permanent so we can use it later. Copy that value and put it into a file in the `.soroban` directory called `hello-id`. You may need to create the `.soroban` folder first with `mkdir .soroban`.
 
@@ -57,7 +76,10 @@ In the background, the CLI is making RPC calls. For information on that checkout
 
 :::
 
-Here we're setting the `to` argument to `RPC`. This again makes use of command expansion `$(…)`; see the note about that in the [Configure an Identity](setup#configure-an-identity) section of Setup.
+Here we're setting the `to` argument to `RPC`. This again makes use of command expansion `$(...)`; see the note about that in the [Configure an Identity](setup.mdx#configure-an-identity) section of Setup.
+
+<Tabs groupId="test-networks">
+<TabItem value="testnet" label="Testnet">
 
 ```bash
 soroban contract invoke \
@@ -68,6 +90,22 @@ soroban contract invoke \
   hello \
   --to RPC
 ```
+
+</TabItem>
+<TabItem value="standalone" label="Standalone">
+
+```bash
+soroban contract invoke \
+  --id $(cat .soroban/hello-id) \
+  --source alice \
+  --network standalone \
+  -- \
+  hello \
+  --to RPC
+```
+
+</TabItem>
+</Tabs>
 
 The following output should appear.
 
@@ -97,7 +135,7 @@ soroban contract invoke ... -- hello --help
 
 In this lesson, we learned how to:
 
-- deploy a contract to Testnet
+- deploy a contract to a test network (either Testnet or a Standalone network)
 - interact with a deployed contract
 
 You shouldn't have any changes to commit to git, because we didn't change any code in this lesson!

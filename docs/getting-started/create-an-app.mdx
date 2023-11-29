@@ -4,7 +4,10 @@ title: 5. Create an App
 description: Make a frontend web app that interacts with your smart contracts.
 ---
 
-With two smart contracts deployed to a public network, you can now create a web app that interacts with them via RPC calls. Let's get started.
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+With two smart contracts deployed to a test network, you can now create a web app that interacts with them via RPC calls. Let's get started.
 
 ## Initialize a frontend toolchain
 
@@ -45,6 +48,9 @@ Before we even open the new frontend files, let's generate an NPM package for th
 
 This is going to use the CLI command `soroban contract bindings typescript`:
 
+<Tabs groupId="test-networks">
+<TabItem value="testnet" label="Testnet">
+
 ```bash
 soroban contract bindings typescript \
   --network testnet \
@@ -52,11 +58,27 @@ soroban contract bindings typescript \
   --output-dir node_modules/hello-soroban-client
 ```
 
+</TabItem>
+<TabItem value="standalone" label="Standalone">
+
+```bash
+soroban contract bindings typescript \
+  --network standalone \
+  --contract-id $(cat .soroban/hello-id) \
+  --output-dir node_modules/hello-soroban-client
+```
+
+</TabItem>
+</Tabs>
+
 We attempt to keep the code in these generated libraries readable, so go ahead and look around. Open up the new `hello-soroban-client` directory in your editor. If you've built or contributed to Node projects, it will all look familiar. You'll see a `package.json` file, a `src` directory, a `tsconfig.json`, and even a README. The README is a great place to start. Go ahead and give it a read.
 
 As it says, when using local libraries, we've had the [most success](https://github.com/stellar/soroban-example-dapp/pull/117#discussion_r1232873560) when generating them directly into the `node_modules` folder, and leaving them out of the `dependencies` section. Yes, this is surprising, but it works the best.
 
 Let's update the `package.json` in your `soroban-tutorial` project with a `postinstall` script to make sure the generated library stays up-to-date:
+
+<Tabs groupId="test-networks">
+<TabItem value="testnet" label="Testnet">
 
 ```diff title="package.json"
   "scripts": {
@@ -67,9 +89,28 @@ Let's update the `package.json` in your `soroban-tutorial` project with a `posti
   }
 ```
 
+</TabItem>
+<TabItem value="standalone" label="Standalone">
+
+```diff title="package.json"
+  "scripts": {
+    ...
+-   "astro": "astro"
++   "astro": "astro",
++   "postinstall": "soroban contract bindings typescript --network standalone --contract-id $(cat .soroban/hello-id) --output-dir node_modules/hello-soroban-client"
+  }
+```
+
+</TabItem>
+</Tabs>
+
+
 ### Call the contract from the frontend
 
 Now let's open up `src/pages/index.astro` and add some code to call the contract. We'll start by importing the generated library:
+
+<Tabs groupId="test-networks">
+<TabItem value="testnet" label="Testnet">
 
 ```diff title="src/pages/index.astro"
  ---
@@ -79,12 +120,33 @@ Now let's open up `src/pages/index.astro` and add some code to call the contract
 +
 +const greeter = new Contract({
 +  ...networks.testnet,
-+  rpcUrl: 'https://soroban-testnet.stellar.org', // from https://soroban.stellar.org/docs/reference/rpc#public-rpc-providers
++  rpcUrl: 'https://soroban-testnet.stellar.org', // from https://soroban.stellar.org/docs/reference/rpc-list#sdf-futurenet-and-testnet-only
 +});
 +
 +const greeting = await greeter.hello({ to: 'Soroban' });
  ---
 ```
+
+</TabItem>
+<TabItem value="standalone" label="Standalone">
+
+```diff title="src/pages/index.astro"
+ ---
+ import Layout from '../layouts/Layout.astro';
+ import Card from '../components/Card.astro';
++import { Contract, networks } from 'hello-soroban-client';
++
++const greeter = new Contract({
++  ...networks.standalone,
++  rpcUrl: 'http://localhost:8000/soroban/rpc', // from https://soroban.stellar.org/docs/reference/rpc#standalone
++});
++
++const greeting = await greeter.hello({ to: 'Soroban' });
+ ---
+```
+
+</TabItem>
+</Tabs>
 
 Then find the `<h1>` tag and replace its contents with the greeting:
 
@@ -286,11 +348,27 @@ Now you're ready to sign the call to `increment`!
 
 We're going to generate a contract client for the incrementor contract with a similar command to the one we used before. Let's move the `hello` bindings generation to its own script, add one for incrementor, and call them both from `postinstall` using a double ampersand ([&&](https://stackoverflow.com/a/25669618/249801)):
 
+<Tabs groupId="test-networks">
+<TabItem value="testnet" label="Testnet">
+
 ```json title="package.json"
 "bindings:hello": "soroban contract bindings typescript --network testnet --contract-id $(cat .soroban/hello-id) --output-dir node_modules/hello-soroban-client",
 "bindings:incrementor": "soroban contract bindings typescript --network testnet --contract-id $(cat .soroban/incrementor-id) --output-dir node_modules/incrementor-client",
 "postinstall": "npm run bindings:hello && npm run bindings:incrementor"
 ```
+
+</TabItem>
+<TabItem value="standalone" label="Standalone">
+
+```json title="package.json"
+"bindings:hello": "soroban contract bindings typescript --network standalone --contract-id $(cat .soroban/hello-id) --output-dir node_modules/hello-soroban-client",
+"bindings:incrementor": "soroban contract bindings typescript --network standalone --contract-id $(cat .soroban/incrementor-id) --output-dir node_modules/incrementor-client",
+"postinstall": "npm run bindings:hello && npm run bindings:incrementor"
+```
+
+</TabItem>
+</Tabs>
+
 
 Now reinstall dependencies to also run `postinstall`:
 
@@ -313,6 +391,12 @@ Current value: <strong id="current-value" aria-live="polite">???</strong><br />
     ...networks.testnet,
     rpcUrl: "https://soroban-testnet.stellar.org", // from https://soroban.stellar.org/docs/reference/rpc-list#sdf-futurenet-and-testnet-only
   });
+
+  /** For Standalone network users: */
+  // const incrementor = new Contract({
+  //   ...networks.standalone,
+  //   rpcUrl: "http://localhost:8000/soroban/rpc", // from https://soroban.stellar.org/docs/reference/rpc#standalone
+  // });
 
   const button = document.querySelector("[data-increment]");
   const currentValue = document.querySelector("#current-value");
@@ -413,6 +497,9 @@ First, let's add a `clean` script that removes the `.soroban` directory to make 
 
 Next, let's add a `setup` script that builds your contracts, then checks if the `.soroban` folder is present, and if not, creates and funds the `alice` identity and deploys your contracts. This is a lot for a single NPM script, so we've broken it into a few to make it a little more legible. Add the following to the `scripts` section of `package.json`:
 
+<Tabs groupId="test-networks">
+<TabItem value="testnet" label="Testnet">
+
 ```json title="package.json"
   "scripts": {
     ...
@@ -424,6 +511,25 @@ Next, let's add a `setup` script that builds your contracts, then checks if the 
     ...
   }
 ```
+
+</TabItem>
+<TabItem value="standalone" label="Standalone">
+
+```json title="package.json"
+  "scripts": {
+    ...
+   "create_deployer": "soroban config identity generate alice && soroban config identity fund alice --network standalone",
+   "deploy:hello": "soroban contract deploy --wasm target/wasm32-unknown-unknown/release/hello_soroban.wasm --source alice --network standalone > .soroban/hello-id",
+   "deploy:incrementor": "soroban contract deploy --wasm target/wasm32-unknown-unknown/release/incrementor.wasm --source alice --network standalone > .soroban/incrementor-id;",
+   "deploy": "npm run deploy:hello && npm run deploy:incrementor",
+   "setup": "soroban contract build && if [ ! -d .soroban ]; then npm run create_deployer && npm run deploy; fi",
+    ...
+  }
+```
+
+</TabItem>
+</Tabs>
+
 
 Finally, let's add a `reset` that calls both in order:
 

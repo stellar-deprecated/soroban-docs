@@ -29,7 +29,7 @@ Now that we've built a basic Hello World example to see the rough structure of S
 This is going to follow along with the [increment example](https://github.com/stellar/soroban-examples/tree/v20.0.0-rc2/increment), which has a single function that increments an internal counter and returns the value. If you want to see a working example, [try it in
 GitPod](https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v20.0.0-rc2).
 
-This tutorial assumes that you've already completed the previous steps in Getting Started: [Setup](./setup.mdx), [Hello World](./hello-world.mdx), and [Deploy to Testnet](./deploy-to-testnet.mdx).
+This tutorial assumes that you've already completed the previous steps in Getting Started: [Setup](./setup.mdx), [Hello World](hello-world.mdx), and [Deploy to Test Network](deploy-to-test-network.mdx).
 
 ## Setting up a multi-contract project
 
@@ -130,11 +130,15 @@ testutils = ["soroban-sdk/testutils"]
 
 Now make sure everything works:
 
-    soroban contract build
+```bash
+soroban contract build
+```
 
 Everything should build.
 
-    cargo test
+```bash
+cargo test
+```
 
 All tests should pass.
 
@@ -191,11 +195,15 @@ mod test;
 
 Make sure it builds:
 
-    soroban contract build
+```bash
+soroban contract build
+```
 
 Check that it built:
 
-    ls target/wasm32-unknown-unknown/release/*.wasm
+```bash
+ls target/wasm32-unknown-unknown/release/*.wasm
+```
 
 You should see both `hello_soroban.wasm` and `incrementor.wasm`.
 
@@ -276,19 +284,21 @@ This uses the same concepts described in the Hello World example.
 
 Make sure it passes:
 
-    cargo test
+```bash
+cargo test
+```
 
 You'll see that this runs tests for the whole workspace; both the Hello World contract and the new Incrementor.
 
 If you want to see the output of the `log!` call, run the tests with `--nocapture`:
 
-```
+```bash
 cargo test -- --nocapture
 ```
 
 You should see the output:
 
-```
+```bash
 running 1 test
 count: U32(0)
 count: U32(1)

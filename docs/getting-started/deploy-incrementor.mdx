@@ -21,6 +21,9 @@ description: Deploy the Incrementor contract to Testnet.
   />
 </head>
 
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
 ## Two-step deployment
 
 It's worth knowing that `deploy` is actually a two-step process.
@@ -31,6 +34,9 @@ It's worth knowing that `deploy` is actually a two-step process.
 
 You can run these two steps separately. Let's try it with the Incrementor contract:
 
+<Tabs groupId="test-networks">
+<TabItem value="testnet" label="Testnet">
+
 ```bash
 soroban contract install \
   --network testnet \
@@ -38,7 +44,23 @@ soroban contract install \
   --wasm target/wasm32-unknown-unknown/release/incrementor.wasm
 ```
 
+</TabItem>
+<TabItem value="standalone" label="Standalone">
+
+```bash
+soroban contract install \
+  --network standalone \
+  --source alice \
+  --wasm target/wasm32-unknown-unknown/release/incrementor.wasm
+```
+
+</TabItem>
+</Tabs>
+
 This returns the hash of the Wasm bytes. Now you can use `--wasm-hash` with `deploy` rather than `--wasm`. Let's also automatically pipe the returned contract ID into a file in the `.soroban` directory, so that when you search your command history and reuse the deploy command in the future, you don't forget that step (you might want to go back and do something similar with the Hello World deploy, too):
+
+<Tabs groupId="test-networks">
+<TabItem value="testnet" label="Testnet">
 
 ```bash
 soroban contract deploy \
@@ -48,6 +70,20 @@ soroban contract deploy \
   > .soroban/incrementor-id
 ```
 
+</TabItem>
+<TabItem value="standalone" label="Standalone">
+
+```bash
+soroban contract deploy \
+  --wasm-hash [paste the output from the last command] \
+  --source alice \
+  --network standalone \
+  > .soroban/incrementor-id
+```
+
+</TabItem>
+</Tabs>
+
 You can check that it saved the contract ID correctly:
 
 ```bash
@@ -55,6 +91,9 @@ cat .soroban/incrementor-id
 ```
 
 Now you can interact with it over RPC like you did with the Hello World contract:
+
+<Tabs groupId="test-networks">
+<TabItem value="testnet" label="Testnet">
 
 ```bash
 soroban contract invoke \
@@ -64,6 +103,21 @@ soroban contract invoke \
   -- \
   increment
 ```
+
+</TabItem>
+<TabItem value="standalone" label="Standalone">
+
+```bash
+soroban contract invoke \
+  --id $(cat .soroban/incrementor-id) \
+  --source alice \
+  --network standalone \
+  -- \
+  increment
+```
+
+</TabItem>
+</Tabs>
 
 You should see the following output:
 
@@ -80,6 +134,6 @@ Sometimes you'll need to run your own node:
 - Production apps! Stellar maintains public test RPC nodes for Testnet and Futurenet, but not for Mainnet. Instead, you will need to run your own node, and point your app at that. If you want to use a software-as-a-service platform for this, [various providers](../reference/rpc-list.mdx) are available.
 - When you need a network that differs from the version deployed to Testnet.
 
-The Soroban team maintains Docker containers that makes this as straightforward as possible. See the [RPC](../reference/rpc.mdx) reference for details.
+The Stellar team maintains Docker containers that makes this as straightforward as possible. See the [RPC](../reference/rpc.mdx) reference for details.
 
 Up next, we'll use the deployed contracts to build a simple web app.

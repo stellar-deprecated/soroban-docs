@@ -48,13 +48,13 @@ soroban contract deploy \
 ```
 
 </TabItem>
-<TabItem value="standalone" label="Standalone">
+<TabItem value="local" label="Local">
 
 ```bash
 soroban contract deploy \
   --wasm target/wasm32-unknown-unknown/release/hello_soroban.wasm \
   --source alice \
-  --network standalone
+  --network local
 ```
 
 </TabItem>
@@ -92,13 +92,13 @@ soroban contract invoke \
 ```
 
 </TabItem>
-<TabItem value="standalone" label="Standalone">
+<TabItem value="local" label="Local">
 
 ```bash
 soroban contract invoke \
   --id $(cat .soroban/hello-id) \
   --source alice \
-  --network standalone \
+  --network local \
   -- \
   hello \
   --to RPC
@@ -135,7 +135,7 @@ soroban contract invoke ... -- hello --help
 
 In this lesson, we learned how to:
 
-- deploy a contract to a test network (either Testnet or a Standalone network)
+- deploy a contract to a test network (either Testnet or a Local network)
 - interact with a deployed contract
 
 You shouldn't have any changes to commit to git, because we didn't change any code in this lesson!

@@ -45,11 +45,11 @@ soroban contract install \
 ```
 
 </TabItem>
-<TabItem value="standalone" label="Standalone">
+<TabItem value="local" label="Local">
 
 ```bash
 soroban contract install \
-  --network standalone \
+  --network local \
   --source alice \
   --wasm target/wasm32-unknown-unknown/release/incrementor.wasm
 ```
@@ -71,13 +71,13 @@ soroban contract deploy \
 ```
 
 </TabItem>
-<TabItem value="standalone" label="Standalone">
+<TabItem value="local" label="Local">
 
 ```bash
 soroban contract deploy \
   --wasm-hash [paste the output from the last command] \
   --source alice \
-  --network standalone \
+  --network local \
   > .soroban/incrementor-id
 ```
 
@@ -105,13 +105,13 @@ soroban contract invoke \
 ```
 
 </TabItem>
-<TabItem value="standalone" label="Standalone">
+<TabItem value="local" label="Local">
 
 ```bash
 soroban contract invoke \
   --id $(cat .soroban/incrementor-id) \
   --source alice \
-  --network standalone \
+  --network local \
   -- \
   increment
 ```

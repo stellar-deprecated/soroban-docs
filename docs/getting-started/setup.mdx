@@ -148,7 +148,25 @@ Users of non-bash shells may need to adapt the above commands to suit their need
 
 ### Configuring the CLI
 
-The Soroban CLI can connect with and work with multiple networks. Here we will highlight two of those networks: The SDF-operated "Testnet," and a self-deployed "Standalone" network that runs on a local machine through a [Docker](https://www.docker.com/) quickstart image.
+The Soroban CLI can connect with and work with multiple networks. Here we will highlight two of those networks: The SDF-operated "Testnet," and a self-deployed "Local" network that runs on a local machine through a [Docker](https://www.docker.com/) quickstart image.
+
+It can be tricky to choose between these options, so here are some brief considerations you may want to think about.
+
+**A Local test network...**
+
+- Requires Docker to operate on a single, local machine.
+- Closes a new ledger every one (1) second. This makes it faster to develop against.
+- Allows for customizing resource limits. You can start developing your contract with "unlimited" resources, and then tune it to meet the Testnet/Mainnet requirements.
+- Can facilitate reproducible test runs with a blank slate.
+- Is still available if the Testnet network is congested.
+- Is not affected by Testnet resets.
+
+** The Testnet test network...**
+
+- Does not require Docker or any other software to start. It is already running, around the clock.
+- Is publicly and globally available, so your development work can easily be shared with others.
+- Is completely reset about once per quarter, erasing all data.
+- Mimics the software setup and constraints on Mainnet. This includes resource limits, ledger close times, etc.
 
 <Tabs groupId="test-networks">
 <TabItem value="testnet" label="Testnet">
@@ -164,9 +182,9 @@ soroban config network add --global testnet \
 ```
 
 </TabItem>
-<TabItem value="standalone" label="Standalone">
+<TabItem value="local" label="Local">
 
-The Standalone network is a fully featured Stellar network that runs the same protocol, software, and services as the Testnet or Futurenet networks. The main difference is that it's isolated to your own local machine. You can also benefit from one-second ledger close times, making it a faster network to develop against.
+The Local network is a fully featured Stellar network that runs the same protocol, software, and services as the Testnet, Futurenet, or even Mainnet networks. The main difference is that it's isolated to your own local machine. You can also benefit from one-second ledger close times, making it a faster network to develop against.
 
 First, you will need to have Docker installed and running on your local machine. If you haven't already, you can follow the installation instructions for [Docker Desktop](https://docs.docker.com/desktop/) before proceeding.
 
@@ -177,14 +195,14 @@ docker run --rm -it \
   -p 8000:8000 \
   --name stellar \
   stellar/quickstart:testing \
-  --standalone \
+  --local \
   --enable-soroban-rpc
 ```
 
-Then, configure your CLI to interact with the Standalone network:
+Then, configure your CLI to interact with the Local network:
 
 ```bash
-soroban config network add --global standalone \
+soroban config network add --global local \
   --rpc-url "http://localhost:8000/soroban/rpc" \
   --network-passphrase "Standalone Network ; February 2017"
 ```
@@ -217,7 +235,7 @@ Like the Network configs, the `--global` means that the identity gets stored in 
 
 All this did so far is generate a public/private keypair on your local machine. No network requests were made, and `alice` has no funds on Testnet. This means that you can't make any transactions with `alice` yet.
 
-To get `alice` some Testnet tokens, you'll need to use [Friendbot](https://developers.stellar.org/docs/fundamentals-and-concepts/testnet-and-pubnet#friendbot). All Stellar and Soroban test networks have a Friendbot that you can use to get some test tokens. The public Friendbot instance for Testnet lives at `https://friendbot.stellar.org`. In a Standalone network configuration, there is also a friendbot available at `http://localhost:8000/friendbot`. Use this command to fund your test account:
+To get `alice` some Testnet tokens, you'll need to use [Friendbot](https://developers.stellar.org/docs/fundamentals-and-concepts/testnet-and-pubnet#friendbot). All Stellar and Soroban test networks have a Friendbot that you can use to get some test tokens. The public Friendbot instance for Testnet lives at `https://friendbot.stellar.org`. In a local network configuration, there is also a Friendbot available at `http://localhost:8000/friendbot`. Use this command to fund your test account:
 
 <Tabs groupId="test-networks">
 <TabItem value="testnet" label="Testnet">
@@ -227,7 +245,7 @@ curl "https://friendbot.stellar.org/?addr=$(soroban config identity address alic
 ```
 
 </TabItem>
-<TabItem value="standalone" label="Standalone">
+<TabItem value="local" label="Local">
 
 ```bash
 curl "https://localhost:8000/friendbot?addr=$(soroban config identity address alice)"

@@ -59,11 +59,11 @@ soroban contract bindings typescript \
 ```
 
 </TabItem>
-<TabItem value="standalone" label="Standalone">
+<TabItem value="local" label="Local">
 
 ```bash
 soroban contract bindings typescript \
-  --network standalone \
+  --network local \
   --contract-id $(cat .soroban/hello-id) \
   --output-dir node_modules/hello-soroban-client
 ```
@@ -90,14 +90,14 @@ Let's update the `package.json` in your `soroban-tutorial` project with a `posti
 ```
 
 </TabItem>
-<TabItem value="standalone" label="Standalone">
+<TabItem value="local" label="Local">
 
 ```diff title="package.json"
   "scripts": {
     ...
 -   "astro": "astro"
 +   "astro": "astro",
-+   "postinstall": "soroban contract bindings typescript --network standalone --contract-id $(cat .soroban/hello-id) --output-dir node_modules/hello-soroban-client"
++   "postinstall": "soroban contract bindings typescript --network local --contract-id $(cat .soroban/hello-id) --output-dir node_modules/hello-soroban-client"
   }
 ```
 
@@ -127,7 +127,7 @@ Now let's open up `src/pages/index.astro` and add some code to call the contract
 ```
 
 </TabItem>
-<TabItem value="standalone" label="Standalone">
+<TabItem value="local" label="Local">
 
 ```diff title="src/pages/index.astro"
  ---
@@ -136,7 +136,7 @@ Now let's open up `src/pages/index.astro` and add some code to call the contract
 +import { Contract, networks } from 'hello-soroban-client';
 +
 +const greeter = new Contract({
-+  ...networks.standalone,
++  ...networks.local,
 +  rpcUrl: 'http://localhost:8000/soroban/rpc', // from https://soroban.stellar.org/docs/reference/rpc#standalone
 +});
 +
@@ -357,11 +357,11 @@ We're going to generate a contract client for the incrementor contract with a si
 ```
 
 </TabItem>
-<TabItem value="standalone" label="Standalone">
+<TabItem value="local" label="Local">
 
 ```json title="package.json"
-"bindings:hello": "soroban contract bindings typescript --network standalone --contract-id $(cat .soroban/hello-id) --output-dir node_modules/hello-soroban-client",
-"bindings:incrementor": "soroban contract bindings typescript --network standalone --contract-id $(cat .soroban/incrementor-id) --output-dir node_modules/incrementor-client",
+"bindings:hello": "soroban contract bindings typescript --network local --contract-id $(cat .soroban/hello-id) --output-dir node_modules/hello-soroban-client",
+"bindings:incrementor": "soroban contract bindings typescript --network local --contract-id $(cat .soroban/incrementor-id) --output-dir node_modules/incrementor-client",
 "postinstall": "npm run bindings:hello && npm run bindings:incrementor"
 ```
 
@@ -390,9 +390,9 @@ Current value: <strong id="current-value" aria-live="polite">???</strong><br />
     rpcUrl: "https://soroban-testnet.stellar.org", // from https://soroban.stellar.org/docs/reference/rpc-list#sdf-futurenet-and-testnet-only
   });
 
-  /** For Standalone network users: */
+  /** For Local network users: */
   // const incrementor = new Contract({
-  //   ...networks.standalone,
+  //   ...networks.local,
   //   rpcUrl: "http://localhost:8000/soroban/rpc", // from https://soroban.stellar.org/docs/reference/rpc#standalone
   // });
 
@@ -511,14 +511,14 @@ Next, let's add a `setup` script that builds your contracts, then checks if the 
 ```
 
 </TabItem>
-<TabItem value="standalone" label="Standalone">
+<TabItem value="local" label="Local">
 
 ```json title="package.json"
   "scripts": {
     ...
-   "create_deployer": "soroban config identity generate alice && soroban config identity fund alice --network standalone",
-   "deploy:hello": "soroban contract deploy --wasm target/wasm32-unknown-unknown/release/hello_soroban.wasm --source alice --network standalone > .soroban/hello-id",
-   "deploy:incrementor": "soroban contract deploy --wasm target/wasm32-unknown-unknown/release/incrementor.wasm --source alice --network standalone > .soroban/incrementor-id;",
+   "create_deployer": "soroban config identity generate alice && soroban config identity fund alice --network local",
+   "deploy:hello": "soroban contract deploy --wasm target/wasm32-unknown-unknown/release/hello_soroban.wasm --source alice --network local > .soroban/hello-id",
+   "deploy:incrementor": "soroban contract deploy --wasm target/wasm32-unknown-unknown/release/incrementor.wasm --source alice --network local > .soroban/incrementor-id;",
    "deploy": "npm run deploy:hello && npm run deploy:incrementor",
    "setup": "soroban contract build && if [ ! -d .soroban ]; then npm run create_deployer && npm run deploy; fi",
     ...

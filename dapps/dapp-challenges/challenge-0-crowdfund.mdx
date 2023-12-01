@@ -19,6 +19,23 @@ import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import "./styles.css";
 
+<head>
+  <title>Crowdfund Dapp Challenge.</title>
+  <meta charSet="utf-8" />
+  <meta
+    property="og:title"
+    content="Build and ship a Crowdfund Dapp on Soroban! Beat the Challenge!"
+  />
+  <meta
+    property="og:description"
+    content="Build and ship a Crowdfund Dapp on Soroban! Beat the Challenge!"
+  />
+  <link
+    rel="canonical"
+    href="https://soroban.stellar.org/dapps/dapp-challenges/challenge-0-crowdfund"
+  />
+</head>
+
 <StartChallengeButton id={0} />
 
 This challenge will guide you through the process of building and shipping a crowdfunding dapp on Stellar using Soroban. Unlike traditional crowdfunding applications, crowdfunding dapps (decentralized applications) provide the means for users to pledge funds to a crowdfund campaign directly from their digital wallets, without the need for intermediaries.
@@ -49,7 +66,7 @@ Then, install soroban-cli alias by running the following command:
 cargo install_soroban
 ```
 
-Soroban CLI is the command line interface to Soroban. It allows you to build, deploy, and interact with smart contracts; configure identities; generate key pairs; manage networks; and more. The soroban-cli (alias) that is used in this challenge is a pinned version of the soroban-cli that is used in the Soroban Dapps Challenge. This ensures that the challenge is reproducible and that all participants are using the same version of Soroban.
+Soroban CLI is the command line interface to Soroban. It allows you to build, deploy, and interact with smart contracts, configure identities, generate key pairs, manage networks, and more. The soroban-cli (alias) that is used in this challenge is a pinned version of the soroban-cli that is used in the Soroban Dapps Challenge. This ensures that the challenge is reproducible and that all participants are using the same version of Soroban.
 
 ## Checkpoint 1: 🎬 Deploy Smart Contracts
 
@@ -80,7 +97,11 @@ Done
 The contract ID is a unique identifier for a smart contract deployed on a blockchain. This contract ID is used to interact with and reference the smart contract, allowing users to invoke functions from the smart contract, send transactions, or otherwise interact with the smart contract's functionalities and data stored on the blockchain.
 
 :::tip
+The contract ID is a unique identifier for a smart contract deployed on a blockchain. This contract ID is used to interact with and reference the smart contract, allowing users to invoke functions from the smart contract, send transactions, or otherwise interact with the smart contract's functionalities and data stored on the blockchain.
 
+:::tip
+
+Please, save your deployed contract ID. You will need it to complete the challenge.
 Please, save your deployed contract ID. You will need it to complete the challenge.
 
 :::
@@ -89,6 +110,7 @@ Please, save your deployed contract ID. You will need it to complete the challen
 
 ## Checkpoint 2: 🤝 Connect the Frontend to the Backend
 
+Now that you have deployed the smart contract, it's time to check out the frontend of your dapp. The frontend is the browser interface where contributors to your crowdfund campaign will connect their digital wallets and pledge assets to the campaign's cause.
 Now that you have deployed the smart contract, it's time to check out the frontend of your dapp. The frontend is the browser interface where contributors to your crowdfund campaign will connect their digital wallets and pledge assets to the campaign's cause.
 
 First, start the development server:
@@ -274,7 +296,7 @@ Remember, you must add Futurenet network lumens to your Freighter wallet to inte
 
 Now it's time to submit your work!
 
-Submit your `Production` URL from the previous step into the challenge form to pass the checkpoint!
+Submit your `Production` URL from the previous step into the challenge form to pass the challenge!
 
 <ParentChallengeForm id={0} />
 

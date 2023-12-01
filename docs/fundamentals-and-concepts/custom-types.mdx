@@ -21,8 +21,6 @@ description: Struct, union, and enum types defined by contracts.
   />
 </head>
 
-import stack from "../../static/img/stack.png";
-
 Custom types are struct, union, and enum types defined by contracts. They are
 usable everywhere primitives types can be used: as contract inputs, outputs, or
 for storage.
@@ -110,8 +108,6 @@ pub enum Enum {
     B(u32),
 }
 ```
-
-<img src={stack} width="10%" />
 
 When a unit variant, such as `Enum::A`, is converted to XDR, the value becomes
 an `ScVal`, containing an `ScVec`, containing an array with a single value,

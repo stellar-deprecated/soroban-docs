@@ -161,3 +161,13 @@ p > code {
     }
   }
 }
+
+/* Customizations to metamask openrpc package styles */
+
+select[data-testid="example-pairing-select"] {
+  padding: 0.75rem;
+  width: 100%;
+  margin-bottom: 1rem;
+  font-size: var(--ifm-font-size-base);
+  border-radius: 5px;
+}

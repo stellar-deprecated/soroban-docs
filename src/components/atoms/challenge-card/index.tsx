@@ -40,6 +40,8 @@ const challengeConfig: { [key: string]: ChallengeConfig } = {
   3: {
     icon: iconBulb,
     route: "/dapps/dapp-challenges/challenge-3-oracle",
+    lastCheckpointRoute:
+    "/dapps/dapp-challenges/challenge-3-oracle#checkpoint-8--check-your-work",
   },
 };
 const months = [

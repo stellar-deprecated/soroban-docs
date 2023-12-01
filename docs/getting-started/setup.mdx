@@ -155,12 +155,13 @@ Use Testnet or a local network during development and testing:
 
 **A Local test network...**
 
-- Requires Docker to operate on a single, local machine.
+- Runs locally on a development machine.
+- Requires Docker.
 - Closes a new ledger every one (1) second. This makes it faster to develop against.
-- Allows for customizing resource limits. You can start developing your contract with "unlimited" resources, and then tune it to meet the Testnet/Mainnet requirements.
+- Allows for customizing resource limits: matching testnet/pubnet, or unlimited.
 - Can facilitate reproducible test runs with a blank slate.
-- Is still available if the Testnet network is congested.
-- Is not affected by Testnet resets.
+- Unaffected by congestion on Testnet.
+- Unaffected by Testnet resets.
 
 ** The Testnet test network...**
 

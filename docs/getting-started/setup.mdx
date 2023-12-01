@@ -166,9 +166,11 @@ Use Testnet or a local network during development and testing:
 ** The Testnet test network...**
 
 - Does not require Docker or any other software to start. It is already running, around the clock.
-- Is publicly and globally available, so your development work can easily be shared with others.
-- Is completely reset about once per quarter, erasing all data.
-- Mimics the software setup and constraints on Mainnet. This includes resource limits, ledger close times, etc.
+- Publicly and globally available, so your development work can be shared with others.
+- Reset once per quarter, erasing all data.
+- Closes a new ledger every five (5) seconds. Just like Mainnet (Pubnet).
+- Uses a single set of resource limits: matching pubnet.
+- Has a small ledger size of 100 operations, and may become congested.
 
 <Tabs groupId="test-networks">
 <TabItem value="testnet" label="Testnet">

@@ -54,7 +54,7 @@ class HttpClient {
   private initHttp() {
     const http = axios.create({
       baseURL:
-        "https://soroban-dapps-challenge.julian-martinez.workers.dev",
+        "https://soroban-dapps-challenge-wrangler.julian-martinez.workers.dev",
       headers,
     });
 

@@ -190,9 +190,10 @@ soroban config network add --global testnet \
 
 A local network is a fully featured Stellar network that runs the same protocol, software, and services as Testnet, or Mainnet, but it's isolated to your own local machine.
 
-First, you will need to have Docker installed and running on your local machine. If you haven't already, you can follow the installation instructions for [Docker Desktop](https://docs.docker.com/desktop/) before proceeding.
+Prerequisites:
+- Install [Docker](https://docs.docker.com/get-docker/)
 
-Next, you can run the following command to download and start a `stellar/quickstart` container (this docker container will run in the foreground of the terminal, so you may want to open a new terminal/tab for this command):
+Run the following command to download and start a `stellar/quickstart` container. The container will run in the foreground of the terminal and host a local network, including a Horizon API, Soroban RPC, and Friendbot Faucet:
 
 ```bash
 docker run --rm -i \

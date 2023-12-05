@@ -112,7 +112,7 @@ Please, save your deployed contract ID. You will need it to complete the challen
 
 Now that you have deployed the smart contract, it's time to check out the frontend of your dapp. The frontend is the browser interface where users will connect their digital wallets to make deposits into and withdrawals from the liquidity pool. The frontend is also where users will be able to see their balances and swap tokens.
 
-Because interacting with dapps requires both backend and frontend development, the Soroban Dapps Challenge includes the functionality to easily deploy a frontend interface of the dapps. Building out the frontend from scratch would typically involve... [].
+Because interacting with dapps requires both backend and frontend development, the Soroban Dapps Challenge includes the functionality to easily deploy a frontend interface of the dapps. Building out the frontend from scratch would typically involve creating a user interface (UI) and user experience (UX) design, as well as writing the code for the frontend. In this challenge, you will use the frontend that is already built for you.
 
 To set up the development server, navigate to the `frontend` folder of the soroban-dapps-challenge repository and run the following command:
 
@@ -237,9 +237,12 @@ You should see an updated balance in the amounts you have deposited in the accou
 
 Now that you have funded the liquidity pool, you can make a swap to easily exchange one token for another. Swaps in a liquidity pool usually depend on the relationship between two or more different tokens that can be exchanged with each other. Typical liquidity pools rely on a mathematical formula that determines the price of the tokens within the pool. With every deposit and withdraw transaction to or from the pool, the formula adjusts the token price of each token based on this formula. When a swap occurs, the liquidity pool uses the formula and the balances of each token with the pool to determine the swap value of each token relative to the others within the pool.
 
-[Input requested!] This liquidity pool dapp challenge uses [a specific formula, logic, functionality] in its smart contracts to enable swapping between tokens [in a specific way...]. Since this liquidity pool dapp currently only holds the two tokens you deposited in the previous step, the formula will reflect those token balances: [explanation of how 12 BTC can be swapped with 33 USDC - not realistic!].
+This liquidity pool dapp challenge uses a [specific formula] in its smart contracts to enable swapping between tokens while ensuring that the liquidity pool remains balanced and that liquidity providers are compensated for their contributions to the pool. Since this liquidity pool dapp currently only holds the two tokens you deposited in the previous step, the formula will reflect those token balances: the price of each token will be equal to the amount of the other token in the pool. For example, if you deposited 50 USDC and 50 BTC, the price of each token will be 1:1. If you deposited 100 USDC and 50 BTC, the price of each token will be 2:1.
 
-[Input requested!] Also important to note is how slippage works in this dapp. Slippage refers to... Here, users can set the max slippage to... [do you change this as a user? how? why would you change the max slippage? how does it affect the swap -- or deposit/withdraw].
+[specific formula]: https://github.com/stellar/soroban-dapps-challenge/blob/f7cde6fc6cfce5470ebab9b7489c367c3306317f/contracts/liquidity-pool/src/lib.rs#L251
+
+
+Also important to note is how slippage works in this dapp. Slippage refers to the maximum variation percentage accepted for the desired deposit amounts. The higher the percentage, the greater the chance of a successful transaction, but you may not get such a good price. Here, users can set the max slippage to their desired amount.
 
 To complete a swap between USDC and BTC test tokens, open the swap tab of the frontend, input the desired token swap amounts, and click the "Swap" button. You should see a popup from Freighter asking you to sign the transaction.
 
@@ -283,7 +286,8 @@ Once the transaction is confirmed, you should see updated balances on the fronte
 
 Now that you have swapped tokens through the liquidity pool, you can make a withdrawal of your funds.
 
-[Input requested!] The "Pool Share" slider in this dapp refers to ... []. [Why would you withdraw a certain % over another? also what does the little hover info popup mean: “estimated price based on last pool query”? What do you gain from the various withdrawal choices you have using this dapp?]
+The "Pool Share" slider in this dapp refers to the slider for the percentage of liquidity you want to withdraw from the pool. For example, if you have 100 USDC and 100 BTC in the pool, and you want to withdraw 50% of your liquidity, you would select 50% on the slider. 
+. [Why would you withdraw a certain % over another? also what does the little hover info popup mean: “estimated price based on last pool query”? What do you gain from the various withdrawal choices you have using this dapp?]
 
 Open the withdraw tab, select how much liquidity you want to remove with the sliding bar, and click the "Withdraw" button. You should see a popup from Freighter asking you to sign the transaction.
 

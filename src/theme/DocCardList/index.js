@@ -11,7 +11,7 @@ function DocCardListForCurrentSidebarCategory({className}) {
   const category = useCurrentSidebarCategory();
   return category.label === 'Tutorials'
     ? <FilterableDocCardList items={category.items} className={className} />
-    : category.label === 'Guides'
+    : category.label === 'How-To Guides'
     ? <GuidesDocList items={category.items} className={className} />
     : <DocCardList items={category.items} className={className} />;
 }

@@ -52,15 +52,15 @@ export default function DocItemFooter() {
   const canDisplayTagsRow = tags.length > 0;
   const canDisplayEditMetaRow = !!(editUrl || lastUpdatedAt || lastUpdatedBy);
   const canDisplayFooter = canDisplayTagsRow || canDisplayEditMetaRow;
-  const canDisplayDocCardsOnGuide = metadata.permalink.startsWith('/guides')
+  const canDisplayDocCardsOnGuide = metadata.permalink.startsWith('/docs/guides')
   if (!canDisplayFooter) {
     return null;
   }
   return (
     <>
       {canDisplayDocCardsOnGuide &&
-        <div className={clsx(metadata.permalink === '/guides/' ? 'margin-top--lg' : 'margin-top--xl')}>
-          {metadata.permalink !== '/guides/' && <h3>Guides in this category:</h3>}
+        <div className={clsx(metadata.permalink === '/docs/guides/' ? 'margin-top--lg' : 'margin-top--xl')}>
+          {metadata.permalink !== '/docs/guides/' && <h3>Guides in this category:</h3>}
           <DocCardList />
         </div>
       }

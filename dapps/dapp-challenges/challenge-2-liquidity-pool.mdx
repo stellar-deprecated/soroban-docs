@@ -286,8 +286,7 @@ Once the transaction is confirmed, you should see updated balances on the fronte
 
 Now that you have swapped tokens through the liquidity pool, you can make a withdrawal of your funds.
 
-The "Pool Share" slider in this dapp refers to the slider for the percentage of liquidity you want to withdraw from the pool. For example, if you have 100 USDC and 100 BTC in the pool, and you want to withdraw 50% of your liquidity, you would select 50% on the slider. 
-. [Why would you withdraw a certain % over another? also what does the little hover info popup mean: “estimated price based on last pool query”? What do you gain from the various withdrawal choices you have using this dapp?]
+The "Pool Share" slider in this dapp refers to the slider for the percentage of liquidity you want to withdraw from the pool. For example, if you have 100 USDC and 100 BTC in the pool, and you want to withdraw 50% of your liquidity, you would select 50% on the slider. The withdrawal amounts are relative to the estimated price of the tokens in the pool base on the conversion ratio set in the Deposit that created the liquidity pool. For example if a user deposits 50 USDC and 1 BTC, the price of USDC will be 50:1 BTC. If the user then withdraws 50% of their liquidity, they will receive 25 USDC and 0.5 BTC. The price of BTC in the pool will then be recalculated based on the token supply in the pool, potentially causing slippage and resulting in a price different from the original 50:1 ratio.
 
 Open the withdraw tab, select how much liquidity you want to remove with the sliding bar, and click the "Withdraw" button. You should see a popup from Freighter asking you to sign the transaction.
 

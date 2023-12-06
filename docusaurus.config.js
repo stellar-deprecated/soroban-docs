@@ -13,7 +13,7 @@ const config = {
   baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "throw",
-  favicon: "img/soroban-fav-icon.png",
+  favicon: "img/favicon.ico",
   organizationName: "stellar", // Usually your GitHub org/user name.
   projectName: "soroban-docs", // Usually your repo name.
   i18n: {

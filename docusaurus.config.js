@@ -31,6 +31,7 @@ const config = {
         sidebarPath: require.resolve('./sidebarsApi.js'),
         editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
         showLastUpdateTime: true,
+        showLastUpdateAuthor: true,
       },
     ],
     [
@@ -42,6 +43,7 @@ const config = {
       sidebarPath: require.resolve('./sidebarsDapps.js'),
       editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
       showLastUpdateTime: true,
+      showLastUpdateAuthor: true,
     },
   ],
     require('./src/dev-server-plugin'),

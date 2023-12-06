@@ -17,12 +17,12 @@ Before diving in, please read our [Stellar Contribution Guide] for details on
 contributing to Stellar's various repositories. Please take special note of the
 [code of conduct].
 
-Our documentation site is built using [Docusaurus][docusaurus]. The content is
-written in [MDX][mdx], which adds a lot of cool possibilities. Even if you're
-unfamiliar with plain markdown, do not fear! You can still contribute in a
-helpful and meaningful way. markdown is super easy to learn, and will come quite
-naturally after only a bit of practice. You can always help fix typos, spelling,
-and broken links, too.
+Our documentation site is built using [Docusaurus]. The content is written in
+[MDX], which adds a lot of cool possibilities. Even if you're unfamiliar with
+plain markdown, do not fear! You can still contribute in a helpful and
+meaningful way. markdown is super easy to learn, and will come quite naturally
+after only a bit of practice. You can always help fix typos, spelling, and
+broken links, too.
 
 ## Quick Start
 

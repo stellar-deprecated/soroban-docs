@@ -108,7 +108,7 @@ const config = {
             position: 'left'
           },
           {
-            href: 'https://github.com/stellar/rs-soroban-sdk',
+            href: 'https://github.com/stellar/soroban-docs',
             label: 'GitHub',
             position: 'right',
           },

@@ -55,6 +55,7 @@ const config = {
         blog: false,
         docs: {
           showLastUpdateTime: true,
+          showLastUpdateAuthor: true,
           breadcrumbs: true,
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl: "https://github.com/stellar/soroban-docs/tree/main/",

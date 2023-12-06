@@ -1,0 +1,54 @@
+---
+sidebar_position: 1
+title: Challenge Dashboard
+---
+
+import sdc_dashboard from "../static/img/sdc_dashboard.png";
+import sdc_leaderboard from "../static/img/sdc_leaderboard.png";
+import "./dapp-challenges/styles.css";
+
+# Your Dashboard
+
+Your [dashboard](/dashboard) is the hub of your activity, providing you with up-to-date information on your challenges and achievements. Here's a guide to what you'll find and how to use the dashboard effectively.
+<a href="/dashboard">
+<img src={sdc_dashboard} className="image-style_reg" />
+</a>
+
+## Overview of Features
+
+The dashboard is intuitively designed to help you track your progress and navigate through the challenges with ease. At the top, you'll see your user address along with a summary of your completed challenges, offering a snapshot of your achievements.
+
+
+## Utilities
+
+
+`Log in` and `Log out` buttons are available to connect and disconnect your Freighter wallet. You will need to be logged in to start or continue a challenge and to see your leaderboard position.
+
+Curious about how you rank against others? The `Show Rank` feature gives you a glimpse of your leaderboard status, spurring a friendly competition.
+
+A `Refresh` button is available to update the information, this will make a call to the database that stores challenge data, ensuring that you are always looking at the most recent data regarding your standings and progress.
+
+The `Reset` button allows you to reset your progress and start over. This will erase progress data in the database for ***ALL*** challenges, which will remove your position from the leaderboard. You will need to complete at least one challenge to be ranked again.
+
+### Challenges Overview
+
+Your challenges are categorized into three states:
+
+- **Active Challenges**: Challenges that you have started but not yet completed will appear here. Each active challenge displays a progress bar and a "Continue" button, allowing you to resume your work right where you left off.
+
+- **Completed Challenges**: Once you finish a challenge, it moves to the completed section. These challenges show a "Completed" status, marking your success and allowing you to review the completed work.
+
+- **Upcoming Challenges**: Challenges that are available for you to start will be listed as well. These represent new opportunities for you to learn and demonstrate your skills.
+
+
+The `Show my challenges` button will filter the catalog to only show challenges that are in progress or completed by you.
+
+
+## Leaderboard
+
+Toggle to the Leaderboard tab to see detailed rankings and find out where you stand in the larger community.
+Leaderboard position is determined by the number of challenges completed, with the most TVL (Total Value Locked) as a tiebreaker.
+
+<img src={sdc_leaderboard} className="image-style_reg" />
+
+Ready to embark on or continue your challenge? Head over to the [Dashboard](/dashboard), connect your wallet, and dive into the challenges that await you!

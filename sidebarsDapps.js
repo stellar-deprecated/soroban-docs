@@ -1,14 +1,14 @@
 module.exports = {
   mySidebar: [
     {
-      type: 'link',
-      label: 'Dashboard',
-      href: '/dashboard',
+      type: 'doc',
+      id: 'index',
+      label: 'Welcome',
     },
     {
       type: 'doc',
-      id: 'index',
-      label: 'Index',
+      id: 'challenge-dashboard',
+      label: 'Challenge Dashboard',
     },
     {
       type: 'doc',

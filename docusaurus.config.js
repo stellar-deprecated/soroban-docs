@@ -31,6 +31,7 @@ const config = {
         sidebarPath: require.resolve('./sidebarsApi.js'),
         editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
         showLastUpdateTime: true,
+        showLastUpdateAuthor: true,
       },
     ],
     [
@@ -42,6 +43,7 @@ const config = {
       sidebarPath: require.resolve('./sidebarsDapps.js'),
       editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
       showLastUpdateTime: true,
+      showLastUpdateAuthor: true,
     },
   ],
     require('./src/dev-server-plugin'),
@@ -55,6 +57,7 @@ const config = {
         blog: false,
         docs: {
           showLastUpdateTime: true,
+          showLastUpdateAuthor: true,
           breadcrumbs: true,
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
@@ -108,7 +111,7 @@ const config = {
             position: 'left'
           },
           {
-            href: 'https://github.com/stellar/rs-soroban-sdk',
+            href: 'https://github.com/stellar/soroban-docs',
             label: 'GitHub',
             position: 'right',
           },

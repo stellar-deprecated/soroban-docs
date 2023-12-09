@@ -32,7 +32,7 @@ No serialization or deserialization is required in contract code when accessing 
 
 Contracts are only allowed to read and write `CONTRACT_DATA` ledger entries owned by the contract: those keyed by the same contract ID as the contract performing the read or write. Attempting to access other `CONTRACT_DATA` ledger entries will cause a transaction to fail.
 
-There is no access control for lifetime bump operations. Any user may invoke `BumpFootprintExpirationOp` on any LedgerEntry.
+There is no access control for TTL extension operations. Any user may invoke `ExtendFootprintTTLOp` on any LedgerEntry.
 
 ## Granularity
 
@@ -46,7 +46,7 @@ Contracts are only allowed to access ledger entries specified in the footprint o
 
 ### Account State vs. Shared State
 
-While there is no distinction between "account" state and "shared" state at the protocol level, it can be helpful to think of data in these terms when deciding what storage type and lifetime bump strategy
+While there is no distinction between "account" state and "shared" state at the protocol level, it can be helpful to think of data in these terms when deciding what storage type and TTL Extension strategy
 to use for a given use case. As a guideline, account and shared state can be described as follows:
 
 - Most contract state can either be associated with a specific account or shared between multiple stakeholders (“public good”)
@@ -77,27 +77,27 @@ In addition to the types of state, it is also helpful to consider the type of co
 ### Best Practices
 
 - Prefer `Temporary` over `Persistent` and `Instance` storage
-  - Anything that can have a timeout should be `Temporary` with expiration set to the timeout. Maximum timeout/expiration is currently 1 year
-  - Ideally, `Temporary` entries should be associated with an absolute ledger boundary and thus never bumped
+  - Anything that can have a timeout should be `Temporary` with TTL set to the timeout. Maximum timeout/TTL is currently 1 year
+  - Ideally, `Temporary` entries should be associated with an absolute ledger boundary and thus never need a TTL extension
     - Example: Soroban Auth signatures have an absolute expiration ledger, so nonces can be stored in `Temporary` entries without security risks
     - Example: SAC allowance that lives only until a given ledger (so that some old allowance signature can not be used in the future if not exhausted)
 - All global state that cannot be `Temporary` should be in `Instance` storage
-  - This guarantees that the lifetime of the contract instance and all relevant globals are tied together
+  - This guarantees that the TTL of the contract instance and all relevant globals are tied together
   - Since global state is used often, this ensures that global state will never need to be restored, leading to cheaper and more efficient contract invocations
-- Autonomous contracts should bump any shared state touched by an invocation via the `bump()` host function
-  - Given that these contracts have no owners, leaving lifetime bumps to benevolent clients might lead to a “tragedy of the commons” situation
-  - Most users do not bump the lifetime because it is not required, but still benefit from the benevolent client who does bump the lifetime
-- Owners of owned contracts should subsidize shared state lifetime extension fees by manually submitting bump operations
-  - Owners should keep track of expiration ledgers for all shared state
-  - This could be implemented via something like a cron job where a `BumpFootprintExpirationOp` for all relevant shared state is submitted periodically (i.e. once a month)
+- Autonomous contracts should extend the TTL of any shared state touched by an invocation via the `extend_ttl()` host function
+  - Given that these contracts have no owners, leaving TTL extensions to benevolent clients might lead to a “tragedy of the commons” situation
+  - Most users do not extend the TTL because it is not required, but still benefit from the benevolent client who does extend the TTL
+- Owners of owned contracts should subsidize shared state TTL extension fees by manually submitting extend operations
+  - Owners should keep track of TTLs for all shared state
+  - This could be implemented via something like a cron job where a `ExtendFootprintTTLOp` for all relevant shared state is submitted periodically (i.e. once a month)
   - Alternatively, this could also be implemented via an admin smart contract function routinely called by the owner
-- Clients (Wallets/Dapps) should identify the state that relates to their respective account, present expiration info to the users, and suggest lifetime bumps when necessary
-- Lifetime extensions should never be relied on for functionality or safety
-  - Unsafe example: An entry must be permanent, but instead of using `Persistent` storage, a contract uses `Temporary` storage but will continually bump the entry so it never expires
-    - Because there is no automatic lifetime extension interface, and every bump must come from either a smart contract invocation or `BumpFootprintExpirationOp`, it must be assumed that an entry can always expire
-    - Lifetime extension fees are variable, and it may become too expensive to bump pseudo “persistent” `Temporary` entries if fees increase unexpectedly
-    - If the rent bump process is automated (i.e. a cron job) the account automatically sending `BumpFootprintExpirationOps` may run out of funds unexpectedly should lifetime extension fees increase, causing the `Temporary` entry to expire and be permanently deleted
-- Entry expiration should never be relied on for functionality or safety
-  - Unsafe example: a nonce should expire in 7 days, so a contract creates a `Temporary` entry and bumps the lifetime to 7 days with no other lifetime enforcement in place.
-  - Anyone can submit a rent bump operation on any entry without authorization, meaning that the nonce can have its lifetime extended indefinitely by any user
+- Clients (Wallets/Dapps) should identify the state that relates to their respective account, present TTL info to the users, and suggest TTL extensions when necessary
+- TTL extensions should never be relied on for functionality or safety
+  - Unsafe example: An entry must be permanent, but instead of using `Persistent` storage, a contract uses `Temporary` storage but will continually extend the entry so it is always live
+    - Because there is no automatic TTL extension interface, and every TTL extension must come from either a smart contract invocation or `ExtendFootprintTTLOp`, it must be assumed that an entry's TTL can go to 0 and the entry be deleted
+    - TTL extension fees are variable, and it may become too expensive to extend the TTL of pseudo “persistent” `Temporary` entries if fees increase unexpectedly
+    - If the TTL extension process is automated (i.e. a cron job) the account automatically sending `ExtendFootprintTTLOps` may run out of funds unexpectedly should TTL extension fees increase, causing the `Temporary` entry to exhaust its TTL and be permanently deleted
+- Entry TTL exhaustion should never be relied on for functionality or safety
+  - Unsafe example: a nonce should expire in 7 days, so a contract creates a `Temporary` entry and extends the TTL to 7 days with no other lifetime enforcement in place.
+  - Anyone can submit a TTL extension operation on any entry without authorization, meaning that the nonce can have its TTL extended indefinitely by any user
   - If an entry needs to be invalidated after a certain time period, this must be implemented manually by the contract

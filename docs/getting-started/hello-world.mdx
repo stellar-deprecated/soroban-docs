@@ -355,7 +355,15 @@ Building optimized contracts is only necessary when deploying to a network with 
 
 Before we go on to deploying the contract to Testnet in the next section, this is a great time to commit your code to version control. Even if you don't share your project with others, this will make it easier for you to see and understand your own changes throughout the rest of the tutorial.
 
-Cargo will have already setup the `hello-soroban` directory as a git repository so you can make your initial commit:
+Cargo will have already setup the `hello-soroban` directory as a git repository.
+
+You should update <.gitignore> with `.soroban` directory as it will contain cached information about your local development and use of the `soroban-cli`:
+
+```bash
+echo .soroban >> .gitignore
+```
+
+Now you can make your initial commit:
 
 ```bash
 git add .

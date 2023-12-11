@@ -559,7 +559,7 @@ struct SorobanTransactionData
 This data comprises two parts: Soroban resources and the `refundableFee`. The
 `refundableFee` is the portion of the transaction fee eligible for refund. It
 includes the fees for the contract events emitted by the transaction, the return
-value of the host function invocation, and fees for the [ledger space rent](./state-expiration.mdx).
+value of the host function invocation, and fees for the [ledger space rent](./state-archival.mdx).
 
 The `SorobanResources` structure includes the ledger footprint and the resource
 values, which together determine the resource consumption limit and the

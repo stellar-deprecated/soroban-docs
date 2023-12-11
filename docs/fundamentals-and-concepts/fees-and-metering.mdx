@@ -52,7 +52,7 @@ The resource fee depends on the following:
 - Ledger I/O: The number of bytes read from or written to the ledger.
 - Transaction size: The size of the transaction submitted to the network in bytes.
 - Events & return value size: The size of the events produced by the contract and the return value of the top-level contract function. Both events and return value are included in transaction metadata.
-- Ledger space rent: The payment for the ledger entry rent bumps and rent payments for increasing ledger entry size. Refer to the [state expiration](./state-expiration.mdx) section for more information about rent in Soroban.
+- Ledger space rent: The payment for the ledger entry TTL extensions (i.e. rent payments) and rent payments for increasing ledger entry size. Refer to the [state archival](./state-archival.mdx) section for more information about rent in Soroban.
 
 Some parameters may contribute to multiple fee components. For example, the transaction size is charged for network propagation (as network bandwidth is limited) and for historical storage (as storing ledger history is not free).
 
@@ -106,7 +106,7 @@ The current (Testnet) limits are as follows:
 | Transaction Size           | 70 KB       |
 | Events & return value size | 2 KB        |
 | Ledger entry size          | 64 KB       |
-| Maximum rent bump          | 31 days     |
+| Maximum TTL                | 6 months    |
 
 # Metering
 

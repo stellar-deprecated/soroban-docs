@@ -267,7 +267,7 @@ The `InvokeHostFunctionOp` can be used to perform the following Soroban operatio
 - Upload Wasm of the new contracts.
 - Deploy new contracts using the uploaded Wasm or built-in implementations (this currently includes only the [token contract](../../tokens/stellar-asset-contract.mdx)).
 
-[`soroban-cli`]: ../../getting-started/setup#install-the-soroban-cli
+[`soroban-cli`]: ../../getting-started/setup.mdx#install-the-soroban-cli
 
 There is only a single `InvokeHostFunctionOp` allowed per transaction. Contracts
 should be used to perform multiple actions atomically, for example, to deploy
@@ -559,7 +559,7 @@ struct SorobanTransactionData
 This data comprises two parts: Soroban resources and the `refundableFee`. The
 `refundableFee` is the portion of the transaction fee eligible for refund. It
 includes the fees for the contract events emitted by the transaction, the return
-value of the host function invocation, and fees for the [ledger space rent](./state-archival.mdx).
+value of the host function invocation, and fees for the [ledger space rent](../state-archival.mdx).
 
 The `SorobanResources` structure includes the ledger footprint and the resource
 values, which together determine the resource consumption limit and the

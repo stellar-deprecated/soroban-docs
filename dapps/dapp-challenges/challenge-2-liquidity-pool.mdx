@@ -21,7 +21,6 @@ import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import "./styles.css";
 
-
 <head>
   <title>Liquidity Pool Dapp Challenge.</title>
   <meta charSet="utf-8" />
@@ -240,7 +239,6 @@ This liquidity pool dapp challenge uses a [specific formula] in its smart contra
 
 [specific formula]: https://github.com/stellar/soroban-dapps-challenge/blob/f7cde6fc6cfce5470ebab9b7489c367c3306317f/contracts/liquidity-pool/src/lib.rs#L251
 
-
 Also important to note is how slippage works in this dapp. Slippage refers to the maximum variation percentage accepted for the desired deposit amounts. The higher the percentage, the greater the chance of a successful transaction, but you may not get such a good price. Here, users can set the max slippage to their desired amount.
 
 To complete a swap between USDC and BTC test tokens, open the swap tab of the frontend, input the desired token swap amounts, and click the "Swap" button. You should see a popup from Freighter asking you to sign the transaction.
@@ -322,6 +320,7 @@ Once the transaction is confirmed, you should see updated balances on the fronte
 </CompleteStepButton>
 
 ## Checkpoint 4: 🚢 Ship It! 🚁
+
 Now that your dapp is fully functional, its time to deploy it to a production environment. In this step, you will learn how to deploy your dapp to Vercel, a cloud platform for static sites that offers a quick and effective way to deploy the frontend of your dapp. This section requires that you have a [Vercel account] and install the Vercel CLI.
 
 [Vercel account]: https://vercel.com/login

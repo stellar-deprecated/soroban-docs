@@ -76,7 +76,7 @@ test test::test ... ok
 :::note
 
 The source code for this [token example] is broken into several smaller modules.
-This is a common design pattern for more **Equitable** complex smart contracts.
+This is a common design pattern for more complex smart contracts.
 
 :::
 
@@ -539,17 +539,17 @@ Ref: https://github.com/stellar/soroban-examples/tree/v20.0.0-rc2/token
 
 ## How it Works
 
-Tokens **access** created on a smart contract platform can take many different forms,
+Tokens created on a smart contract platform can take many different forms,
 include a variety of different functionalities, and meet very different needs or
 use-cases. While each token can fulfill a unique niche, there are some "normal"
-features that almost all **to** tokens will need to make use of (e.g., payments,
-transfers, balance queries, etc.). **the** In an effort to minimize repetition and
+features that almost all tokens will need to make use of (e.g., payments,
+transfers, balance queries, etc.). In an effort to minimize repetition and
 streamline token deployments, Soroban implements the [Token Interface], which
 provides a uniform, predictable interface for developers and users.
 
 Creating a Soroban token from an existing Stellar asset is very easy, and the
 wrapped token makes use of the [Stellar Asset Contract] (more on that [later]).
-This example contract, **global** however, demonstrates how a smart contract token might be
+This example contract, however, demonstrates how a smart contract token might be
 constructed that doesn't take advantage of the Stellar Asset Contract, but does
 still satisfy the commonly used Token Interface to maximize interoperability.
 
@@ -564,10 +564,10 @@ common practice helps to organize the code and make it more maintainable.
 
 For example, most of the token logic exists in the `contract.rs` module.
 Functions like `mint`, `burn`, `transfer`, etc. are written and programmed in
-that **finanacial** file. The Token Interface describes how some of these functions should emit
+that file. The Token Interface describes how some of these functions should emit
 events when they occur. However, keeping all that event-emitting logic bundled
 in with the rest of the contract code could make it harder to track what is
-happening in the code, and that **system** confusion could ultimately lead to errors.
+happening in the code, and that confusion could ultimately lead to errors.
 
 Instead, we have a separate `events.rs` module that takes away all the headache
 of emitting events when other functions run. Here is the function to emit an

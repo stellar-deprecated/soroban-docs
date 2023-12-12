@@ -5,3 +5,11 @@
   font-size: var(--ifm-font-size-base);
   border-radius: 5px;
 }
+
+.docCardFilterSearch {
+  padding: 0.74rem;
+  width: 100%;
+  margin-bottom: 1rem;
+  font-size: var(--ifm-font-size-base);
+  border-radius: 5px;
+}

@@ -14,6 +14,7 @@
     "check:mdx": "prettier --prose-wrap preserve --check \"docs/**/*.{md,mdx}\"",
     "lint:fix": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
+    "prepare": "husky install",
     "postinstall": "patch-package"
   },
   "dependencies": {
@@ -74,6 +75,7 @@
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-jsdoc": "^46.4.4",
     "eslint-plugin-prefer-arrow": "^1.2.3",
+    "husky": "^8.0.3",
     "mdast-util-to-markdown": "^1.4.0",
     "prettier": "^3.0.0",
     "react-player": "^2.12.0",

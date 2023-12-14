@@ -1,4 +1,7 @@
 {
   "position": 50,
-  "label": "Tokens"
+  "label": "Tokens",
+  "link": {
+    "type": "generated-index"
+  }
 }

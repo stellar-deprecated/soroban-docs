@@ -22,18 +22,6 @@ function DocCardListForCurrentSidebarCategory({className}) {
 
 function GuidesDocList(props) {
   const {items, className} = props;
-
-  // return (
-  //   <section className={clsx('row', className)}>
-  //     {items.map((item, index) => {
-  //       if (item.type === 'category') {
-  //         return (
-  //           <h2>{item.label}</h2>
-  //         )
-  //       }}
-  //     )}
-  //   </section>
-  // );
   return (
     <div className={clsx('row', className)}>
       {items.map((item, index) => {
@@ -77,7 +65,7 @@ function FilterableDocCardList(props) {
         <option>Intermediate</option>
         <option>Advanced</option>
       </select>
-      <input placeholder="Search Tutorial Title" className={styles.docCardFilterSearch} onChange={e => setTutorialQuery(e.target.value)} />
+      <input placeholder="Search Tutorials" className={styles.docCardFilterSearch} onChange={e => setTutorialQuery(e.target.value)} />
       <section className={clsx('row', className)}>
         {filteredDocCards.map((item, index) => {
           const doc = useDocById(item.docId ?? undefined);

@@ -1000,6 +1000,24 @@
             "description": "A Stellar transaction, serialized as a base64 string",
             "type": "string"
           }
+        },
+        {
+          "name": "resourceConfig",
+          "summary": "configuration for how resources will be calculated",
+          "description": "Contains optional configuration for how resources will be calculated when simulating transactions.",
+          "required": false,
+          "schema": {
+            "title": "resourceConfig",
+            "description": "(optional) Configuration for how resources will be calculated",
+            "type": "object",
+            "properties": {
+              "instructionLeeway": {
+                "title": "instructionLeeway",
+                "description": "Stringified number - Allow this many extra instructions when budgeting resources",
+                "type": "string"
+              }
+            }
+          }
         }
       ],
       "result": {

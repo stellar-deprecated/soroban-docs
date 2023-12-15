@@ -1,6 +1,14 @@
 ---
-title: Restore a contract using the Soroban CLI
+title: Restore an archived contract using the Soroban CLI
 hide_table_of_contents: true
 ---
 
-It goes something like `soroban contract restore ...`
+If your contract instance has been archived, it can easily be restored using the Soroban CLI.
+
+```bash
+soroban contract restore \
+    --source S... \
+    --network testnet \
+    --id C... \
+    --durability persistent
+```

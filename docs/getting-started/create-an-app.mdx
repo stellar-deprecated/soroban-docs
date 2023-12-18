@@ -347,6 +347,7 @@ If you're new to JavaScript, you may not know what's happening with those `const
 ```ts
 const { result: newValue } = ...
 ```
+
 :::
 
 Also, notice that you don't need to manually specify Freighter as the wallet in the call to `increment`. This may change in the future, but while Freighter is the only game in town, these generated libraries automatically use it. If you want to override this behavior, you can pass a `wallet` option; check the latest `Wallet` interface in [the template source](https://github.com/stellar/soroban-tools/blob/main/cmd/crates/soroban-spec-typescript/src/project_template/src/method-options.ts) for details.

@@ -146,7 +146,7 @@
                   },
                   "ledger": {
                     "title": "ledgerSequence",
-                    "description": "Stringified sequence number of the ledger in which this event was emitted.",
+                    "description": "Sequence number of the ledger in which this event was emitted.",
                     "type": "number"
                   },
                   "ledgerClosedAt": {

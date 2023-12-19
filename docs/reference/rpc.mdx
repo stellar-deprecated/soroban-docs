@@ -266,7 +266,7 @@ Here's how to run the [soroban-rpc docker image](https://hub.docker.com/r/stella
 1. Pull the image at the version you'd like to run from [the tags](https://hub.docker.com/r/stellar/soroban-rpc/tags):
 
 ```bash
-docker pull stellar/soroban-rpc:20.0.0-rc4-40
+docker pull stellar/soroban-rpc
 ```
 
 2. Create a configuration file for [Stellar Core](https://github.com/stellar/stellar-core). Here is a sample configuration file for Testnet:
@@ -310,7 +310,7 @@ HISTORY="curl -sf http://history.stellar.org/prd/core-testnet/core_testnet_003/{
 
 ```bash
 docker run -p 8001:8001 -p 8000:8000 \
--v <STELLAR_CORE_CONFIG_FOLDER>:/config stellar/soroban-rpc:20.0.0-rc4-40 \
+-v <STELLAR_CORE_CONFIG_FOLDER>:/config stellar/soroban-rpc \
 --captive-core-config-path="/config/<STELLAR_CORE_CONFIG_PATH>" \
 --captive-core-storage-path="/var/lib/stellar/captive-core" \
 --captive-core-use-db=true \
@@ -330,14 +330,14 @@ For production, we recommend running Soroban RPC with a [TOML](https://toml.io/e
 
 ```bash
 docker run -p 8001:8001 -p 8000:8000 \
--v <CONFIG_FOLDER>:/config stellar/soroban-rpc:20.0.0-rc4-40 \
+-v <CONFIG_FOLDER>:/config stellar/soroban-rpc \
 --config-path <RPC_CONFIG_FILENAME>
 ```
 
 You can use Soroban RPC itself to generate a starter configuration file:
 
 ```bash
-docker run stellar/soroban-rpc:20.0.0-rc4-40 gen-config-file > soroban-rpc-config.toml
+docker run stellar/soroban-rpc gen-config-file > soroban-rpc-config.toml
 ```
 
 The resulting configuration should look like this:
@@ -594,7 +594,7 @@ docker.io/stellar/system-test:soroban-preview11 \
 --TargetNetworkPassphrase "Test SDF Network ; September 2015" \
 --TargetNetworkTestAccountSecret <your test account StrKey encoded key here > \
 --TargetNetworkTestAccountPublic <your test account StrKey encoded pubkey here> \
---SorobanExamplesGitHash v20.0.0-rc2
+--SorobanExamplesGitHash v20.0.0
 ```
 
 Make sure you configure the system test correctly:

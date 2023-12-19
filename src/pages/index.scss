@@ -312,6 +312,27 @@ a.hp-link {
   }
 }
 
+.Timeline {
+  display: flex;
+  justify-content: center
+}
+[data-theme='dark'] .Timeline {
+  .img__light {
+    display: inherit;
+  }
+  .img__dark {
+    display: none;
+  }
+}
+[data-theme='light'] .Timeline {
+  .img__light {
+    display: none;
+  }
+  .img__dark {
+    display: inherit;
+  }
+}
+
 .Learn {
   color: white;
   background-color: var(--secondary-black);

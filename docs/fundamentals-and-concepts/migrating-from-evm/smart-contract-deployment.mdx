@@ -189,10 +189,10 @@ If you haven't already setup up the dev environment for Soroban, you can get sta
 
 This project requires using the `soroban_token_contract.wasm` file which you will need to import manually.
 
-First, you will need to clone the `v20.0.0-rc2` tag of `soroban-examples` repository:
+First, you will need to clone the `v20.0.0` tag of `soroban-examples` repository:
 
 ```bash
-git clone -b v20.0.0-rc2 https://github.com/stellar/soroban-examples
+git clone -b v20.0.0 https://github.com/stellar/soroban-examples
 ```
 
 Then, navigate to the `soroban-examples/token` directory
@@ -255,11 +255,11 @@ publish = false
 crate-type = ["cdylib"]
 
 [dependencies]
-soroban-sdk = { version = "20.0.0-rc2" }
+soroban-sdk = { version = "20.0.0" }
 num-integer = { version = "0.1.45", default-features = false, features = ["i128"] }
 
 [dev_dependencies]
-soroban-sdk = { version = "20.0.0-rc2", features = ["testutils"] }
+soroban-sdk = { version = "20.0.0", features = ["testutils"] }
 
 [profile.release]
 opt-level = "z"

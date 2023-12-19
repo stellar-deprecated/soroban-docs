@@ -25,6 +25,7 @@ export default function Landing() {
       <main className="Landing">
         <Hero />
         <Designed />
+        <Timeline />
         <Learn />
         <GettingStarted />
         <Earn />
@@ -130,6 +131,13 @@ const DesignedCard = ({ title, children }) => (
     </div>
   </div>
 );
+
+const Timeline = () => (
+  <div className="Timeline">
+    <img className="img__light" src="/img/timeline-lgt.png"></img>
+    <img className="img__dark" src="/img/timeline-drk.png"></img>
+  </div>
+)
 
 const Learn = () => (
   <div className="Learn">

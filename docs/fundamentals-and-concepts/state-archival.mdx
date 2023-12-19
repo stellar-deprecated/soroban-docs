@@ -226,10 +226,10 @@ In order to help the scaffolding of the code, we'll introduce some reusable comp
 ```typescript
 import {
   Server,
-  SorobanRpc,
   Transaction,
   FeeBumpTransaction,
-} from "soroban-client";
+  SorobanRpc
+} from "@stellar/stellar-sdk";
 
 const RPC_SERVER = "https://soroban-testnet.stellar.org/";
 const server = new Server(RPC_SERVER);
@@ -237,7 +237,7 @@ const server = new Server(RPC_SERVER);
 // Submits a tx and then polls for its status until a timeout is reached.
 async function yeetTx(
   tx: Transaction | FeeBumpTransaction,
-): Promise<SorobanRpc.GetTransactionResponse> {
+): Promise<SorobanRpc.Api.GetTransactionResponse> {
   return server.sendTransaction(tx).then(async (reply) => {
     if (reply.status !== "PENDING") {
       throw reply;
@@ -280,7 +280,7 @@ Remember: You should always handle errors gracefully! This is a fail-hard and fa
 
 :::
 
-In the following code, we will also leverage [`Server.prepareTransaction`](https://stellar.github.io/js-soroban-client/Server.html#prepareTransaction). This is a helpful method that, given a transaction, will simulate it, then amend the transaction with the simulation results (fees, etc.) and return that. Then, it can just be signed and submitted. We will also use [`SorobanDataBuilder`](https://stellar.github.io/js-soroban-client/SorobanDataBuilder.html), a convenient abstraction that lets us use a [builder pattern](https://en.wikipedia.org/wiki/Builder_pattern) to set the appropriate storage footprints for a transaction.
+In the following code, we will also leverage [`Server.prepareTransaction`](https://stellar.github.io/js-soroban-client/Server.html#prepareTransaction). This is a helpful method that, given a transaction, will simulate it, then amend the transaction with the simulation results (fees, etc.) and return that. Then, it can just be signed and submitted. We will also use [`SorobanDataBuilder`](https://stellar.github.io/js-stellar-sdk/SorobanDataBuilder.html), a convenient abstraction that lets us use a [builder pattern](https://en.wikipedia.org/wiki/Builder_pattern) to set the appropriate storage footprints for a transaction.
 
 ### Example: My data is archived!
 
@@ -301,22 +301,23 @@ import {
   Keypair,
   TransactionBuilder,
   SorobanDataBuilder,
-  assembleTransaction,
+  SorobanRpc,
   xdr,
-} from "soroban-client"; // add'l imports to preamble
+} from "@stellar/stellar-sdk"; // add'l imports to preamble
+const { Api, assembleTransaction } = SorobanRpc;
 
 // assume that `server` is the Server() instance from the preamble
 
 async function submitOrRestoreAndRetry(
   signer: Keypair,
   tx: Transaction,
-): Promise<SorobanRpc.GetTransactionResponse> {
-  // We can't use `Server.prepareTransaction` here because we want to do
+): Promise<Api.GetTransactionResponse> {
+  // We can't use `prepareTransaction` here because we want to do
   // restoration if necessary, basically assembling the simulation ourselves.
   const sim = await server.simulateTransaction(tx);
 
   // Other failures are out of scope of this tutorial.
-  if (!SorobanRpc.isSimulationSuccess(sim)) {
+  if (!Api.isSimulationSuccess(sim)) {
     throw sim;
   }
 
@@ -343,7 +344,7 @@ async function submitOrRestoreAndRetry(
   restoreTx.sign(signer);
 
   const resp = await yeetTx(restoreTx);
-  if (resp.status !== SorobanRpc.GetTransactionStatus.SUCCESS) {
+  if (resp.status !== Api.GetTransactionStatus.SUCCESS) {
     throw resp;
   }
 
@@ -395,13 +396,13 @@ import {
   TransactionBuilder,
   SorobanDataBuilder,
   Operation,
-  SorobanRpc,
-} from "soroban-client";
+  SorobanRpc
+} from "@stellar/stellar-sdk";
 
 async function restoreContract(
   signer: Keypair,
   c: Contract,
-): Promise<SorobanRpc.GetTransactionResponse> {
+): Promise<SorobanRpc.Api.GetTransactionResponse> {
   const account = await server.getAccount(signer.publicKey());
   const restoreTx = new TransactionBuilder(account, { fee: BASE_FEE })
     .setNetworkPassphrase(Networks.TESTNET)

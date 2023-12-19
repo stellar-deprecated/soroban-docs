@@ -36,10 +36,10 @@ Some (but not all yet) of the Stellar SDKs have functions built-in to handle mos
 
 :::tip
 
-The [`soroban-client`](https://stellar.github.io/js-soroban-client/) JavaScript SDK is a new library that can be used alongside the existing JavaScript SDKs for Stellar. All you need to do is install it using your preferred package manager.
+The existing [JavaScript SDK](https://github.com/stellar/js-stellar-sdk) now incorporates all of the elements needed for Soroban. All you need to do is install it using your preferred package manager.
 
 ```bash
-npm install --save soroban-client
+npm install --save @stellar/stellar-sdk
 ```
 
 :::
@@ -49,11 +49,11 @@ npm install --save soroban-client
   const {
     Keypair,
     Contract,
-    Server,
+    SorobanRpc,
     TransactionBuilder,
     Networks,
     BASE_FEE,
-  } = require("soroban-client");
+  } = require("@stellar/stellar-sdk");
 
   // The source account will be used to sign and send the transaction.
   // GCWY3M4VRW4NXJRI7IVAU3CC7XOPN6PRBG6I5M7TAOQNKZXLT3KAH362
@@ -61,9 +61,8 @@ npm install --save soroban-client
     "SCQN3XGRO65BHNSWLSHYIR4B65AHLDUQ7YLHGIWQ4677AZFRS77TCZRB",
   );
 
-  // Configure SorobanClient to use the `soroban-rpc` instance of your
-  // choosing.
-  const server = new Server("https://soroban-testnet.stellar.org:443");
+  // Configure the SDK to use the `soroban-rpc` instance of your choosing.
+  const server = new SorobanRpc.Server("https://soroban-testnet.stellar.org:443");
 
   // Here we will use a deployed instance of the `increment` example contract.
   const contractAddress =
@@ -131,7 +130,7 @@ npm install --save soroban-client
         }
         // Find the return value from the contract and return it
         let transactionMeta = getResponse.resultMetaXdr;
-        let returnValue = transactionMeta.v3().sorobanMeta().returnValue();
+        let returnValue = getResponse.returnValue;
         console.log(`Transaction result: ${returnValue.value()}`);
       } else {
         throw `Transaction failed: ${getResponse.resultXdr}`;
@@ -152,10 +151,10 @@ npm install --save soroban-client
 
 :::tip
 
-The [`py-stellar-base`](https://stellar-sdk.readthedocs.io/en/soroban/) Python SDK has implemented experimental support for interacting with Soroban smart contracts. You can install it from the `soroban` branch of the library's [GitHub repository](https://github.com/StellarCN/py-stellar-base/tree/soroban). Note: If you already use this SDK for interacting with the Stellar network, you may want to consider installing the `soroban` branch in a virtualenv of some sort.
+The [`py-stellar-base`](https://stellar-sdk.readthedocs.io/en/soroban/) Python SDK has stable support for interacting with Soroban smart contracts as of [v9.0.0](https://github.com/StellarCN/py-stellar-base/releases/tag/9.0.0).
 
 ```bash
-pip install git+https://github.com/StellarCN/py-stellar-base.git@soroban
+pip install stellar-sdk
 ```
 
 :::

@@ -62,7 +62,9 @@ npm install --save @stellar/stellar-sdk
   );
 
   // Configure the SDK to use the `soroban-rpc` instance of your choosing.
-  const server = new SorobanRpc.Server("https://soroban-testnet.stellar.org:443");
+  const server = new SorobanRpc.Server(
+    "https://soroban-testnet.stellar.org:443",
+  );
 
   // Here we will use a deployed instance of the `increment` example contract.
   const contractAddress =

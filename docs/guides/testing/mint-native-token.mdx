@@ -1,6 +1,11 @@
 ---
 title: Mint native XLM in a contract test
 hide_table_of_contents: true
+draft: true
 ---
 
-I guess it goes something like `env.deploy_token_contract(...)` or some such thing. How long will this line go on if I just keep writing? Perhaps some "Lorem Ipsum" or other placeholder text would be useful in this situation, but I don't feel like finding a generator for that right now.
+It can often be necessary to test whether your contract's interactions surrounding tokens work as intended. Often, the token you test again can be created from arbitrary details. However, there are occassions where testing against a specific token can be advantageous. Here is a test function that makes use of the Stellar Asset Contract for the native XLM token.
+
+```rust
+env.token.native_asset_contract(); // or some such...
+```

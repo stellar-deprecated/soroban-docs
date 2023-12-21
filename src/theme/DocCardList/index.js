@@ -14,13 +14,13 @@ import { title } from 'process';
 function DocCardListForCurrentSidebarCategory({className}) {
   const category = useCurrentSidebarCategory();
   return category.label === 'Tutorials'
-    ? <FilterableDocCardList items={category.items} className={className} />
+    ? <TutorialsDocCardList items={category.items} className={className} />
     : category.label === 'How-To Guides'
-    ? <GuidesDocList items={category.items} className={className} />
+    ? <GuidesDocCardList items={category.items} className={className} />
     : <DocCardList items={category.items} className={className} />;
 }
 
-function GuidesDocList(props) {
+function GuidesDocCardList(props) {
   const {items, className} = props;
   return (
     <div className={clsx('row', className)}>
@@ -40,7 +40,7 @@ function GuidesDocList(props) {
   )
 }
 
-function FilterableDocCardList(props) {
+function TutorialsDocCardList(props) {
   const [tutorialLevel, setTutorialLevel] = useState('All');
   const [tutorialQuery, setTutorialQuery] = useState('');
 
@@ -59,13 +59,20 @@ function FilterableDocCardList(props) {
 
   return (
     <>
-      <select className={styles.docCardFilterSelect} onChange={e => setTutorialLevel(e.target.value)}>
-        <option value="All" default>Select Tutorial Level</option>
-        <option>Beginner</option>
-        <option>Intermediate</option>
-        <option>Advanced</option>
-      </select>
-      <input placeholder="Search Tutorials" className={styles.docCardFilterSearch} onChange={e => setTutorialQuery(e.target.value)} />
+      <div className={clsx('row', className)}>
+        <div className={clsx('col', 'col--6', className)}>
+          <select className={styles.docCardFilterSelect} onChange={e => setTutorialLevel(e.target.value)}>
+            <option default selected disabled>Select Tutorial Level</option>
+            <option>All</option>
+            <option>Beginner</option>
+            <option>Intermediate</option>
+            <option>Advanced</option>
+          </select>
+        </div>
+        <div className={clsx('col', 'col--6', className)}>
+          <input placeholder="Search Tutorials" className={styles.docCardFilterSearch} onChange={e => setTutorialQuery(e.target.value)} />
+        </div>
+      </div>
       <section className={clsx('row', className)}>
         {filteredDocCards.map((item, index) => {
           const doc = useDocById(item.docId ?? undefined);

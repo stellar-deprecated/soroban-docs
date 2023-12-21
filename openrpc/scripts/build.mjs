@@ -122,7 +122,7 @@ const doc = {
   },
 }
 
-// fs.writeFileSync('openrpc/refs-openrpc.json', JSON.stringify(doc, null, 2));
+fs.writeFileSync('openrpc/refs-openrpc.json', JSON.stringify(doc, null, 2));
 
 let spec = await dereferenceDocument(doc, defaultResolver.default)
 
@@ -137,6 +137,7 @@ for (var i=0; i < spec.methods.length; i++) {
 }
 
 let data = JSON.stringify(spec, null, 2);
+fs.writeFileSync('openrpc/openrpc.json', data);
 fs.writeFileSync('static/openrpc.json', data);
 
 console.log();

@@ -15,13 +15,10 @@ function sortByMethodName(methods) {
   })
 }
 
-console.log("Loading files...\n");
-
 let methods = [];
 let methodsBase = "openrpc/src/methods/";
 let methodFiles = fs.readdirSync(methodsBase);
 methodFiles.forEach(file => {
-  console.log(file);
   let raw = fs.readFileSync(methodsBase + file);
   let parsed = JSON.parse(raw);
   methods = [
@@ -34,7 +31,6 @@ let contentDescriptors = {};
 let cdBase = "openrpc/src/contentDescriptors/";
 let cdFiles = fs.readdirSync(cdBase);
 cdFiles.forEach(file => {
-  console.log(file);
   let raw = fs.readFileSync(cdBase + file);
   let parsed = JSON.parse(raw);
   contentDescriptors = {
@@ -47,7 +43,6 @@ let schemas = {};
 let schemasBase = "openrpc/src/schemas/"
 let schemaFiles = fs.readdirSync(schemasBase);
 schemaFiles.forEach(file => {
-  console.log(file);
   let raw = fs.readFileSync(schemasBase + file);
   let parsed = JSON.parse(raw);
   schemas = {
@@ -60,7 +55,6 @@ let examples = {}
 let examplesBase = "openrpc/src/examples/"
 let examplesFiles = fs.readdirSync(examplesBase)
 examplesFiles.forEach(file => {
-  console.log(file)
   let raw = fs.readFileSync(examplesBase + file)
   let parsed = JSON.parse(raw)
   examples = {
@@ -73,7 +67,6 @@ let examplePairingObjects = {}
 let epoBase = "openrpc/src/examplePairingObjects/"
 let epoFiles = fs.readdirSync(epoBase)
 epoFiles.forEach(file => {
-  console.log(file)
   let raw = fs.readFileSync(epoBase + file)
   let parsed = JSON.parse(raw)
   examplePairingObjects = {

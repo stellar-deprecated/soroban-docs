@@ -1,24 +1,29 @@
-# Soroban RPC API Specification
+# Soroban RPC API Specification <!-- omit in toc -->
 
 ## Table of Contents <!-- omit in toc -->
 
-- [Soroban RPC API Specification](#soroban-rpc-api-specification)
-  - [JSON-RPC](#json-rpc)
-    - [Building](#building)
-    - [Testing](#testing)
-    - [JSON `$ref`s](#json-refs)
-  - [Keeping Things Up-to-Date](#keeping-things-up-to-date)
-    - [Methods (`/openrpc/src/methods/*`)](#methods-openrpcsrcmethods)
-    - [Content Descriptors (`/openrpc/src/contentDescriptors/*`)](#content-descriptors-openrpcsrccontentdescriptors)
-    - [Schemas (`/openrpc/src/schemas/*`)](#schemas-openrpcsrcschemas)
-    - [Examples (`/openrpc/src/examples/*`)](#examples-openrpcsrcexamples)
-    - [Example Pairings (`/openrpc/src/examplePairingObjects/*`)](#example-pairings-openrpcsrcexamplepairingobjects)
+- [JSON-RPC](#json-rpc)
+  - [Building](#building)
+  - [Testing](#testing)
+  - [JSON `$ref`s](#json-refs)
+- [Keeping Things Up-to-Date](#keeping-things-up-to-date)
+  - [Methods (`/openrpc/src/methods/*`)](#methods-openrpcsrcmethods)
+  - [Content Descriptors (`/openrpc/src/contentDescriptors/*`)](#content-descriptors-openrpcsrccontentdescriptors)
+  - [Schemas (`/openrpc/src/schemas/*`)](#schemas-openrpcsrcschemas)
+  - [Examples (`/openrpc/src/examples/*`)](#examples-openrpcsrcexamples)
+  - [Example Pairings (`/openrpc/src/examplePairingObjects/*`)](#example-pairings-openrpcsrcexamplepairingobjects)
 
 ## JSON-RPC
 
 This is a specification of the API presented by Soroban RPC.
 
 ### Building
+
+> _Note:_ The build process will provide an output file at
+> `/static/openrpc.json`. This file should be included in any commits. However,
+> this build process is re-run as part of our docusaurus deployment. So, it's
+> necessary to update the actual source JSON files, and not just this built file
+> as it will be overwritten at deploy time.
 
 The specification is split into multiple files to improve readability. The
 complete spec can be compiled into a single document as follows. (Run this

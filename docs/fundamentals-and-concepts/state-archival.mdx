@@ -225,14 +225,13 @@ In order to help the scaffolding of the code, we'll introduce some reusable comp
 
 ```typescript
 import {
-  Server,
   Transaction,
   FeeBumpTransaction,
   SorobanRpc,
 } from "@stellar/stellar-sdk";
 
 const RPC_SERVER = "https://soroban-testnet.stellar.org/";
-const server = new Server(RPC_SERVER);
+const server = new SorobanRpc.Server(RPC_SERVER);
 
 // Submits a tx and then polls for its status until a timeout is reached.
 async function yeetTx(
@@ -289,7 +288,7 @@ We'll start with the likeliest occurrence: my piece of persistent data is archiv
 In this example, we will assume two things: the contract itself is still live (i.e. others have been extending its TTL while you've been away) and you don't know how your archived data is represented on the ledger. If you did, you could skip the steps below where we figure that out and just set up the restoration footprint directly. The process involves three discrete steps:
 
 1. Simulate our transaction as we normally would.
-2. If the simulation indicated it, we perform restoration via [`Operation.restoreFootprint`](https://stellar.github.io/js-soroban-client/Operation.html#.restoreFootprint) using its hints.
+2. If the simulation indicated it, we perform restoration via [`Operation.restoreFootprint`](https://stellar.github.io/js-stellar-sdk/Operation.html#.restoreFootprint) using its hints.
 3. We retry running our initial transaction.
 
 Let's see that in code:
@@ -322,7 +321,7 @@ async function submitOrRestoreAndRetry(
   }
 
   // If simulation didn't fail, we don't need to restore anything! Just send it.
-  if (!sim.restorePreamble) {
+  if (!Api.isSimulationRestore(sim)) {
     const prepTx = assembleTransaction(tx, Networks.TESTNET, sim);
     prepTx.sign(signer);
     return yeetTx(prepTx);
@@ -383,9 +382,9 @@ flowchart LR
 
 We need **both** to be live for our contract calls to work.
 
-Let's work through how these can be recovered. The recovery process is slightly different for a convenient reason: we don't need simulation to figure out the footprints. Instead, we can leverage [`Contract.getFootprint()`](https://stellar.github.io/js-soroban-client/Contract.html#getFootprint), which prepares a footprint with the ledger keys used by a given contract instance (including its backing WASM code).
+Let's work through how these can be recovered. The recovery process is slightly different: while we don't need simulation to figure out the footprints, we do need to do an additional fetch to determine where the WASM code lives on the ledger. We can leverage [`Contract.getFootprint()`](https://stellar.github.io/js-stellar-sdk/Contract.html#getFootprint), which will give us the ledger key used by a given contract instance, but not its backing WASM code. For that, we'll recreate [this example](/api/methods/getLedgerEntries#requesting-a-contracts-wasm-code).
 
-Unfortunately, we still need simulation to figure out the _fees_ for our restoration. This, however, can be easily covered by the SDK's [`Server.prepareTransaction`](https://stellar.github.io/js-soroban-client/Server.html#prepareTransaction) helper, which will do simulation and assembly for us:
+We also need simulation to figure out the fees for our restoration. This, however, can be easily covered by the SDK's [`Server.prepareTransaction`](https://stellar.github.io/js-stellar-sdk/Server.html#prepareTransaction) helper, which will do simulation and assembly for us:
 
 ```typescript
 import {
@@ -403,23 +402,37 @@ async function restoreContract(
   signer: Keypair,
   c: Contract,
 ): Promise<SorobanRpc.Api.GetTransactionResponse> {
+  const instance = c.getFootprint();
+
   const account = await server.getAccount(signer.publicKey());
+  const wasmEntry = await server.getLedgerEntries(
+    getWasmLedgerKey(instance)
+  );
+
   const restoreTx = new TransactionBuilder(account, { fee: BASE_FEE })
     .setNetworkPassphrase(Networks.TESTNET)
     .setSorobanData(
       // Set the restoration footprint (remember, it should be in the
       // read-write part!)
-      new SorobanDataBuilder().setReadWrite(c.getFootprint()).build(),
+      new SorobanDataBuilder().setReadWrite([
+        instance,
+        wasmEntry
+      ]).build(),
     )
     .addOperation(Operation.restoreFootprint({}))
     .build();
 
-  const preppedTx = await server.prepareTransaction(
-    restoreTx,
-    Networks.TESTNET,
-  );
+  const preppedTx = await server.prepareTransaction(restoreTx);
   preppedTx.sign(signer);
   return yeetTx(preppedTx);
+}
+
+function getWasmLedgerKey(entry: xdr.ContractDataEntry):  {
+  return xdr.LedgerKey.contractCode(
+    new xdr.LedgerKeyContractCode({
+      hash: entry.val().instance().wasmHash()
+    })
+  );
 }
 ```
 

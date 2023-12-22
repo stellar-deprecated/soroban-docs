@@ -34,145 +34,128 @@ consistent with the interface described here:
 
 ### Code
 
-The interface below uses the Rust [soroban-sdk](https://soroban.stellar.org/docs/reference/sdks/rust).
+The interface below uses the Rust [soroban-sdk](../sdks/rust.mdx) to declare a
+trait that complies with the
+[SEP-41](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0041.md)
+token interface.
 
 ```rust
-pub trait Contract {
-    // --------------------------------------------------------------------------------
-    // Admin interface – privileged functions.
-    // --------------------------------------------------------------------------------
-    //
-    // All the admin functions have to be authorized by the admin with all input
-    // arguments, i.e. they have to call `admin.require_auth()`.
+pub trait TokenInterface {
+    /// Returns the allowance for `spender` to transfer from `from`.
+    ///
+    /// # Arguments
+    ///
+    /// - `from` - The address holding the balance of tokens to be drawn from.
+    /// - `spender` - The address spending the tokens held by `from`.
+    fn allowance(env: Env, from: Address, spender: Address) -> i128;
 
-    /// Clawback "amount" from "from" account. "amount" is burned.
-    /// Emit event with topics = ["clawback", admin: Address, to: Address], data = [amount: i128]
-    fn clawback(
-        env: soroban_sdk::Env,
-        from: Address,
-        amount: i128,
-    );
+    /// Set the allowance by `amount` for `spender` to transfer/burn from
+    /// `from`.
+    ///
+    /// # Arguments
+    ///
+    /// - `from` - The address holding the balance of tokens to be drawn from.
+    /// - `spender` - The address being authorized to spend the tokens held by
+    /// `from`.
+    /// - `amount` - The tokens to be made available to `spender`.
+    /// - `live_until_ledger` - The minimum ledger number that this allowance will live until.
+    /// Cannot be less than the current ledger number unless the amount is being
+    /// set to 0.  An non-live entry (where live_until_ledger < the current
+    /// ledger number) should be treated as a 0 amount allowance.
+    ///
+    /// # Events
+    ///
+    /// Emits an event with topics `["approve", from: Address,
+    /// spender: Address], data = [amount: i128, live_until_ledger: u32]`
+    ///
+    /// Emits an event with:
+    /// - topics - `["approve", from: Address, spender: Address]`
+    /// - data - `[amount: i128, live_until_ledger: u32]`
+    fn approve(env: Env, from: Address, spender: Address, amount: i128, live_until_ledger: u32);
 
-    /// Mints "amount" to "to".
-    /// Emit event with topics = ["mint", admin: Address, to: Address], data = [amount: i128]
-    fn mint(
-        env: soroban_sdk::Env,
-        to: Address,
-        amount: i128,
-    );
+    /// Returns the balance of `id`.
+    ///
+    /// # Arguments
+    ///
+    /// - `id` - The address for which a balance is being queried. If the
+    /// address has no existing balance, returns 0.
+    fn balance(env: Env, id: Address) -> i128;
 
-    /// Sets the administrator to the specified address "new_admin".
-    /// Emit event with topics = ["set_admin", admin: Address], data = [new_admin: Address]
-    fn set_admin(
-        env: soroban_sdk::Env,
-        new_admin: Address,
-    );
+    /// Transfer `amount` from `from` to `to`.
+    ///
+    /// # Arguments
+    ///
+    /// - `from` - The address holding the balance of tokens which will be
+    /// withdrawn from.
+    /// - `to` - The address which will receive the transferred tokens.
+    /// - `amount` - The amount of tokens to be transferred.
+    ///
+    /// # Events
+    ///
+    /// Emits an event with:
+    /// - topics - `["transfer", from: Address, to: Address]`
+    /// - data - `[amount: i128]`
+    fn transfer(env: Env, from: Address, to: Address, amount: i128);
 
-    /// Sets whether the account is authorized to use its balance.
-    /// If "authorized" is true, "id" should be able to use its balance.
-    /// Emit event with topics = ["set_authorized", id: Address], data = [authorize: bool]
-    fn set_authorized(
-        env: soroban_sdk::Env,
-        id: Address,
-        authorize: bool,
-    );
+    /// Transfer `amount` from `from` to `to`, consuming the allowance of
+    /// `spender`. Authorized by spender (`spender.require_auth()`).
+    ///
+    /// # Arguments
+    ///
+    /// - `spender` - The address authorizing the transfer, and having its
+    /// allowance consumed during the transfer.
+    /// - `from` - The address holding the balance of tokens which will be
+    /// withdrawn from.
+    /// - `to` - The address which will receive the transferred tokens.
+    /// - `amount` - The amount of tokens to be transferred.
+    ///
+    /// # Events
+    ///
+    /// Emits an event with:
+    /// - topics - `["transfer", from: Address, to: Address]`
+    /// - data - `[amount: i128]`
+    fn transfer_from(env: Env, spender: Address, from: Address, to: Address, amount: i128);
 
-    // --------------------------------------------------------------------------------
-    // Token interface
-    // --------------------------------------------------------------------------------
-    //
-    // All the functions here have to be authorized by the token spender
-    // (usually named `from` here) using all the input arguments, i.e. they have
-    // to call `from.require_auth()`.
+    /// Burn `amount` from `from`.
+    ///
+    /// # Arguments
+    ///
+    /// - `from` - The address holding the balance of tokens which will be
+    /// burned from.
+    /// - `amount` - The amount of tokens to be burned.
+    ///
+    /// # Events
+    ///
+    /// Emits an event with:
+    /// - topics - `["burn", from: Address]`
+    /// - data - `[amount: i128]`
+    fn burn(env: Env, from: Address, amount: i128);
 
-    /// Set the allowance by "amount" for "spender" to transfer/burn from "from".
-    /// "expiration_ledger" is the ledger number where this allowance expires. It cannot
-    /// be less than the current ledger number unless the amount is being set to 0.
-    /// An expired entry (where "expiration_ledger" < the current ledger number)
-    /// should be treated as a 0 amount allowance.
-    /// Emit event with topics = ["approve", from: Address, spender: Address], data = [amount: i128, expiration_ledger: u32]
-    fn approve(
-        env: soroban_sdk::Env,
-        from: Address,
-        spender: Address,
-        amount: i128,
-        expiration_ledger: u32,
-    );
+    /// Burn `amount` from `from`, consuming the allowance of `spender`.
+    ///
+    /// # Arguments
+    ///
+    /// - `spender` - The address authorizing the burn, and having its allowance
+    /// consumed during the burn.
+    /// - `from` - The address holding the balance of tokens which will be
+    /// burned from.
+    /// - `amount` - The amount of tokens to be burned.
+    ///
+    /// # Events
+    ///
+    /// Emits an event with:
+    /// - topics - `["burn", from: Address]`
+    /// - data - `[amount: i128]`
+    fn burn_from(env: Env, spender: Address, from: Address, amount: i128);
 
-    /// Transfer "amount" from "from" to "to".
-    /// Emit event with topics = ["transfer", from: Address, to: Address], data = [amount: i128]
-    fn transfer(
-        env: soroban_sdk::Env,
-        from: Address,
-        to: Address,
-        amount: i128,
-    );
+    /// Returns the number of decimals used to represent amounts of this token.
+    fn decimals(env: Env) -> u32;
 
-    /// Transfer "amount" from "from" to "to", consuming the allowance of "spender".
-    /// Authorized by spender (`spender.require_auth()`).
-    /// Emit event with topics = ["transfer", from: Address, to: Address], data = [amount: i128]
-    fn transfer_from(
-        env: soroban_sdk::Env,
-        spender: Address,
-        from: Address,
-        to: Address,
-        amount: i128,
-    );
+    /// Returns the name for this token.
+    fn name(env: Env) -> String;
 
-    /// Burn "amount" from "from".
-    /// Emit event with topics = ["burn", from: Address], data = [amount: i128]
-    fn burn(
-        env: soroban_sdk::Env,
-        from: Address,
-        amount: i128,
-    );
-
-    /// Burn "amount" from "from", consuming the allowance of "spender".
-    /// Emit event with topics = ["burn", from: Address], data = [amount: i128]
-    fn burn_from(
-        env: soroban_sdk::Env,
-        spender: Address,
-        from: Address,
-        amount: i128,
-    );
-
-    // --------------------------------------------------------------------------------
-    // Read-only Token interface
-    // --------------------------------------------------------------------------------
-    //
-    // The functions here don't need any authorization and don't emit any
-    // events.
-
-    /// Get the balance of "id".
-    fn balance(env: soroban_sdk::Env, id: Address) -> i128;
-
-    /// Get the spendable balance of "id". This will return the same value as balance()
-    /// unless this is called on the Stellar Asset Contract, in which case this can
-    /// be less due to reserves/liabilities.
-    fn spendable_balance(env: soroban_sdk::Env id: Address) -> i128;
-
-    // Returns true if "id" is authorized to use its balance.
-    fn authorized(env: soroban_sdk::Env, id: Address) -> bool;
-
-    /// Get the allowance for "spender" to transfer from "from".
-    fn allowance(
-        env: soroban_sdk::Env,
-        from: Address,
-        spender: Address,
-    ) -> i128;
-
-    // --------------------------------------------------------------------------------
-    // Descriptive Interface
-    // --------------------------------------------------------------------------------
-
-    // Get the number of decimals used to represent amounts of this token.
-    fn decimals(env: soroban_sdk::Env) -> u32;
-
-    // Get the name for this token.
-    fn name(env: soroban_sdk::Env) -> soroban_sdk::Bytes;
-
-    // Get the symbol for this token.
-    fn symbol(env: soroban_sdk::Env) -> soroban_sdk::Bytes;
+    /// Returns the symbol for this token.
+    fn symbol(env: Env) -> String;
 }
 ```
 

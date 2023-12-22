@@ -498,11 +498,11 @@ that `function` performs (if any).
   corresponding to the created contract.
 
 Building `SorobanAuthorizedInvocation` trees may be simplified by using the
-recording auth mode in Soroban preflight (see the [docs][preflight-doc] for more
+recording auth mode in Soroban's `simulateTransaction` mechanism (see the [docs][simulate-transaction-doc] for more
 details).
 
 [envelope-xdr]: https://github.com/stellar/stellar-xdr/blob/e372df9f677961aac04c5a4cc80a3667f310b29f/Stellar-transaction.x#L703
-[preflight-doc]: ../fundamentals-and-concepts/interacting-with-contracts.mdx#authorization
+[simulate-transaction-doc]: ../fundamentals-and-concepts/interacting-with-contracts.mdx#authorization
 
 ##### Stellar Account Signatures
 
@@ -559,7 +559,7 @@ struct SorobanTransactionData
 This data comprises two parts: Soroban resources and the `refundableFee`. The
 `refundableFee` is the portion of the transaction fee eligible for refund. It
 includes the fees for the contract events emitted by the transaction, the return
-value of the host function invocation, and fees for the [ledger space rent](./state-expiration.mdx).
+value of the host function invocation, and fees for the [ledger space rent](./state-archival.mdx).
 
 The `SorobanResources` structure includes the ledger footprint and the resource
 values, which together determine the resource consumption limit and the
@@ -567,5 +567,4 @@ resource fee. The footprint must contain the `LedgerKey`s that will be read
 and/or written.
 
 The simplest method to determine the values in `SorobanResources` and
-`refundableFee` is to use the transaction simulation with
-[preflight service](../fundamentals-and-concepts/interacting-with-contracts.mdx#preflight).
+`refundableFee` is to use the [`simulateTransaction` mechanism](../fundamentals-and-concepts/interacting-with-contracts.mdx#transaction-simulation).

@@ -1,38 +1,8 @@
 ---
-sidebar_position: 1
+hide_title: true
+description: Returns latest known ledger
 ---
 
-import ExampleRequest from "@site/src/components/ExampleRequest";
+import { RpcMethod } from "@site/src/components/RpcMethod";
 
-For finding out the current latest known ledger of this node. This is a subset of the ledger info from Horizon.
-
-## Parameters
-
-- None
-
-## Returns
-
-- `<object>`
-  - `id`: `<hash>` - hash of the latest ledger as a hex-encoded string
-  - `protocolVersion`: `<number>` - Stellar Core protocol version associated with the latest ledger
-  - `sequence`: `<number>` - sequence number of the latest ledger
-
-## Examples
-
-### Request
-
-<ExampleRequest method="getLatestLedger" />
-
-### Response
-
-```json
-{
-  "jsonrpc": "2.0",
-  "id": 8675309,
-  "result": {
-    "id": "2a00000000000000000000000000000000000000000000000000000000000000",
-    "protocolVersion": 20,
-    "sequence": 666
-  }
-}
-```
+<RpcMethod method="getLatestLedger"/>

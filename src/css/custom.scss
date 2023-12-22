@@ -15,6 +15,9 @@
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
 
+// soroban teal color #4daaa9
+// soroban gold color #f9db4a;
+
 /* You can override the default Infima variables here. */
 :root {
   --ifm-color-primary: #4daaa9;
@@ -47,6 +50,7 @@
 /* For readability concerns, you should choose a lighter palette in dark mode. */
 [data-theme="dark"] {
   --ifm-color-primary: #f9db4a;
+  --ifm-color-secondary: #4daaa9;
   --ifm-navbar-background-color: #1b1b1d;
   --ifm-footer-background-color: #1b1b1d;
   --ifm-background-color: #222222 !important;
@@ -111,4 +115,59 @@ p > code {
   border-radius: 0.5rem;
   font-family: var(--ifm-font-family-mono);
   font-weight: 700;
+}
+
+/* Reader Feedback Box */
+
+.readerFeedback {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+
+  margin-top: 3rem;
+  padding: 1.5rem 2rem;
+  background-color: var(--ifm-menu-color-background-active);
+  font-weight: 700;
+  color: var(--ifm-color-primary);
+
+  svg {
+    height: 1.5rem;
+    width: 1.5rem;
+    transition: color var(--ifm-transition-fast) var(--ifm-transition-timing-default);
+
+    &:hover,
+    &:focus {
+      cursor: pointer;
+    }
+  }
+
+  .feedback_thumbsup {
+    color: var(--ifm-color-success-lightest);
+
+    &:hover,
+    &:focus {
+      color: var(--ifm-color-success-darkest);
+    }
+  }
+
+  .feedback_thumbsdown {
+    color: var(--ifm-color-danger-lightest);
+
+    &:hover,
+    &:focus {
+      color: var(--ifm-color-danger-darkest);
+    }
+  }
+}
+
+/* Customizations to metamask openrpc package styles */
+
+select[data-testid="example-pairing-select"] {
+  padding: 0.75rem;
+  width: 100%;
+  margin-bottom: 1rem;
+  font-size: var(--ifm-font-size-base);
+  border-radius: 5px;
 }

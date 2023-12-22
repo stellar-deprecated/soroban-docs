@@ -13,7 +13,7 @@ const config = {
   baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "throw",
-  favicon: "img/favicon.ico",
+  favicon: "img/soroban-fav-icon.png",
   organizationName: "stellar", // Usually your GitHub org/user name.
   projectName: "soroban-docs", // Usually your repo name.
   i18n: {
@@ -23,19 +23,15 @@ const config = {
   plugins: [
     "docusaurus-plugin-sass",
     [
-      '@docusaurus/plugin-google-analytics',
-      {
-        trackingID: 'UA-53373928-1',
-        anonymizeIP: true,
-      },
-    ],
-    [
       '@docusaurus/plugin-content-docs',
       {
         id: 'api',
         path: 'api',
         routeBasePath: 'api',
         sidebarPath: require.resolve('./sidebarsApi.js'),
+        editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
+        showLastUpdateTime: true,
+        showLastUpdateAuthor: true,
       },
     ],
     [
@@ -45,6 +41,9 @@ const config = {
       path: 'dapps',
       routeBasePath: 'dapps',
       sidebarPath: require.resolve('./sidebarsDapps.js'),
+      editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
+      showLastUpdateTime: true,
+      showLastUpdateAuthor: true,
     },
   ],
     require('./src/dev-server-plugin'),
@@ -58,12 +57,17 @@ const config = {
         blog: false,
         docs: {
           showLastUpdateTime: true,
+          showLastUpdateAuthor: true,
           breadcrumbs: true,
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
         },
         theme: {
           customCss: [require.resolve("./src/css/custom.scss")],
+        },
+        gtag: {
+          trackingID: "G-YE9KVSTERG",
+          anonymizeIP: true,
         },
       }),
     ],
@@ -107,7 +111,7 @@ const config = {
             position: 'left'
           },
           {
-            href: 'https://github.com/stellar/rs-soroban-sdk',
+            href: 'https://github.com/stellar/soroban-docs',
             label: 'GitHub',
             position: 'right',
           },

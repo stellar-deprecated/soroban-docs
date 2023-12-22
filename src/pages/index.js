@@ -25,6 +25,7 @@ export default function Landing() {
       <main className="Landing">
         <Hero />
         <Designed />
+        <Timeline />
         <Learn />
         <GettingStarted />
         <Earn />
@@ -61,7 +62,7 @@ const Hero = () => (
         <p>
           Start building on Soroban today with the help of established tools and
           documentation, or explore earning opportunities with the Soroban
-          Adoption Fund programs.
+          adoption fund programs.
         </p>
 
         <div className="Hero__btn-group">
@@ -130,6 +131,13 @@ const DesignedCard = ({ title, children }) => (
     </div>
   </div>
 );
+
+const Timeline = () => (
+  <div className="Timeline">
+    <img className="img__light" src="/img/timeline-lgt.png"></img>
+    <img className="img__dark" src="/img/timeline-drk.png"></img>
+  </div>
+)
 
 const Learn = () => (
   <div className="Learn">
@@ -215,7 +223,7 @@ const GettingStarted = () => (
           index="4."
           title="Create an App"
           subtitle="Build a front-end app to interact with your Soroban contracts."
-          href="/docs/getting-started/deploy-to-testnet"
+          href="/docs/getting-started/create-an-app"
         />
 
         <GettingStartedCard
@@ -258,7 +266,7 @@ const Earn = () => (
 
       <div className="Earn__right">
         <p>
-          The Stellar Development Foundation (SDF)’s $100M Soroban Adoption Fund
+          The Stellar Development Foundation (SDF)’s $100M Soroban adoption fund
           encourages and supports developers as they learn, experiment, build,
           and scale projects on Soroban. The fund is an umbrella for many
           programs that support all levels of Soroban adoption, some of which

@@ -1,65 +1,8 @@
 ---
-sidebar_position: 8
+hide_title: true
+description: Submits a trial contract invocation transaction
 ---
 
-import ExampleRequest from "@site/src/components/ExampleRequest";
+import { RpcMethod } from "@site/src/components/RpcMethod";
 
-Submit a trial contract invocation to simulate how it would be executed by the network. This endpoint calculates the effective transaction data, required authorizations, and minimal resource fee. It provides a way to test and analyze the potential outcomes of a transaction without actually submitting it to the network.
-
-## Parameters
-
-- `<xdr.TransactionEnvelope>` - The transaction to be simulated (serialized in base64)
-
-## Returns
-
-- `<object>`
-  - `minResourceFee`: `<string>` (optional) stringified number - Recommended minimum resource fee to add when submitting the transaction. This fee is to be added on top of the [Stellar network fee](https://developers.stellar.org/docs/encyclopedia/fees-surge-pricing-fee-strategies#network-fees-on-stellar). Not present in case of error.
-  - `cost`: `<object>` (optional) - Information about instructions used, etc. Not present in case of error.
-    - `cpuInsns`: `<string>` stringified number -  Total cpu instructions consumed by this transaction
-    - `memBytes`: `<string>` stringified number -  Total memory bytes allocated by this transaction
-  - `results`: `<object[]>` (optional) - This array will only have one element: the result for the Host Function invocation. Only present on successful simulation (i.e. no error) of `InvokeHostFunction` operations.
-    - `xdr`: `<xdr.ScVal>` serialized base64 string - return value of the Host Function call.
-    - `auth`: `<xdr.ContractAuth[]>` array of serialized base64 strings - Per-address authorizations recorded when simulating this Host Function call.
-  - `transactionData`: `<xdr.SorobanTransactionData>` (optional) serialized base64 string - The recommended Soroban Transaction Data to use when submitting the simulated transaction. This data contains the refundable fee and resource usage information such as the ledger footprint and IO access data (serialized in a base64 string). Not present in case of error.
-  - `events`: `<xdr.DiagnosticEvent[]>` (optional) array of serialized base64 strings - Array of the events emitted during the contract invocation. The events are ordered by their emission _time_. (an array of serialized base64 strings). Only present when simulating of `InvokeHostFunction` operations, note that it can be present on error, providing extra context about what failed.
-  - `restorePreamble`: `<object>` (optional) - It can only be present on successful simulation (i.e. no error) of `InvokeHostFunction` operations. If present, it indicates that the simulation detected expired ledger entries which need to be restored before the submission of the `InvokeHostFunction` operation. The `minResourceFee` and `transactionData` fields should be used to submit a transaction containing a `RestoreFootprint` operation.
-    - `minResourceFee`: `<string>` stringified number -  Recommended minimum resource fee to add when submitting the `RestoreFootprint` operation. This fee is to be added on top of the [Stellar network fee](https://developers.stellar.org/docs/encyclopedia/fees-surge-pricing-fee-strategies#network-fees-on-stellar).
-    - `transactionData`: `<xdr.SorobanTransactionData>` serialized base64 string - The recommended Soroban Transaction Data to use when submitting the `RestoreFootprint` operation.
-  - `latestLedger`: `<string>` stringified number - Current latest closed ledger (LCL) observed by the node when this response was generated. Always present.
-  - `error`: `<string>` (optional) - This field will include details about why the invoke host function call failed. Only present if the transaction simulation failed.
-
-## Examples
-
-### Request
-
-<ExampleRequest method="simulateTransaction" params={{transaction: "AAAAAgAAAABzdv3ojkzWHMD7KUoXhrPx0GH18vHKV0ZfqpMiEblG1gAAAGQAAAAAAAAABAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAABAAAAAHN2/eiOTNYcwPspSheGs/HQYfXy8cpXRl+qkyIRuUbWAAAAGAAAAAIAAAAAAAAABAAAAA0AAAAg4avr0cYyEk0etiaStUgJ889XGSqUqZEZcCyR+ma87LIAAAAPAAAABGF1dGgAAAATAAAAAAAAAABi/B0L0JGythwN1lY0aypo19NHxvLCyO5tBEcCVvwF9wAAAA8AAAAFd29ybGQAAAAAAAAAAAAAAAAAAAQAAAANAAAAIOGr69HGMhJNHrYmkrVICfPPVxkqlKmRGXAskfpmvOyyAAAADwAAAARhdXRoAAAAEwAAAAAAAAAAYvwdC9CRsrYcDdZWNGsqaNfTR8bywsjubQRHAlb8BfcAAAAPAAAABXdvcmxkAAAAAAAAAAAAAAAAAAAA"}} />
-
-### Response
-
-```json
-{
-  "jsonrpc": "2.0",
-  "id": 1102,
-  "result": {
-    "transactionData": "AAAAAwAAAAAAAAAAYvwdC9CRsrYcDdZWNGsqaNfTR8bywsjubQRHAlb8BfcAAAAG4avr0cYyEk0etiaStUgJ889XGSqUqZEZcCyR+ma87LIAAAAUAAAAB8zDhJ3ZTMHmdBjlVh/7d1HDdo+QI1ZXGmeRzBwVAoVXAAAAAQAAAAbhq+vRxjISTR62JpK1SAnzz1cZKpSpkRlwLJH6ZrzssgAAABUAAAAAAAAAAGL8HQvQkbK2HA3WVjRrKmjX00fG8sLI7m0ERwJW/AX3ACb/vgAAFcQAAAC0AAABrAAAAAAAAABUAAAAAA==",
-    "events": [
-      "AAAAAQAAAAAAAAAB4avr0cYyEk0etiaStUgJ889XGSqUqZEZcCyR+ma87LIAAAABAAAAAAAAAAEAAAAOAAAABGF1dGgAAAAPAAAABXdvcmxkAAAA",
-      "AAAAAQAAAAAAAAAB4avr0cYyEk0etiaStUgJ889XGSqUqZEZcCyR+ma87LIAAAABAAAAAAAAAAEAAAAOAAAABGF1dGgAAAAPAAAABXdvcmxkAAAA"
-    ],
-    "minResourceFee": "79488",
-    "results": [
-      {
-        "auth": [
-          "AAAAAQAAAAAAAAAAYvwdC9CRsrYcDdZWNGsqaNfTR8bywsjubQRHAlb8BfcAAAAAAAAAAOGr69HGMhJNHrYmkrVICfPPVxkqlKmRGXAskfpmvOyyAAAABGF1dGgAAAACAAAAEwAAAAAAAAAAYvwdC9CRsrYcDdZWNGsqaNfTR8bywsjubQRHAlb8BfcAAAAPAAAABXdvcmxkAAAAAAAAAAAAAAA="
-        ],
-        "xdr": "AAAAEwAAAAAAAAAAYvwdC9CRsrYcDdZWNGsqaNfTR8bywsjubQRHAlb8Bfc="
-      }
-    ],
-    "cost": {
-      "cpuInsns": "2222468",
-      "memBytes": "2204681"
-    },
-    "latestLedger": "23456"
-  }
-}
-```
+<RpcMethod method="simulateTransaction"/>

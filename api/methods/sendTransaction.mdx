@@ -1,50 +1,8 @@
 ---
-sidebar_position: 7
+hide_title: true
+description: Submits a transaction
 ---
 
-import ExampleRequest from "@site/src/components/ExampleRequest";
+import { RpcMethod } from "@site/src/components/RpcMethod";
 
-Submit a real transaction to the Stellar network. This is the only way to make changes "on-chain".
-
-Unlike Horizon, this does not wait for transaction completion. It simply validates and enqueues the transaction. Clients should call getTransaction to learn about transaction success/failure.
-
-This supports all transactions, not only smart contract-related transactions.
-
-## Parameters
-
-- `<xdr.TransactionEnvelope>` - The signed transaction to broadcast (serialized in base64)
-
-## Returns
-
-- `<object>`
-  - `hash`: `<hash>` The transaction hash (in an hex-encoded string).
-  - `status`: `<status>` - The current status of the transaction by hash, one of:
-    - `PENDING` - The transaction has been accepted by stellar-core.
-    - `DUPLICATE` - The transaction has already been submitted to stellar-core.
-    - `TRY_AGAIN_LATER` - The transaction was not included in the previous 4 ledgers and is banned from the next few ledgers.
-    - `ERROR` - An error occurred from submitting the transaction to stellar-core.
-  - `latestLedger`: `<string>` - The latest ledger known to Soroban-RPC at the time it handled the `sendTransaction()` request.
-  - `latestLedgerCloseTime`: `<string>` - The unix timestamp of the close time of the latest ledger known to Soroban-RPC at the time it handled the `sendTransaction()` request.
-  - `errorResultXdr`: `<xdr.TransactionResult>` -  (optional) If the transaction status is `ERROR`, this will be a base64 encoded string of the raw TransactionResult XDR struct containing details on why stellar-core rejected the transaction.
-
-## Examples
-
-### Request
-
-<ExampleRequest method="sendTransaction" params={{transaction: "AAAAAgAAAABzdv3ojkzWHMD7KUoXhrPx0GH18vHKV0ZfqpMiEblG1gAAp18AAAAAAAAAAgAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAABAAAAAHN2/eiOTNYcwPspSheGs/HQYfXy8cpXRl+qkyIRuUbWAAAAGAAAAAEAAAABAAAAAPVf8W9m9DNgJmuV22+P7AHXYDEFQwauSks4BZj2z9EUAAAAAO3beL34UBBpCfUUPCfcnqX8YQKn41UhnKu6BInkVe9lAAAAAAAAAAEAAAABAAAAB+3beL34UBBpCfUUPCfcnqX8YQKn41UhnKu6BInkVe9lAAAAAQAAAAbhq+vRxjISTR62JpK1SAnzz1cZKpSpkRlwLJH6ZrzssgAAABQAAUKLAAAUkAAAAIAAAACoAAAAAAAAACEAAAAAAAAAARG5RtYAAABA+Vy3k86bNEP7rP8hb3cY1QWYhRa3CnF7jqHUj22Rd++2a0YwCKrMbofTUOb21GP6aFZwfKVvaokS22u1to5xDw=="}} />
-
-### Response
-
-```json
-{
-  "jsonrpc": "2.0",
-  "id": 8675309,
-  "result": {
-    "hash": "a01441a4d0b80769d2c2d97dcd28d13e9036065da14ea83731424d77efc50894",
-    "status": "PENDING",
-    "latestLedger": "45075181",
-    "latestLedgerCloseTime": "1677115742"
-  }
-}
-```
-
+<RpcMethod method="sendTransaction"/>

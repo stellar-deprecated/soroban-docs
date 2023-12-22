@@ -536,25 +536,21 @@ There are a couple of helpful methods in the SDK to make dealing with authorizat
 - Once you've gotten the authorization entries from [`simulateTransaction`](https://soroban.stellar.org/api/methods/simulateTransaction), you can use the [`authorizeEntry`](https://stellar.github.io/js-stellar-sdk/global.html#authorizeEntry) helper to "fill out" the empty entry accordingly. You will, of course, need the appropriate signer for each of the entries if you are in a multi-party situation.
 
 ```typescript
-const signedEntries = simTx.auth
-  .filter((entry) => {})
-  .map(async (entry) => {
-    return (
-      // In this case, you can authorize by signing the transaction with the
-      // corresponding source account.
-      entry.switch() ===
-        xdr.SorobanCredentialsType.sorobanCredentialsSourceAccount()
-        ? entry
-        : await authorizeEntry(
-            entry,
-            // The `signer` here will be unique for each entry, perhaps reaching out
-            // to a separate entity.
-            signer,
-            currentLedger + 1000,
-            Networks.TESTNET,
-          )
-    );
-  });
+const signedEntries = simTx.auth.map(async (entry) =>
+  // In this case, you can authorize by signing the transaction with the
+  // corresponding source account.
+  entry.switch() ===
+  xdr.SorobanCredentialsType.sorobanCredentialsSourceAccount()
+    ? entry
+    : await authorizeEntry(
+        entry,
+        // The `signer` here will be unique for each entry, perhaps reaching out
+        // to a separate entity.
+        signer,
+        currentLedger + 1000,
+        Networks.TESTNET,
+      ),
+);
 ```
 
 - If you, instead, want to _build_ an authorization entry from scratch rather than relying on simulation, you can use [`authorizeInvocation`](https://stellar.github.io/js-stellar-sdk/global.html#authorizeInvocation), which will build the structure with the appropriate fields.

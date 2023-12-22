@@ -400,6 +400,15 @@ The `hostFunction` in `InvokeHostFunctionOp` will be executed by the Soroban hos
        Stellar asset. This is only supported when `executable == CONTRACT_EXECUTABLE_TOKEN`.
        Note, that the asset doesn't need to exist when this is applied, however the issuer of the asset will be the initial token administrator. Anyone can deploy asset contracts.
 
+##### JavaScript Usage
+
+Each of these variations of host function invocation has convenience methods in the [JavaScript SDK](../reference/sdks/js):
+
+- [`Operation.invokeHostFunction`](https://stellar.github.io/js-stellar-sdk/Operation.html#.invokeHostFunction) is the lowest-level method that corresponds directly to the XDR.
+- [`Operation.invokeContractFunction`](https://stellar.github.io/js-stellar-sdk/Operation.html#.invokeContractFunction) is an abstraction to invoke the method of a particular contract, similar to [`Contract.call`](https://stellar.github.io/js-stellar-sdk/Contract.html#call).
+- [`Operation.createStellarAssetContract`](https://stellar.github.io/js-stellar-sdk/Operation.html#.createStellarAssetContract) and [`Operation.createCustomContract`](https://stellar.github.io/js-stellar-sdk/Operation.html#.createCustomContract) are abstractions to instantiate contracts: the former is for wrapping an existing [Stellar asset](https://developers.stellar.org/docs/issuing-assets/how-to-issue-an-asset) into a smart contract and the latter is for deploying your own contract.
+- [`Operation.uploadContractWasm`](https://stellar.github.io/js-stellar-sdk/Operation.html#.uploadContractWasm) corresponds to the above `HOST_FUNCTION_TYPE_UPLOAD_CONTRACT_WASM` variant, letting you upload the raw WASM buffer to the ledger.
+
 #### Authorization Data
 
 Soroban's [authorization framework](../fundamentals-and-concepts/authorization.mdx)
@@ -438,7 +447,7 @@ as a root. This tree is authorized by a user specified in `credentials`.
       SCAddress address;
       int64 nonce;
       uint32 signatureExpirationLedger;
-      SCVec signatureArgs;
+      SCVal signature;
   };
   ```
   The fields of this structure have the following semantics:
@@ -451,11 +460,7 @@ as a root. This tree is authorized by a user specified in `credentials`.
   - `nonce` is an arbitrary value that is unique for all the signatures
     performed by `address` until `signatureExpirationLedger`. A good approach to
     generating this is to just use a random value.
-  - `signatureArgs` - signature (or multiple signatures) that sign the 32-byte
-    SHA-256 hash of `ENVELOPE_TYPE_SOROBAN_AUTHORIZATION` preimage
-    ([XDR][envelope-xdr]). The signature structure is defined by the account
-    contract corresponding to the `Address` (see below for the Stellar account
-    signature structure).
+  - `signature` is a structure containing the signature (or multiple signatures) that signed the 32-byte, SHA-256 hash of the `ENVELOPE_TYPE_SOROBAN_AUTHORIZATION` preimage ([XDR][envelope-xdr]). The signature structure is defined by the account contract corresponding to the `Address` (see below for the Stellar account signature structure).
 
 `SorobanAuthorizedInvocation` defines a node in the authorized invocation tree:
 
@@ -524,6 +529,36 @@ pub struct AccountEd25519Signature {
 [structures]: https://github.com/stellar/rs-soroban-env/blob/99d8c92cdc7e5cd0f5311df8f88d04658ecde7d2/soroban-env-host/src/native_contract/account_contract.rs#L51
 [custom accounts]: ../fundamentals-and-concepts/authorization.mdx#account-abstraction
 
+##### JavaScript Usage
+
+There are a couple of helpful methods in the SDK to make dealing with authorization easier:
+
+- Once you've gotten the authorization entries from [`simulateTransaction`](https://soroban.stellar.org/api/methods/simulateTransaction), you can use the [`authorizeEntry`](https://stellar.github.io/js-stellar-sdk/global.html#authorizeEntry) helper to "fill out" the empty entry accordingly. You will, of course, need the appropriate signer for each of the entries if you are in a multi-party situation.
+
+```typescript
+const signedEntries = simTx.auth
+  .filter((entry) => {})
+  .map(async (entry) => {
+    return (
+      // In this case, you can authorize by signing the transaction with the
+      // corresponding source account.
+      entry.switch() ===
+        xdr.SorobanCredentialsType.sorobanCredentialsSourceAccount()
+        ? entry
+        : await authorizeEntry(
+            entry,
+            // The `signer` here will be unique for each entry, perhaps reaching out
+            // to a separate entity.
+            signer,
+            currentLedger + 1000,
+            Networks.TESTNET,
+          )
+    );
+  });
+```
+
+- If you, instead, want to _build_ an authorization entry from scratch rather than relying on simulation, you can use [`authorizeInvocation`](https://stellar.github.io/js-stellar-sdk/global.html#authorizeInvocation), which will build the structure with the appropriate fields.
+
 ### Transaction resources
 
 Every Soroban transaction has to have a `SorobanTransactionData` transaction
@@ -569,3 +604,7 @@ and/or written.
 
 The simplest method to determine the values in `SorobanResources` and
 `refundableFee` is to use the [`simulateTransaction` mechanism](../fundamentals-and-concepts/interacting-with-contracts.mdx#transaction-simulation).
+
+#### JavaScript Usage
+
+You can use the [`SorobanDataBuilder`](https://stellar.github.io/js-stellar-sdk/SorobanDataBuilder.html) to leverage the [builder pattern](https://en.wikipedia.org/wiki/Builder_pattern) and get/set all of the above resources accordingly. Then, you call `.build()` and pass the resulting structure to the [`setSorobanData`](https://stellar.github.io/js-stellar-sdk/TransactionBuilder.html#setSorobanData) method of the corresponding [`TransactionBuilder`](https://stellar.github.io/js-stellar-sdk/TransactionBuilder.html).

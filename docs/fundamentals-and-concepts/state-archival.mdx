@@ -322,7 +322,7 @@ async function submitOrRestoreAndRetry(
 
   // If simulation didn't fail, we don't need to restore anything! Just send it.
   if (!Api.isSimulationRestore(sim)) {
-    const prepTx = assembleTransaction(tx, Networks.TESTNET, sim);
+    const prepTx = assembleTransaction(tx, sim);
     prepTx.sign(signer);
     return yeetTx(prepTx);
   }
@@ -382,7 +382,7 @@ flowchart LR
 
 We need **both** to be live for our contract calls to work.
 
-Let's work through how these can be recovered. The recovery process is slightly different: while we don't need simulation to figure out the footprints, we do need to do an additional fetch to determine where the WASM code lives on the ledger. We can leverage [`Contract.getFootprint()`](https://stellar.github.io/js-stellar-sdk/Contract.html#getFootprint), which will give us the ledger key used by a given contract instance, but not its backing WASM code. For that, we'll recreate [this example](/api/methods/getLedgerEntries#requesting-a-contracts-wasm-code).
+Let's work through how these can be recovered. The recovery process is slightly different: while we don't need simulation to figure out the footprints, we do need to do an additional ledger entry fetch. We can leverage [`Contract.getFootprint()`](https://stellar.github.io/js-stellar-sdk/Contract.html#getFootprint) to get the ledger key used by a given contract instance, but that won't give us its backing WASM code. For that, we'll recreate [this example](/api/methods/getLedgerEntries#requesting-a-contracts-wasm-code) here.
 
 We also need simulation to figure out the fees for our restoration. This, however, can be easily covered by the SDK's [`Server.prepareTransaction`](https://stellar.github.io/js-stellar-sdk/Server.html#prepareTransaction) helper, which will do simulation and assembly for us:
 

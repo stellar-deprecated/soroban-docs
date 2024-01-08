@@ -8,7 +8,7 @@ This is a pretty likely occurrence: my piece of persistent data is archived beca
 If you find that a piece of persistent data is archived, it can be restored using a Stellar transaction containing a `RestoreFootprintOp` operation. We'll make two assumptions for the sake of this guide:
 
 - The contract instance itself is still live (i.e., others have been extending its TTL while you've been away).
-- You don't know how your archived data is represented on the ledger (If you do know how the data is structured, you can follow [this guide](./create-restoration-footprint-js.mdx) on creating a restoration footprint directly).
+- You don't know how your archived data is represented on the ledger.
 
 The restoration process we'll use involves three discrete steps:
 
@@ -20,7 +20,7 @@ Here's a function called `submitOrRestoreAndRetry()` that will take care of all 
 
 :::info
 
-This guide makes use of the (aptly named) `yeetTx` function we created in [another guide](../sdks/submit-transaction-wait.mdx).
+This guide makes use of the (aptly named) `yeetTx` function we created in [another guide](../transactions/submit-transaction-wait-js.mdx).
 
 :::
 

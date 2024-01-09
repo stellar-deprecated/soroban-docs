@@ -22,6 +22,18 @@ const config = {
   },
   plugins: [
     "docusaurus-plugin-sass",
+    // [
+    //   '@docusaurus/plugin-content-docs',
+    //   {
+    //     id: 'guides',
+    //     path: 'guides',
+    //     routeBasePath: 'guides',
+    //     sidebarPath: require.resolve('./sidebarsGuides.js'),
+    //     sidebarItemsGenerator: require('./src/sidebar-generator'),
+    //     editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
+    //     showLastUpdateTime: true,
+    //   },
+    // ],
     [
       '@docusaurus/plugin-content-docs',
       {
@@ -36,16 +48,16 @@ const config = {
     ],
     [
       '@docusaurus/plugin-content-docs',
-    {
-      id: 'dapps',
-      path: 'dapps',
-      routeBasePath: 'dapps',
-      sidebarPath: require.resolve('./sidebarsDapps.js'),
-      editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
-      showLastUpdateTime: true,
-      showLastUpdateAuthor: true,
-    },
-  ],
+      {
+        id: 'dapps',
+        path: 'dapps',
+        routeBasePath: 'dapps',
+        sidebarPath: require.resolve('./sidebarsDapps.js'),
+        editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
+        showLastUpdateTime: true,
+        showLastUpdateAuthor: true,
+      },
+    ],
     require('./src/dev-server-plugin'),
     require('./src/analytics-module')
   ],
@@ -61,6 +73,7 @@ const config = {
           breadcrumbs: true,
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
+          sidebarItemsGenerator: require('./src/sidebar-generator'),
         },
         theme: {
           customCss: [require.resolve("./src/css/custom.scss")],
@@ -78,7 +91,8 @@ const config = {
       image: 'img/meta.png',
       docs: {
         sidebar: {
-          autoCollapseCategories: false
+          autoCollapseCategories: false,
+          // hideable: true,
         }
       },
       navbar: {
@@ -110,6 +124,11 @@ const config = {
             label: 'Dapps',
             position: 'left'
           },
+          // {
+          //   to: '/guides',
+          //   label: 'Guides',
+          //   position: 'left'
+          // },
           {
             href: 'https://github.com/stellar/soroban-docs',
             label: 'GitHub',

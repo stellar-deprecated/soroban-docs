@@ -6,10 +6,8 @@ module.exports = {
       collapsible: true,
       collapsed: false,
       link: {
-        type: 'generated-index',
-        title: 'Introduction',
-        description: 'A public discussion about the design of soroban-rpc.',
-        slug: '/',
+        type: 'doc',
+        id: 'README',
       },
       items: [
         'goals',

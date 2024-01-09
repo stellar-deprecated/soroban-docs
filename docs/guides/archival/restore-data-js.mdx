@@ -25,26 +25,35 @@ This guide makes use of the (aptly named) `yeetTx` function we created in [anoth
 :::
 
 ```typescript
-const RPC_SERVER = "https://soroban-testnet.stellar.org/";
-const server = new SorobanRpc.Server(RPC_SERVER);
+import {
+  BASE_FEE,
+  Networks,
+  Keypair,
+  TransactionBuilder,
+  SorobanDataBuilder,
+  SorobanRpc,
+  xdr,
+} from "@stellar/stellar-sdk"; // add'l imports to yeetTx
+const { Api, assembleTransaction } = SorobanRpc;
+
+// assume that `server` is the Server() instance from the yeetTx
 
 async function submitOrRestoreAndRetry(
   signer: Keypair,
   tx: Transaction,
-): Promise<SorobanRpc.Api.GetTransactionResponse> {
-  // We don't use `Server.prepareTransaction` here because we want to do
+): Promise<Api.GetTransactionResponse> {
+  // We can't use `prepareTransaction` here because we want to do
   // restoration if necessary, basically assembling the simulation ourselves.
-  const server = new SorobanRpc.Server("https://soroban-testnet.stellar.org");
   const sim = await server.simulateTransaction(tx);
 
   // Other failures are out of scope of this tutorial.
-  if (!SorobanRpc.Api.isSimulationSuccess(sim)) {
+  if (!Api.isSimulationSuccess(sim)) {
     throw sim;
   }
 
   // If simulation didn't fail, we don't need to restore anything! Just send it.
-  if (!SorobanRpc.Api.isSimulationRestore(sim)) {
-    const prepTx = SorobanRpc.assembleTransaction(tx, sim).build();
+  if (!Api.isSimulationRestore(sim)) {
+    const prepTx = assembleTransaction(tx, sim);
     prepTx.sign(signer);
     return yeetTx(prepTx);
   }
@@ -63,7 +72,7 @@ async function submitOrRestoreAndRetry(
   restoreTx.sign(signer);
 
   const resp = await yeetTx(restoreTx);
-  if (resp.status !== SorobanRpc.Api.GetTransactionStatus.SUCCESS) {
+  if (resp.status !== Api.GetTransactionStatus.SUCCESS) {
     throw resp;
   }
 

@@ -32,19 +32,28 @@ import {
   SorobanDataBuilder,
   Operation,
   SorobanRpc,
-} from "stellar-sdk";
+} from "@stellar/stellar-sdk";
 
 async function restoreContract(
   signer: Keypair,
   c: Contract,
 ): Promise<SorobanRpc.Api.GetTransactionResponse> {
+  const instance = c.getFootprint();
+
   const account = await server.getAccount(signer.publicKey());
+  const wasmEntry = await server.getLedgerEntries(
+    getWasmLedgerKey(instance)
+  );
+
   const restoreTx = new TransactionBuilder(account, { fee: BASE_FEE })
     .setNetworkPassphrase(Networks.TESTNET)
     .setSorobanData(
       // Set the restoration footprint (remember, it should be in the
       // read-write part!)
-      new SorobanDataBuilder().setReadWrite([c.getFootprint()]).build(),
+      new SorobanDataBuilder().setReadWrite([
+        instance,
+        wasmEntry
+      ]).build(),
     )
     .addOperation(Operation.restoreFootprint({}))
     .build();
@@ -52,5 +61,13 @@ async function restoreContract(
   const preppedTx = await server.prepareTransaction(restoreTx);
   preppedTx.sign(signer);
   return yeetTx(preppedTx);
+}
+
+function getWasmLedgerKey(entry: xdr.ContractDataEntry):  {
+  return xdr.LedgerKey.contractCode(
+    new xdr.LedgerKeyContractCode({
+      hash: entry.val().instance().wasmHash()
+    })
+  );
 }
 ```

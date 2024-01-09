@@ -3,8 +3,6 @@ title: Invoke a contract function in a Stellar transaction using JavaScript
 hide_table_of_contents: true
 ---
 
-**TODO:** This is an outdated version of this transaction. Update it!
-
 This is a simple example using the `@stellar/stellar-sdk` JavaScript library to create, simulate, and then assemble a Stellar transaction which invokes an `increment` function of the [auth example contract](../../tutorials/auth.mdx).
 
 ```javascript
@@ -12,11 +10,11 @@ This is a simple example using the `@stellar/stellar-sdk` JavaScript library to 
   const {
     Keypair,
     Contract,
-    Server,
+    SorobanRpc,
     TransactionBuilder,
     Networks,
     BASE_FEE,
-  } = require("soroban-client");
+  } = require("@stellar/stellar-sdk");
 
   // The source account will be used to sign and send the transaction.
   // GCWY3M4VRW4NXJRI7IVAU3CC7XOPN6PRBG6I5M7TAOQNKZXLT3KAH362
@@ -26,7 +24,9 @@ This is a simple example using the `@stellar/stellar-sdk` JavaScript library to 
 
   // Configure SorobanClient to use the `soroban-rpc` instance of your
   // choosing.
-  const server = new Server("https://soroban-testnet.stellar.org:443");
+  const server = new SorobanRpc.Server(
+    "https://soroban-testnet.stellar.org:443",
+  );
 
   // Here we will use a deployed instance of the `increment` example contract.
   const contractAddress =

@@ -6,7 +6,11 @@ hide_table_of_contents: true
 Here is a simple, rudimentary looping mechanism to submit a transaction to Soroban RPC and wait for a result.
 
 ```typescript
-import { SorobanRpc, Transaction, FeeBumpTransaction } from "stellar-sdk";
+import {
+  Transaction,
+  FeeBumpTransaction,
+  SorobanRpc,
+} from "@stellar/stellar-sdk";
 
 const RPC_SERVER = "https://soroban-testnet.stellar.org/";
 const server = new SorobanRpc.Server(RPC_SERVER);

@@ -107,7 +107,7 @@ Some of the basic constructs in Solidity include:
 4. `Events`: Used to log changes in the contract state.
 5. `Inheritance`: Solidity supports single and multiple inheritance.
 
-We will explore some of these constructs in more detail in the next article, [Advanced Solidity Concepts](solidity-and-rust-advanced-concepts#advanced-solidity-concepts).
+We will explore some of these constructs in more detail in the next article, [Advanced Solidity Concepts](solidity-and-rust-advanced-concepts.mdx#advanced-solidity-concepts).
 
 ### Rust Syntax
 
@@ -121,7 +121,7 @@ fn main() {
 
 ### Data Types
 
-The [Soroban Rust SDK](https://docs.rs/soroban-sdk/latest/soroban_sdk/index.html) supports a variety of [Built-In Types](../../soroban-internals/types/built-in-types) which consist of both Primitive and [Custom Types](../../soroban-internals/types/custom-types), such as:
+The [Soroban Rust SDK](https://docs.rs/soroban-sdk/latest/soroban_sdk/index.html) supports a variety of [Built-In Types](../../soroban-internals/types/built-in-types.mdx) which consist of both Primitive and [Custom Types](../../soroban-internals/types/custom-types.mdx), such as:
 
 #### Primitive Data Types
 
@@ -322,7 +322,7 @@ Rust enforces [**strict ownership rules**](https://doc.rust-lang.org/book/ch04-0
 
 Contract development in Rust involves certain restrictions due to either unavailable features in the deployment environment or high runtime costs. Thus, the code written for contracts can be seen as a distinct _dialect_ of Rust, focusing on deterministic behavior and minimized code size.
 
-To learn more about Rust's Contract Dialect, check out the [Contract Rust Dialect Page](../../soroban-internals/rust-dialect).
+To learn more about Rust's Contract Dialect, check out the [Contract Rust Dialect Page](../../soroban-internals/rust-dialect.mdx).
 
 ## Writing and Interacting with Simple Smart Contracts
 
@@ -541,7 +541,7 @@ env.storage().instance().get(&COUNTER).unwrap_or(0)
 
 This is a repeat of the code we saw earlier, which retrieves the value associated with the key `COUNTER` from the contract storage. If there is no value set for the key `COUNTER`, a default value of 0 is used. Finally, the `unwrap()` method is called to extract the actual value from the `Ok` wrapper, which is then returned to the caller of the function.
 
-Now that we have written our smart contract, it's time to explore how we can interact with it using the [Soroban-CLI](../../reference/soroban-cli), one of many robust [Developer Tools](../../reference/developer-tools.mdx) available. This powerful command-line tool allows us to interact with the Soroban Virtual Machine from a local machine, providing us with an efficient and flexible way to manage our smart contract.
+Now that we have written our smart contract, it's time to explore how we can interact with it using the [Soroban-CLI](../../reference/soroban-cli.mdx), one of many robust [Developer Tools](../../developer-tools.mdx) available. This powerful command-line tool allows us to interact with the Soroban Virtual Machine from a local machine, providing us with an efficient and flexible way to manage our smart contract.
 
 ### Interacting with the Rust Smart Counter
 
@@ -551,7 +551,7 @@ To interact with the Rust counter, create a new Rust library using the cargo new
 cargo new --lib increment
 ```
 
-Once the project is created, replace the `src/lib.rs` file with the [code example above](#writing-and-interacting-with-a-simple-counter-in-rust).
+Once the project is created, replace the `src/lib.rs` file with the [code example above](#writing-a-smart-counter-in-rust).
 
 ```rust
 // Remember to replace your lib.rs file with the code example above.
@@ -595,7 +595,7 @@ inherits = "release"
 debug-assertions = true
 ```
 
-> _Note_: For a detailed explanation of the `Cargo.toml` configuration used in this tutorial, check out the [Hello World Example](../../getting-started/hello-world#import-soroban-sdk-and-features).
+> _Note_: For a detailed explanation of the `Cargo.toml` configuration used in this tutorial, check out the [Hello World Example](../../getting-started/hello-world.mdx#import-soroban-sdk-and-features).
 
 Next, build the project using the `soroban contract build` command.
 

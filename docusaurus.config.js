@@ -59,6 +59,7 @@ const config = {
           showLastUpdateTime: true,
           showLastUpdateAuthor: true,
           breadcrumbs: true,
+          routeBasePath: "/docs",
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
           sidebarItemsGenerator: require('./src/sidebar-generator'),

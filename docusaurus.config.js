@@ -22,18 +22,6 @@ const config = {
   },
   plugins: [
     "docusaurus-plugin-sass",
-    // [
-    //   '@docusaurus/plugin-content-docs',
-    //   {
-    //     id: 'guides',
-    //     path: 'guides',
-    //     routeBasePath: 'guides',
-    //     sidebarPath: require.resolve('./sidebarsGuides.js'),
-    //     sidebarItemsGenerator: require('./src/sidebar-generator'),
-    //     editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
-    //     showLastUpdateTime: true,
-    //   },
-    // ],
     [
       '@docusaurus/plugin-content-docs',
       {
@@ -92,7 +80,6 @@ const config = {
       docs: {
         sidebar: {
           autoCollapseCategories: false,
-          // hideable: true,
         }
       },
       navbar: {
@@ -124,11 +111,6 @@ const config = {
             label: 'Dapps',
             position: 'left'
           },
-          // {
-          //   to: '/guides',
-          //   label: 'Guides',
-          //   position: 'left'
-          // },
           {
             href: 'https://github.com/stellar/soroban-docs',
             label: 'GitHub',

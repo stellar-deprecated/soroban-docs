@@ -22,18 +22,6 @@ const config = {
   },
   plugins: [
     "docusaurus-plugin-sass",
-    // [
-    //   '@docusaurus/plugin-content-docs',
-    //   {
-    //     id: 'guides',
-    //     path: 'guides',
-    //     routeBasePath: 'guides',
-    //     sidebarPath: require.resolve('./sidebarsGuides.js'),
-    //     sidebarItemsGenerator: require('./src/sidebar-generator'),
-    //     editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
-    //     showLastUpdateTime: true,
-    //   },
-    // ],
     [
       '@docusaurus/plugin-content-docs',
       {
@@ -71,6 +59,7 @@ const config = {
           showLastUpdateTime: true,
           showLastUpdateAuthor: true,
           breadcrumbs: true,
+          routeBasePath: "/docs",
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
           sidebarItemsGenerator: require('./src/sidebar-generator'),
@@ -92,7 +81,6 @@ const config = {
       docs: {
         sidebar: {
           autoCollapseCategories: false,
-          // hideable: true,
         }
       },
       navbar: {
@@ -100,7 +88,7 @@ const config = {
           width: 100,
           src: "img/soroban-wordmark-temp.svg",
           srcDark: "img/soroban-wordmark-temp-dark.svg",
-          href: "/",
+          href: "/docs",
         },
         items: [
           {
@@ -124,11 +112,6 @@ const config = {
             label: 'Dapps',
             position: 'left'
           },
-          // {
-          //   to: '/guides',
-          //   label: 'Guides',
-          //   position: 'left'
-          // },
           {
             href: 'https://github.com/stellar/soroban-docs',
             label: 'GitHub',

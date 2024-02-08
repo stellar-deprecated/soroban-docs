@@ -110,7 +110,7 @@ basics:
 [Docusaurus]: https://docusaurus.io
 [MDX]: https://mdxjs.com
 [yarn]: https://yarnpkg.com/
-[Soroban RPC]: https://github.com/stellar.org/soroban-tools/cmd/soroban-rpc
+[Soroban RPC]: https://github.com/stellar.org/soroban-rpc/cmd/soroban-rpc
 [OpenRPC specification]: https://github.com/stellar/soroban-docs/blob/main/static/openrpc.json
 [create an issue]: https://github.com/stellar/soroban-docs/issues
 [Dapps Challenge]: https://soroban.stellar.org/dapps

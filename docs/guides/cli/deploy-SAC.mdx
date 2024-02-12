@@ -1,0 +1,63 @@
+---
+title: Deploy a token using the Stellar Asset Contract
+hide_table_of_contents: true
+---
+
+The Soroban CLI can be used to deploy an existing Stellar asset into a [Stellar Asset Contract] token that can be used in Soroban smart contracts:
+
+```bash
+soroban contract asset deploy \
+    --source S... \
+    --network testnet \
+    --asset USDC:GCYEIQEWOCTTSA72VPZ6LYIZIK4W4KNGJR72UADIXUXG45VDFRVCQTYE
+```
+
+The `asset` argument corresponds to the symbol and it's issuer address.
+
+The same can be done for the native [Lumens] asset:
+
+```bash
+soroban contract asset deploy \
+    --source S... \
+    --network testnet \
+    --asset native
+```
+
+:::note
+
+Deploying the native asset will fail on testnet or mainnet as
+a Soroban Asset contract already exists.
+
+:::
+
+For any asset, the SAC id can be fetched with:
+
+```bash
+soroban contract id asset \
+    --source S... \
+    --network testnet \
+    --asset native
+```
+
+The SAC id can then be used in a Soroban contract as any other asset:
+
+```rust
+use soroban_sdk::token;
+
+struct MyContract;
+
+#[contractimpl]
+impl MyContract {
+  fn token_fn(e: Env, token_id: BytesN<32>) {
+    // Create a client instance for the provided token identifier. If the
+    // `token_id` value corresponds to an SAC contract, then SAC implementation
+    // is used.
+    let client = token::Client::new(&env, &token_id);
+    // Call token operations.
+    client.transfer(...);
+  }
+}
+```
+
+[Stellar Asset Contract]: ../../tokens/stellar-asset-contract.mdx
+[Lumens]: https://developers.stellar.org/docs/fundamentals-and-concepts/lumens

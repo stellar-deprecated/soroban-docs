@@ -30,7 +30,7 @@
                 },
                 "cost": {
                     "type": "object",
-                    "description": "(optional) - This cost object will be deprecated as it is legacy and is no longer accurate.Please use decode transactionData XDR to retrieve the correct resources.",
+                    "description": "(optional) - The cost object is legacy, inaccurate, and will be deprecated in future RPC releases. Please decode transactionData XDR to retrieve the correct resources.",
                     "properties": {
                         "cpuInsns": {
                             "type": "string",

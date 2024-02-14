@@ -54,7 +54,15 @@ const config = {
       "classic",
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
-        blog: false,
+        blog: {
+          path: 'meeting-notes',
+          blogTitle: 'Meeting Notes',
+          blogDescription: 'Notes and recordings from the Soroban protocol & developers meetings',
+          blogSidebarTitle: 'All meetings',
+          blogSidebarCount: 'ALL',
+          postsPerPage: 'ALL',
+          routeBasePath: 'meetings',
+        },
         docs: {
           showLastUpdateTime: true,
           showLastUpdateAuthor: true,
@@ -111,6 +119,11 @@ const config = {
             to: '/dapps',
             label: 'Dapps',
             position: 'left'
+          },
+          {
+            to: '/meetings',
+            label: 'Meetings',
+            position: 'right',
           },
           {
             href: 'https://github.com/stellar/soroban-docs',

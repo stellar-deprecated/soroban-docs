@@ -30,7 +30,7 @@
                 },
                 "cost": {
                     "type": "object",
-                    "description": "(optional) - Information about instructions used, etc. Not present in case of error.",
+                    "description": "(optional) - This cost object will be deprecated as it is legacy and is no longer accurate.Please use decode transactionData XDR to retrieve the correct resources.",
                     "properties": {
                         "cpuInsns": {
                             "type": "string",

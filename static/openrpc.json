@@ -835,7 +835,7 @@
         {
           "name": "transaction",
           "summary": "transaction to be submitted to the network",
-          "description": "The signed transaction to broadcast for inclusion in a ledger.",
+          "description": "The signed transaction to broadcast for inclusion in a ledger. Please note that parameter structure within the request must contain named parameters as a by-name object, and not as positional arguments as a by-position array.",
           "required": true,
           "schema": {
             "title": "transaction",
@@ -1001,7 +1001,7 @@
         {
           "name": "transaction",
           "summary": "transaction to be simulated",
-          "description": "In order for the RPC server to successfully simulate a Stellar transaction, the provided transaction must contain only a single operation of the type `invokeHostFunction`.",
+          "description": "In order for the RPC server to successfully simulate a Stellar transaction, the provided transaction must contain only a single operation of the type `invokeHostFunction`. Please note that parameter structure within the request must contain named parameters as a by-name object, and not as a positional argument as a by-position array",
           "required": true,
           "schema": {
             "title": "transaction",
@@ -1049,7 +1049,7 @@
             },
             "cost": {
               "type": "object",
-              "description": "(optional) - Information about instructions used, etc. Not present in case of error.",
+              "description": "(optional) - The cost object is legacy, inaccurate, and will be deprecated in future RPC releases. Please decode transactionData XDR to retrieve the correct resources.",
               "required": [
                 "cpuInsns",
                 "memBytes"

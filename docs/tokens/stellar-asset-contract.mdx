@@ -30,7 +30,7 @@ assets. For this reason, we introduced the Stellar Asset Contract, or SAC for
 short, which allows users to use their Stellar account and trustline balances in
 Soroban.
 
-The SAC implements the SEP-41 [token interface][token-interface], which is similar to the
+The SAC implements the SEP-41 [Token Interface], which is similar to the
 widely used ERC-20 token standard. This should make it easier for existing
 smart contract developers to get started on Stellar.
 
@@ -161,7 +161,7 @@ impl MyContract {
     // `token_id` value corresponds to an SAC contract, then SAC implementation
     // is used.
     let client = token::Client::new(&env, &token_id);
-    // Call token operations.
+    // Call token operations part of the SEP-41 token interface
     client.transfer(...);
   }
 }
@@ -170,16 +170,16 @@ impl MyContract {
 :::info Different clients
 
 A client created by `token::Client` exclusively implements the functions
-defined by the SEP-41 [token interface][token-interface]. But the Stellar
+defined by the SEP-41 [Token Interface]. But the Stellar
 Asset Contract exposes additional functions such as `mint`. To access these
 functions, another client needs to be used: `token::StellarAssetInterface`.
 This client only implements the functions which are not part of the SEP-41.
 
 ```rust
-let client = token::StellarAssetInterface::new(&env, &token_id);
+let sac_client = token::StellarAssetInterface::new(&env, &token_id);
 // Call token operations which are not part of the SEP-41 token interface
 // but part of the CAP-46-6 Smart Contract Standardized Asset
-client.mint(...);
+sac_client.mint(...);
 ```
 
 :::
@@ -204,7 +204,7 @@ tokens using `register_stellar_asset_contract`. For example:
 ```rust
 let admin = Address::random();
 let user = Address::random();
-let token = TokenClient::new(e, &e.register_stellar_asset_contract(admin.clone()));
+let token = token::StellarAssetInterface::new(e, &e.register_stellar_asset_contract(admin.clone()));
 token.mint(&admin, &user, &1000);
 ```
 
@@ -214,7 +214,7 @@ implementation.
 ## Contract Interface
 
 This interface can be found in the [SDK]. It extends the common
-[token interface][token-interface].
+[Token Interface].
 
 [SDK]: https://github.com/stellar/rs-soroban-sdk/blob/v20.0.0/soroban-sdk/src/token.rs
-[token-interface]: token-interface.mdx
+[Token Interface]: token-interface.mdx

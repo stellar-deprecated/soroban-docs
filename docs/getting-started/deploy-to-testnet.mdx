@@ -27,15 +27,15 @@ To recap what we've done so far, in [Setup](setup.mdx):
 - configured the soroban-cli to communicate with the Soroban Testnet via RPC
 - and configured an identity to sign transactions
 
-In [Hello World](hello-world.mdx) we wrote a simple contract, and now we are ready to deploy that contract to Testnet, and interact with it.
+In [Hello World](hello-world.mdx) we created a `hello-world` project, and learned how to test and build the `HelloWorld` contract. Now we are ready to deploy that contract to Testnet, and interact with it.
 
 ## Deploy
 
-To deploy your Hello Soroban contract, run the following command:
+To deploy your HelloWorld contract, run the following command:
 
 ```bash
 soroban contract deploy \
-  --wasm target/wasm32-unknown-unknown/release/hello_soroban.wasm \
+  --wasm target/wasm32-unknown-unknown/release/hello_world.wasm \
   --source alice \
   --network testnet
 ```
@@ -99,6 +99,4 @@ In this lesson, we learned how to:
 - deploy a contract to Testnet
 - interact with a deployed contract
 
-You shouldn't have any changes to commit to git, because we didn't change any code in this lesson!
-
-Next we'll add a new contract to this project, reorganizing the project as a multi-contract project using Cargo Workspaces. The new contract will show off a little bit of Soroban's storage capabilities.
+Next we'll add a new contract to this project, and see how our workspace can accommodate a multi-contract project. The new contract will show off a little bit of Soroban's storage capabilities.

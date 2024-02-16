@@ -6,7 +6,7 @@ module.exports = {
     },
     {
       type: 'link',
-      label: 'Meeting Notes (Blog Version)',
+      label: 'Meeting Notes',
       href: '/meetings',
     }
   ]

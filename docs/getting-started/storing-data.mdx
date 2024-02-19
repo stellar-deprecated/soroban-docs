@@ -31,48 +31,27 @@ This tutorial assumes that you've already completed the previous steps in Gettin
 
 ## Adding the increment contract
 
-First, we'll need to create a new `contracts/increment` directory for our contract.
+The `soroban contract init` command allows us to initialize a new project with any of the example contracts from the [soroban-examples](https://github.com/stellar/soroban-examples) repo, using the `--with-example` (or `-w`) flag.
 
-```bash
-mkdir contracts/increment
+It will not overwrite existing files, so we can also use this command to add a new contract to an existing project. Run the command again with a `--with-example` flag to add an `increment` contract to our project. From the our `getting-started-tutorial` directory, run:
+
+```sh
+soroban contract init ./ --with-example increment
 ```
 
-Then, we need to create a `Cargo.toml` file for the `increment` contract. We can copy the existing `contracts/hello_world/Cargo.toml` file, making sure to change the package name to `increment`.
+This will create a new `contracts/increment` directory with the following files:
 
-```bash
-cp contracts/hello_world/Cargo.toml contracts/increment/Cargo.toml
+```
+└── contracts
+    ├── increment
+        ├── Cargo.lock
+        ├── Cargo.toml
+        └── src
+            ├── lib.rs
+            └── test.rs
 ```
 
-```diff title="contracts/increment/Cargo.toml"
-[package]
--name = "hello-world"
-+name = "increment"
-version = "0.0.0"
-authors = ["Stellar Development Foundation <info@stellar.org>"]
-license = "Apache-2.0"
-edition = "2021"
-rust-version = "1.74.0"
-publish = false
-
-[lib]
-crate-type = ["cdylib"]
-doctest = false
-
-[dependencies]
-soroban-sdk = { workspace = true }
-
-[dev_dependencies]
-soroban-sdk = { workspace = true, features = ["testutils"] }
-```
-
-We also need to create the `contracts/increment/src` directory, and `lib.rs` and `test.rs` files within it.
-
-```bash
-mkdir -p contracts/increment/src && \
-touch contracts/increment/src/lib.rs contracts/increment/src/test.rs
-```
-
-We'll add the following code to `contracts/increment/src/lib.rs`, and go over it in more detail below.
+The following code was added to `contracts/increment/src/lib.rs`. We'll go over it in more detail below.
 
 ```rust
 #![no_std]
@@ -175,7 +154,7 @@ You should see both `soroban_hello_world_contract.wasm` and `soroban_increment_c
 
 ## Tests
 
-Open the `contracts/increment/src/test.rs` file and add the following test:
+The following test has been added to the `contracts/increment/src/test.rs` file.
 
 ```rust title="contracts/incrementor/src/test.rs"
 use crate::{IncrementorContract, IncrementorContractClient};
@@ -201,7 +180,7 @@ Make sure it passes:
 cargo test
 ```
 
-You'll see that this runs tests for the whole workspace; both the Hello World contract and the new Increment.
+You'll see that this runs tests for the whole workspace; both the Hello World contract and the new Increment contract.
 
 If you want to see the output of the `log!` call, run the tests with `--nocapture`:
 

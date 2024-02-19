@@ -35,15 +35,15 @@ To deploy your HelloWorld contract, run the following command:
 
 ```bash
 soroban contract deploy \
-  --wasm target/wasm32-unknown-unknown/release/hello_world.wasm \
+  --wasm target/wasm32-unknown-unknown/release/soroban_hello_world_contract.wasm \
   --source alice \
   --network testnet
 ```
 
-This returns the ID of the contract, starting with a `C`. Let's put it somewhere semi-permanent so we can use it later. Copy that value and put it into a file in the `.soroban` directory called `hello-id`. You may need to create the `.soroban` folder first with `mkdir .soroban`.
+This returns the ID of the contract, starting with a `C`. Let's put it somewhere semi-permanent so we can use it later. Copy that value and put it into a file in the `.soroban/contract-ids` directory called `soroban_hello_world_contract.txt`.
 
 ```bash
-echo "C...[your contract id here]" > .soroban/hello-id
+echo "C...[your contract id here]" > .soroban/contract-ids/soroban_hello_world_contract.txt
 ```
 
 ## Interact
@@ -60,7 +60,7 @@ Here we're setting the `to` argument to `RPC`. This again makes use of command e
 
 ```bash
 soroban contract invoke \
-  --id $(cat .soroban/hello-id) \
+  --id $(cat .soroban/contract-ids/soroban_hello_world_contract.txt) \
   --source alice \
   --network testnet \
   -- \

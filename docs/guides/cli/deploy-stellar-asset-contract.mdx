@@ -47,37 +47,9 @@ soroban contract id asset \
     --asset native
 ```
 
-The contract address can then be used in a Soroban contract as any contract.
-The Soroban SDK provides `soroban_sdk::token` an interface to the Stellar Asset
-Contract. There are two different clients:
-
-- `token::Client` gives access to the token operations part of the SEP-41 token
-  interface, such as `transfer` or `burn`.
-- `token::StellarAssetInterface` gives access to the token operations specific
-  to Stellar Asset Contracts, such as `mint`.
-
-```rust
-use soroban_sdk::token;
-
-struct MyContract;
-
-#[contractimpl]
-impl MyContract {
-  fn token_fn(e: Env, token: Address) {
-    // Create a client instance for the provided token identifier. If the
-    // `token_id` value corresponds to an SAC contract, then SAC implementation
-    // is used.
-    let client = token::Client::new(&env, &token);
-    // Call token operations part of the SEP-41 token interface
-    client.burn(...);
-
-    let sac_client = token::StellarAssetInterface::new(&env, &token);
-    // Call token operations which are not part of the SEP-41 token interface
-    // but part of the CAP-46-6 Smart Contract Standardized Asset
-    sac_client.mint(...);
-  }
-}
-```
-
 [Stellar Asset Contract]: ../../tokens/stellar-asset-contract.mdx
 [Lumens]: https://developers.stellar.org/docs/fundamentals-and-concepts/lumens
+[SEP-41]: https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0041.md
+[`soroban_sdk::token`]: https://docs.rs/soroban-sdk/latest/soroban_sdk/token/
+[`token::TokenClient`]: https://docs.rs/soroban-sdk/latest/soroban_sdk/token/struct.TokenClient.html
+[`token::StellarAssetClient`]: https://docs.rs/soroban-sdk/latest/soroban_sdk/token/struct.StellarAssetClient.html

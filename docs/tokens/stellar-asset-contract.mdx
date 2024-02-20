@@ -156,30 +156,29 @@ struct MyContract;
 
 #[contractimpl]
 impl MyContract {
-  fn token_fn(e: Env, token_id: BytesN<32>) {
-    // Create a client instance for the provided token identifier. If the
-    // `token_id` value corresponds to an SAC contract, then SAC implementation
-    // is used.
-    let client = token::Client::new(&env, &token_id);
+  fn token_fn(e: Env, id: Address) {
+    // Create a client instance for the provided token identifier. If the id
+    // value corresponds to an SAC contract, then SAC implementation is used.
+    let client = token::Client::new(&env, &id);
     // Call token operations part of the SEP-41 token interface
     client.transfer(...);
   }
 }
 ```
 
-:::info Different clients
+:::info Clients
 
-A client created by `token::Client` exclusively implements the functions
-defined by the SEP-41 [Token Interface]. But the Stellar
-Asset Contract exposes additional functions such as `mint`. To access these
-functions, another client needs to be used: `token::StellarAssetInterface`.
-This client only implements the functions which are not part of the SEP-41.
+A client created by [`token::Client`] implements the functions defined by any
+contract that implements the SEP-41 [Token Interface]. But the Stellar Asset
+Contract exposes additional functions such as `mint`. To access the additional
+functions, another client needs to be used: [`token::StellarAssetClient`]. This
+client only implements the functions which are not part of the SEP-41.
 
 ```rust
-let sac_client = token::StellarAssetInterface::new(&env, &token_id);
+let client = token::StellarAssetClient::new(&env, &id);
 // Call token operations which are not part of the SEP-41 token interface
 // but part of the CAP-46-6 Smart Contract Standardized Asset
-sac_client.mint(...);
+client.mint(...);
 ```
 
 :::
@@ -204,7 +203,7 @@ tokens using `register_stellar_asset_contract`. For example:
 ```rust
 let admin = Address::random();
 let user = Address::random();
-let token = token::StellarAssetInterface::new(e, &e.register_stellar_asset_contract(admin.clone()));
+let token = StellarAssetClient::new(e, &e.register_stellar_asset_contract(admin.clone()));
 token.mint(&admin, &user, &1000);
 ```
 
@@ -218,3 +217,6 @@ This interface can be found in the [SDK]. It extends the common
 
 [SDK]: https://github.com/stellar/rs-soroban-sdk/blob/v20.0.0/soroban-sdk/src/token.rs
 [Token Interface]: token-interface.mdx
+[`soroban_sdk::token`]: https://docs.rs/soroban-sdk/latest/soroban_sdk/token/
+[`token::TokenClient`]: https://docs.rs/soroban-sdk/latest/soroban_sdk/token/struct.TokenClient.html
+[`token::StellarAssetClient`]: https://docs.rs/soroban-sdk/latest/soroban_sdk/token/struct.StellarAssetClient.html

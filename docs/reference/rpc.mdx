@@ -67,7 +67,7 @@ soroban config network add standalone \
 Then generate a unique identity (public/private keypair) to use with it:
 
 ```bash
-soroban config identity generate alice
+soroban keys generate alice
 ```
 
 :::tip Test-only Identities
@@ -79,7 +79,7 @@ It's a good practice to never use the same keys for testing and development that
 Finally, fund your new account on the local sandbox environment by making a request to the local Friendbot:
 
 ```bash
-curl "http://localhost:8000/friendbot?addr=$(soroban config identity address alice)"
+curl "http://localhost:8000/friendbot?addr=$(soroban keys address alice)"
 ```
 
 :::tip Command Expansion `$(...)`
@@ -140,7 +140,7 @@ Replace `testnet` in that command with the name of your choice if you want to le
 The `alice` identity suggested for your Standalone network will still work here, since it's just a public/private keypair, but you'll need to remember to fund it for the Testnet network:
 
 ```bash
-curl "https://friendbot.stellar.org/?addr=$(soroban config identity address alice)"
+curl "https://friendbot.stellar.org/?addr=$(soroban keys address alice)"
 ```
 
 Now you can replace `--network standalone` with `--network testnet` (or whatever you named it) in all your commands that need a network, like the `deploy` and `invoke` commands shown above.
@@ -171,7 +171,7 @@ Replace `futurenet` in that command with the name of your choice, if you want to
 The `alice` identity suggested for your Standalone and Testnet networks will still work here, since it's just a public/private keypair, but you'll need to remember to fund it for the Futurenet network:
 
 ```bash
-curl "https://friendbot-futurenet.stellar.org/?addr=$(soroban config identity address alice)"
+curl "https://friendbot-futurenet.stellar.org/?addr=$(soroban keys address alice)"
 ```
 
 Now you can replace `--network standalone` with `--network futurenet` (or whatever you named it) in all your commands that need a network, like the `deploy` and `invoke` commands shown above.
@@ -538,7 +538,7 @@ soroban config network add --global testnet \
 And fund your accounts/identities with the publicly hosted Friendbot:
 
 ```bash
-curl "https://friendbot.stellar.org/?addr=$(soroban config identity address alice)"
+curl "https://friendbot.stellar.org/?addr=$(soroban keys address alice)"
 ```
 
 See the tip above about command expansion (that's the note about `$(...)`) if you're not using a bash-based shell.

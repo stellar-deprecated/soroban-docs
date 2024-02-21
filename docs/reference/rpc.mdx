@@ -226,10 +226,10 @@ This example of Helm chart usage highlights some key aspects:
 
 By default, this is disabled (`sorobanRpc.persistence.enabled=false`) and the RPC deployment will use ephemeral pod storage via `emptyDir`, which will likely be adequate for `futurenet` and `testnet` transaction volumes. However, it's worth highlighting the trade-off of not having storage limitations of the cluster enforced (likely below 100MB).
 
-- Network presets are defined in [`values.yaml`](https://github.com/stellar/helm-charts/blob/main/charts/soroban-rpc/values.yaml), which currently sets network configuration specific to `futurenet`. You can override this default and use other "canned" `values.yaml` files which have been published for other networks. For example, there is a [`testnet-values.yaml`](https://github.com/stellar/helm-charts/blob/main/charts/soroban-rpc/testnet-values.yaml) file to configure the deployment of the RPC server with the `testnet` network. Include this `--values` parameter in your `helm install` to specify the desired network:
+- Network presets are defined in [`values.yaml`](https://github.com/stellar/helm-charts/blob/main/charts/soroban-rpc/values.yaml), which currently sets network configuration specific to `futurenet`. You can override this default and use other "canned" `values.yaml` files which have been published for other networks. For example, there is a [`values-testnet.yaml`](https://github.com/stellar/helm-charts/blob/main/charts/soroban-rpc/values-testnet.yaml) file to configure the deployment of the RPC server with the `testnet` network. Include this `--values` parameter in your `helm install` to specify the desired network:
 
 ```bash
---values https://raw.githubusercontent.com/stellar/helm-charts/main/charts/soroban-rpc/testnet-values.yaml
+--values https://raw.githubusercontent.com/stellar/helm-charts/main/charts/soroban-rpc/values-testnet.yaml
 ```
 
 - Configuring RPC to use other custom networks can be accomplished by downloading the [`values.yaml`](https://github.com/stellar/helm-charts/blob/main/charts/soroban-rpc/values.yaml) locally and updating settings under `sorobanRpc.sorobanRpcConfig` and `sorobanRpc.coreConfig`. This is applicable when connecting to specific networks other than the existing files like `values.yaml` available, such as your own standalone network. Include the local `values.yaml` in `helm install`:

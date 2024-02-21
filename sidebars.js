@@ -8,6 +8,20 @@ module.exports = {
       type: 'link',
       label: 'Meeting Notes',
       href: '/meetings',
-    }
-  ]
+    },
+    {
+      type: 'html',
+      value: '<hr />',
+    },
+    {
+      type: 'html',
+      value: 'Migrated Content:',
+      className: 'sidebar-title',
+    },
+    {
+      type: 'link',
+      href: 'https://developers.stellar.org/docs/tools/developer-tools',
+      label: 'Developer Tools',
+    },
+  ],
 };

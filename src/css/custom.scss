@@ -177,10 +177,3 @@ select[data-testid="example-pairing-select"] {
 .sidebar-category-items-hidden ul {
   display: none !important;
 }
-
-/* Sidebar title items */
-.sidebar-title {
-  // margin-top: 0.25rem;
-  padding: var(--ifm-menu-link-padding-vertical) 0.4rem;
-  font-weight: bolder;
-}

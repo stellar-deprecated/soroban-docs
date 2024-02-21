@@ -41,7 +41,6 @@ The ledger rent cost ('Write 1KB' entries in the table) is based on the write fe
 | Write 1KB to ledger (empty)                   | 1,000                         |
 | Write 1KB to ledger (current, 12 GB)          | 0.356 XLM (17.4 XLM/tx)       |
 | Write 1KB to ledger (target, 14 GB)           | 0.4 XLM (2.26 XLM/tx)         |
-| Write 1KB to ledger (2x of target, 29 GB)     | 40 XLM (2260 XLM/tx)          |
 | Temp entry rent period                        | 10 months                     |
 | Persistent entry rent period                  | 1 month                       |
 | 1 KB of temp storage per month                | 400,000                       |
@@ -58,12 +57,11 @@ The ledger rent cost ('Write 1KB' entries in the table) is based on the write fe
 | 1KB of transaction size (bandwidth)           | 1,624 (113,642/max tx)                                                                                           |
 | 1KB of transaction size (history)             | 16,235 (1,136,418/max tx)                                                                                        |
 | 1KB of Events/return value                    | 10,000 (80,000/max tx)                                                                                           |
-| “Target” ledger size                          | 13 GB (current size is 12GB, 2 month target with up to 6GB/year projected growth)                                |
+| “Target” ledger size                          | 13 GB (current size is 12GB)                                                                                     |
 | Fee multiplier after reaching the target size | 1,000                                                                                                            |
 | Write 1KB to ledger, stroops (empty)          | -1,234,673 (the write cost is always positive; this value is used only for the effective write fee computations) |
 | Write 1KB to ledger, stroops (current, 12 GB) | 11,539 (750,000/max tx)                                                                                          |
 | Write 1KB to ledger, stroops (target, 13 GB)  | 115,390 (7,500,000/max tx)                                                                                       |
-| Write 1KB to ledger (2x of target, 26 GB)     | 11.5 XLM (736 XLM/max tx)                                                                                        |
 | Temp entry rent period, ledgers               | 2,804                                                                                                            |
 | Persistent entry rent period, ledgers         | 1,402                                                                                                            |
 | Minimum persistent entry TTL, ledgers         | 2,073,600 (120 days)                                                                                             |

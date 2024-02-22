@@ -85,6 +85,10 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      announcementBar: {
+        id: 'announcementBar-migration',
+        content: "🎉️ <strong>We're moving!!</strong> 🎉️ We're merging the Soroban documentation into the <a target='_blank' href='https://developers.stellar.org'>Stellar Developers</a> documentation. Please check <a target='_blank' href='https://github.com/stellar/soroban-docs/issues/740'>this GH issue</a> for progress and updates.",
+      },
       image: 'img/meta.png',
       docs: {
         sidebar: {

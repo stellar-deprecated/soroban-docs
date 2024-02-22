@@ -20,6 +20,7 @@
 
 /* You can override the default Infima variables here. */
 :root {
+  --site-primary-hue-saturation: 179 68%;
   --ifm-color-primary: #4daaa9;
   // --ifm-background-color: #ffffff;
   // --ifm-background-surface-color: #fafafa;
@@ -49,6 +50,7 @@
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
 [data-theme="dark"] {
+  --site-primary-hue-saturation: 50 94%;
   --ifm-color-primary: #f9db4a;
   --ifm-color-secondary: #4daaa9;
   --ifm-navbar-background-color: #1b1b1d;
@@ -176,4 +178,25 @@ select[data-testid="example-pairing-select"] {
 
 .sidebar-category-items-hidden ul {
   display: none !important;
+}
+
+/* Announcement Bar(s) */
+
+div[class^='announcementBar_'] {
+  font-size: 18px;
+
+  --site-announcement-bar-stripe-color1: hsl(
+    var(--site-primary-hue-saturation) 85%
+  );
+  --site-announcement-bar-stripe-color2: hsl(
+    var(--site-primary-hue-saturation) 95%
+  );
+
+  background: repeating-linear-gradient(
+    35deg,
+    var(--site-announcement-bar-stripe-color1),
+    var(--site-announcement-bar-stripe-color1) 20px,
+    var(--site-announcement-bar-stripe-color2) 10px,
+    var(--site-announcement-bar-stripe-color2) 40px
+  );
 }

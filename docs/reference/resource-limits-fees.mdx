@@ -27,24 +27,24 @@ The ledger rent cost ('Write 1KB' entries in the table) is based on the write fe
 
 ### Phase 0 (current)
 
-| Network Setting                               | Phase 0 Cost (stroops)        |
-| :-------------------------------------------- | :---------------------------- |
-| 10,000 instructions                           | 100 (1,000,000/tx)            |
-| Read 1 ledger entry                           | 1,000 (20,000/tx)             |
-| Write 1 ledger entry                          | 3,000 (30,000/tx)             |
-| Read 1KB from ledger                          | 1,000 (127,000/tx)            |
-| 1KB of transaction (bandwidth)                | 500 (34,000/tx)               |
-| 1KB of transaction (history)                  | 5,000 (340,000/tx)            |
-| 1KB of Events/return value                    | 300 (1,500/tx)                |
-| “Target” ledger size                          | 14.5 GB (current is ~12.5 GB) |
-| Fee multiplier after reaching the target size | 1,000                         |
-| Write 1KB to ledger (empty)                   | 1,000                         |
-| Write 1KB to ledger (current, 12 GB)          | 0.356 XLM (17.4 XLM/tx)       |
-| Write 1KB to ledger (target, 14 GB)           | 0.4 XLM (2.26 XLM/tx)         |
-| Temp entry rent period                        | 10 months                     |
-| Persistent entry rent period                  | 1 month                       |
-| 1 KB of temp storage per month                | 400,000                       |
-| 1 KB of persistent storage per month          | 4,000,000                     |
+| Network Setting                               | Phase 0 Cost (stroops)  |
+| :-------------------------------------------- | :---------------------- |
+| 10,000 instructions                           | 100 (1,000,000/tx)      |
+| Read 1 ledger entry                           | 1,000 (20,000/tx)       |
+| Write 1 ledger entry                          | 3,000 (30,000/tx)       |
+| Read 1KB from ledger                          | 1,000 (127,000/tx)      |
+| 1KB of transaction (bandwidth)                | 500 (34,000/tx)         |
+| 1KB of transaction (history)                  | 5,000 (340,000/tx)      |
+| 1KB of Events/return value                    | 300 (1,500/tx)          |
+| “Target” ledger size                          | 14.5 GB                 |
+| Fee multiplier after reaching the target size | 1,000                   |
+| Write 1KB to ledger (empty)                   | 1,000                   |
+| Write 1KB to ledger (current, 12 GB)          | 0.356 XLM (17.4 XLM/tx) |
+| Write 1KB to ledger (target, 14 GB)           | 0.4 XLM (2.26 XLM/tx)   |
+| Temp entry rent period                        | 10 months               |
+| Persistent entry rent period                  | 1 month                 |
+| 1 KB of temp storage per month                | 400,000                 |
+| 1 KB of persistent storage per month          | 4,000,000               |
 
 ### Phase 1
 
@@ -57,7 +57,7 @@ The ledger rent cost ('Write 1KB' entries in the table) is based on the write fe
 | 1KB of transaction size (bandwidth)           | 1,624 (113,642/max tx)                                                                                           |
 | 1KB of transaction size (history)             | 16,235 (1,136,418/max tx)                                                                                        |
 | 1KB of Events/return value                    | 10,000 (80,000/max tx)                                                                                           |
-| “Target” ledger size                          | 13 GB (current size is 12GB)                                                                                     |
+| “Target” ledger size                          | 13 GB                                                                                                            |
 | Fee multiplier after reaching the target size | 1,000                                                                                                            |
 | Write 1KB to ledger, stroops (empty)          | -1,234,673 (the write cost is always positive; this value is used only for the effective write fee computations) |
 | Write 1KB to ledger, stroops (current, 12 GB) | 11,539 (750,000/max tx)                                                                                          |

@@ -43,9 +43,21 @@ Release candidates are software releases that are also released to the [Testnet]
 
 ### Changelog
 
-#### XDR
+#### Soroban RPC
 
-#### Soroban Environment
+- (tag: v20.3.3) Bump version to 20.3.3
+- Update Dockerfile and Makefile to refer rpc instead of tools
+- Fix publish-dry-run failures
+- Revert "soroban-rpc: Remove publish-dry-run Workflow"
+- Perform fee padding in a larger bit width of integers
+- (tag: v20.3.2) Bump version to 20.3.2
+- Merge pull request #68 from stellar/add-spec-tools-crate
+- Merge branch 'main' into add-spec-tools-crate
+- Change module from soroban-tool to rpc in go.mod
+- Add hardcoded WASM file and reference it in tests
+- Uncomment install_rust
+- Add prometheus hook to count different log levels
+- Remove build-test-wasms from makefile
 
 #### Soroban Rust SDK
 

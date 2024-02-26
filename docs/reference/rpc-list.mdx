@@ -9,21 +9,28 @@ Multiple infrastructure providers have made Soroban RPC endpoint services availa
 
 These providers allow access to the Testnet and Mainnet networks.
 
-| Provider                                              | Signup / Access                                     |
-| :---------------------------------------------------- | --------------------------------------------------- |
-| [Blockdaemon](https://www.blockdaemon.com)            | [Access](https://www.blockdaemon.com/apply/soroban) |
-| [Validation Cloud](https://validationcloud.io/)       | [Access](https://app.validationcloud.io/)           |
-| [QuickNode](https://www.quicknode.com/chains/stellar) | [Access](https://www.quicknode.com/chains/stellar)  |
-| [NowNodes](https://nownodes.io/nodes/stellar-xlm)     | [Access](https://nownodes.io/nodes/stellar-xlm)     |
-| [Gateway](https://gateway.fm/)                        | [Access](https://gateway.fm/public-rpc/)            |
+| Provider                                                | Access                                              | Futurenet     | Testnet   | Mainnet     |
+| ------------------------------------------------------- | --------------------------------------------------- | ------------- | --------- | ----------- |
+| [Blockdaemon](https://www.blockdaemon.com)              | [Access](https://www.blockdaemon.com/apply/soroban) | Not available | Available | Available   |
+| [Validation Cloud](https://validationcloud.io/)         | [Access](https://app.validationcloud.io/)           | Not available | Available | Coming soon |
+| [QuickNode\*](https://www.quicknode.com/chains/stellar) | [Access](https://www.quicknode.com/chains/stellar)  | Not available | Available | Available   |
+| [NowNodes](https://nownodes.io/nodes/stellar-xlm)       | [Access](https://nownodes.io/nodes/stellar-xlm)     | Available     | Available | Coming soon |
+| [Gateway](https://gateway.fm/)                          | [Access](https://gateway.fm/public-rpc/)            | Not available | Available | Available   |
 
-## SDF (Futurenet and Testnet only)
+\*_Please note that Quicknode combines Horizon and RPC in the same endpoint._
 
-SDF has made available Soroban RPC endpoints with access to the Futurenet and Testnet networks. These services are free to use, and are suitable for development and testing.
+## SDF Provided RPC (Futurenet and Testnet only)
+
+SDF has made available Soroban RPC with access to the Futurenet and Testnet networks. These services are free to use, and are suitable for development and testing.
 
 SDF will not be providing a publicly available RPC endpoint for Mainnet. Developers should select an ecosystem provider that works for their project before migrating to Mainnet. In some cases, projects may choose to [run their own RPC instance](rpc.mdx#run-your-own-instance).
 
-| Provider                      | Endpoint                              | Friendbot                                 | Network     |
-| :---------------------------- | ------------------------------------- | ----------------------------------------- | ----------- |
-| [SDF](http://www.stellar.org) | `https://rpc-futurenet.stellar.org`   | `https://friendbot-futurenet.stellar.org` | `Futurenet` |
-| [SDF](http://www.stellar.org) | `https://soroban-testnet.stellar.org` | `https://friendbot.stellar.org`           | `Testnet`   |
+| Network     | RPC Endpoint                          | Friendbot Endpoint                        | Provider                      |
+| ----------- | ------------------------------------- | ----------------------------------------- | ----------------------------- |
+| `Futurenet` | `https://rpc-futurenet.stellar.org`   | `https://friendbot-futurenet.stellar.org` | [SDF](http://www.stellar.org) |
+| `Testnet`   | `https://soroban-testnet.stellar.org` | `https://friendbot.stellar.org`           | [SDF](http://www.stellar.org) |
+
+## Run Your Own RPC
+
+If you are interested in running your own RPC, please checkout
+[this page](./rpc#docker-image).

@@ -22,18 +22,18 @@ const config = {
   },
   plugins: [
     "docusaurus-plugin-sass",
-    [
-      '@docusaurus/plugin-content-docs',
-      {
-        id: 'api',
-        path: 'api',
-        routeBasePath: 'api',
-        sidebarPath: require.resolve('./sidebarsApi.js'),
-        editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
-        showLastUpdateTime: true,
-        showLastUpdateAuthor: true,
-      },
-    ],
+    // [
+    //   '@docusaurus/plugin-content-docs',
+    //   {
+    //     id: 'api',
+    //     path: 'api',
+    //     routeBasePath: 'api',
+    //     sidebarPath: require.resolve('./sidebarsApi.js'),
+    //     editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
+    //     showLastUpdateTime: true,
+    //     showLastUpdateAuthor: true,
+    //   },
+    // ],
     [
       '@docusaurus/plugin-content-docs',
       {

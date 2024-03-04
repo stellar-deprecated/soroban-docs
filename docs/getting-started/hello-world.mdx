@@ -331,7 +331,9 @@ The `.wasm` file contains the logic of the contract, as well as the contract's [
 
 Use `soroban contract optimize` to further minimize the size of the `.wasm`. First, re-install soroban-cli with the `opt` feature:
 
-    cargo install --locked --version 20.3.0 soroban-cli --features opt
+```bash
+cargo install --locked soroban-cli --features opt
+```
 
 Then build an optimized `.wasm` file:
 

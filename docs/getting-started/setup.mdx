@@ -155,8 +155,8 @@ soroban network add --global testnet \
   --network-passphrase "Test SDF Network ; September 2015"
 ```
 
-Note the `--global` flag. This creates a file in your home folder's `/.config/soroban/network/testnet.toml` with the settings you specified. This
-means that you can use the `--network testnet` flag in any Soroban CLI command to use this network.
+Note the `--global` flag. This creates a file in your home folder's `~/.config/soroban/network/testnet.toml` with the settings you specified. This
+means that you can use the `--network testnet` flag in any Soroban CLI command to use this network from any directory or filepath on your system.
 
 If you want project-specific network configurations, you can omit the `--global` flag, and the networks will be added to your working directory's `.soroban/network` folder instead.
 

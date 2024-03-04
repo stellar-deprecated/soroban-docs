@@ -69,7 +69,7 @@ Though we can run `soroban contract bindings typescript` for each of our contrac
 
 In addition to generating the NPM packages, `initialize.js` will also:
 
-- Generate and fund our soroban account
+- Generate and fund our Stellar account
 - Build all of the contracts in the `contracts` dir
 - Deploy our contracts
 - Create handy contract clients for each contract
@@ -310,7 +310,7 @@ Now you're ready to sign the call to `increment`!
 
 ### Call `increment`
 
-Now we can import the increment contract client from `soroban_increment_contract` and start using it. We'll again create a new Astro component. Create a new file at `src/components/Counter.astro` with the following contents:
+Now we can import the `increment` contract client from `soroban_increment_contract` and start using it. We'll again create a new Astro component. Create a new file at `src/components/Counter.astro` with the following contents:
 
 ```html title="src/components/Counter.astro"
 <strong>Incrementor</strong><br />
@@ -350,7 +350,7 @@ The biggest difference from the call to `greeter.hello` is that this transaction
 
 :::info
 
-Destructuring `{ result }` If you're new to JavaScript, you may not know what's happening with those `const { result }` lines. This is using JavaScript's _destructuring_ feature. If the thing on the right of the equals sign is an object, then you can use this pattern to quickly grab specific keys from that object and assign them to variables. You can also name the variable something else, if you like. For example, try changing the code above to:
+Destructuring `{ result }`: If you're new to JavaScript, you may not know what's happening with those `const { result }` lines. This is using JavaScript's _destructuring_ feature. If the thing on the right of the equals sign is an object, then you can use this pattern to quickly grab specific keys from that object and assign them to variables. You can also name the variable something else, if you like. For example, try changing the code above to:
 
 ```ts
 const { result: newValue } = ...

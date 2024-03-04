@@ -25,7 +25,7 @@ import TabItem from "@theme/TabItem";
 
 Now that we've built a basic Hello World example contract, we'll write a simple contract that stores and retrieves data. This will help you see the basics of Soroban's storage system.
 
-This is going to follow along with the [increment example](https://github.com/stellar/soroban-examples/tree/v20.0.0/increment), which has a single function that increments an internal counter and returns the value. If you want to see a working example, [try it in GitPod](https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v20.0.0).
+This is going to follow along with the [increment example](https://github.com/stellar/soroban-examples/tree/v20.2.0/increment), which has a single function that increments an internal counter and returns the value. If you want to see a working example, [try it in GitPod](https://gitpod.io/#https://github.com/stellar/soroban-examples/tree/v20.2.0).
 
 This tutorial assumes that you've already completed the previous steps in Getting Started: [Setup](./setup.mdx), [Hello World](./hello-world.mdx), and [Deploy to Testnet](./deploy-to-testnet.mdx).
 
@@ -33,7 +33,7 @@ This tutorial assumes that you've already completed the previous steps in Gettin
 
 The `soroban contract init` command allows us to initialize a new project with any of the example contracts from the [soroban-examples](https://github.com/stellar/soroban-examples) repo, using the `--with-example` (or `-w`) flag.
 
-It will not overwrite existing files, so we can also use this command to add a new contract to an existing project. Run the command again with a `--with-example` flag to add an `increment` contract to our project. From the our `getting-started-tutorial` directory, run:
+It will not overwrite existing files, so we can also use this command to add a new contract to an existing project. Run the command again with a `--with-example` flag to add an `increment` contract to our project. From inside our `getting-started-tutorial` directory, run:
 
 ```sh
 soroban contract init ./ --with-example increment
@@ -136,7 +136,7 @@ The `set()` function stores the new count value against the key, replacing the e
 env.storage().instance().extend_ttl(100, 100);
 ```
 
-All contract data has a Time To Live (TTL), measured in ledgers, that must be periodically extended. If an entry's TTL is not periodically extended, the entry will eventually become "archived". You can learn more about this in the [State Archival](../soroban-internals/state-archival.mdx) document.
+All contract data has a Time To Live (TTL), measured in ledgers, that must be periodically extended. If an entry's TTL is not periodically extended, the entry will eventually become "archived." You can learn more about this in the [State Archival](../soroban-internals/state-archival.mdx) document.
 
 For now, it's worth knowing that there are three kinds of storage: `Persistent`, `Temporary`, and `Instance`. This contract only uses `Instance` storage: `env.storage().instance()`. Every time the counter is incremented, this storage's TTL gets extended by 100 [ledgers](https://developers.stellar.org/docs/fundamentals-and-concepts/stellar-data-structures/ledgers), or about 500 seconds.
 
@@ -148,7 +148,9 @@ soroban contract build
 
 Check that it built:
 
-    ls target/wasm32-unknown-unknown/release/*.wasm
+```bash
+ls target/wasm32-unknown-unknown/release/*.wasm
+```
 
 You should see both `soroban_hello_world_contract.wasm` and `soroban_increment_contract.wasm`.
 

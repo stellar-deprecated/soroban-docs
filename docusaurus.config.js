@@ -109,7 +109,7 @@ const config = {
             position: 'left'
           },
           {
-            href: 'https://developers.stellar.org/platforms/soroban-rpc',
+            href: 'https://developers.stellar.org/network/soroban-rpc',
             label: 'API',
             position: 'left'
           },

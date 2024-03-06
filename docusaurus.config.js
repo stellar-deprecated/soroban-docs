@@ -204,7 +204,7 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
-        additionalLanguages: ["rust", "toml", "solidity", "cpp"],
+        additionalLanguages: ["rust", "toml", "solidity", "cpp", "java"],
       },
     }),
   markdown: {

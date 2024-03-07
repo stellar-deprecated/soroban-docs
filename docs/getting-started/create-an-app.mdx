@@ -87,8 +87,10 @@ cp .env.example .env
 Let's take a look at the contents of the `.env` file:
 
 ```
-SOROBAN_NETWORK_PASSPHRASE="Standalone Network ; February 2017"
-SOROBAN_RPC_URL="http://localhost:8000/soroban/rpc"
+# Prefix with "PUBLIC_" to make available in Astro frontend files
+PUBLIC_SOROBAN_NETWORK_PASSPHRASE="Standalone Network ; February 2017"
+PUBLIC_SOROBAN_RPC_URL="http://localhost:8000/soroban/rpc"
+
 SOROBAN_ACCOUNT="me"
 SOROBAN_NETWORK="standalone"
 
@@ -99,16 +101,16 @@ PUBLIC_SOROBAN_RPC_URL=$SOROBAN_RPC_URL
 This `.env` file defaults to connecting to a locally running network, but we want to configure our project to communicate with Testnet, since that is where we deployed our contracts. To do that, let's update the `.env` file to look like this:
 
 ```diff
--SOROBAN_NETWORK_PASSPHRASE="Standalone Network ; February 2017"
-+SOROBAN_NETWORK_PASSPHRASE="Test SDF Network ; September 2015"
--SOROBAN_RPC_URL="http://localhost:8000/soroban/rpc"
-+SOROBAN_RPC_URL="https://soroban-testnet.stellar.org:443"
+# Prefix with "PUBLIC_" to make available in Astro frontend files
+-PUBLIC_SOROBAN_NETWORK_PASSPHRASE="Standalone Network ; February 2017"
++PUBLIC_SOROBAN_NETWORK_PASSPHRASE="Test SDF Network ; September 2015"
+-PUBLIC_SOROBAN_RPC_URL="http://localhost:8000/soroban/rpc"
++PUBLIC_SOROBAN_RPC_URL="https://soroban-testnet.stellar.org:443"
+
 -SOROBAN_ACCOUNT="me"
 +SOROBAN_ACCOUNT="alice"
 -SOROBAN_NETWORK="standalone"
 +SOROBAN_NETWORK="testnet"
-
-PUBLIC_SOROBAN_RPC_URL=$SOROBAN_RPC_URL
 ```
 
 :::info

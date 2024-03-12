@@ -7,7 +7,7 @@ module.exports = {
     {
       type: 'link',
       label: 'Meeting Notes',
-      href: '/meetings',
+      href: 'https://developers.stellar.org/meetings',
     }
   ]
 };

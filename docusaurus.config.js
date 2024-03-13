@@ -125,7 +125,7 @@ const config = {
             position: 'left'
           },
           {
-            to: 'https://developers.stellar.org/meetings',
+            href: 'https://developers.stellar.org/meetings',
             label: 'Meetings',
             position: 'right',
           },

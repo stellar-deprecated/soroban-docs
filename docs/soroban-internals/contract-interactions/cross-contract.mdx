@@ -2,7 +2,17 @@
 sidebar_position: 10
 title: Cross-Contract
 description: Interact with a Soroban contract from within another Soroban contract.
+sidebar_custom_props:
+  migration:
+    href: https://developers.stellar.org/docs/learn/soroban-internals/contract-interactions/cross-contract
+    label: Cross-Contract
 ---
+
+:::danger These are not the droids you're looking for
+
+This page has been migrated to the Stellar Developers documentation. Please [click here](https://developers.stellar.org/docs/learn/soroban-internals/contract-interactions/cross-contract) for the most up-to-date information
+
+:::
 
 A cross-contract invocation is a powerful (yet expensive) kind of contract interaction. A contract invocation is similar to starting a new process because the code that runs will be in a separate address space, meaning that they do not share any data other than what was passed in the invocation. While a contract invocation typically transfers control to a _different_ contract, it is possible to transfer control to the currently running contract. Regardless of whether the contract that receives control is a different contract or the currently running contract, the value returned by `get_invoking_contract` will be the previous value of `get_current_contract`. A contract invocation can only access the public methods of a contract.
 

@@ -2,6 +2,10 @@
 sidebar_position: 160
 title: State Archival
 description: Smart contract state archival.
+sidebar_custom_props:
+  migration:
+    href: https://developers.stellar.org/docs/learn/soroban-internals/state-archival
+    label: State Archival
 ---
 
     <head>
@@ -18,6 +22,12 @@ description: Smart contract state archival.
     href="https://soroban.stellar.org/docs/soroban-internals/state-archival"
   />
 </head>
+
+:::danger These are not the droids you're looking for
+
+This page has been migrated to the Stellar Developers documentation. Please [click here](https://developers.stellar.org/docs/learn/soroban-internals/state-archival) for the most up-to-date information
+
+:::
 
 Contract data is made up of three different types: `Persistent`, `Temporary`, and `Instance`. In a contract, these are accessed with `env.storage().persistent()`, `env.storage().temporary()`, and `env.storage().instance()` respectively; see the [`storage()` docs](https://docs.rs/soroban-sdk/latest/soroban_sdk/storage/struct.Storage.html).
 

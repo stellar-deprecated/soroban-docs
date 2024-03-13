@@ -2,7 +2,17 @@
 sidebar_position: 20
 title: Tests
 description: Interacting with contracts in tests
+sidebar_custom_props:
+  migration:
+    href: https://developers.stellar.org/docs/learn/soroban-internals/contract-interactions/tests
+    label: Tests
 ---
+
+:::danger These are not the droids you're looking for
+
+This page has been migrated to the Stellar Developers documentation. Please [click here](https://developers.stellar.org/docs/learn/soroban-internals/contract-interactions/tests) for the most up-to-date information
+
+:::
 
 [Debugging contracts](../debugging.mdx) explains that it is much more convenient to debug using native code than Wasm. Given that you are testing native code, it is tempting to interact with your contract directly using function calls. If you attempt this approach, you will find that it doesn't always work. Function call interactions do not set the environment into the correct state for contract execution, so functions involving contract data and determining the current or invoking contract will not work.
 

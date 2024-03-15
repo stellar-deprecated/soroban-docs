@@ -54,15 +54,7 @@ const config = {
       "classic",
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
-        blog: {
-          path: 'meeting-notes',
-          blogTitle: 'Meeting Notes',
-          blogDescription: 'Notes and recordings from the Soroban protocol & developers meetings',
-          blogSidebarTitle: 'All meetings',
-          blogSidebarCount: 'ALL',
-          postsPerPage: 'ALL',
-          routeBasePath: 'meetings',
-        },
+        blog: false,
         docs: {
           showLastUpdateTime: true,
           showLastUpdateAuthor: true,

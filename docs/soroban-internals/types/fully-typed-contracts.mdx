@@ -3,6 +3,10 @@ sidebar_position: 30
 title: "Fully-Typed Contracts"
 desctiption: Smart contract WASM files contain a machine-readable description of the interface type.
 sidebar_label: Fully-Typed Contracts
+sidebar_custom_props:
+  migration:
+    href: https://developers.stellar.org/docs/learn/smart-contract-internals/types/fully-typed-contracts
+    label: Fully-Typed Contracts
 ---
 
 <head>
@@ -24,6 +28,12 @@ sidebar_label: Fully-Typed Contracts
     href="https://soroban.stellar.org/docs/soroban-internals/fully-typed-contracts"
   />
 </head>
+
+:::danger These are not the droids you're looking for
+
+This page has been migrated to the Stellar Developers documentation. Please [click here](https://developers.stellar.org/docs/learn/smart-contract-internals/types/fully-typed-contracts) for the most up-to-date information
+
+:::
 
 When you compile a contract created with [soroban-sdk](https://developers.stellar.org/docs/tools/sdks/library#soroban-rust-sdk), the Wasm file ends up with a [custom section](https://webassembly.github.io/spec/core/appendix/custom.html) containing a machine-readable description of your contract's interface types, sometimes called its [spec](https://github.com/stellar/rs-soroban-sdk/tree/main/soroban-spec) or its [API](https://github.com/stellar/soroban-docs/pull/381#issuecomment-1507283476). This is similar to [ABIs](https://www.quicknode.com/guides/ethereum-development/smart-contracts/what-is-an-abi/) in Ethereum, except that Soroban will store every single one of them on-chain from day one, and they include the comments from the contract's author.
 

@@ -119,12 +119,6 @@ Stellar classic, which you can learn more about [here](https://developers.stella
       `AUTHORIZED_FLAG` set.
     - A trustline balance can only be clawed back using the `clawback` contract
       function if the trustline has `TRUSTLINE_CLAWBACK_ENABLED_FLAG` set.
-    - The admin can only deauthorize a trustline if the issuer of the asset has
-      `AUTH_REVOCABLE_FLAG` set. The deauthorization will fail if the issuer is
-      missing. Note that when a trustline is deauthorized from Soroban,
-      `AUTHORIZED_FLAG` is cleared and
-      `AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG` is set to avoid having to pull
-      offers and redeeming pool shares.
     - Transfers to the issuer account will burn the token, while transfers from
       the issuer account will mint.
     - Trustline balances are stored in a 64-bit signed integer even though the
@@ -134,8 +128,6 @@ Stellar classic, which you can learn more about [here](https://developers.stella
 - Using `Address::Contract`
   - The balance and authorization state will be stored in contract storage, as
     opposed to a trustline.
-  - `AUTH_REVOCABLE_FLAG` is not required to be set on the issuer to deauthorize a
-    balance.
   - Balances are stored in a 128-bit signed integer.
   - A balance can only be clawed back if the issuer account had the
     `AUTH_CLAWBACK_ENABLED_FLAG` set when the balance was created. A balance is
@@ -151,6 +143,16 @@ specified `Address::Contract` will need to be explicitly authorized with
 trustlines interact with the `AUTH_REQUIRED_FLAG` issuer flag, allowing asset issuers
 to have the same control in Soroban as they do in Stellar classic. Read more
 about `AUTH_REQUIRED_FLAG` [here](https://developers.stellar.org/docs/issuing-assets/control-asset-access#authorization-required-0x1).
+
+### Revoking Authorization
+
+The admin can only revoke authorization from an `Address`, if the issuer of the
+asset has `AUTH_REVOCABLE_FLAG` set. The deauthorization will fail if the issuer
+is missing. This requirement is true for both the trustline balances of
+`Address::Account` and contract balances of `Address:Contract`. Note that when a
+trustline is deauthorized from Soroban, `AUTHORIZED_FLAG` is cleared and
+`AUTHORIZED_TO_MAINTAIN_LIABILITIES_FLAG` is set to avoid having to pull offers
+and redeeming pool shares.
 
 ## Authorization semantics
 

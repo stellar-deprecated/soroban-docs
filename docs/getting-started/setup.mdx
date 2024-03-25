@@ -172,13 +172,7 @@ soroban keys address alice
 
 Like the Network configs, the `--global` means that the identity gets stored in `~/.config/soroban/identity/alice.toml`. You can omit the `--global` flag to store the identity in your project's `.soroban/identity` folder instead.
 
-All this did so far is generate a public/private keypair on your local machine. No network requests were made, and `alice` has no funds on Testnet. This means that you can't make any transactions with `alice` yet.
-
-To get `alice` some Testnet tokens, you'll need to use [Friendbot](https://developers.stellar.org/docs/fundamentals-and-concepts/testnet-and-pubnet#friendbot). All Stellar and Soroban test networks have a Friendbot that you can use to get some test tokens. The public Friendbot instance for Testnet lives at `https://friendbot.stellar.org`. The cli includes a `fund` subcommand to fund your address with Friendbot:
-
-```bash
-soroban keys fund alice --network testnet
-```
+By default, `soroban keys generate` will fund your account using [Friendbot](https://developers.stellar.org/docs/fundamentals-and-concepts/testnet-and-pubnet#friendbot). If you don't want this behavior, run this command with `--no-fund`.
 
 [Rust]: https://www.rust-lang.org/
 [Soroban CLI]: setup.mdx#install-the-soroban-cli

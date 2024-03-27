@@ -4,6 +4,13 @@ const path = require('path')
 const migrationLinksRecursive = (sidebarItems) => {
     const result = sidebarItems.map((sidebarItem) => {
         if (sidebarItem.type === 'category') {
+            if (sidebarItem.label === 'How-To Guides' || sidebarItem.label === 'Tutorials') {
+                return {
+                    type: 'link',
+                    href: sidebarItem.customProps.migration.href,
+                    label: sidebarItem.customProps.migration.label,
+                }
+            }
             return {...sidebarItem, items: migrationLinksRecursive(sidebarItem.items)}
         }
 

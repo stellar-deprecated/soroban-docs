@@ -1,4 +1,17 @@
-# Soroban Documentation and API Reference <!-- omit in toc -->
+# [Deprecated] Soroban Documentation and API Reference <!-- omit in toc -->
+
+
+Soroban Documentation has been consolidated into Stellar Developer
+Documentations.
+
+To read the Stellar Developer Docs: https://developers.stellar.org/
+To contribute or open issues in the Stellar Developer Docs: https://github.com/stellar/stellar-docs
+
+
+Please do not open issues in this repo as it is no longer actively maintained. 
+
+----
+
 
 Welcome to the official home repository for [Documentation] and [API Reference] for the [Soroban] smart contracts platform.
 

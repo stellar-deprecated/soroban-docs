@@ -108,7 +108,7 @@ const config = {
           //   position: 'left',
           // },
           {
-            to: '/dapps',
+            href: 'https://developers.stellar.org/docs/learn/interactive/dapps',
             label: 'Dapps',
             position: 'left'
           },

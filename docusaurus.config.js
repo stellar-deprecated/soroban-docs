@@ -22,30 +22,6 @@ const config = {
   },
   plugins: [
     "docusaurus-plugin-sass",
-    // [
-    //   '@docusaurus/plugin-content-docs',
-    //   {
-    //     id: 'api',
-    //     path: 'api',
-    //     routeBasePath: 'api',
-    //     sidebarPath: require.resolve('./sidebarsApi.js'),
-    //     editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
-    //     showLastUpdateTime: true,
-    //     showLastUpdateAuthor: true,
-    //   },
-    // ],
-    [
-      '@docusaurus/plugin-content-docs',
-      {
-        id: 'dapps',
-        path: 'dapps',
-        routeBasePath: 'dapps',
-        sidebarPath: require.resolve('./sidebarsDapps.js'),
-        editUrl: "https://github.com/stellar/soroban-docs/tree/main/",
-        showLastUpdateTime: true,
-        showLastUpdateAuthor: true,
-      },
-    ],
     require('./src/dev-server-plugin'),
     require('./src/analytics-module')
   ],
@@ -101,14 +77,8 @@ const config = {
             label: 'API',
             position: 'left'
           },
-          // {
-          //   href: 'https://fastcheapandoutofcontrol.com/',
-          //   label: 'Play Game',
-          //   className: 'nav-highlight',
-          //   position: 'left',
-          // },
           {
-            to: '/dapps',
+            href: 'https://developers.stellar.org/docs/learn/interactive/dapps',
             label: 'Dapps',
             position: 'left'
           },

@@ -35,7 +35,7 @@
     "@stellar/freighter-api": "^1.6.1",
     "@stellar/stellar-sdk": "^11.1.0",
     "ajv": "^8.12.0",
-    "axios": "^1.4.0",
+    "axios": "^1.6.6",
     "clsx": "^1.2.1",
     "dereference-json-schema": "^0.2.1",
     "docusaurus-plugin-sass": "^0.2.2",
